@@ -23,6 +23,10 @@ module PactBroker
       message("errors.validation." + key, options)
     end
 
+    def validation_message_at_index key, index, options = {}
+      message("errors.validation." + key, options).chomp(".") + " (at index #{index})"
+    end
+
     def pluralize(word, count)
       if count == 1
         word

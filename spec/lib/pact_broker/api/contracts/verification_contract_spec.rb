@@ -37,7 +37,7 @@ module PactBroker
             let(:success) { nil }
 
             it "has an error" do
-              expect(subject.errors[:success]).to include(match("blank"))
+              expect(subject.errors[:success]).to include(match("boolean"))
             end
           end
 
@@ -69,21 +69,25 @@ module PactBroker
             let(:build_url) { {} }
 
             it "has an error" do
-              expect(subject.errors[:build_url]).to include(match("URL"))
+              expect(subject.errors[:build_url]).to include(match("string"))
             end
           end
 
           context "when the providerApplicationVersion is not present" do
             let(:params) { modify valid_params, without: :providerApplicationVersion }
+
             it "has an error" do
-              expect(subject.errors[:provider_version]).to include(match("can't be blank"))
+              expect(subject.errors[:provider_version]).to include(match("string"))
             end
           end
 
           context "when the providerApplicationVersion is blank" do
             let(:provider_version) { " " }
             it "has an error" do
-              expect(subject.errors[:provider_version]).to include(match("can't be blank"))
+              expect(subject.errors[:provider_version]).to contain_exactly(match("blank"))
+            end
+
+            it "has one error" do
             end
           end
 

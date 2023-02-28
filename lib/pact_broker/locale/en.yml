@@ -2,17 +2,10 @@ en:
   errors:
     not_blank?: "can't be blank"
     filled?: "can't be blank"
-    valid_method?: "is not a recognised HTTP method"
     valid_url?: "is not a valid URL eg. http://example.org"
     base64?: "is not valid Base64"
-    valid_version_number?: "Version number '%{value}' cannot be parsed to a version number. The expected format (unless this configuration has been overridden) is a semantic version. eg. 1.3.0 or 2.0.4.rc1"
-    name_in_path_matches_name_in_pact?: "does not match %{left} name in path ('%{right}')."
-    valid_consumer_version_number?: "Consumer version number '%{value}' cannot be parsed to a version number. The expected format (unless this configuration has been overridden) is a semantic version. eg. 1.3.0 or 2.0.4.rc1"
-    non_templated_host?: "cannot have a template parameter in the host"
-    pacticipant_exists?: "does not match an existing pacticipant"
     single_line?: "cannot contain multiple lines"
     no_spaces?: "cannot contain spaces"
-    environment_with_name_exists?: "with name '%{value}' does not exist"
     none?: "cannot be provided"
 
   pact_broker:
@@ -68,7 +61,12 @@ en:
         version_branch: Configure the version branch to be the value of your repository branch.
     errors:
       validation:
-        blank: "cannot be blank."
+        no_spaces: "cannot contain spaces"
+        single_line: "cannot contain multiple lines"
+        environment_not_found: "with name '%{value}' does not exist"
+        blank: "cannot be blank"
+        cannot_be_provided_at_same_time: "%{name_1} and %{name_2} cannot be provided at the same time"
+        blank_with_name: "%{name} cannot be blank"
         attribute_missing: "Missing required attribute '%{attribute}'"
         invalid_http_method: "Invalid HTTP method '%{method}'"
         invalid_url: "Invalid URL '%{url}'. Expected format: http://example.org"
@@ -76,25 +74,46 @@ en:
         pact_content_modification_not_allowed: "Cannot change the content of the pact for %{consumer_name} version %{consumer_version_number} and provider %{provider_name}, as race conditions will cause unreliable results for can-i-deploy. Each pact must be published with a unique consumer version number. For more information see https://docs.pact.io/go/versioning"
         consumer_version_number_missing: "Please specify the consumer version number by setting the X-Pact-Consumer-Version header."
         consumer_version_number_header_invalid: "X-Pact-Consumer-Version '%{consumer_version_number}' cannot be parsed to a version number. The expected format (unless this configuration has been overridden) is a semantic version. eg. 1.3.0 or 2.0.4.rc1"
-        consumer_version_number_invalid: "Consumer version number '%{consumer_version_number}' cannot be parsed to a version number. The expected format (unless this configuration has been overridden) is a semantic version. eg. 1.3.0 or 2.0.4.rc1"
         pacticipant_name_mismatch: "in pact ('%{name_in_pact}') does not match %{pacticipant} name in path ('%{name}')."
-        consumer_name_in_content_mismatch_pacticipant_name: "consumer name in contract content ('%{consumer_name_in_content}') must match pacticipantName ('%{pacticipant_name}')"
         consumer_name_in_contract_mismatch_pacticipant_name: "consumerName ('%{consumer_name_in_contract}') must match pacticipantName ('%{pacticipant_name}')"
-        provider_name_in_content_mismatch: "provider name in contract content ('%{provider_name_in_content}') must match providerName ('%{provider_name}') in contracts"
+        consumer_name_in_content_mismatch: "consumer name in contract content ('%{consumer_name_in_content}') must match consumerName in contract params ('%{consumer_name}')"
+        provider_name_in_content_mismatch: "provider name in contract content ('%{provider_name_in_content}') must match providerName in contract params ('%{provider_name}')"
         connection_encoding_not_utf8: "The Sequel connection encoding (%{encoding}) is strongly recommended to be \"utf8\". If you need to set it to %{encoding} for some particular reason, then disable this check by setting config.validate_database_connection_config = false"
         invalid_webhook_uuid: The UUID can only contain the characters A-Z, a-z, 0-9, _ and -, and must be 16 or more characters.
         pacticipant_not_found: No pacticipant with name '%{name}' found
-        environment_name_must_be_unique: Another environment with name '%{name}' already exists.
+        environment_name_must_be_unique: "name '%{name}' is already used by an existing environment."
         must_specify_environment_or_tag: Must specify either an environment or a 'to' tag.
         cannot_specify_tag_and_environment: Cannot specify both a 'to' tag and an environment.
         cannot_specify_latest_and_environment: Cannot specify both latest=true and an environment.
         cannot_specify_more_than_one_destination_identifier: Cannot specify more than one of tag, environment and mainBranch.
         environment_with_name_not_found: "Environment with name '%{name}' does not exist"
         cannot_modify_version_branch: "The branch for a pacticipant version cannot be changed once set (currently '%{old_branch}', proposed value '%{new_branch}'). Your pact publication/verification publication configurations may be in conflict with each other if you are seeing this error. If the current branch value is incorrect, you must delete the pacticipant version resource at %{version_url} and publish the pacts/verification results again with a consistent branch name."
-        invalid_content_for_content_type: "The content could not be parsed as %{content_type}"
+        invalid_content_for_content_type: "content could not be parsed as %{content_type}"
         cannot_set_currently_deployed_true: The currentlyDeployed property cannot be set back to true. Please record a new deployment.
         cannot_set_currently_supported_true: The currentlySupported property cannot be set back to true. Please record a new deployment.
         invalid_limit: The limit must be 1 or greater.
+        pacts_for_verification_selector_fallback_tag: "fallbackTag can only be set if latest is true"
+        pacts_for_verification_selector_matching_branch_requires_provider_version_branch: the providerVersionBranch must be specified when the selector matchingBranch=true is used
+        pacts_for_verification_selector_tag_and_branch_disallowed: "cannot specify both a tag and a branch"
+        pacts_for_verification_selector_fallback_tag_requires_tag: "a tag must be specified when a fallbackTag is specified"
+        pacts_for_verification_selector_fallback_branch_requires_branch: "a branch must be specified when a fallbackBranch is specified"
+        pacts_for_verification_selector_branch_and_latest_false_disallowed: cannot specify a branch with latest=false
+        pacts_for_verification_selector_fallback_branch_and_latest_false_disallowed: fallbackBranch can only be set if latest is true
+        pacts_for_verification_selector_required_params_missing: must specify a value for environment or tag or branch, or specify mainBranch=true, matchingBranch=true, latest=true, deployed=true, released=true or deployedOrReleased=true
+        pacts_for_verification_selector_main_branch_with_other_param_disallowed: cannot specify mainBranch=true with any other criteria apart from consumer
+        pacts_for_verification_selector_matching_branch_with_other_param_disallowed: cannot specify matchingBranch=true with any other criteria apart from consumer
+        pacts_for_verification_selector_deployed_and_released_disallowed: cannot specify both deployed=true and released=true
+        pacts_for_verification_selector_deployed_and_deployed_or_released_disallowed: cannot specify both deployed=true and deployedOrReleased=true
+        pacts_for_verification_selector_released_and_deployed_or_released_disallowed: cannot specify both released=true and deployedOrReleased=true
+        pact_name_in_path_mismatch_name_in_pact: "name in pact '%{name_in_pact}' does not match name in URL path '%{name_in_path}'."
+        base64: "is not valid Base64"
+        non_utf_8_char_in_contract: "contract content has a non UTF-8 character at char %{char_number} and cannot be parsed as JSON. Fragment preceding invalid character is: '%{fragment}'"
+        invalid_consumer_version_number: "Consumer version number '%{value}' cannot be parsed to a version number. The expected format (unless this configuration has been overridden) is a semantic version. eg. 1.3.0 or 2.0.4.rc1"
+        invalid_version_number: "Version number '%{value}' cannot be parsed to a version number. The expected format (unless this configuration has been overridden) is a semantic version. eg. 1.3.0 or 2.0.4.rc1"
+        invalid_url: "is not a valid URL eg. http://example.org"
+        pacticipant_with_name_not_found: "does not match an existing pacticipant"
+        invalid_http_method: "is not a recognised HTTP method"
+        webhook_templated_host_not_allowed: "cannot have a template parameter in the host"
       duplicate_pacticipant: |
         This is the first time a pact has been published for "%{new_name}".
         The name "%{new_name}" is very similar to the following existing pacticipants:

@@ -1,47 +1,42 @@
 require "dry-validation"
-require "pact_broker/api/contracts/dry_validation_workarounds"
-require "pact_broker/api/contracts/dry_validation_predicates"
-require "pact_broker/messages"
+require "pact_broker/api/contracts/dry_validation_methods"
+require "pact_broker/api/contracts/dry_validation_macros"
 
 module PactBroker
   module Api
     module Contracts
-      class EnvironmentSchema
-        extend DryValidationWorkarounds
-        extend PactBroker::Messages
+      class EnvironmentSchema < Dry::Validation::Contract
         using PactBroker::HashRefinements
+        include DryValidationMethods
 
-        SCHEMA = Dry::Validation.Schema do
-          configure do
-            predicates(DryValidationPredicates)
-            config.messages_file = File.expand_path("../../../locale/en.yml", __FILE__)
-          end
-          required(:name).filled(:str?, :single_line?, :no_spaces?)
-          optional(:displayName).maybe(:str?, :single_line?)
+        json do
+          optional(:uuid)
+          required(:name).filled(:string)
+          optional(:displayName).maybe(:string)
           required(:production).filled(included_in?: [true, false])
-          optional(:contacts).each do
-            schema do
-              required(:name).filled(:str?, :single_line?)
-              optional(:details).schema do
-              end
+          optional(:contacts).array(:hash) do
+            required(:name).filled(:string)
+            optional(:details).hash
+          end
+        end
+
+        rule(:name).validate(:not_multiple_lines, :no_spaces_if_present)
+        rule(:displayName).validate(:not_multiple_lines)
+
+        rule(:name, :uuid) do
+          if (environment_with_same_name = PactBroker::Deployments::EnvironmentService.find_by_name(values[:name]))
+            if environment_with_same_name.uuid != values[:uuid]
+              key.failure(validation_message("environment_name_must_be_unique", name: values[:name]))
             end
           end
+        end
+
+        rule(:contacts).each do
+          validate_not_multiple_lines(value[:name], key(path.keys + [:name]))
         end
 
         def self.call(params_with_string_keys)
-          params = params_with_string_keys&.symbolize_keys
-          results = select_first_message(flatten_indexed_messages(SCHEMA.call(params).messages(full: true)))
-          validate_name(params, results)
-          results
-        end
-
-        def self.validate_name(params, results)
-          if (environment_with_same_name = PactBroker::Deployments::EnvironmentService.find_by_name(params[:name]))
-            if environment_with_same_name.uuid != params[:uuid]
-              results[:name] ||= []
-              results[:name] << message("errors.validation.environment_name_must_be_unique", name: params[:name])
-            end
-          end
+          flatten_indexed_messages(new.call(params_with_string_keys&.symbolize_keys).errors.to_hash)
         end
       end
     end

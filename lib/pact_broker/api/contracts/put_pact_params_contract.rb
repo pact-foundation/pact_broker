@@ -1,4 +1,7 @@
 require "pact_broker/api/contracts/base_contract"
+require "pact_broker/api/contracts/validation_helpers"
+require "pact_broker/api/contracts/dry_validation_macros"
+require "pact_broker/api/contracts/dry_validation_methods"
 
 module PactBroker
   module Api
@@ -10,15 +13,22 @@ module PactBroker
         property :message_args
 
         validation do
-          configure do
-            config.messages_file = File.expand_path("../../../locale/en.yml", __FILE__)
+          include PactBroker::Api::Contracts::ValidationHelpers
+          include PactBroker::Api::Contracts::DryValidationMethods
+
+          json do
+            required(:name).maybe(:string)
+            required(:name_in_pact).maybe(:string)
           end
 
-          required(:name).maybe
-          required(:name_in_pact).maybe
+          rule(:name, :name_in_pact) do
+            if name_in_pact_does_not_match_name_in_url_path?(values)
+              key.failure(validation_message("pact_name_in_path_mismatch_name_in_pact", name_in_pact: values[:name_in_pact], name_in_path: values[:name]))
+            end
+          end
 
-          rule(name_in_path_matches_name_in_pact?: [:name, :name_in_pact]) do |name, name_in_pact|
-            name_in_pact.filled?.then(name.eql?(value(:name_in_pact)))
+          def name_in_pact_does_not_match_name_in_url_path?(values)
+            provided?(values[:name_in_pact]) && values[:name] != values[:name_in_pact]
           end
         end
       end
@@ -29,17 +39,16 @@ module PactBroker
         property :provider, form: PutPacticipantNameContract
 
         validation do
-          configure do
-            config.messages_file = File.expand_path("../../../locale/en.yml", __FILE__)
-
-            def valid_consumer_version_number?(value)
-              return true if PactBroker.configuration.order_versions_by_date
-              parsed_version_number = PactBroker.configuration.version_parser.call(value)
-              !parsed_version_number.nil?
-            end
+          include PactBroker::Api::Contracts::DryValidationMethods
+          json do
+            required(:consumer_version_number).filled(:string)
           end
 
-          required(:consumer_version_number).filled(:valid_consumer_version_number?)
+          rule(:consumer_version_number).validate(:not_blank_if_present)
+
+          rule(:consumer_version_number) do
+            validate_version_number(value, key) if !rule_error?(:consumer_version_number)
+          end
         end
       end
     end

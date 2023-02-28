@@ -1,4 +1,4 @@
-require "pact_broker/api/contracts/pacticipant_schema"
+require "pact_broker/api/contracts/pacticipant_create_schema"
 
 module PactBroker
   module Api
@@ -21,6 +21,12 @@ module PactBroker
 
         context "with valid params" do
           it { is_expected.to be_empty }
+        end
+
+        context "with a branch that has a space" do
+          let(:main_branch) { "origin main" }
+
+          its([:mainBranch, 0]) { is_expected.to eq "mainBranch cannot contain spaces" }
         end
 
         context "with empty params" do

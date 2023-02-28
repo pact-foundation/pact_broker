@@ -1,4 +1,7 @@
 require "pact_broker/api/contracts/base_contract"
+require "pact_broker/api/contracts/dry_validation_macros"
+require "pact_broker/api/contracts/dry_validation_methods"
+
 require "uri"
 
 module PactBroker
@@ -11,30 +14,21 @@ module PactBroker
         property :build_url, as: :buildUrl
 
         validation do
-          configure do
-            config.messages_file = File.expand_path("../../../locale/en.yml", __FILE__)
+          include PactBroker::Api::Contracts::DryValidationMethods
 
-            def not_blank? value
-              value && value.to_s.strip.size > 0
-            end
-
-            def valid_url? url
-              URI(url)
-            rescue URI::InvalidURIError, ArgumentError
-              nil
-            end
-
-            def valid_version_number?(value)
-              return true if PactBroker.configuration.order_versions_by_date
-
-              parsed_version_number = PactBroker.configuration.version_parser.call(value)
-              !!parsed_version_number
-            end
+          json do
+            required(:success).filled(:bool)
+            required(:provider_version).filled(:string)
+            optional(:build_url).maybe(:string)
           end
 
-          required(:success).filled(:bool?)
-          required(:provider_version) { not_blank? & valid_version_number? }
-          optional(:build_url).maybe(:valid_url?)
+          rule(:provider_version).validate(:not_blank_if_present)
+
+          rule(:provider_version) do
+            validate_version_number(value, key) unless rule_error?(:provider_version)
+          end
+
+          rule(:build_url).validate(:valid_url_if_present)
         end
       end
     end
