@@ -67,12 +67,11 @@ module PactBroker
           end
         end
 
-        # The path_info segments aren't URL decoded
+        # Remove the non-path compontents in the path_info (eg. the application context, which is naughtily passed in via the path_info)
         def identifier_from_path
           @identifier_from_path ||= request.path_info.each_with_object({}) do | (key, value), hash|
-            if value.is_a?(String)
-              hash[key] = Webmachine::Dispatcher::Route.rfc3986_percent_decode(value)
-            elsif value.is_a?(Symbol) || value.is_a?(Numeric)
+            case value
+            when String, Symbol, Numeric
               hash[key] = value
             end
           end

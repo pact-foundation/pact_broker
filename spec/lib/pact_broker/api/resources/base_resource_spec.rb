@@ -22,7 +22,7 @@ module PactBroker
           allow(env).to receive(:[]).with("pactbroker.base_url").and_return(nil)
         end
         let(:request) { double("request", body: body, uri: uri, base_uri: URI("http://example.org/"), env: env, path_info: path_info).as_null_object }
-        let(:path_info) { { application_context: application_context, key1: "foo%20bar", key2: :value2, key3: 1.2 }}
+        let(:path_info) { { application_context: application_context, key1: "foo bar", key2: :value2, key3: 1.2 }}
         let(:application_context) { PactBroker::ApplicationContext.default_application_context }
         let(:response) { double("response").as_null_object }
         let(:uri) { URI("http://example.org/path?query") }
