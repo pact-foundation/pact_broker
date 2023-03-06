@@ -36,7 +36,7 @@ module PactBroker
 
         def from_json
           already_existed = !!branch_version
-          @branch_version = branch_service.find_or_create_branch_version(identifier_from_path)
+          @branch_version = branch_service.find_or_create_branch_version(**identifier_from_path)
           # Make it return a 201 by setting the Location header
           response.headers["Location"] = branch_version_url(branch_version, base_url) unless already_existed
           response.body = to_json
@@ -49,7 +49,7 @@ module PactBroker
         private
 
         def branch_version
-          @branch_version ||= branch_service.find_branch_version(identifier_from_path)
+          @branch_version ||= branch_service.find_branch_version(**identifier_from_path)
         end
       end
     end

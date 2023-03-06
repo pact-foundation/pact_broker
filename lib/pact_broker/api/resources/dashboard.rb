@@ -35,7 +35,7 @@ module PactBroker
         private
 
         def index_items
-          index_service.find_index_items_for_api(identifier_from_path.merge(pagination_options))
+          index_service.find_index_items_for_api(**identifier_from_path.merge(pagination_options))
         end
       end
     end

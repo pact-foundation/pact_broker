@@ -29,7 +29,7 @@ module Webmachine
     res.code = code
     unless res.body
       title, message = t(["errors.#{code}.title", "errors.#{code}.message"],
-                         { :method => req.method,
+                         **{ :method => req.method,
                            :error => res.error}.merge(options))
 
       title = options[:title] if options[:title]
