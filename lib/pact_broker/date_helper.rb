@@ -14,7 +14,7 @@ module PactBroker
       end
 
       def t path, options
-        I18n.t path, @options.merge(options)
+        I18n.t(path, **@options.merge(options))
       end
     end
 

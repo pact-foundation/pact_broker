@@ -43,7 +43,7 @@ module PactBroker
         end
 
         def released_versions
-          @released_versions ||= released_version_service.find_currently_supported_versions_for_environment(environment, query_params)
+          @released_versions ||= released_version_service.find_currently_supported_versions_for_environment(environment, **query_params)
         end
 
         def environment_uuid

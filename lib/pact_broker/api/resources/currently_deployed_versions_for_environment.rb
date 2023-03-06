@@ -43,7 +43,7 @@ module PactBroker
         end
 
         def deployed_versions
-          @deployed_versions ||= deployed_version_service.find_currently_deployed_versions_for_environment(environment, query_params)
+          @deployed_versions ||= deployed_version_service.find_currently_deployed_versions_for_environment(environment, **query_params)
         end
 
         def environment_uuid
