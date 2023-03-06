@@ -27,11 +27,12 @@ describe "Creating a branch version" do
     its(:status) { is_expected.to eq 201 }
   end
 
-  context "with a percentage in the version number", pending: "this is currently raising a utf-8 encoding error" do
+  context "with a percentage in the version number" do
     let(:path) { "/pacticipants/foo/branches/main/versions/%25DATE%25_%25TIME%25" }
 
     it "returns a 201 response" do
       expect(subject.status).to be 201
+      expect(PactBroker::Domain::Version.last.number).to eq "%DATE%_%TIME%"
     end
   end
 end
