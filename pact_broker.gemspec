@@ -49,8 +49,8 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.license       = "MIT"
 
-  #gem.add_runtime_dependency 'pact'
   gem.add_runtime_dependency "json", "~> 2.3"
+  gem.add_runtime_dependency "psych", "~> 4.0" # TODO identify breaking changes and see if we can use 5
   gem.add_runtime_dependency "roar", "~> 1.1"
   gem.add_runtime_dependency "reform", "~> 2.3.3"
   gem.add_runtime_dependency "dry-validation", "~> 0.10.5"

@@ -67,8 +67,7 @@ module PactBroker
 
     def self.configuration_for_env env
       database_yml = PactBroker.project_root.join("config","database.yml")
-      yaml_load_opts = RUBY_VERSION.start_with?("2") ? {} : { aliases: true }
-      config = YAML.load(ERB.new(File.read(database_yml)).result, **yaml_load_opts)
+      config = YAML.load(ERB.new(File.read(database_yml)).result, aliases: true)
       config.fetch(env).fetch(ENV.fetch("DATABASE_ADAPTER","default"))
     end
   end
