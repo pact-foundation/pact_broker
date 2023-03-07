@@ -1,4 +1,4 @@
-name: Tests for Ruby 3.0 - these are hardcoded to succeed so every commit doesn't look like it's failing
+name: Tests for Ruby 3.0
 
 on:
   push:
@@ -22,4 +22,4 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby_version }}
           bundler-cache: true
-      - run: "bundle exec rake || true"
+      - run: "bundle exec rake"
