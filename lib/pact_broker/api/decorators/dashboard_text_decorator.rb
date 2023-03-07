@@ -17,8 +17,8 @@ module PactBroker
           to_hash(options).to_json
         end
 
-        def to_text(options)
-          data = items(index_items, options[:user_options][:base_url])
+        def to_text(user_options:, **_other)
+          data = items(index_items, user_options[:base_url])
           printer = TablePrint::Printer.new(data)
           printer.table_print + "\n"
         end

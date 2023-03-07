@@ -33,7 +33,7 @@ module PactBroker
         end
 
         def to_text
-          decorator_class(:matrix_text_decorator).new(results).to_text(decorator_options)
+          decorator_class(:matrix_text_decorator).new(results).to_text(**decorator_options)
         end
 
         def policy_name
