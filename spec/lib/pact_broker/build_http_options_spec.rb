@@ -4,7 +4,7 @@ require "pact_broker/build_http_options"
 module PactBroker
   describe BuildHttpOptions do
 
-    subject { PactBroker::BuildHttpOptions.call(url, options) }
+    subject { PactBroker::BuildHttpOptions.call(url, **options) }
     let(:options) { {} }
 
     context "default http options" do
