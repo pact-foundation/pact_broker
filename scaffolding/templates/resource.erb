@@ -18,7 +18,7 @@ module <%= resource_top_module %>
         end
 
         def to_json
-          decorator_class(:<%= decorator_instance_name %>).new(<%= model_instance_name %>).to_json(decorator_options)
+          decorator_class(:<%= decorator_instance_name %>).new(<%= model_instance_name %>).to_json(**decorator_options)
         end
 
         def policy_name

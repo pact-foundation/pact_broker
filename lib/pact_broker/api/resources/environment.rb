@@ -43,7 +43,7 @@ module PactBroker
         end
 
         def to_json
-          decorator_class(:environment_decorator).new(environment).to_json(decorator_options)
+          decorator_class(:environment_decorator).new(environment).to_json(**decorator_options)
         end
 
         def parsed_environment

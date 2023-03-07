@@ -26,7 +26,7 @@ module PactBroker
         def set_json_validation_error_messages errors
           response.headers["Content-Type"] = error_response_content_type
           if problem_json_error_content_type?
-            response.body = PactBroker::Api::Decorators::ValidationErrorsProblemJSONDecorator.new(errors).to_json(decorator_options)
+            response.body = PactBroker::Api::Decorators::ValidationErrorsProblemJSONDecorator.new(errors).to_json(**decorator_options)
           else
             response.body = { errors: errors }.to_json
           end
@@ -42,7 +42,7 @@ module PactBroker
 
         def error_response_body(detail, title, type, status)
           if problem_json_error_content_type?
-            PactBroker::Api::Decorators::CustomErrorProblemJSONDecorator.new(detail: detail, title: title, type: type, status: status).to_json(decorator_options)
+            PactBroker::Api::Decorators::CustomErrorProblemJSONDecorator.new(detail: detail, title: title, type: type, status: status).to_json(**decorator_options)
           else
             { error: detail }.to_json
           end

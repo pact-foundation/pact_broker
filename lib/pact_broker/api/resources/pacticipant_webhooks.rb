@@ -40,11 +40,11 @@ module PactBroker
 
         def from_json
           saved_webhook = webhook_service.create next_uuid, webhook, consumer, provider
-          response.body = decorator_class(:webhook_decorator).new(saved_webhook).to_json(decorator_options)
+          response.body = decorator_class(:webhook_decorator).new(saved_webhook).to_json(**decorator_options)
         end
 
         def to_json
-          decorator_class(:webhooks_decorator).new(webhooks).to_json(decorator_options(resource_title: "Webhooks"))
+          decorator_class(:webhooks_decorator).new(webhooks).to_json(**decorator_options(resource_title: "Webhooks"))
         end
 
         def policy_name
