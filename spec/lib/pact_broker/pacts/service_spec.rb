@@ -148,7 +148,7 @@ module PactBroker
           end
 
           it "broadcasts the contract_published event" do
-            expect(Service).to receive(:broadcast).with(:contract_published, pact: new_pact, event_context: { consumer_version_tags: %w[dev] })
+            expect(Service).to receive(:broadcast).with(:contract_published, { pact: new_pact, event_context: { consumer_version_tags: %w[dev] } })
             subject
           end
 
