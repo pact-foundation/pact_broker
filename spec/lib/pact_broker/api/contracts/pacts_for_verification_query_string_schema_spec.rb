@@ -40,7 +40,7 @@ module PactBroker
           end
 
           it "flattens the messages" do
-            expect(subject[:consumer_version_selectors].first).to eq "tag is missing at index 0"
+            expect(subject[:consumer_version_selectors].first).to eq "tag is missing (at index 0)"
           end
         end
 
@@ -88,7 +88,7 @@ module PactBroker
           end
 
           it "has an error" do
-            expect(subject[:consumer_version_selectors].first).to include "blank"
+            expect(subject[:consumer_version_selectors].first).to include "filled"
           end
         end
       end

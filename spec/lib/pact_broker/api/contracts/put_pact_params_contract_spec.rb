@@ -1,4 +1,5 @@
 require "pact_broker/api/contracts/put_pact_params_contract"
+require "pact_broker/pacts/pact_params"
 
 module PactBroker
   module Api
@@ -39,13 +40,13 @@ module PactBroker
             end
           end
 
-          context "with a nil consumer version number" do
+          context "with a blank consumer version number" do
             let(:attributes) do
-              valid_attributes.merge(consumer_version_number: nil)
+              valid_attributes.merge(consumer_version_number: " ")
             end
 
             it "returns an error" do
-              expect(subject.errors[:consumer_version_number]).to include("can't be blank")
+              expect(subject.errors[:consumer_version_number].first).to include("blank")
             end
           end
 
@@ -55,7 +56,7 @@ module PactBroker
             end
 
             it "returns an error" do
-              expect(subject.errors[:consumer_version_number]).to include("can't be blank")
+              expect(subject.errors[:consumer_version_number].first).to include("filled")
             end
           end
 
@@ -65,7 +66,7 @@ module PactBroker
             end
 
             it "returns an error" do
-              expect(subject.errors[:consumer_version_number]).to include(/Consumer version number 'blah' cannot be parsed to a version number/)
+              expect(subject.errors[:consumer_version_number]).to include(/Version number 'blah' cannot be parsed to a version number/)
             end
           end
 
@@ -89,7 +90,7 @@ module PactBroker
             end
 
             it "returns an error" do
-              expect(subject.errors[:'consumer.name']).to include("does not match consumer name in path ('another consumer').")
+              expect(subject.errors[:'consumer.name']).to include("name in pact 'consumer' does not match name in URL path 'another consumer'.")
             end
           end
 
@@ -99,7 +100,7 @@ module PactBroker
             end
 
             it "returns an error" do
-              expect(subject.errors[:'provider.name']).to include("does not match provider name in path ('another provider').")
+              expect(subject.errors[:'provider.name']).to include("name in pact 'provider' does not match name in URL path 'another provider'.")
             end
           end
 
