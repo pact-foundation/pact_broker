@@ -4,6 +4,7 @@ gemspec
 
 # While https://github.com/brandonhilkert/sucker_punch/pull/253 is outstanding
 gem "sucker_punch", git: "https://github.com/pact-foundation/sucker_punch.git", ref: "fix/rename-is-singleton-class-method-2"
+gem "webmachine", git: "https://github.com/webmachine/webmachine-ruby.git", ref: "2470ae64ea54ac253222f16ef91baffbc54bef48"
 
 gem "rake", "~>12.3.3"
 gem "sqlite3", "~>1.3"
