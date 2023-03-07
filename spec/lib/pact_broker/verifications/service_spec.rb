@@ -76,13 +76,13 @@ module PactBroker
         end
 
         it "it broadcasts the provider_verification_published event" do
-          expect(Service).to receive(:broadcast).with(:provider_verification_published, pact: pact, verification: instance_of(PactBroker::Domain::Verification), event_context: hash_including(provider_version_tags: %w[dev]))
+          expect(Service).to receive(:broadcast).with(:provider_verification_published, { pact: pact, verification: instance_of(PactBroker::Domain::Verification), event_context: hash_including(provider_version_tags: %w[dev]) })
           create_verification
         end
 
         context "when the verification is successful" do
           it "it broadcasts the provider_verification_succeeded event" do
-            expect(Service).to receive(:broadcast).with(:provider_verification_succeeded, pact: pact, verification: instance_of(PactBroker::Domain::Verification), event_context: hash_including(provider_version_tags: %w[dev]))
+            expect(Service).to receive(:broadcast).with(:provider_verification_succeeded, { pact: pact, verification: instance_of(PactBroker::Domain::Verification), event_context: hash_including(provider_version_tags: %w[dev]) })
             create_verification
           end
         end
@@ -91,7 +91,7 @@ module PactBroker
           let(:success) { false }
 
           it "it broadcasts the provider_verification_failed event" do
-            expect(Service).to receive(:broadcast).with(:provider_verification_failed, pact: pact, verification: instance_of(PactBroker::Domain::Verification), event_context: hash_including(provider_version_tags: %w[dev]))
+            expect(Service).to receive(:broadcast).with(:provider_verification_failed, { pact: pact, verification: instance_of(PactBroker::Domain::Verification), event_context: hash_including(provider_version_tags: %w[dev]) })
             create_verification
           end
         end
