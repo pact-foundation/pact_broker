@@ -2,8 +2,7 @@ require "spec/support/test_data_builder"
 
 describe "Get matrix for consumer and provider" do
   before do
-    TestDataBuilder.new
-      .create_pact_with_hierarchy("Consumer", "1.0.0", "Provider")
+    td.create_pact_with_hierarchy("Consumer", "1.0.0", "Provider")
       .create_verification(provider_version: "4.5.6")
   end
 
@@ -16,9 +15,10 @@ describe "Get matrix for consumer and provider" do
       ]
     }
   end
+  let(:rack_env) { {} }
   let(:last_response_body) { JSON.parse(subject.body, symbolize_names: true) }
 
-  subject { get path, params; last_response }
+  subject { get(path, params, rack_env) }
 
   it "returns a 200 HAL JSON response" do
     expect(subject).to be_a_hal_json_success_response
@@ -30,5 +30,10 @@ describe "Get matrix for consumer and provider" do
     expect(last_response_body[:matrix][0][:pact]).to be_instance_of(Hash)
     expect(last_response_body[:matrix][0][:verificationResult]).to be_instance_of(Hash)
   end
-end
 
+  context "with Accept: text/plain" do
+    let(:rack_env) { { "HTTP_ACCEPT" => "text/plain" } }
+
+    its(:headers) { is_expected.to include("Content-Type" => "text/plain;charset=utf-8") }
+  end
+end

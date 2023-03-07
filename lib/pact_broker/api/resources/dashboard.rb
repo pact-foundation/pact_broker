@@ -25,7 +25,7 @@ module PactBroker
         end
 
         def to_text
-          decorator_class(:dashboard_text_decorator).new(index_items).to_text(decorator_options)
+          decorator_class(:dashboard_text_decorator).new(index_items).to_text(**decorator_options)
         end
 
         def policy_name
