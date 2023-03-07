@@ -32,11 +32,11 @@ module PactBroker
         def from_json
           @deployed_version = deployed_version_service.find_or_create(deployed_version_uuid, version, environment, application_instance)
           response.headers["Location"] = deployed_version_url(deployed_version, base_url)
-          response.body = decorator_class(:deployed_version_decorator).new(deployed_version).to_json(decorator_options)
+          response.body = decorator_class(:deployed_version_decorator).new(deployed_version).to_json(**decorator_options)
         end
 
         def to_json
-          decorator_class(:deployed_versions_decorator).new(deployed_versions).to_json(decorator_options(title: title))
+          decorator_class(:deployed_versions_decorator).new(deployed_versions).to_json(**decorator_options(title: title))
         end
 
         def policy_name

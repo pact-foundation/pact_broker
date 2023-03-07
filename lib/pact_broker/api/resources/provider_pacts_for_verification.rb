@@ -58,7 +58,7 @@ module PactBroker
         def to_json
           log_request
           decorator_class(:verifiable_pacts_decorator).new(pacts).to_json(
-            decorator_options(
+            **decorator_options(
               include_pending_status: parsed_query_params.include_pending_status,
               title: "Pacts to be verified by provider #{provider_name}",
               deprecated: request.get?

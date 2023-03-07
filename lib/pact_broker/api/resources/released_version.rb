@@ -31,7 +31,7 @@ module PactBroker
         end
 
         def to_json
-          decorator_class(:released_version_decorator).new(released_version).to_json(decorator_options)
+          decorator_class(:released_version_decorator).new(released_version).to_json(**decorator_options)
         end
 
         def from_merge_patch_json

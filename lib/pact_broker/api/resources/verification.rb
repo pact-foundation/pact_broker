@@ -38,11 +38,11 @@ module PactBroker
         end
 
         def to_json
-          decorator_for(verification).to_json(decorator_options(pact: pact))
+          decorator_for(verification).to_json(**decorator_options(pact: pact))
         end
 
         def to_extended_json
-          extended_decorator_for(verification).to_json(decorator_options(pact: pact))
+          extended_decorator_for(verification).to_json(**decorator_options(pact: pact))
         end
 
         def delete_resource

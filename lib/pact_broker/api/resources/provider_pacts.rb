@@ -24,7 +24,7 @@ module PactBroker
         end
 
         def to_json
-          decorator_class(:provider_pacts_decorator).new(pacts).to_json(decorator_options(identifier_from_path.merge(title: resource_title)))
+          decorator_class(:provider_pacts_decorator).new(pacts).to_json(**decorator_options(identifier_from_path.merge(title: resource_title)))
         end
 
         private

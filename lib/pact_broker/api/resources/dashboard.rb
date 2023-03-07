@@ -21,7 +21,7 @@ module PactBroker
         end
 
         def to_json
-          decorator_class(:dashboard_decorator).new(index_items).to_json(decorator_options)
+          decorator_class(:dashboard_decorator).new(index_items).to_json(**decorator_options)
         end
 
         def to_text

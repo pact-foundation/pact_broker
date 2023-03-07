@@ -39,7 +39,7 @@ module PactBroker
 
         def from_json
           created_model = pacticipant_service.create(parsed_pacticipant.to_h)
-          response.body = decorator_for(created_model).to_json(decorator_options)
+          response.body = decorator_for(created_model).to_json(**decorator_options)
         end
 
         def create_path
@@ -51,7 +51,7 @@ module PactBroker
         end
 
         def generate_json pacticipants
-          decorator_class(:deprecated_pacticipant_collection_decorator).new(pacticipants).to_json(decorator_options)
+          decorator_class(:deprecated_pacticipant_collection_decorator).new(pacticipants).to_json(**decorator_options)
         end
 
         def decorator_for model

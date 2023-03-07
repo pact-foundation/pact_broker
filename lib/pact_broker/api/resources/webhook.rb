@@ -46,7 +46,7 @@ module PactBroker
         end
 
         def to_json
-          decorator_class(:webhook_decorator).new(webhook).to_json(decorator_options)
+          decorator_class(:webhook_decorator).new(webhook).to_json(**decorator_options)
         end
 
         def delete_resource

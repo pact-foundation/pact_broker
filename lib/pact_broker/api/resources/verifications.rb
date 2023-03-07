@@ -45,7 +45,7 @@ module PactBroker
           handle_webhook_events(build_url: verification_params["buildUrl"]) do
             verified_pacts = pact_service.find_for_verification_publication(pact_params, event_context[:consumer_version_selectors])
             verification = verification_service.create(next_verification_number, verification_params, verified_pacts, event_context)
-            response.body = decorator_for(verification).to_json(decorator_options)
+            response.body = decorator_for(verification).to_json(**decorator_options)
           end
           true
         end

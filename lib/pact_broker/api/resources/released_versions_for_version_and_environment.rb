@@ -32,12 +32,12 @@ module PactBroker
         def from_json
           existing_released_version # make sure we have this before we update the database
           @released_version = released_version_service.create_or_update(next_released_version_uuid, version, environment)
-          response.body = decorator_class(:released_version_decorator).new(released_version).to_json(decorator_options)
+          response.body = decorator_class(:released_version_decorator).new(released_version).to_json(**decorator_options)
           true
         end
 
         def to_json
-          decorator_class(:released_versions_decorator).new(released_versions).to_json(decorator_options(title: title))
+          decorator_class(:released_versions_decorator).new(released_versions).to_json(**decorator_options(title: title))
         end
 
         def policy_name
