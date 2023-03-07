@@ -48,6 +48,10 @@ module PactBroker
         consumer_version.tags.collect(&:name)
       end
 
+      def consumer_version_branch_versions
+        consumer_version.branch_versions
+      end
+
       def latest_consumer_version_tag_names= latest_consumer_version_tag_names
         @latest_consumer_version_tag_names = latest_consumer_version_tag_names
       end

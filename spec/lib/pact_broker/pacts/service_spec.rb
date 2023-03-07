@@ -97,6 +97,42 @@ module PactBroker
             end
           end
 
+          context "when the latest pact for the latest branch has a different pact_version_sha" do
+            before do
+              allow(pact_repository).to receive(:find_previous_pacts).and_return(previous_pact_by_branch)
+            end
+
+            let(:previous_dev_pact_version_sha) { "2" }
+            let(:previous_pact_by_branch) do
+              {
+                branch: double("previous pact", pact_version_sha: previous_dev_pact_version_sha)
+              }
+            end
+
+            it "broadcasts the contract_published event" do
+              expect(Service).to receive(:broadcast).with(
+                :contract_published,
+                  {
+                    pact: new_pact,
+                    event_context: { consumer_version_tags: %w[dev] }
+                  }
+              )
+              subject
+            end
+
+            it "broadcasts the contract_content_changed event" do
+              expect(Service).to receive(:broadcast).with(
+                :contract_content_changed,
+                  {
+                    pact: new_pact,
+                    event_comment: "pact content has changed since previous version on this branch",
+                    event_context: { consumer_version_tags: %w[dev] }
+                  }
+              )
+              subject
+            end
+          end
+
           context "when the new pact has not changed content or tags since the previous version with the same tags" do
             before do
               allow(pact_repository).to receive(:find_previous_pacts).and_return(previous_pacts_by_tag)

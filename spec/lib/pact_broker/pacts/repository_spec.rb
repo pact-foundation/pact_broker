@@ -808,6 +808,37 @@ module PactBroker
         end
       end
 
+      context "by branch" do
+        context "when a previous version with a pact with the same branch exists" do
+          before do
+            td.publish_pact(consumer_name: "Foo", provider_name: "Bar", consumer_version_number: "0", branch: "feat/foo")
+              .publish_pact(consumer_name: "Foo", provider_name: "Bar", consumer_version_number: "1", branch: "main")
+              .publish_pact(consumer_name: "Foo", provider_name: "Bar", consumer_version_number: "2", branch: "main")
+              .publish_pact(consumer_name: "Foo", provider_name: "Bar", consumer_version_number: "3", branch: "feat/foo")
+              .publish_pact(consumer_name: "Foo", provider_name: "Bar", consumer_version_number: "4", branch: "main")
+          end
+
+          let(:pact) { td.and_return(:pact)  }
+          let(:branch_id) { PactBroker::Versions::Branch.where(name: "main").single_record.id }
+
+          subject  { Repository.new.find_previous_pact(pact, nil, branch_id) }
+
+          it "finds the previous pact" do
+            expect(subject.consumer_version_number).to eq "2"
+          end
+
+          it "sets the json_content" do
+            expect(subject.json_content).to_not be nil
+          end
+
+          context "when there is no previous pact" do
+            let(:pact) { td.find_pact("Foo", "1", "Bar") }
+
+            it { is_expected.to be nil }
+          end
+        end
+      end
+
       describe "find_next_pact" do
         before do
           td.create_consumer("Consumer")

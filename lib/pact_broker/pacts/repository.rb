@@ -284,14 +284,17 @@ module PactBroker
           .collect(&:to_domain_with_content)
       end
 
-      def find_previous_pact pact, tag = nil
+      def find_previous_pact pact, tag = nil, branch_id = nil
         query = scope_for(PactPublication)
             .eager_for_domain_with_content
             .remove_overridden_revisions
             .for_consumer_name(pact.consumer.name)
             .for_provider_name(pact.provider.name)
 
-        if tag == :untagged
+        # Not the most efficient query
+        if branch_id
+          query = query.for_branch_id(branch_id)
+        elsif tag == :untagged
           query = query.untagged
         elsif tag
           query = query.for_consumer_version_tag_all_revisions(tag)
@@ -326,7 +329,9 @@ module PactBroker
       end
 
       def find_previous_pacts pact
-        if pact.consumer_version_tag_names.any?
+        if pact.consumer_version_branch_versions.any?
+          { branch: find_previous_pact(pact, nil, pact.consumer_version_branch_versions.last.branch_id) }
+        elsif pact.consumer_version_tag_names.any?
           pact.consumer_version_tag_names.each_with_object({}) do |tag, tags_to_pacts|
             tags_to_pacts[tag] = find_previous_pact(pact, tag)
           end

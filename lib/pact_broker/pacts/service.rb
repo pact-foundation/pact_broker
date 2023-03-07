@@ -242,8 +242,14 @@ module PactBroker
 
       def explanation_for_content_changed(changed_pacts)
         if changed_pacts.any?
-          messages = changed_pacts.collect do |tag, previous_pact|
-            if tag == :untagged
+          messages = changed_pacts.collect do |key, previous_pact|
+            if key == :branch
+              if previous_pact
+                "pact content has changed since previous version on this branch"
+              else
+                "first time pact published for this branch"
+              end
+            elsif key == :untagged
               if previous_pact
                 "pact content has changed since previous untagged version"
               else
@@ -251,9 +257,9 @@ module PactBroker
               end
             else
               if previous_pact
-                "pact content has changed since the last consumer version tagged with #{tag}"
+                "pact content has changed since the last consumer version tagged with #{key}"
               else
-                "first time any pact published for this consumer with consumer version tagged #{tag}"
+                "first time any pact published for this consumer with consumer version tagged #{key}"
               end
             end
           end
