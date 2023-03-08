@@ -41,7 +41,7 @@ module PactBroker
         end
 
         def self.call(params)
-          flatten_indexed_messages(new.call(params&.symbolize_keys).errors.to_hash)
+          flatten_messages(new.call(params&.symbolize_keys).errors.to_hash)
         end
       end
     end

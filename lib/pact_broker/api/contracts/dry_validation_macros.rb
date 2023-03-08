@@ -39,12 +39,37 @@ end
 # If the child contract defines a option called `parent` then it can access the parent
 # hash for validation rules that need to work across the levels.
 # eg. ConsumerVersionSelectorContract for the matchingBranch rule
+#
+# Will not add any errors if the array is nil
 Dry::Validation.register_macro(:validate_each_with_contract) do |macro:|
   value&.each_with_index do | item, index |
     child_contract_class = macro.args[0]
     messages = child_contract_class.new(parent: values).call(item).errors(full: true).to_hash.values.flatten
     messages.each do | message |
       key(path.keys + [index]).failure(message)
+    end
+  end
+end
+
+# Validate a child node with the specified contract,
+# and merge the errors into the appropriate path in the parent
+# validation results.
+# eg.
+#    rule(:myChildHash).validate(validate_with_contract: MyChildContract)
+#
+# If the child contract defines a option called `parent` then it can access the parent
+# hash for validation rules that need to work across the levels.
+# eg. ConsumerVersionSelectorContract for the matchingBranch rule
+#
+# Will not add any errors if the value is nil
+Dry::Validation.register_macro(:validate_with_contract) do |macro:|
+  if value
+    child_contract_class = macro.args[0]
+    errors = child_contract_class.new(parent: values).call(value).errors.to_hash
+    errors.each do | key, messages |
+      messages.each do | message |
+        key(path.keys + [key]).failure(message)
+      end
     end
   end
 end

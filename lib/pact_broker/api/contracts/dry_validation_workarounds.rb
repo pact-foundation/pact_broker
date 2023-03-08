@@ -4,6 +4,13 @@ module PactBroker
       module DryValidationWorkarounds
         extend self
 
+        # Takes the errors hash in the format it comes from dry-validation,
+        # and smushes it into the format that the Pact Broker API expects.
+        # Can't wait to get rid of this and just use a problem+json response format.
+        def flatten_messages(messages)
+          flatten_nested_messages(flatten_indexed_messages(messages))
+        end
+
         # Transforms error messages like this:
         # { things: { 0 => ["an error"], 2 => ["another error"] } }
         # into this:
@@ -11,6 +18,7 @@ module PactBroker
         #
         # @param [Hash] messages
         # @return [Hash]
+        # @private
         def flatten_indexed_messages(messages)
           if messages.values.any?{ | value | is_indexed_structure?(value) }
             messages.each_with_object({}) do | (key, value), new_messages |
@@ -20,6 +28,28 @@ module PactBroker
             messages
           end
         end
+
+        # Transforms error messages like this:
+        # { parent: { child: ["an error"] }
+        # into this:
+        # { :"parent.child" : ["an error"] }
+        # because that was the way Reform did it, and now we need to keep it consistent.
+        #
+        # @param [Hash] messages
+        # @return [Hash]
+        # @private
+        def flatten_nested_messages(hash, new_hash = {}, parent_keys = [])
+          hash.each do | key, value |
+            case value
+            when Hash
+              flatten_nested_messages(value, new_hash, parent_keys + [key])
+            when Array
+              new_hash[ (parent_keys + [key]).join(".").to_sym ] = value
+            end
+          end
+          new_hash
+        end
+
 
         # @private
         def is_indexed_structure?(thing)

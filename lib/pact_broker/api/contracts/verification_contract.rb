@@ -2,8 +2,6 @@ require "pact_broker/api/contracts/base_contract"
 require "pact_broker/api/contracts/dry_validation_macros"
 require "pact_broker/api/contracts/dry_validation_methods"
 
-require "uri"
-
 module PactBroker
   module Api
     module Contracts
