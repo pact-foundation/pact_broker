@@ -1,18 +1,11 @@
-require "dry-validation"
-require "pact_broker/api/contracts/dry_validation_workarounds"
-require "pact_broker/api/contracts/dry_validation_macros"
-require "pact_broker/messages"
-require "pact_broker/api/contracts/utf_8_validation"
-require "pact_broker/api/contracts/validation_helpers"
+require "pact_broker/api/contracts/contract_support"
 require "pact_broker/api/contracts/publish_contracts_contract_contract"
 
 module PactBroker
   module Api
     module Contracts
       class PublishContractsSchema < Dry::Validation::Contract
-
         include DryValidationMethods
-        using PactBroker::HashRefinements
 
         json do
           required(:pacticipantName).filled(:string)
@@ -38,10 +31,6 @@ module PactBroker
               key([:contracts, index]).failure(validation_message("consumer_name_in_contract_mismatch_pacticipant_name", { consumer_name_in_contract: contract[:consumerName], pacticipant_name: values[:pacticipantName] }))
             end
           end
-        end
-
-        def self.call(params)
-          flatten_messages(new.call(params&.symbolize_keys).errors.to_hash)
         end
       end
     end

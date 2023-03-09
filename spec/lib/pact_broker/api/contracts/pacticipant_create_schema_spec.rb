@@ -26,7 +26,7 @@ module PactBroker
         context "with a branch that has a space" do
           let(:main_branch) { "origin main" }
 
-          its([:mainBranch, 0]) { is_expected.to eq "mainBranch cannot contain spaces" }
+          its([:mainBranch, 0]) { is_expected.to eq "cannot contain spaces" }
         end
 
         context "with empty params" do
@@ -38,7 +38,7 @@ module PactBroker
             }
           end
 
-          its([:name, 0]) { is_expected.to include "name is missing" }
+          its([:name, 0]) { is_expected.to include "is missing" }
         end
       end
     end

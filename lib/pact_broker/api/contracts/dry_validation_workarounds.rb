@@ -1,8 +1,22 @@
+require "pact_broker/hash_refinements"
+
 module PactBroker
   module Api
     module Contracts
       module DryValidationWorkarounds
         extend self
+        using PactBroker::HashRefinements
+
+        # The entry method for all the Dry::Validation::Contract classes
+        # eg. MyContract.call(params)
+        # It takes the params (doesn't matter if they're string or symbol keys)
+        # executes the dry-validation validation, and smushes the response Hash into the Pact Broker format.
+        #
+        # @param [Hash] the parameters to validate
+        # @return [Hash] the validation errors to display to the user
+        def call(params)
+          flatten_messages(new.call(params&.symbolize_keys).errors.to_hash)
+        end
 
         # Takes the errors hash in the format it comes from dry-validation,
         # and smushes it into the format that the Pact Broker API expects.

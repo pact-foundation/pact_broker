@@ -1,11 +1,10 @@
-require "dry-validation"
-require "pact_broker/api/contracts/dry_validation_macros"
+require "pact_broker/api/contracts/contract_support"
 
 module PactBroker
   module Api
     module Contracts
       class PacticipantSchema < Dry::Validation::Contract
-        using PactBroker::HashRefinements
+        include DryValidationMethods
 
         json do
           optional(:name).filled(:string)
@@ -22,10 +21,6 @@ module PactBroker
         rule(:repositoryUrl).validate(:not_multiple_lines)
         rule(:repositoryName).validate(:not_multiple_lines)
         rule(:repositoryNamespace).validate(:not_multiple_lines)
-
-        def self.call(params_with_string_keys)
-          new.call(params_with_string_keys&.symbolize_keys).errors(full: true).to_hash
-        end
       end
     end
   end

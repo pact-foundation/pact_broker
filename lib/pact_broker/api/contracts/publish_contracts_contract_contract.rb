@@ -1,10 +1,5 @@
-require "dry-validation"
-require "pact_broker/api/contracts/dry_validation_workarounds"
-require "pact_broker/api/contracts/dry_validation_macros"
-require "pact_broker/messages"
+require "pact_broker/api/contracts/contract_support"
 require "pact_broker/api/contracts/utf_8_validation"
-require "pact_broker/api/contracts/validation_helpers"
-require "pact_broker/api/contracts/dry_validation_methods"
 
 # The contract for the contract object in the publish contracts request
 module PactBroker

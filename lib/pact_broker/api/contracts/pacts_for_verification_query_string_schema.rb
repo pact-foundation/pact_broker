@@ -1,12 +1,10 @@
-require "dry-validation"
-require "pact_broker/api/contracts/dry_validation_workarounds"
+require "pact_broker/api/contracts/contract_support"
 
 module PactBroker
   module Api
     module Contracts
       class PactsForVerificationQueryStringSchema < Dry::Validation::Contract
         extend DryValidationWorkarounds
-        using PactBroker::HashRefinements
 
         params do
           optional(:provider_version_tags).maybe(:array?)
@@ -20,10 +18,6 @@ module PactBroker
           end
           optional(:include_pending_status).filled(included_in?: ["true", "false"])
           optional(:include_wip_pacts_since).filled(:date)
-        end
-
-        def self.call(params)
-          flatten_messages(new.call(params&.symbolize_keys).errors.to_hash)
         end
       end
     end
