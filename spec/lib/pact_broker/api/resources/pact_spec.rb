@@ -80,11 +80,10 @@ module PactBroker::Api
         end
 
         context "with validation errors" do
-          let(:errors) { double(:errors, messages: ["messages"]) }
+          let(:errors) { { messages: ["messages"] } }
 
           before do
-            allow_any_instance_of(Contracts::PutPactParamsContract).to receive(:validate).and_return(false)
-            allow_any_instance_of(Contracts::PutPactParamsContract).to receive(:errors).and_return(errors)
+            allow(Contracts::PutPactParamsContract).to receive(:call).and_return(errors)
           end
 
           it "returns a 400 error" do

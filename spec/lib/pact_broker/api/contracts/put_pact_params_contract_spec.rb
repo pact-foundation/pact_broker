@@ -10,7 +10,7 @@ module PactBroker
         end
 
         let(:json_content) { {"some" => "json" }.to_json }
-        let(:pact_params) { Pacts::PactParams.new(attributes) }
+        let(:pact_params) { Pacts::PactParams.new(attributes).to_hash_for_validation }
         let(:order_versions_by_date) { false }
 
         let(:valid_attributes) do
@@ -24,19 +24,15 @@ module PactBroker
           }
         end
 
-        subject { PutPactParamsContract.new(pact_params) }
+        subject { PutPactParamsContract.call(pact_params) }
 
         describe "errors" do
           let(:attributes) { valid_attributes }
 
-          before do
-            subject.validate(attributes)
-          end
-
           context "with valid params" do
 
             it "is empty" do
-              expect(subject.errors).to be_empty
+              expect(subject).to be_empty
             end
           end
 
@@ -46,7 +42,7 @@ module PactBroker
             end
 
             it "returns an error" do
-              expect(subject.errors[:consumer_version_number].first).to include("blank")
+              expect(subject[:consumer_version_number].first).to include("blank")
             end
           end
 
@@ -56,7 +52,7 @@ module PactBroker
             end
 
             it "returns an error" do
-              expect(subject.errors[:consumer_version_number].first).to include("filled")
+              expect(subject[:consumer_version_number].first).to include("filled")
             end
           end
 
@@ -66,7 +62,7 @@ module PactBroker
             end
 
             it "returns an error" do
-              expect(subject.errors[:consumer_version_number]).to include(/Version number 'blah' cannot be parsed to a version number/)
+              expect(subject[:consumer_version_number]).to include(/Version number 'blah' cannot be parsed to a version number/)
             end
           end
 
@@ -79,7 +75,7 @@ module PactBroker
               end
 
               it "does not return an error" do
-                expect(subject.errors[:consumer_version_number]).to be_empty
+                expect(subject).to be_empty
               end
             end
           end
@@ -90,7 +86,7 @@ module PactBroker
             end
 
             it "returns an error" do
-              expect(subject.errors[:'consumer.name']).to include("name in pact 'consumer' does not match name in URL path 'another consumer'.")
+              expect(subject[:'consumer.name']).to include("name in pact 'consumer' does not match name in URL path 'another consumer'.")
             end
           end
 
@@ -100,7 +96,7 @@ module PactBroker
             end
 
             it "returns an error" do
-              expect(subject.errors[:'provider.name']).to include("name in pact 'provider' does not match name in URL path 'another provider'.")
+              expect(subject[:'provider.name']).to include("name in pact 'provider' does not match name in URL path 'another provider'.")
             end
           end
 
@@ -112,7 +108,7 @@ module PactBroker
             end
 
             it "returns no error because I don't want to stop a different CDC from being published" do
-              expect(subject.errors).to be_empty
+              expect(subject).to be_empty
             end
           end
 
@@ -124,7 +120,7 @@ module PactBroker
             end
 
             it "returns no error because I don't want to stop a different CDC from being published" do
-              expect(subject.errors).to be_empty
+              expect(subject).to be_empty
             end
           end
         end

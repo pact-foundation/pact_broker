@@ -81,24 +81,13 @@ module PactBroker
         self[:provider_name_in_pact]
       end
 
-      def consumer
-        PacticipantName.new(consumer_name, consumer_name_in_pact, "consumer")
+      def to_hash_for_validation
+        {
+          consumer_version_number: consumer_version_number,
+          consumer: { name: consumer_name, name_in_pact: consumer_name_in_pact },
+          provider: { name: provider_name, name_in_pact: provider_name_in_pact }
+        }
       end
-
-      def provider
-        PacticipantName.new(provider_name, provider_name_in_pact, "provider")
-      end
-
-      class PacticipantName < Struct.new(:name, :name_in_pact, :pacticipant)
-        def message_args
-          {
-            name: name,
-            name_in_pact: name_in_pact,
-            pacticipant: pacticipant
-          }
-        end
-      end
-
     end
   end
 end
