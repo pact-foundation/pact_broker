@@ -57,8 +57,9 @@ module PactBroker::Api
           allow(PactBroker::Webhooks::Service).to receive(:create).and_return(created_webhook)
           allow_any_instance_of(Webhook).to receive(:consumer).and_return(consumer)
           allow_any_instance_of(Webhook).to receive(:provider).and_return(provider)
-          allow_any_instance_of(Webhook).to receive(:webhook_validation_errors?).and_return(false)
+          allow(PactBroker::Api::Contracts::WebhookContract).to receive(:call).and_return(errors)
         end
+
 
         let(:consumer) { double("consumer") }
         let(:provider) { double("provider") }
@@ -71,11 +72,12 @@ module PactBroker::Api
         let(:webhook) { nil }
         let(:webhook_json) { load_fixture("webhook_valid.json") }
         let(:uuid) { "some-uuid" }
+        let(:errors) { {} }
 
         subject { put("/webhooks/#{uuid}", webhook_json, "CONTENT_TYPE" => "application/json") }
 
         it "validates the UUID" do
-          expect_any_instance_of(Webhook).to receive(:webhook_validation_errors?).with(parsed_webhook, uuid)
+          allow(PactBroker::Api::Contracts::WebhookContract).to receive(:call).with(hash_including(uuid: uuid))
           subject
         end
 

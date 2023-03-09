@@ -1,15 +1,12 @@
 require "pact_broker/api/resources/base_resource"
 require "pact_broker/services"
 require "pact_broker/api/decorators/webhook_decorator"
-require "pact_broker/api/resources/webhook_resource_methods"
+require "pact_broker/api/contracts/webhook_contract"
 
 module PactBroker
   module Api
     module Resources
       class Webhook < BaseResource
-
-        include WebhookResourceMethods
-
         def content_types_accepted
           [["application/json", :from_json]]
         end
@@ -31,7 +28,7 @@ module PactBroker
         end
 
         def malformed_request?
-          super || (request.put? && webhook_validation_errors?(parsed_webhook, uuid))
+          super || (request.put? && validation_errors_for_schema?(schema, { uuid: uuid }.compact.merge(params)))
         end
 
         def from_json
@@ -78,6 +75,10 @@ module PactBroker
 
         def parsed_webhook
           @parsed_webhook ||= decorator_class(:webhook_decorator).new(PactBroker::Domain::Webhook.new).from_json(request_body)
+        end
+
+        def schema
+          api_contract_class(:webhook_contract)
         end
 
         def uuid

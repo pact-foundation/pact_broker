@@ -1,8 +1,6 @@
-require "pact_broker/api/contracts/validation_helpers"
-require "pact_broker/messages"
+require "pact_broker/api/contracts/contract_support"
 require "pact_broker/webhooks/render"
 require "pact_broker/webhooks/check_host_whitelist"
-require "pact_broker/api/contracts/dry_validation_methods"
 
 module PactBroker
   module Api
@@ -12,7 +10,7 @@ module PactBroker
         include PactBroker::Api::Contracts::DryValidationMethods
 
         json do
-          required(:http_method).filled(:string)
+          required(:method).filled(:string)
           required(:url).filled(:string)
         end
 
@@ -22,13 +20,13 @@ module PactBroker
           end
         end
 
-        rule(:http_method) do
+        rule(:method) do
           if !valid_http_method?(value)
             key.failure(validation_message("invalid_http_method"))
           end
         end
 
-        rule(:http_method) do
+        rule(:method) do
           if_still_valid(self) do
             if !allowed_webhook_method?(value)
               key.failure(http_method_error_message)

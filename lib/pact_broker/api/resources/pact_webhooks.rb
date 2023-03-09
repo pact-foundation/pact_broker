@@ -25,18 +25,7 @@ module PactBroker
         end
 
         def malformed_request?
-          super || (request.post? && validation_errors?(webhook))
-        end
-
-        def validation_errors? webhook
-          errors = webhook_service.errors(webhook)
-
-          unless errors.empty?
-            response.headers["Content-Type"] = "application/hal+json;charset=utf-8"
-            response.body = { errors: errors.messages }.to_json
-          end
-
-          !errors.empty?
+          super || (request.post? && validation_errors_for_schema?)
         end
 
         def create_path
@@ -61,6 +50,10 @@ module PactBroker
         end
 
         private
+
+        def schema
+          api_contract_class(:webhook_contract)
+        end
 
         def webhooks
           @webhooks ||= webhook_service.find_by_consumer_and_provider consumer, provider

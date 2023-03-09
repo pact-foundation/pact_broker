@@ -30,7 +30,7 @@ module PactBroker
         end
 
         def malformed_request?
-          super || (request.post? && validation_errors?(webhook))
+          super || (request.post? && validation_errors_for_schema?)
         end
 
         def to_json
@@ -56,14 +56,8 @@ module PactBroker
 
         private
 
-        def validation_errors? webhook
-          errors = webhook_service.errors(webhook)
-
-          unless errors.empty?
-            set_json_validation_error_messages(errors.messages)
-          end
-
-          !errors.empty?
+        def schema
+          api_contract_class(:webhook_contract)
         end
 
         def consumer

@@ -40,25 +40,9 @@ module PactBroker
         :find_triggered_webhooks_for_verification
       ] => :webhook_repository
 
-      # Not actually a UUID. Ah well.
-      def valid_uuid_format?(uuid)
-        !!(uuid =~ /^[A-Za-z0-9_\-]{16,}$/)
-      end
 
       def next_uuid
         SecureRandom.urlsafe_base64
-      end
-
-      def errors webhook, uuid = nil
-        contract = PactBroker::Api::Contracts::WebhookContract.new(webhook)
-        contract.validate(webhook.attributes)
-        messages = contract.errors.messages
-
-        if uuid && !valid_uuid_format?(uuid)
-          messages["uuid"] = [message("errors.validation.invalid_webhook_uuid")]
-        end
-
-        OpenStruct.new(messages: messages, empty?: messages.empty?, any?: messages.any?)
       end
 
       def create uuid, webhook, consumer, provider

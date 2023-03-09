@@ -2,13 +2,11 @@ require "pact_broker/api/resources/base_resource"
 require "pact_broker/api/decorators/webhook_decorator"
 require "pact_broker/api/decorators/webhooks_decorator"
 require "pact_broker/api/contracts/webhook_contract"
-require "pact_broker/api/resources/webhook_resource_methods"
 
 module PactBroker
   module Api
     module Resources
       class PacticipantWebhooks < BaseResource
-        include WebhookResourceMethods
 
         def allowed_methods
           ["POST", "GET", "OPTIONS"]
@@ -27,7 +25,7 @@ module PactBroker
         end
 
         def malformed_request?
-          super || (request.post? && webhook_validation_errors?(webhook))
+          super || (request.post? && validation_errors_for_schema?)
         end
 
         def create_path
@@ -56,6 +54,10 @@ module PactBroker
         end
 
         private
+
+        def schema
+          api_contract_class(:webhook_contract)
+        end
 
         def webhooks
           webhook_service.find_by_consumer_and_provider(consumer, provider)
