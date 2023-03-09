@@ -57,7 +57,7 @@ module PactBroker
             "detail" => message,
             "status" => 400
           }
-          error["pointer"] = path if path.present?
+          error["pointer"] = path.tr(".", "/") if path.present?
           list << error
         end
       end
