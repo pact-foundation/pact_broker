@@ -29,11 +29,11 @@ module PactBroker
         end
 
         def to_json
-          decorator_class(:matrix_decorator).new(results).to_json(decorator_options)
+          decorator_class(:matrix_decorator).new(results).to_json(**decorator_options)
         end
 
         def to_text
-          decorator_class(:matrix_text_decorator).new(results).to_text(decorator_options)
+          decorator_class(:matrix_text_decorator).new(results).to_text(**decorator_options)
         end
 
         def policy_name

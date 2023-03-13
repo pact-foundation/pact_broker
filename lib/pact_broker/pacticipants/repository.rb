@@ -2,13 +2,15 @@ require "sequel"
 require "pact_broker/domain/pacticipant"
 require "pact_broker/repositories/helpers"
 require "pact_broker/error"
+require "pact_broker/repositories/scopes"
 
 module PactBroker
   module Pacticipants
     class Repository
 
-      include PactBroker::Repositories::Helpers
       include PactBroker::Repositories
+      include PactBroker::Repositories::Helpers
+      include PactBroker::Repositories::Scopes
 
       def find_by_name name
         pacticipants = PactBroker::Domain::Pacticipant.where(name_like(:name, name)).all
@@ -22,6 +24,11 @@ module PactBroker
         pacticipant
       end
 
+      def find_by_names(names)
+        name_likes = names.collect{ | name | name_like(:name, name) }
+        scope_for(PactBroker::Domain::Pacticipant).where(Sequel.|(*name_likes)).all
+      end
+
       def find_by_id id
         PactBroker::Domain::Pacticipant.where(id: id).single_record
       end
@@ -31,7 +38,7 @@ module PactBroker
       end
 
       def find(options = {}, pagination_options = {})
-        query = PactBroker::Domain::Pacticipant.select_all_qualified
+        query = scope_for(PactBroker::Domain::Pacticipant).select_all_qualified
         query = query.label(options[:label_name]) if options[:label_name]
         query.order_ignore_case(Sequel[:pacticipants][:name]).eager(:labels).eager(:latest_version).all_with_pagination_options(pagination_options)
       end
@@ -96,7 +103,7 @@ module PactBroker
       def search_by_name(pacticipant_name)
         terms = pacticipant_name.split.map { |v| v.gsub("_", "\\_") }
         string_match_query = Sequel.|( *terms.map { |term| Sequel.ilike(Sequel[:pacticipants][:name], "%#{term}%") })
-        PactBroker::Domain::Pacticipant.where(string_match_query)
+        scope_for(PactBroker::Domain::Pacticipant).where(string_match_query)
       end
 
       def set_main_branch(pacticipant, main_branch)

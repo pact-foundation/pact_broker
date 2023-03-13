@@ -35,7 +35,7 @@ module PactBroker
         end
 
         def from_json
-          response.body = decorator_class(:environment_decorator).new(create_environment).to_json(decorator_options)
+          response.body = decorator_class(:environment_decorator).new(create_environment).to_json(**decorator_options)
         end
 
         def policy_name
@@ -43,7 +43,7 @@ module PactBroker
         end
 
         def to_json
-          decorator_class(:environments_decorator).new(environments).to_json(decorator_options)
+          decorator_class(:environments_decorator).new(environments).to_json(**decorator_options)
         end
 
         def parsed_environment

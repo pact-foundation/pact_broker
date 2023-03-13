@@ -25,7 +25,7 @@ module PactBroker
           let(:interaction) { { "_id" => "blah", "foo" => "bar" } }
 
           it "removes the i_d before creating the sha" do
-            expect(GenerateInteractionSha).to receive(:call).with("foo" => "bar")
+            expect(GenerateInteractionSha).to receive(:call).with({ "foo" => "bar" })
             subject
           end
         end

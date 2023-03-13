@@ -23,7 +23,7 @@ module PactBroker
         end
 
         def to_json
-          decorator_class(:versions_decorator).new(versions).to_json(decorator_options(identifier_from_path))
+          decorator_class(:versions_decorator).new(versions).to_json(**decorator_options(identifier_from_path))
         end
 
         def versions

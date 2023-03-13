@@ -40,6 +40,13 @@ module PactBroker
         pacticipant_repository.find_by_name(name)
       end
 
+      # Used by pf
+      # @param [Array<String>]
+      # @return [Array<PactBroker::Domain::Pacticipant>]
+      def self.find_pacticipants_by_names(names)
+        pacticipant_repository.find_by_names(names)
+      end
+
       def self.find_pacticipant_by_name!(name)
         pacticipant_repository.find_by_name!(name)
       end

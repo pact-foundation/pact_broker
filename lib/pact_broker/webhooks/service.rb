@@ -29,6 +29,7 @@ module PactBroker
       extend PactBroker::Messages
 
       delegate [
+        :create,
         :find_by_uuid,
         :find_all,
         :update_triggered_webhook_status,
@@ -37,7 +38,8 @@ module PactBroker
         :find_latest_triggered_webhooks_for_pact,
         :fail_retrying_triggered_webhooks,
         :find_triggered_webhooks_for_pact,
-        :find_triggered_webhooks_for_verification
+        :find_triggered_webhooks_for_verification,
+        :delete_by_uuid
       ] => :webhook_repository
 
 
@@ -45,19 +47,11 @@ module PactBroker
         SecureRandom.urlsafe_base64
       end
 
-      def create uuid, webhook, consumer, provider
-        webhook_repository.create uuid, webhook, consumer, provider
-      end
-
       def update_by_uuid uuid, params
         webhook = webhook_repository.find_by_uuid(uuid)
         maintain_redacted_params(webhook, params)
         PactBroker::Api::Decorators::WebhookDecorator.new(webhook).from_hash(params)
         webhook_repository.update_by_uuid uuid, webhook
-      end
-
-      def delete_by_uuid uuid
-        webhook_repository.delete_by_uuid uuid
       end
 
       def delete_all_webhhook_related_objects_by_pacticipant pacticipant

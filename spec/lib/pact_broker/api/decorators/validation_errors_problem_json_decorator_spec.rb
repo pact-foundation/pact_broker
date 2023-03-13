@@ -38,6 +38,35 @@ module PactBroker
             it { is_expected.to match_pact(expected_hash, allow_unexpected_keys: false)}
           end
 
+          context "with a hash of errors with dotted keys" do
+            let(:validation_errors) do
+              {
+                :"contract.content" => ["this is some error text" ]
+              }
+            end
+
+            let(:expected_hash) do
+              {
+                "title" => "Validation errors",
+                "type" => "http://example.org/problems/validation-error",
+                "status" => 400,
+                "instance" => "/",
+
+                "errors" => [
+                  {
+                    "type" => "http://example.org/problems/invalid-body-property-value",
+                    "pointer" => "/contract/content",
+                    "title" => "Validation error",
+                    "detail" => "this is some error text",
+                    "status" => 400
+                  }
+                ]
+              }
+            end
+
+            it { is_expected.to match_pact(expected_hash, allow_unexpected_keys: false)}
+          end
+
           context "with an indexed hash of errors" do
             let(:validation_errors) do
               {

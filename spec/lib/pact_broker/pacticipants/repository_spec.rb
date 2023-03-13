@@ -103,8 +103,8 @@ module PactBroker
         it "returns the pacticipants with the given label" do
           expect(subject.collect(&:name)).to eq ["Bar", "Foo"]
         end
-
       end
+
       describe "#find_by_name" do
         before do
           td.create_pacticipant("Foo-Bar")
@@ -168,6 +168,18 @@ module PactBroker
             it { is_expected.to be nil }
           end
         end
+      end
+
+      describe "#find_by_names" do
+        before do
+          td.create_pacticipant("foo")
+            .create_pacticipant("bar")
+            .create_pacticipant("wiffle")
+        end
+
+        subject { Repository.new.find_by_names(["foo", "bar"]) }
+
+        it { is_expected.to contain_exactly(have_attributes(name: "foo"), have_attributes(name: "bar")) }
       end
 
       describe "#pacticipant_names" do

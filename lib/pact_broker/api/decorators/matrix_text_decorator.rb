@@ -14,7 +14,7 @@ module PactBroker
           @lines = lines
         end
 
-        def to_text(_options)
+        def to_text(**_options)
           json_decorator = PactBroker::Api::Decorators::MatrixDecorator.new(lines)
           data = lines.collect do | line |
             Line.new(line.consumer_name, line.consumer_version_number, line.pact_revision_number, line.provider_name, line.provider_version_number, line.verification_number, line.success)
