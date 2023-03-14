@@ -18,7 +18,8 @@ module PactBroker
             end
 
             if integers.empty?
-              add_error(errors_hash, error.path.join(".").to_sym, error.text)
+              key = error.path == [nil] ? nil : error.path.join(".").to_sym
+              add_error(errors_hash, key, error.text)
             else
               add_indexed_error(errors_hash, error)
             end

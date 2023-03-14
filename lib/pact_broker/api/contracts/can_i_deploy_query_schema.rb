@@ -6,15 +6,14 @@ require "pact_broker/string_refinements"
 module PactBroker
   module Api
     module Contracts
-      class CanIDeployQuerySchema < Dry::Validation::Contract
-        extend PactBroker::Messages
+      class CanIDeployQuerySchema < BaseContract
         using PactBroker::StringRefinements
 
         params do
-          required(:pacticipant).filled(:str?)
-          required(:version).filled(:str?)
-          optional(:to).filled(:str?)
-          optional(:environment).filled(:str?)
+          required(:pacticipant).filled(:string)
+          required(:version).filled(:string)
+          optional(:to).filled(:string)
+          optional(:environment).filled(:string)
         end
 
         rule(:environment) do
@@ -32,10 +31,6 @@ module PactBroker
           if values[:to].blank? && values[:environment].blank?
             base.failure(PactBroker::Messages.message("errors.validation.must_specify_environment_or_tag"))
           end
-        end
-
-        def self.call(params)
-          new.call(params).errors.to_hash
         end
       end
     end
