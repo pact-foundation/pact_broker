@@ -4,6 +4,12 @@ module PactBroker
   module Api
     module Contracts
       describe CanIDeployQuerySchema do
+        before do
+          allow(PactBroker::Pacticipants::Service).to receive(:find_pacticipant_by_name).and_return(pacticipant)
+        end
+
+        let(:pacticipant) { double("pacticipant") }
+
         subject { CanIDeployQuerySchema.call(params) }
 
         context "with valid params" do
@@ -106,6 +112,19 @@ module PactBroker
           end
 
           its([:environment, 0]) { is_expected.to eq "with name 'prod' does not exist" }
+        end
+
+        context "when the pacticipant does not exist" do
+          let(:pacticipant) { nil }
+
+          let(:params) do
+            {
+              pacticipant: "foo",
+              version: "1"
+            }
+          end
+
+          its([:pacticipant, 0]) { is_expected.to eq "does not match an existing pacticipant" }
         end
       end
     end

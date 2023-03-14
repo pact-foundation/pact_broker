@@ -31,37 +31,37 @@ module PactBroker
         end
 
         def validate_pacticipant_with_name_exists(value, key)
-          if !PactBroker::Api::Contracts::ValidationHelpers.pacticipant_with_name_exists?(value)
+          if ValidationHelpers.provided?(value) && !ValidationHelpers.pacticipant_with_name_exists?(value)
             key.failure(PactBroker::Messages.validation_message("pacticipant_with_name_not_found"))
           end
         end
 
         def validate_environment_with_name_exists(value, key)
-          if !PactBroker::Api::Contracts::ValidationHelpers.environment_with_name_exists?(value)
+          if ValidationHelpers.provided?(value) && !ValidationHelpers.environment_with_name_exists?(value)
             key.failure(PactBroker::Messages.validation_message("environment_not_found", value: value))
           end
         end
 
         def validate_not_blank_if_present(value, key)
-          if value && PactBroker::Api::Contracts::ValidationHelpers.blank?(value)
+          if value && ValidationHelpers.blank?(value)
             key.failure(PactBroker::Messages.validation_message("blank"))
           end
         end
 
         def validate_no_spaces_if_present(value, key)
-          if value && PactBroker::Api::Contracts::ValidationHelpers.includes_space?(value)
+          if value && ValidationHelpers.includes_space?(value)
             key.failure(PactBroker::Messages.validation_message("no_spaces"))
           end
         end
 
         def validate_not_multiple_lines(value, key)
-          if value && PactBroker::Api::Contracts::ValidationHelpers.multiple_lines?(value)
+          if value && ValidationHelpers.multiple_lines?(value)
             key.failure(PactBroker::Messages.validation_message("single_line"))
           end
         end
 
         def validate_valid_url(value, key)
-          if value && !PactBroker::Api::Contracts::ValidationHelpers.valid_url?(value)
+          if value && !ValidationHelpers.valid_url?(value)
             key.failure(PactBroker::Messages.validation_message("invalid_url"))
           end
         end

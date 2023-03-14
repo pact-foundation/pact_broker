@@ -30,6 +30,10 @@ Dry::Validation.register_macro(:pacticipant_with_name_exists) do
   PactBroker::Api::Contracts::DryValidationMethods.validate_pacticipant_with_name_exists(value, key)
 end
 
+Dry::Validation.register_macro(:environment_with_name_exists) do
+  PactBroker::Api::Contracts::DryValidationMethods.validate_environment_with_name_exists(value, key)
+end
+
 # Validate each object in an array with the specified contract,
 # and merge the errors into the appropriate path in the parent
 # validation results.
