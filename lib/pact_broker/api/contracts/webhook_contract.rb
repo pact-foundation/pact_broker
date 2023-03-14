@@ -1,4 +1,4 @@
-require "pact_broker/api/contracts/contract_support"
+require "pact_broker/api/contracts/base_contract"
 require "pact_broker/api/contracts/webhook_request_contract"
 require "pact_broker/api/contracts/webhook_pacticipant_contract"
 require "pact_broker/webhooks/webhook_event"
@@ -6,12 +6,11 @@ require "pact_broker/webhooks/webhook_event"
 module PactBroker
   module Api
     module Contracts
-      class WebhookContract < Dry::Validation::Contract
-        include DryValidationMethods
+      class WebhookContract < BaseContract
 
         UUID_REGEX = /^[A-Za-z0-9_\-]{16,}$/
 
-        class EventContract < Dry::Validation::Contract
+        class EventContract < BaseContract
           json do
             required(:name).filled(included_in?: PactBroker::Webhooks::WebhookEvent::EVENT_NAMES)
           end

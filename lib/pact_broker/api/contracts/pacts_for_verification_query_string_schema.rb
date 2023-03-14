@@ -1,11 +1,9 @@
-require "pact_broker/api/contracts/contract_support"
+require "pact_broker/api/contracts/base_contract"
 
 module PactBroker
   module Api
     module Contracts
-      class PactsForVerificationQueryStringSchema < Dry::Validation::Contract
-        extend DryValidationWorkarounds
-
+      class PactsForVerificationQueryStringSchema < BaseContract
         params do
           optional(:provider_version_tags).maybe(:array?)
           optional(:consumer_version_selectors).each do

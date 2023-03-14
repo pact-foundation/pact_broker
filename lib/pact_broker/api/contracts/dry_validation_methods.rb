@@ -1,15 +1,10 @@
 require "pact_broker/api/contracts/validation_helpers"
-require "pact_broker/api/contracts/dry_validation_workarounds"
 
 module PactBroker
   module Api
     module Contracts
       module DryValidationMethods
         extend self
-
-        def self.included(receiver)
-          receiver.extend DryValidationWorkarounds
-        end
 
         def validation_message(key, params = {})
           PactBroker::Messages.validation_message(key, params)

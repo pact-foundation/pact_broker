@@ -4,6 +4,7 @@ require "webmachine/render_error_monkey_patch"
 require "pact_broker/db/models"
 require "pact_broker/api/resources"
 require "pact_broker/api/decorators"
+require "pact_broker/api/contracts"
 require "pact_broker/application_context"
 require "pact_broker/feature_toggle"
 

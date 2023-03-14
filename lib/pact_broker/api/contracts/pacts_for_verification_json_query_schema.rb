@@ -1,12 +1,10 @@
-require "pact_broker/api/contracts/contract_support"
+require "pact_broker/api/contracts/base_contract"
 require "pact_broker/api/contracts/consumer_version_selector_contract"
 
 module PactBroker
   module Api
     module Contracts
-      class PactsForVerificationJSONQuerySchema < Dry::Validation::Contract
-        include DryValidationMethods
-
+      class PactsForVerificationJSONQuerySchema < BaseContract
         json do
           optional(:providerVersionBranch).filled(:str?)
           optional(:providerVersionTags).maybe(:array?)

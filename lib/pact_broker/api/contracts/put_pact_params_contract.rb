@@ -1,14 +1,10 @@
-require "pact_broker/api/contracts/contract_support"
 require "pact_broker/api/contracts/base_contract"
 require "pact_broker/api/contracts/validation_helpers"
 
 module PactBroker
   module Api
     module Contracts
-      class PutPacticipantNameContract < Dry::Validation::Contract
-        include PactBroker::Api::Contracts::ValidationHelpers
-        include PactBroker::Api::Contracts::DryValidationMethods
-
+      class PutPacticipantNameContract < BaseContract
         json do
           required(:name).maybe(:string)
           required(:name_in_pact).maybe(:string)
@@ -25,9 +21,7 @@ module PactBroker
         end
       end
 
-      class PutPactParamsContract < Dry::Validation::Contract
-        include PactBroker::Api::Contracts::DryValidationMethods
-
+      class PutPactParamsContract < BaseContract
         json do
           required(:consumer).filled(:hash)
           required(:provider).filled(:hash)

@@ -1,11 +1,9 @@
-require "pact_broker/api/contracts/contract_support"
+require "pact_broker/api/contracts/base_contract"
 
 module PactBroker
   module Api
     module Contracts
-      class WebhookPacticipantContract < ::Dry::Validation::Contract
-        include PactBroker::Api::Contracts::DryValidationMethods
-
+      class WebhookPacticipantContract < BaseContract
         json do
           optional(:name).maybe(:string)
           optional(:label).maybe(:string)

@@ -1,12 +1,10 @@
-require "pact_broker/api/contracts/contract_support"
+require "pact_broker/api/contracts/base_contract"
 
 module PactBroker
   module Api
     module Contracts
-      class ConsumerVersionSelectorContract < Dry::Validation::Contract
+      class ConsumerVersionSelectorContract < BaseContract
         option :parent # the parent hash in which the ConsumerVersionSelector is embedded
-
-        include DryValidationMethods
 
         BRANCH_KEYS = [:latest, :tag, :fallbackTag, :branch, :fallbackBranch, :matchingBranch, :mainBranch]
         ENVIRONMENT_KEYS = [:environment, :deployed, :released, :deployedOrReleased]

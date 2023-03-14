@@ -1,12 +1,10 @@
-require "pact_broker/api/contracts/contract_support"
+require "pact_broker/api/contracts/base_contract"
 require "pact_broker/api/contracts/publish_contracts_contract_contract"
 
 module PactBroker
   module Api
     module Contracts
-      class PublishContractsSchema < Dry::Validation::Contract
-        include DryValidationMethods
-
+      class PublishContractsSchema < BaseContract
         json do
           required(:pacticipantName).filled(:string)
           required(:pacticipantVersionNumber).filled(:string)

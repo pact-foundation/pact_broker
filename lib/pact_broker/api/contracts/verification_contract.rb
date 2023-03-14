@@ -1,11 +1,9 @@
-require "pact_broker/api/contracts/contract_support"
+require "pact_broker/api/contracts/base_contract"
 
 module PactBroker
   module Api
     module Contracts
-      class VerificationContract < Dry::Validation::Contract
-        include PactBroker::Api::Contracts::DryValidationMethods
-
+      class VerificationContract < BaseContract
         json do
           required(:success).filled(:bool)
           required(:providerApplicationVersion).filled(:string)

@@ -1,11 +1,9 @@
-require "pact_broker/api/contracts/contract_support"
+require "pact_broker/api/contracts/base_contract"
 
 module PactBroker
   module Api
     module Contracts
-      class EnvironmentSchema < Dry::Validation::Contract
-        include DryValidationMethods
-
+      class EnvironmentSchema < BaseContract
         json do
           optional(:uuid)
           required(:name).filled(:string)

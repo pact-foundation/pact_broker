@@ -1,13 +1,13 @@
-require "pact_broker/api/contracts/contract_support"
+require "pact_broker/api/contracts/base_contract"
 require "pact_broker/webhooks/render"
 require "pact_broker/webhooks/check_host_whitelist"
+require "pact_broker/api/contracts/validation_helpers"
 
 module PactBroker
   module Api
     module Contracts
-      class WebhookRequestContract < Dry::Validation::Contract
-        include PactBroker::Api::Contracts::ValidationHelpers
-        include PactBroker::Api::Contracts::DryValidationMethods
+      class WebhookRequestContract < BaseContract
+        include ValidationHelpers
 
         json do
           required(:method).filled(:string)

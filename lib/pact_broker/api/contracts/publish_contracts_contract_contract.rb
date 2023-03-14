@@ -1,13 +1,11 @@
-require "pact_broker/api/contracts/contract_support"
+require "pact_broker/api/contracts/base_contract"
 require "pact_broker/api/contracts/utf_8_validation"
 
 # The contract for the contract object in the publish contracts request
 module PactBroker
   module Api
     module Contracts
-      class PublishContractsContractContract < Dry::Validation::Contract
-        include PactBroker::Api::Contracts::DryValidationMethods
-
+      class PublishContractsContractContract < BaseContract
         json do
           required(:consumerName).filled(:string)
           required(:providerName).filled(:string)
@@ -18,6 +16,7 @@ module PactBroker
           optional(:decodedParsedContent) # set in the resource
           optional(:decodedContent) # set in the resource
         end
+
         rule(:consumerName).validate(:not_blank_if_present)
         rule(:providerName).validate(:not_blank_if_present)
 
