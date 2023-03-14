@@ -57,12 +57,6 @@ module PactBroker
         verification_repository.delete(verification.id)
       end
 
-      def errors params
-        contract = PactBroker::Api::Contracts::VerificationContract.new(PactBroker::Domain::Verification.new)
-        contract.validate(params)
-        contract.errors
-      end
-
       def find params
         verification_repository.find(params.fetch(:consumer_name), params.fetch(:provider_name), params.fetch(:pact_version_sha), params.fetch(:verification_number))
       end
