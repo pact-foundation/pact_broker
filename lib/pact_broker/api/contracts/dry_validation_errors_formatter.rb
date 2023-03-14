@@ -25,16 +25,6 @@ module PactBroker
           end
         end
 
-        def format_operations_errors(errors)
-          errors.each_with_object({}) do | error, errors_hash |
-            index = error.path[1]
-            path = error.path[2..-1]
-            key = path.join(".").to_sym
-            errors_hash[key] ||= []
-            errors_hash[key] <<  "#{path.last} #{error.text} (at index #{index})"
-          end
-        end
-
         # @private
         def add_error(errors_hash, key, text)
           errors_hash[key] ||= []
