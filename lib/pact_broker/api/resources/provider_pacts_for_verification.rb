@@ -20,7 +20,7 @@ module PactBroker
         end
 
         def malformed_request?
-          super || ((request.get? || (request.post? && content_type_json?)) && schema_validation_errors?)
+          super || ((request.get? || (request.post? && content_type_json?)) && validation_errors_for_schema?(schema, query))
         end
 
         def process_post
@@ -66,10 +66,10 @@ module PactBroker
           )
         end
 
-        def query_schema
+        def schema
           if request.get?
             PactBroker::Api::Contracts::PactsForVerificationQueryStringSchema
-          else
+          elsif request.post?
             PactBroker::Api::Contracts::PactsForVerificationJSONQuerySchema
           end
         end
@@ -94,15 +94,6 @@ module PactBroker
 
         def nested_query
           @nested_query ||= Rack::Utils.parse_nested_query(request.uri.query)
-        end
-
-        def schema_validation_errors?
-          if (errors = query_schema.call(query)).any?
-            set_json_validation_error_messages(errors)
-            true
-          else
-            false
-          end
         end
       end
     end
