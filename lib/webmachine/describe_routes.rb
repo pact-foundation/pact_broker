@@ -101,7 +101,7 @@ module Webmachine
         end
       end
     rescue StandardError => e
-      puts "Could not determine instance info for #{route.resource}. #{e.class} - #{e.message}"
+      puts "Could not determine instance info for #{webmachine_route.resource}. #{e.class} - #{e.message}"
       {}
     end
 

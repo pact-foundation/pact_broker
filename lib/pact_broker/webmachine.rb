@@ -1,0 +1,5 @@
+require "webmachine"
+require "webmachine/application_monkey_patch"
+require "webmachine/adapters/rack_mapped"
+require "webmachine/application_monkey_patch"
+require "webmachine/render_error_monkey_patch"
