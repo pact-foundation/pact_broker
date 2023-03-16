@@ -6,7 +6,7 @@ module PactBroker
       describe PacticipantCreateSchema do
         let(:params) do
           {
-            name: "pact-broker",
+            name: name,
             displayName: "Pact Broker",
             mainBranch: main_branch,
             repositoryUrl: "https://github.com/pact-foundation/pact_broker",
@@ -15,12 +15,26 @@ module PactBroker
           }
         end
 
+        let(:name) { "pact-broker" }
+
         let(:main_branch) { "main" }
 
         subject { PacticipantCreateSchema.call(params) }
 
         context "with valid params" do
           it { is_expected.to be_empty }
+        end
+
+        context "with an empty name" do
+          let(:name) { "" }
+
+          it { is_expected.to_not be_empty }
+        end
+
+        context "with a blank name" do
+          let(:name) { " " }
+
+          it { is_expected.to_not be_empty }
         end
 
         context "with a branch that has a space" do
