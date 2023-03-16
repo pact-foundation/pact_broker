@@ -25,7 +25,7 @@ end
 module PactBroker
   # rubocop: disable Metrics/MethodLength
   def self.build_api(application_context = PactBroker::ApplicationContext.default_application_context)
-    pact_api = Webmachine::Application.new do |app|
+    Webmachine.build_rack_api(application_context) do |app|
       app.routes do
         add(["trace", :*], Webmachine::Trace::TraceResource) unless ENV["RACK_ENV"] == "production"
 
@@ -139,14 +139,6 @@ module PactBroker
         add [], Api::Resources::Index, {resource_name: "index"}
       end
     end
-
-    pact_api.application_context = application_context
-
-    pact_api.configure do |config|
-      config.adapter = :RackMapped
-    end
-
-    pact_api.adapter
   end
 
 
