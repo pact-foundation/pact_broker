@@ -1,6 +1,4 @@
-require "webmachine/adapters/rack_mapped"
-require "webmachine/application_monkey_patch"
-require "webmachine/render_error_monkey_patch"
+require "pact_broker/webmachine"
 require "pact_broker/db/models"
 require "pact_broker/api/resources"
 require "pact_broker/api/decorators"
