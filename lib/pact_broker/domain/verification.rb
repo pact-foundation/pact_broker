@@ -228,7 +228,7 @@ module PactBroker
       end
 
       # So consumer_version_tag_name can be accessed by method name
-      def method_missing(m, *args, &block)
+      def method_missing(m, *args, **kwargs, &block)
         if values.key?(m) && args.size == 0
           values[m]
         else
