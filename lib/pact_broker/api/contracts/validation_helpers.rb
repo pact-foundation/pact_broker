@@ -28,7 +28,7 @@ module PactBroker
         # @param [Object]
         def provided?(value)
           if value.is_a?(String)
-            !!value.strip.size
+            value.strip.size > 0
           else
             !value.nil?
           end
@@ -39,8 +39,7 @@ module PactBroker
         end
 
         def valid_url?(url)
-          uri = URI(url)
-          !!(uri.scheme && uri.host)
+          URI(url)
         rescue URI::InvalidURIError, ArgumentError
           false
         end

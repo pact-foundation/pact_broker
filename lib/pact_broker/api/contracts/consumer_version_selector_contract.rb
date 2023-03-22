@@ -45,8 +45,15 @@ module PactBroker
 
         # mainBranch
         rule(*ALL_KEYS) do
-          if values[:mainBranch] && values.slice(*ALL_KEYS - [:consumer, :mainBranch]).any?
+          if values[:mainBranch] && values.slice(*ALL_KEYS - [:consumer, :mainBranch, :latest]).any?
             base.failure(validation_message("pacts_for_verification_selector_main_branch_with_other_param_disallowed"))
+          end
+        end
+
+        # mainBranch/latest
+        rule(:mainBranch, :latest) do
+          if values[:mainBranch] && values[:latest] == false
+            base.failure(validation_message("pacts_for_verification_selector_main_branch_and_latest_false_disallowed"))
           end
         end
 
