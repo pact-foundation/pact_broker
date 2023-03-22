@@ -45,6 +45,6 @@ PactBroker::DB.run_migrations(connection)
 require "pact_broker/api"
 require "support/test_data_builder"
 
-require "pry"; pry(binding);
+require "pry-byebug"; pry(binding);
 
 "time to pry" # need a line here or pry doesn't catch
