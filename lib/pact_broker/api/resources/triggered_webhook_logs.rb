@@ -28,11 +28,11 @@ module PactBroker
         end
 
         def policy_name
-          :'webhooks::webhook'
+          :'webhooks::triggered_webhook'
         end
 
         def policy_record
-          triggered_webhook&.webhook
+          triggered_webhook
         end
 
         private
