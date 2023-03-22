@@ -9,7 +9,6 @@ module PactBroker
     module EnvironmentService
       using PactBroker::StringRefinements
       extend PactBroker::Repositories::Scopes
-
       extend self
 
       def self.included(base)
@@ -36,8 +35,6 @@ module PactBroker
         environment.upsert
       end
 
-      alias_method :update, :replace # For PF
-
       def find_all
         scope_for(PactBroker::Deployments::Environment).order(Sequel.function(:lower, :display_name)).all
       end
@@ -56,6 +53,10 @@ module PactBroker
 
       def find_for_pacticipant(_pacticipant)
         find_all
+      end
+
+      def scope_for(scope)
+        PactBroker.policy_scope!(scope)
       end
     end
   end

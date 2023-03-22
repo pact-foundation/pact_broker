@@ -7,6 +7,10 @@ module PactBroker
       @resource = resource
     end
 
+    def read?
+      true
+    end
+
     def update?
       true
     end
@@ -16,10 +20,6 @@ module PactBroker
     end
 
     def create?
-      true
-    end
-
-    def view?
       true
     end
 

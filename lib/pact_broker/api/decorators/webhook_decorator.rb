@@ -42,7 +42,6 @@ module PactBroker
             title: represented.display_description,
             href: webhook_url(represented.uuid, options[:base_url])
           }
-
         end
 
         link :'pb:execute' do | options |

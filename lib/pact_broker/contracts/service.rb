@@ -7,6 +7,7 @@ require "pact_broker/contracts/notice"
 require "pact_broker/events/subscriber"
 require "pact_broker/api/pact_broker_urls"
 require "pact_broker/pacts/create_formatted_diff"
+require "pact_broker/pacts/pact_params"
 
 module PactBroker
   module Contracts

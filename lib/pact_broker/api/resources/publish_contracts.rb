@@ -40,9 +40,14 @@ module PactBroker
           :'contracts::contracts'
         end
 
-        # for PactFlow
+        # for pactflow
         def policy_record
           @policy_record ||= pacticipant_service.find_pacticipant_by_name(parsed_contracts.pacticipant_name)
+        end
+
+        # for pactflow
+        def policy_record_context
+          { pacticipant: policy_record }
         end
 
         private
@@ -105,7 +110,7 @@ module PactBroker
 
         # TODO put this somewhere shareable
         def parse_yaml(content)
-          YAML.safe_load(content, [Time, Date, DateTime]) rescue nil
+          YAML.safe_load(content, permitted_classes: [Time, Date, DateTime]) rescue nil
         end
 
         def parse_json(content)

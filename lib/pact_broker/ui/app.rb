@@ -26,7 +26,7 @@ module PactBroker
     class App
 
       def initialize
-        @app = ::Rack::Builder.new {
+        @app = ::Rack::Builder.new do
 
           map "/ui/relationships" do
             run PactBroker::UI::Controllers::Index
@@ -69,7 +69,7 @@ module PactBroker
             use PathInfoFixer
             run PactBroker::UI::Controllers::Index
           end
-        }
+        end
       end
 
       def call env
