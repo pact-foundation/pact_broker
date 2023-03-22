@@ -7,9 +7,9 @@ module PactBroker
     module Contracts
       describe VerificationContract do
 
-        subject { VerificationContract.new(verification) }
+        subject { VerificationContract.call(params) }
         let(:verification) { PactBroker::Domain::Verification.new }
-        let(:valid_params) { {success: success, providerApplicationVersion: provider_version, buildUrl: build_url} }
+        let(:valid_params) { { success: success, providerApplicationVersion: provider_version, buildUrl: build_url } }
         let(:params) { valid_params }
 
         let(:success) { true }
@@ -26,64 +26,69 @@ module PactBroker
 
           before do
             allow(PactBroker.configuration).to receive(:order_versions_by_date).and_return(order_versions_by_date)
-            subject.validate(params)
           end
 
           context "with valid fields" do
-            its(:errors) { is_expected.to be_empty }
+            it { is_expected.to be_empty }
           end
 
           context "with no success property" do
             let(:success) { nil }
 
             it "has an error" do
-              expect(subject.errors[:success]).to include(match("blank"))
+              expect(subject[:success]).to include(match("boolean"))
             end
           end
 
           context "when success is a non-boolean string" do
             let(:success) { "foo" }
+
             it "has an error" do
-              expect(subject.errors[:success]).to include(match("boolean"))
+              expect(subject[:success]).to include(match("boolean"))
             end
           end
 
           context "when buildUrl is not a URL" do
             let(:build_url) { "foo bar" }
+
             it "has an error" do
-              expect(subject.errors[:build_url]).to include(match("URL"))
+              expect(subject[:buildUrl]).to include(match("URL"))
             end
           end
 
           context "when buildUrl is nil" do
             let(:build_url) { nil }
-            its(:errors) { is_expected.to be_empty }
+
+            it { is_expected.to be_empty }
           end
 
           context "when the buildURL is not present" do
             let(:params) { modify valid_params, without: :buildUrl }
-            its(:errors) { is_expected.to be_empty }
+
+            it { is_expected.to be_empty }
           end
 
           context "when the buildURL is not stringable" do
             let(:build_url) { {} }
 
             it "has an error" do
-              expect(subject.errors[:build_url]).to include(match("URL"))
+              expect(subject[:buildUrl]).to include(match("string"))
             end
           end
 
           context "when the providerApplicationVersion is not present" do
             let(:params) { modify valid_params, without: :providerApplicationVersion }
+
             it "has an error" do
-              expect(subject.errors[:provider_version]).to include(match("can't be blank"))
+              expect(subject[:providerApplicationVersion]).to include(match("missing"))
             end
           end
 
           context "when the providerApplicationVersion is blank" do
             let(:provider_version) { " " }
+
             it "has an error" do
-              expect(subject.errors[:provider_version]).to include(match("can't be blank"))
+              expect(subject[:providerApplicationVersion]).to contain_exactly(match("blank"))
             end
           end
 
@@ -92,7 +97,8 @@ module PactBroker
 
             context "when the providerApplicationVersion is not a semantic version" do
               let(:provider_version) { "#" }
-              its(:errors) { is_expected.to be_empty }
+
+              it { is_expected.to be_empty }
             end
           end
 
@@ -101,7 +107,7 @@ module PactBroker
               let(:provider_version) { "#" }
 
               it "has an error" do
-                expect(subject.errors[:provider_version]).to include(match("#.*cannot be parsed"))
+                expect(subject[:providerApplicationVersion]).to include(match("#.*cannot be parsed"))
               end
             end
           end

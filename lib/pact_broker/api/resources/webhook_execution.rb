@@ -1,7 +1,6 @@
 require "pact_broker/api/resources/base_resource"
 require "pact_broker/services"
 require "pact_broker/api/decorators/webhook_execution_result_decorator"
-require "pact_broker/api/resources/webhook_resource_methods"
 require "pact_broker/constants"
 require "pact_broker/webhooks/execution_configuration"
 require "pact_broker/api/resources/webhook_execution_methods"
@@ -10,7 +9,6 @@ module PactBroker
   module Api
     module Resources
       class WebhookExecution < BaseResource
-        include WebhookResourceMethods
         include WebhookExecutionMethods
 
         def content_types_provided
@@ -39,7 +37,7 @@ module PactBroker
             if uuid
               false
             else
-              webhook_validation_errors?(webhook)
+              validation_errors_for_schema?
             end
           else
             false
@@ -87,6 +85,10 @@ module PactBroker
 
         def build_unsaved_webhook
           decorator_class(:webhook_decorator).new(PactBroker::Domain::Webhook.new).from_json(request_body)
+        end
+
+        def schema
+          api_contract_class(:webhook_contract)
         end
       end
     end

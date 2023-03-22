@@ -54,9 +54,8 @@ module PactBroker
           potential_duplicate_pacticipants?(pact_params.pacticipant_names) || merge_conflict || disallowed_modification?
         end
 
-
         def malformed_request?
-          super || ((request.patch? || request.really_put?) && contract_validation_errors?(Contracts::PutPactParamsContract.new(pact_params), pact_params))
+          super || ((request.patch? || request.really_put?) && validation_errors_for_schema?(schema, pact_params.to_hash_for_validation))
         end
 
         def resource_exists?
@@ -117,6 +116,10 @@ module PactBroker
           else
             false
           end
+        end
+
+        def schema
+          api_contract_class(:put_pact_params_contract)
         end
       end
     end

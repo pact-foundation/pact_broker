@@ -203,22 +203,6 @@ module PactBroker
           end
         end
 
-        def validation_errors? model
-          if (errors = model.validate).any?
-            set_json_validation_error_messages errors
-            true
-          else
-            false
-          end
-        end
-
-        def contract_validation_errors? contract, params
-          if (invalid = !contract.validate(params))
-            set_json_validation_error_messages contract.errors.messages
-          end
-          invalid
-        end
-
         def find_pacticipant name, role
           pacticipant_service.find_pacticipant_by_name(name).tap do | pacticipant |
             if pacticipant.nil?

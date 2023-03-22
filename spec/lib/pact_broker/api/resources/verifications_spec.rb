@@ -15,15 +15,15 @@ module PactBroker
           let(:response_body) { JSON.parse(subject.body, symbolize_names: true) }
           let(:database_connector) { double("database_connector" )}
           let(:verification) { double(PactBroker::Domain::Verification) }
-          let(:errors_empty) { true }
           let(:parsed_metadata) { { the: "metadata", consumer_version_number: "2", pending: true } }
           let(:base_url) { "http://example.org" }
           let(:webhook_execution_configuration) { instance_double(PactBroker::Webhooks::ExecutionConfiguration) }
+          let(:errors) { {} }
 
           before do
             allow_any_instance_of(Verifications).to receive(:handle_webhook_events) { |&block| block.call }
             allow(PactBroker::Verifications::Service).to receive(:create).and_return(verification)
-            allow(PactBroker::Verifications::Service).to receive(:errors).and_return(double(:errors, messages: ["errors"], empty?: errors_empty))
+            allow(PactBroker::Api::Contracts::VerificationContract).to receive(:call).and_return(errors)
             allow(PactBrokerUrls).to receive(:decode_pact_metadata).and_return(parsed_metadata)
           end
 
@@ -118,14 +118,14 @@ module PactBroker
           end
 
           context "when invalid parameters are used" do
-            let(:errors_empty) { false }
+            let(:errors) { { some: ["errors"]} }
 
             it "returns a 400 status" do
               expect(subject.status).to eq 400
             end
 
             it "sets errors on the response" do
-              expect(response_body[:errors]).to eq ["errors"]
+              expect(response_body[:errors]).to eq errors
             end
           end
         end

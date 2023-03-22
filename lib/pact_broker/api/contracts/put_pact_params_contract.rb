@@ -1,45 +1,40 @@
 require "pact_broker/api/contracts/base_contract"
+require "pact_broker/api/contracts/validation_helpers"
 
 module PactBroker
   module Api
     module Contracts
       class PutPacticipantNameContract < BaseContract
-        property :name
-        property :name_in_pact
-        property :pacticipant
-        property :message_args
+        json do
+          required(:name).maybe(:string)
+          required(:name_in_pact).maybe(:string)
+        end
 
-        validation do
-          configure do
-            config.messages_file = File.expand_path("../../../locale/en.yml", __FILE__)
+        rule(:name, :name_in_pact) do
+          if name_in_pact_does_not_match_name_in_url_path?(values)
+            key.failure(validation_message("pact_name_in_path_mismatch_name_in_pact", name_in_pact: values[:name_in_pact], name_in_path: values[:name]))
           end
+        end
 
-          required(:name).maybe
-          required(:name_in_pact).maybe
-
-          rule(name_in_path_matches_name_in_pact?: [:name, :name_in_pact]) do |name, name_in_pact|
-            name_in_pact.filled?.then(name.eql?(value(:name_in_pact)))
-          end
+        def name_in_pact_does_not_match_name_in_url_path?(values)
+          provided?(values[:name_in_pact]) && values[:name] != values[:name_in_pact]
         end
       end
 
       class PutPactParamsContract < BaseContract
-        property :consumer_version_number
-        property :consumer, form: PutPacticipantNameContract
-        property :provider, form: PutPacticipantNameContract
+        json do
+          required(:consumer).filled(:hash)
+          required(:provider).filled(:hash)
+          required(:consumer_version_number).filled(:string)
+        end
 
-        validation do
-          configure do
-            config.messages_file = File.expand_path("../../../locale/en.yml", __FILE__)
+        rule(:consumer).validate(validate_with_contract: PutPacticipantNameContract)
+        rule(:provider).validate(validate_with_contract: PutPacticipantNameContract)
 
-            def valid_consumer_version_number?(value)
-              return true if PactBroker.configuration.order_versions_by_date
-              parsed_version_number = PactBroker.configuration.version_parser.call(value)
-              !parsed_version_number.nil?
-            end
-          end
+        rule(:consumer_version_number).validate(:not_blank_if_present)
 
-          required(:consumer_version_number).filled(:valid_consumer_version_number?)
+        rule(:consumer_version_number) do
+          validate_version_number(value, key) if !rule_error?(:consumer_version_number)
         end
       end
     end

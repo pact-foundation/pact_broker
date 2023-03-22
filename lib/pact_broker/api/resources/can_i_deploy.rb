@@ -1,5 +1,5 @@
 require "pact_broker/api/resources/matrix"
-require "pact_broker/matrix/can_i_deploy_query_schema"
+require "pact_broker/api/contracts/can_i_deploy_query_schema"
 require "pact_broker/matrix/parse_can_i_deploy_query"
 require "pact_broker/messages"
 
@@ -9,16 +9,9 @@ module PactBroker
       class CanIDeploy < Matrix
         include PactBroker::Messages
 
+        # Can't call super because it will execute the Matrix validation, not the BaseResource validation
         def malformed_request?
-          if (errors = query_schema.call(query_params)).any?
-            set_json_validation_error_messages(errors)
-            true
-          elsif !pacticipant
-            set_json_validation_error_messages(pacticipant: [message("errors.validation.pacticipant_not_found", name: pacticipant_name)])
-            true
-          else
-            false
-          end
+          request.get? && validation_errors_for_schema?(schema, request.query)
         end
 
         def policy_name
@@ -27,16 +20,8 @@ module PactBroker
 
         private
 
-        def query_schema
+        def schema
           PactBroker::Api::Contracts::CanIDeployQuerySchema
-        end
-
-        def pacticipant
-          @pacticipant ||= pacticipant_service.find_pacticipant_by_name(pacticipant_name)
-        end
-
-        def pacticipant_name
-          selectors.first.pacticipant_name
         end
 
         def parsed_query

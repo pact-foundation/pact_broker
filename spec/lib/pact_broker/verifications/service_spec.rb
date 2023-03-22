@@ -249,18 +249,6 @@ module PactBroker
           end
         end
       end
-
-      describe "#errors" do
-        let(:params) { {} }
-
-        it "returns errors" do
-          expect(subject.errors(params)).to_not be_empty
-        end
-
-        it "returns something that responds to :messages" do
-          expect(subject.errors(params).messages).to_not be_empty
-        end
-      end
     end
   end
 end

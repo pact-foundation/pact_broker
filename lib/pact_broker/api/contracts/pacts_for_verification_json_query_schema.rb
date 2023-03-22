@@ -1,161 +1,55 @@
-require "dry-validation"
-require "pact_broker/hash_refinements"
-require "pact_broker/string_refinements"
-require "pact_broker/api/contracts/dry_validation_workarounds"
-require "pact_broker/api/contracts/dry_validation_predicates"
-require "pact_broker/messages"
+require "pact_broker/api/contracts/base_contract"
+require "pact_broker/api/contracts/consumer_version_selector_contract"
+require "pact_broker/logging"
 
 module PactBroker
   module Api
     module Contracts
-      class PactsForVerificationJSONQuerySchema
-        extend DryValidationWorkarounds
-        extend PactBroker::Messages
+      class PactsForVerificationJSONQuerySchema < BaseContract
+        include PactBroker::Logging
 
-        using PactBroker::HashRefinements
-        using PactBroker::StringRefinements
-
-        BRANCH_KEYS = [:latest, :tag, :fallbackTag, :branch, :fallbackBranch, :matchingBranch]
-        ENVIRONMENT_KEYS = [:environment, :deployed, :released, :deployedOrReleased]
-        ALL_KEYS = BRANCH_KEYS + ENVIRONMENT_KEYS
-
-        SCHEMA = Dry::Validation.Schema do
-          configure do
-            predicates(DryValidationPredicates)
-            config.messages_file = File.expand_path("../../../locale/en.yml", __FILE__)
-          end
+        json do
+          optional(:providerVersionBranch).maybe(:string)
           optional(:providerVersionTags).maybe(:array?)
-          optional(:consumerVersionSelectors).each do
-            schema do
-              # configure do
-              #   def self.messages
-              #     super.merge(en: { errors: { fallbackTagMustBeForLatest: 'can only be set if latest=true' }})
-              #   end
-              # end
-
-              optional(:mainBranch).filled(included_in?: [true])
-              optional(:tag).filled(:str?)
-              optional(:branch).filled(:str?)
-              optional(:matchingBranch).filled(included_in?: [true])
-              optional(:latest).filled(included_in?: [true, false])
-              optional(:fallbackTag).filled(:str?)
-              optional(:fallbackBranch).filled(:str?)
-              optional(:consumer).filled(:str?, :not_blank?)
-              optional(:deployed).filled(included_in?: [true])
-              optional(:released).filled(included_in?: [true])
-              optional(:deployedOrReleased).filled(included_in?: [true])
-              optional(:environment).filled(:str?, :environment_with_name_exists?)
-
-              # rule(fallbackTagMustBeForLatest: [:fallbackTag, :latest]) do | fallback_tag, latest |
-              #   fallback_tag.filled?.then(latest.eql?(true))
-              # end
-            end
-          end
+          optional(:consumerVersionSelectors).array(:hash)
           optional(:includePendingStatus).filled(included_in?: [true, false])
-          optional(:includeWipPactsSince).filled(:date?)
+          optional(:includeWipPactsSince).filled(:date)
         end
 
-        def self.call(params)
-          symbolized_params = params&.symbolize_keys
-          results = select_first_message(flatten_indexed_messages(SCHEMA.call(symbolized_params).messages(full: true)))
-          add_cross_field_validation_errors(symbolized_params, results)
-          results
-        end
+        # The original implementation of pacts-for-verification unfortunately went out without any validation on the
+        # providerVersionBranch at all (most likely unintentionally.)
+        # When we added
+        #   optional(:providerVersionBranch).filled(:string)
+        # during the dry-validation upgrade, we discovered that many users/pact clients were requesting pacts for verification
+        # with an empty string in the providerVersionBranch
+        # This complicated logic tries to not break those customers as much as possible, while still raising an error
+        # when the blank string is most likely a configuration error
+        # (eg. when the request performs logic that uses the provider version branch)
+        # It allows the providerVersionBranch to be unspecified/nil, as that most likely means the user did not
+        # specify the branch at all.
+        rule(:providerVersionBranch, :providerVersionTags, :includePendingStatus, :includeWipPactsSince) do
+          branch = values[:providerVersionBranch]
 
-        def self.add_cross_field_validation_errors(params, results)
-          # This is a ducking joke. Need to get rid of dry-validation
-          if params[:consumerVersionSelectors].is_a?(Array)
-            errors = params[:consumerVersionSelectors].each_with_index.flat_map do | selector, index |
-              validate_consumer_version_selector(selector, index, params)
+          # a space is a clear user error - don't bother checking further
+          if branch && branch.size > 0
+            validate_not_blank_if_present(branch, key)
+          end
+
+          if !rule_error?
+            tags = values[:providerVersionTags]
+            include_pending = values[:includePendingStatus]
+            wip = values[:includeWipPactsSince]
+
+            # There are no tags, the user specified wip or pending, and they set a branch, but the branch is an empty or blank string...
+            if !tags&.any? && (wip || include_pending) && branch && ValidationHelpers.blank?(branch)
+              # most likely a user error - return a message
+              #key.failure(validation_message("pacts_for_verification_selector_provider_version_branch_empty"))
+              logger.info("pacts_for_verification_empty_provider_version", values.data)
             end
-            if errors.any?
-              results[:consumerVersionSelectors] ||= []
-              results[:consumerVersionSelectors].concat(errors)
-            end
           end
+
         end
-
-        def self.not_provided?(value)
-          value.nil? || value.blank?
-        end
-
-        # when setting a tag, latest=true and latest=false are both valid
-        # when setting the branch, it doesn't make sense to verify all pacts for a branch,
-        # so latest is not required, but cannot be set to false
-        # rubocop: disable Metrics/CyclomaticComplexity, Metrics/MethodLength
-        def self.validate_consumer_version_selector(selector, index, params)
-          errors = []
-
-          if selector[:fallbackTag] && !selector[:latest]
-            errors << "fallbackTag can only be set if latest is true (at index #{index})"
-          end
-
-          if selector[:fallbackBranch] && selector[:latest] == false
-            errors << "fallbackBranch can only be set if latest is true (at index #{index})"
-          end
-
-          if not_provided?(selector[:mainBranch]) &&
-              not_provided?(selector[:tag]) &&
-              not_provided?(selector[:branch]) &&
-              not_provided?(selector[:environment]) &&
-              selector[:matchingBranch] != true &&
-              selector[:deployed] != true &&
-              selector[:released] != true &&
-              selector[:deployedOrReleased] != true &&
-              selector[:latest] != true
-            errors << "must specify a value for environment or tag or branch, or specify mainBranch=true, matchingBranch=true, latest=true, deployed=true, released=true or deployedOrReleased=true (at index #{index})"
-          end
-
-          if selector[:mainBranch] && selector.slice(*ALL_KEYS - [:consumer, :mainBranch]).any?
-            errors << "cannot specify mainBranch=true with any other criteria apart from consumer (at index #{index})"
-          end
-
-          if selector[:matchingBranch] && selector.slice(*ALL_KEYS - [:consumer, :matchingBranch]).any?
-            errors << "cannot specify matchingBranch=true with any other criteria apart from consumer (at index #{index})"
-          end
-
-          if selector[:tag] && selector[:branch]
-            errors << "cannot specify both a tag and a branch (at index #{index})"
-          end
-
-          if selector[:fallbackBranch] && !selector[:branch]
-            errors << "a branch must be specified when a fallbackBranch is specified (at index #{index})"
-          end
-
-          if selector[:fallbackTag] && !selector[:tag]
-            errors << "a tag must be specified when a fallbackTag is specified (at index #{index})"
-          end
-
-          if selector[:branch] && selector[:latest] == false
-            errors << "cannot specify a branch with latest=false (at index #{index})"
-          end
-
-          if selector[:deployed] && selector[:released]
-            errors << "cannot specify both deployed=true and released=true (at index #{index})"
-          end
-
-          if selector[:deployed] && selector[:deployedOrReleased]
-            errors << "cannot specify both deployed=true and deployedOrReleased=true (at index #{index})"
-          end
-
-          if selector[:released] && selector[:deployedOrReleased]
-            errors << "cannot specify both released=true and deployedOrReleased=true (at index #{index})"
-          end
-
-          if selector[:matchingBranch] && not_provided?(params[:providerVersionBranch])
-            errors << "the providerVersionBranch must be specified when the selector matchingBranch=true is used (at index #{index})"
-          end
-
-          non_environment_fields = selector.slice(*BRANCH_KEYS).keys.sort
-          environment_related_fields = selector.slice(*ENVIRONMENT_KEYS).keys.sort
-
-          if (non_environment_fields.any? && environment_related_fields.any?)
-            errors << "cannot specify the #{pluralize("field", non_environment_fields.count)} #{non_environment_fields.join("/")} with the #{pluralize("field", environment_related_fields.count)} #{environment_related_fields.join("/")} (at index #{index})"
-          end
-
-          errors
-        end
-        # rubocop: enable Metrics/CyclomaticComplexity, Metrics/MethodLength
+        rule(:consumerVersionSelectors).validate(validate_each_with_contract: ConsumerVersionSelectorContract)
       end
     end
   end

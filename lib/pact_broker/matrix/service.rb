@@ -52,6 +52,7 @@ module PactBroker
         end
       end
 
+      # TODO create a proper contract for this
       # rubocop: disable Metrics/CyclomaticComplexity
       def validate_selectors selectors, options = {}
         error_messages = []

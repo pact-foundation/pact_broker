@@ -33,7 +33,7 @@
     "body": {
       "errors": {
         "pacticipantVersionNumber": [
-          "pacticipantVersionNumber is missing"
+          "is missing"
         ]
       }
     }
