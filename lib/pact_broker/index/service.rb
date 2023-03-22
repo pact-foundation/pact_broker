@@ -109,7 +109,7 @@ module PactBroker
       # rubocop: disable Metrics/CyclomaticComplexity
       def self.latest_verification_for_pseudo_branch(pact_publication, is_overall_latest, latest_verifications_for_cv_tags, tags_option, options)
         if options[:view] == "branch" || (options[:view] == "all" && pact_publication.consumer_version.branch_heads.any?)
-          pact_publication.latest_verification || pact_publication.latest_verification_for_consumer_branches
+          pact_publication.latest_verification || pact_publication.latest_verification_for_consumer_branches(forbid_lazy_load: false)
         elsif tags_option == true
           latest_verifications_for_cv_tags
             .select{ | v | v.consumer_id == pact_publication.consumer_id && v.provider_id == pact_publication.provider_id && pact_publication.head_pact_tags.collect(&:name).include?(v.consumer_version_tag_name) }

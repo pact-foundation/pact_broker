@@ -10,14 +10,33 @@ module PactBroker
     class HttpTestDataBuilder
 
       class SetRequestId < Faraday::Middleware
-        def initialize(app, correlation_id)
+        def initialize(app, correlation_id, logger)
           super(app)
           @correlation_id = correlation_id
+          @logger = logger
         end
 
         def on_request(env)
           request_id = "#{@correlation_id}-#{Time.now.to_f.to_s[7... -1]}"
           env.request_headers["X-Request-Id"] = request_id
+          @logger.info("X-Request-Id: #{request_id}")
+        end
+      end
+
+      class LogRequestLength < Faraday::Middleware
+        def initialize(app, logger)
+          super(app)
+          @app = app
+          @logger = logger
+        end
+
+        def call(env)
+          starting = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+          response = @app.call(env)
+          ending = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+          elapsed = ending - starting
+          @logger.info "Response time: #{elapsed}"
+          response
         end
       end
 
@@ -26,13 +45,17 @@ module PactBroker
       def initialize(pact_broker_base_url, auth = {})
         @correlation_id = SecureRandom.hex(10)
 
+        stream = ENV["DEBUG"] == "true" ? $stdout : StringIO.new
+        logger = ::Logger.new(stream)
+
         @client = Faraday.new(url: pact_broker_base_url) do |faraday|
-          faraday.use SetRequestId, @correlation_id
+          faraday.use LogRequestLength, logger
+          faraday.use SetRequestId, @correlation_id, logger
           faraday.request :json
           faraday.response :json, :content_type => /\bjson$/
           if ENV["DEBUG"] == "true"
-            faraday.response :logger, ::Logger.new($stdout), headers: false, body: true do | logger |
-              logger.filter(/(Authorization: ).*/,'\1[REMOVED]')
+            faraday.response :logger, logger, headers: false, body: true do | l |
+              l.filter(/(Authorization: ).*/,'\1[REMOVED]')
             end
           end
           faraday.basic_auth(auth[:username], auth[:password]) if auth[:username]

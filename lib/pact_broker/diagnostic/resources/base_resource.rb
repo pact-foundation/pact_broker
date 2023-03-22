@@ -13,7 +13,7 @@ module PactBroker
         end
 
         def forbidden?
-          return false if PactBroker.configuration.authorize.nil?
+          return false unless PactBroker.configuration.authorization_configured?
           !PactBroker.configuration.authorize.call(self, {})
         end
 
