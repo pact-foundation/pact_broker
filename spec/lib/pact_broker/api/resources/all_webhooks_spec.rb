@@ -26,7 +26,7 @@ module PactBroker::Api
         before do
           allow(webhook_service).to receive(:create).and_return(saved_webhook)
           allow(webhook_service).to receive(:next_uuid).and_return(next_uuid)
-          allow(webhook_service).to receive(:errors).and_return(errors)
+          allow(PactBroker::Api::Contracts::WebhookContract).to receive(:call).and_return(errors)
           allow(PactBroker::Domain::Webhook).to receive(:new).and_return(webhook)
         end
 
@@ -37,8 +37,7 @@ module PactBroker::Api
         end
 
         let(:next_uuid) { "123k2nvkkwjrwk34" }
-        let(:valid) { true }
-        let(:errors) { double("errors", empty?: valid, messages: ["messages"]) }
+        let(:errors) { {} }
 
         subject { post path, webhook_json, headers }
 
@@ -52,7 +51,7 @@ module PactBroker::Api
         end
 
         context "with invalid attributes" do
-          let(:valid) { false }
+          let(:errors) { { some: ["messages"] } }
 
           it "returns a 400" do
             subject
@@ -66,7 +65,7 @@ module PactBroker::Api
 
           it "returns the validation errors" do
             subject
-            expect(JSON.parse(last_response.body, symbolize_names: true)).to eq errors: ["messages"]
+            expect(JSON.parse(last_response.body, symbolize_names: true)).to eq errors: { some: ["messages"] }
           end
 
         end

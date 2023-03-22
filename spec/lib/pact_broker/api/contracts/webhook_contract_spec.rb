@@ -8,10 +8,11 @@ module PactBroker
         let(:json) { load_fixture "webhook_valid_with_pacticipants.json" }
         let(:hash) { JSON.parse(json) }
         let(:webhook) { PactBroker::Api::Decorators::WebhookDecorator.new(Domain::Webhook.new).from_json(json) }
-        let(:subject) { WebhookContract.new(webhook) }
         let(:matching_hosts) { ["foo"] }
         let(:consumer) { double("consumer") }
         let(:provider) { double("provider") }
+
+        subject { WebhookContract.call(hash) }
 
         def valid_webhook_with
           hash = load_json_fixture "webhook_valid_with_pacticipants.json"
@@ -26,7 +27,6 @@ module PactBroker
             allow(PactBroker::Webhooks::CheckHostWhitelist).to receive(:call).and_return(whitelist_matches)
             allow(PactBroker::Pacticipants::Service).to receive(:find_pacticipant_by_name).with("Foo").and_return(consumer)
             allow(PactBroker::Pacticipants::Service).to receive(:find_pacticipant_by_name).with("Bar").and_return(provider)
-            subject.validate(hash)
           end
 
           let(:webhook_http_method_whitelist) { ["POST"] }
@@ -35,7 +35,7 @@ module PactBroker
 
           context "with valid fields" do
             it "is empty" do
-              expect(subject.errors).to be_empty
+              expect(subject).to be_empty
             end
           end
 
@@ -47,7 +47,7 @@ module PactBroker
             end
 
             it "contains an error" do
-              expect(subject.errors[:'consumer.name']).to eq ["can't be blank"]
+              expect(subject[:'consumer.name']).to eq ["cannot be blank"]
             end
           end
 
@@ -61,7 +61,7 @@ module PactBroker
             # I'd prefer this to be "is missing". Isn't the whole point of dry validation
             # that you can distingush between keys being missing and values being missing? FFS.
             it "contains an error" do
-              expect(subject.errors[:'consumer.name']).to eq ["can't be blank"]
+              expect(subject[:'consumer.name']).to eq ["cannot be blank"]
             end
           end
 
@@ -73,7 +73,7 @@ module PactBroker
             end
 
             it "contains no errors" do
-              expect(subject.errors).to be_empty
+              expect(subject).to be_empty
             end
           end
 
@@ -81,7 +81,7 @@ module PactBroker
             let(:consumer) { nil }
 
             it "contains no errors" do
-              expect(subject.errors[:'consumer.name']).to eq ["does not match an existing pacticipant"]
+              expect(subject[:'consumer.name']).to eq ["does not match an existing pacticipant"]
             end
           end
 
@@ -94,7 +94,7 @@ module PactBroker
             end
 
             it "contains no errors" do
-              expect(subject.errors).to be_empty
+              expect(subject).to be_empty
             end
           end
 
@@ -106,7 +106,7 @@ module PactBroker
             end
 
             it "contains consumer.label error" do
-              expect(subject.errors.messages).to eq({:'consumer.label' => ["cannot be provided"]})
+              expect(subject[:'consumer.label']).to contain_exactly(match("name and label cannot be provided at the same time"))
             end
           end
 
@@ -118,7 +118,7 @@ module PactBroker
             end
 
             it "contains an error" do
-              expect(subject.errors[:'provider.name']).to eq ["can't be blank"]
+              expect(subject[:'provider.name']).to eq ["cannot be blank"]
             end
           end
 
@@ -132,7 +132,7 @@ module PactBroker
             # I'd prefer this to be "is missing". Isn't the whole point of dry validation
             # that you can distingush between keys being missing and values being missing? FFS.
             it "contains an error" do
-              expect(subject.errors[:'provider.name']).to eq ["can't be blank"]
+              expect(subject[:'provider.name']).to eq ["cannot be blank"]
             end
           end
 
@@ -144,7 +144,7 @@ module PactBroker
             end
 
             it "contains no errors" do
-              expect(subject.errors).to be_empty
+              expect(subject).to be_empty
             end
           end
 
@@ -152,7 +152,7 @@ module PactBroker
             let(:provider) { nil }
 
             it "contains no errors" do
-              expect(subject.errors[:'provider.name']).to eq ["does not match an existing pacticipant"]
+              expect(subject[:'provider.name']).to eq ["does not match an existing pacticipant"]
             end
           end
 
@@ -165,7 +165,7 @@ module PactBroker
             end
 
             it "contains no errors" do
-              expect(subject.errors).to be_empty
+              expect(subject).to be_empty
             end
           end
 
@@ -177,7 +177,7 @@ module PactBroker
             end
 
             it "contains provider.label error" do
-              expect(subject.errors.messages).to eq({:'provider.label' => ["cannot be provided"]})
+              expect(subject[:'provider.label']).to contain_exactly(match("name and label cannot be provided at the same time"))
             end
           end
 
@@ -185,7 +185,7 @@ module PactBroker
             let(:json) { {}.to_json }
 
             it "contains an error for missing request" do
-              expect(subject.errors[:request]).to eq ["can't be blank"]
+              expect(subject[:request]).to contain_exactly(match("is missing"))
             end
           end
 
@@ -193,7 +193,7 @@ module PactBroker
             let(:json) { {}.to_json }
 
             it "does not contain an error for missing event, as it will be defaulted" do
-              expect(subject.errors.messages[:events]).to be nil
+              expect(subject[:events]).to be nil
             end
           end
 
@@ -205,7 +205,7 @@ module PactBroker
             end
 
             it "contains an error for missing request" do
-              expect(subject.errors[:events]).to eq ["size cannot be less than 1"]
+              expect(subject[:events]).to eq ["size cannot be less than 1"]
             end
           end
 
@@ -217,7 +217,7 @@ module PactBroker
             end
 
             it "contains an error" do
-              expect(subject.errors[:'events.name'].first).to include "must be one of"
+              expect(subject[:events]).to contain_exactly(match("must be one of"))
             end
           end
 
@@ -229,7 +229,7 @@ module PactBroker
             end
 
             it "contains an error for missing method" do
-              expect(subject.errors[:"request.http_method"]).to include "can't be blank"
+              expect(subject[:"request.method"]).to contain_exactly(match("is missing"))
             end
           end
 
@@ -241,7 +241,7 @@ module PactBroker
             end
 
             it "contains an error for invalid method" do
-              expect(subject.errors[:"request.http_method"]).to include "is not a recognised HTTP method"
+              expect(subject[:"request.method"]).to include "is not a recognised HTTP method"
             end
           end
 
@@ -253,7 +253,7 @@ module PactBroker
             end
 
             it "contains an error for the URL" do
-              expect(subject.errors[:"request.url"]).to include "scheme must be https. See /doc/webhooks#whitelist for more information."
+              expect(subject[:"request.url"]).to include "scheme must be https. See /doc/webhooks#whitelist for more information."
             end
           end
 
@@ -266,22 +266,23 @@ module PactBroker
 
             context "when there is only one allowed HTTP method" do
               it "contains an error for invalid method" do
-                expect(subject.errors[:"request.http_method"]).to include "must be POST. See /doc/webhooks#whitelist for more information."
+                expect(subject[:"request.method"]).to include "must be POST. See /doc/webhooks#whitelist for more information."
               end
             end
 
-            context "when there is more than one allowed HTTP method", pending: "need to work out how to dynamically create this message" do
+            context "when there is more than one allowed HTTP method" do
               let(:webhook_http_method_whitelist) { ["POST", "GET"] }
 
               it "contains an error for invalid method" do
-                expect(subject.errors[:"request.http_method"]).to include "must be one of POST, GET"
+                expect(subject[:"request.method"]).to contain_exactly(match("must be one of POST, GET"))
               end
             end
           end
 
           context "when the host whitelist is empty" do
             it "does not attempt to validate the host" do
-              expect(PactBroker::Webhooks::CheckHostWhitelist).to_not have_received(:call)
+              expect(PactBroker::Webhooks::CheckHostWhitelist).to_not receive(:call)
+              subject
             end
           end
 
@@ -289,14 +290,15 @@ module PactBroker
             let(:webhook_host_whitelist) { [/foo/, "bar"] }
 
             it "validates the host" do
-              expect(PactBroker::Webhooks::CheckHostWhitelist).to have_received(:call).with("some.url", webhook_host_whitelist)
+              expect(PactBroker::Webhooks::CheckHostWhitelist).to receive(:call).with("some.url", webhook_host_whitelist)
+              subject
             end
 
             context "when the host does not match the whitelist" do
               let(:whitelist_matches) { [] }
 
-              it "contains an error", pending: "need to work out how to do dynamic messages" do
-                expect(subject.errors[:"request.url"]).to include "host must be in the whitelist /foo/, \"bar\" . See /doc/webhooks#whitelist for more information."
+              it "contains an error" do
+                expect(subject[:"request.url"]).to eq ["host must be in the whitelist /foo/, \"bar\". See /doc/webhooks#whitelist for more information."]
               end
             end
           end
@@ -309,7 +311,7 @@ module PactBroker
             end
 
             it "contains an error for missing URL" do
-              expect(subject.errors[:"request.url"]).to include "can't be blank"
+              expect(subject[:"request.url"]).to contain_exactly(match("missing"))
             end
           end
 
@@ -321,7 +323,7 @@ module PactBroker
             end
 
             it "contains an error for invalid URL" do
-              expect(subject.errors[:"request.url"]).to eq ["is not a valid URL eg. http://example.org"]
+              expect(subject[:"request.url"]).to eq ["is not a valid URL eg. http://example.org"]
             end
           end
 
@@ -333,11 +335,11 @@ module PactBroker
             end
 
             it "contains an error for invalid URL" do
-              expect(subject.errors[:"request.url"]).to eq ["is not a valid URL eg. http://example.org"]
+              expect(subject[:"request.url"]).to eq ["is not a valid URL eg. http://example.org"]
             end
           end
 
-          context "with a URL that has templated parameters in it" do
+          context "with a URL that has templated parameters in the path" do
             let(:json) do
               valid_webhook_with do |hash|
                 hash["request"]["url"] = "https://foo/commits/${pactbroker.consumerVersionNumber}"
@@ -345,7 +347,7 @@ module PactBroker
             end
 
             it "is empty" do
-              expect(subject.errors).to be_empty
+              expect(subject).to be_empty
             end
           end
 
@@ -357,19 +359,19 @@ module PactBroker
             end
 
             it "contains an error" do
-              expect(subject.errors[:"request.url"]).to eq ["cannot have a template parameter in the host"]
+              expect(subject[:"request.url"]).to eq ["cannot have a template parameter in the host"]
             end
           end
 
-          context "when enabled is not a boolean", pending: "I can't work out why this doesn't work" do
+          context "with enabled that is not a boolean" do
             let(:json) do
               valid_webhook_with do |hash|
                 hash["enabled"] = "foo"
               end
             end
 
-            it "contains an error" do
-              expect(subject.errors[:enabled]).to eq ["cannot have a template parameter in the host"]
+            it "contains an error for invalid URL" do
+              expect(subject[:enabled]).to eq ["must be boolean"]
             end
           end
 
@@ -381,7 +383,29 @@ module PactBroker
             end
 
             it "contains an error" do
-              expect(subject.errors[:"request.http_method"]).to eq ["is not a recognised HTTP method"]
+              expect(subject[:"request.method"]).to eq ["is not a recognised HTTP method"]
+            end
+          end
+
+          context "with a valid uuid" do
+            let(:json) do
+              valid_webhook_with do |hash|
+                hash["uuid"] = "28f40dc2-1e46-4b08-ba7c-1184892fac13"
+              end
+            end
+
+            it { is_expected.to be_empty }
+          end
+
+          ["HIJKLMNOP", "abcdefghigHIJKLMNOP\\", "abcdefghigHIJKLMNOP#", "abcdefghigHIJKLMNOP$"].each do | invalid_uuid |
+            context "with an invalid uuid #{invalid_uuid}" do
+              let(:json) do
+                valid_webhook_with do |hash|
+                  hash["uuid"] = invalid_uuid
+                end
+              end
+
+              its([:uuid, 0]) { is_expected.to match "can only contain" }
             end
           end
         end

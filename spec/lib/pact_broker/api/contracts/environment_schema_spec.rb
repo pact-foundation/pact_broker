@@ -48,7 +48,7 @@ module PactBroker
         context "when there is another environment with the same name but a different uuid" do
           let(:existing_environment) { instance_double("PactBroker::Deployments::Environment", uuid: "5678")}
 
-          its([:name]) { is_expected.to eq ["Another environment with name 'test' already exists."] }
+          its([:name]) { is_expected.to eq ["name 'test' is already used by an existing environment."] }
         end
 
         context "when there is another environment with the same name and same uuid" do
@@ -72,7 +72,17 @@ module PactBroker
             }]
           end
 
-          its([:contacts, 0]) { is_expected.to eq "name is missing at index 0" }
+          its([:contacts, 0]) { is_expected.to eq "name is missing (at index 0)" }
+        end
+
+        context "with a multi line owner name" do
+          let(:contacts) do
+            [{
+               name: "foo\nbar"
+            }]
+          end
+
+          its([:contacts, 0]) { is_expected.to eq "name cannot contain multiple lines (at index 0)" }
         end
 
         context "with string contact details" do
@@ -83,7 +93,7 @@ module PactBroker
             }]
           end
 
-          its([:contacts, 0]) { is_expected.to eq "details must be a hash at index 0" }
+          its([:contacts, 0]) { is_expected.to eq "details must be a hash (at index 0)" }
         end
       end
     end

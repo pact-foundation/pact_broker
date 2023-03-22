@@ -2,6 +2,8 @@ module PactBroker
   module Api
     module Contracts
       module UTF8Validation
+        extend self
+
         def fragment_before_invalid_utf_8_char(string)
           string.force_encoding("UTF-8").each_char.with_index do | char, index |
             if !char.valid_encoding?

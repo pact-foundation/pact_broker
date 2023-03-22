@@ -21,6 +21,7 @@ module PactBroker
 
         VALID_KEY_COMBINATIONS = [
           [:mainBranch],
+          [:mainBranch, :latest],
           [:matchingBranch],
           [:tag],
           [:tag, :latest],

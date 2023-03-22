@@ -1,33 +1,24 @@
-require "dry-validation"
-require "pact_broker/api/contracts/dry_validation_workarounds"
-require "pact_broker/api/contracts/dry_validation_predicates"
-require "pact_broker/messages"
+require "pact_broker/api/contracts/base_contract"
 
 module PactBroker
   module Api
     module Contracts
-      class PacticipantSchema
-        extend DryValidationWorkarounds
-        extend PactBroker::Messages
-        using PactBroker::HashRefinements
-
-        SCHEMA = Dry::Validation.Schema do
-          configure do
-            predicates(DryValidationPredicates)
-            config.messages_file = File.expand_path("../../../locale/en.yml", __FILE__)
-          end
-          optional(:name).filled(:str?, :single_line?)
-          optional(:displayName).maybe(:str?, :single_line?, :not_blank?)
-          optional(:mainBranch).maybe(:str?, :single_line?, :no_spaces?)
-          optional(:repositoryUrl).maybe(:str?, :single_line?)
-          optional(:repositoryName).maybe(:str?, :single_line?)
-          optional(:repositoryNamespace).maybe(:str?, :single_line?)
+      class PacticipantSchema < BaseContract
+        json do
+          optional(:name).filled(:string)
+          optional(:displayName).maybe(:string)
+          optional(:mainBranch).maybe(:string)
+          optional(:repositoryUrl).maybe(:string)
+          optional(:repositoryName).maybe(:string)
+          optional(:repositoryNamespace).maybe(:string)
         end
 
-        def self.call(params_with_string_keys)
-          params = params_with_string_keys&.symbolize_keys
-          select_first_message(flatten_indexed_messages(SCHEMA.call(params).messages(full: true)))
-        end
+        rule(:name).validate(:not_multiple_lines, :not_blank_if_present)
+        rule(:displayName).validate(:not_multiple_lines, :not_blank_if_present)
+        rule(:mainBranch).validate(:not_multiple_lines, :no_spaces_if_present, :not_blank_if_present)
+        rule(:repositoryUrl).validate(:not_multiple_lines)
+        rule(:repositoryName).validate(:not_multiple_lines)
+        rule(:repositoryNamespace).validate(:not_multiple_lines)
       end
     end
   end

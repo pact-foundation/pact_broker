@@ -34,7 +34,7 @@ module PactBroker
         end
 
         def malformed_request?
-          super || (request.post? && any_validation_errors?)
+          super || (request.post? && validation_errors_for_schema?)
         end
 
         def create_path
@@ -84,10 +84,8 @@ module PactBroker
           params(symbolize_names: false).merge("wip" => wip?, "pending" => pending?)
         end
 
-        def any_validation_errors?
-          errors = verification_service.errors(params)
-          set_json_validation_error_messages(errors.messages) if !errors.empty?
-          !errors.empty?
+        def schema
+          PactBroker::Api::Contracts::VerificationContract
         end
       end
     end

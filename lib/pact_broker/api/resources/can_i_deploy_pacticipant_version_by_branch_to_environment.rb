@@ -1,8 +1,5 @@
 require "pact_broker/api/resources/matrix"
-require "pact_broker/matrix/can_i_deploy_query_schema"
-require "pact_broker/matrix/parse_can_i_deploy_query"
 require "pact_broker/api/decorators/matrix_decorator"
-require "pact_broker/api/decorators/matrix_text_decorator"
 
 module PactBroker
   module Api

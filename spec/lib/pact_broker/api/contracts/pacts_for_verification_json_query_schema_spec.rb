@@ -4,11 +4,6 @@ module PactBroker
   module Api
     module Contracts
       describe PactsForVerificationJSONQuerySchema do
-        before do
-          allow(PactBroker::Deployments::EnvironmentService).to receive(:find_by_name).and_return(environment)
-        end
-        let(:environment) { double("environment") }
-
         let(:params) do
           {
             providerVersionTags: provider_version_tags,
@@ -63,7 +58,7 @@ module PactBroker
             context "when there are multiple errors" do
               let(:consumer_version_selectors) do
                 [{
-                  consumer: "",
+                  consumer: " ",
                   tag: "feat-x",
                   fallbackTag: "master"
                 }]
@@ -158,12 +153,12 @@ module PactBroker
           let(:consumer_version_selectors) do
             [{
               tag: "feat-x",
-              consumer: ""
+              consumer: " "
             }]
           end
 
           it "has an error" do
-            expect(subject[:consumerVersionSelectors].first).to include "blank"
+            expect(subject[:consumerVersionSelectors].first).to include "consumer cannot be blank (at index 0)"
           end
         end
 
@@ -201,6 +196,10 @@ module PactBroker
 
 
         context "when the environment is specified" do
+          before do
+            allow(PactBroker::Deployments::EnvironmentService).to receive(:find_by_name).and_return(double("environment"))
+          end
+
           let(:consumer_version_selectors) do
             [{
               environment: "test"
@@ -211,6 +210,10 @@ module PactBroker
         end
 
         context "when deployed with an environment is specified" do
+          before do
+            allow(PactBroker::Deployments::EnvironmentService).to receive(:find_by_name).and_return(double("environment"))
+          end
+
           let(:consumer_version_selectors) do
             [{
               environment: "feat",
@@ -222,6 +225,10 @@ module PactBroker
         end
 
         context "when deployed=false with an environment is specified" do
+          before do
+            allow(PactBroker::Deployments::EnvironmentService).to receive(:find_by_name).and_return(double("environment"))
+          end
+
           let(:consumer_version_selectors) do
             [{
               environment: "feat",
@@ -229,7 +236,7 @@ module PactBroker
             }]
           end
 
-          its([:consumerVersionSelectors, 0]) { is_expected.to eq "deployed must be one of: true at index 0" }
+          its([:consumerVersionSelectors, 0]) { is_expected.to eq "deployed must be one of: true (at index 0)" }
         end
 
         context "when the environment is specified and deployed is nil" do
@@ -240,7 +247,7 @@ module PactBroker
             }]
           end
 
-          its([:consumerVersionSelectors, 0]) { is_expected.to eq "deployed can't be blank at index 0" }
+          its([:consumerVersionSelectors, 0]) { is_expected.to eq "deployed must be filled (at index 0)" }
         end
 
         context "when deployed is nil" do
@@ -250,7 +257,7 @@ module PactBroker
             }]
           end
 
-          its([:consumerVersionSelectors, 0]) { is_expected.to eq "deployed can't be blank at index 0" }
+          its([:consumerVersionSelectors, 0]) { is_expected.to eq "deployed must be filled (at index 0)" }
         end
 
         context "when latest=true and an environment is specified" do
@@ -340,7 +347,20 @@ module PactBroker
             [{ environment: "prod" }]
           end
 
-          its([:consumerVersionSelectors, 0]) { is_expected.to eq "environment with name 'prod' does not exist at index 0" }
+          its([:consumerVersionSelectors, 0]) { is_expected.to eq "environment with name 'prod' does not exist (at index 0)" }
+        end
+
+        context "when the environment name does not pass schema validation" do
+          let(:environment) { nil }
+
+          let(:consumer_version_selectors) do
+            [{ environment: 1 }]
+          end
+
+          it "does not attempt to look up the environment" do
+            expect(PactBroker::Deployments::EnvironmentService).to_not receive(:find_by_name)
+            subject
+          end
         end
 
         context "when matchingBranch is true, but the providerVersionBranch is not set" do
@@ -351,6 +371,25 @@ module PactBroker
           end
 
           its([:consumerVersionSelectors, 0]) { is_expected.to include "the providerVersionBranch must be specified"}
+        end
+
+        context "when the providerVersionBranch is a space" do
+          let(:provider_version_branch) { " " }
+
+          let(:params) do
+            {
+              providerVersionBranch: provider_version_branch,
+              consumerVersionSelectors: consumer_version_selectors
+            }
+          end
+
+          let(:consumer_version_selectors) do
+            [{
+              matchingBranch: true
+            }]
+          end
+
+          its([:providerVersionBranch, 0]) { is_expected.to include "cannot be blank"}
         end
       end
     end
