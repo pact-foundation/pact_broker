@@ -181,7 +181,7 @@ module PactBroker
 
         it { is_expected.to contain_exactly(have_attributes(name: "foo"), have_attributes(name: "bar")) }
 
-        context "when the array is empty" do
+        context "when the names array is empty" do
           subject { Repository.new.find_by_names([]) }
 
           its(:size) { is_expected.to eq 0 }
