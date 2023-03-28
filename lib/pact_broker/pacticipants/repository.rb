@@ -24,7 +24,9 @@ module PactBroker
         pacticipant
       end
 
+      # @param [Array<String>] the array of names by which to find the pacticipants
       def find_by_names(names)
+        return [] if names.empty?
         name_likes = names.collect{ | name | name_like(:name, name) }
         scope_for(PactBroker::Domain::Pacticipant).where(Sequel.|(*name_likes)).all
       end
