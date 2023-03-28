@@ -8,7 +8,7 @@ module PactBroker
       describe PacticipantCollectionDecorator do
         let(:options) { {user_options: {base_url: "http://example.org"} } }
         let(:pacticipants) { [] }
-        let(:json) { PacticipantCollectionDecorator.new(pacticipants).to_json(options) }
+        let(:json) { PacticipantCollectionDecorator.new(pacticipants).to_json(**options) }
 
         subject { JSON.parse json, symbolize_names: true }
 
@@ -34,12 +34,12 @@ module PactBroker
       end
 
       describe DeprecatedPacticipantCollectionDecorator do
-        let(:options) { {user_options: {base_url: "http://example.org"} } }
+        let(:options) { { user_options: { base_url: "http://example.org" } } }
         let(:pacticipant) { PactBroker::Domain::Pacticipant.new(name: "Name", created_at: DateTime.new, updated_at: DateTime.new)}
         let(:pacticipants) { [pacticipant] }
-        let(:json) { DeprecatedPacticipantCollectionDecorator.new(pacticipants).to_json(options) }
+        let(:json) { DeprecatedPacticipantCollectionDecorator.new(pacticipants).to_json(**options) }
 
-        subject { JSON.parse json, symbolize_names: true }
+        subject { JSON.parse(json, symbolize_names: true) }
 
         it "includes the pacticipants under the _embedded key" do
           expect(subject[:_embedded][:pacticipants]).to be_instance_of(Array)

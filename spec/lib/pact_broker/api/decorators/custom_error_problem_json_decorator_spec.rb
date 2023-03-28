@@ -7,7 +7,7 @@ module PactBroker
         let(:decorator_options) { { user_options: { base_url: "http://example.org" } } }
         let(:params) { { title: "Title", type: "type", detail: "Detail", status: 400 } }
 
-        subject { CustomErrorProblemJSONDecorator.new(**params).to_hash(decorator_options) }
+        subject { CustomErrorProblemJSONDecorator.new(**params).to_hash(**decorator_options) }
 
         let(:expected_hash) do
           {

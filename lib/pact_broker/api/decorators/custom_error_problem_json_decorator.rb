@@ -17,18 +17,18 @@ module PactBroker
         end
 
         # @return [Hash]
-        def to_hash(decorator_options = {})
+        def to_hash(user_options: {}, **__other)
           {
             "title" => @title,
-            "type" => "#{decorator_options.dig(:user_options, :base_url)}/problem/#{@type}",
+            "type" => "#{user_options[:base_url]}/problem/#{@type}",
             "detail" => @detail,
             "status" => @status
           }
         end
 
         # @return [String] JSON
-        def to_json(decorator_options = {})
-          to_hash(decorator_options).to_json
+        def to_json(*args, **kwargs)
+          to_hash(*args, **kwargs).to_json
         end
       end
     end

@@ -9,17 +9,17 @@ module PactBroker
       class VerifiablePactDecorator < BaseDecorator
         include PactBroker::Pacts::Metadata
 
-        property :shortDescription, getter: -> (context) { PactBroker::Pacts::VerifiablePactMessages.new(context[:represented], nil).pact_version_short_description }
+        property :shortDescription, getter: lambda { | represented:, ** | PactBroker::Pacts::VerifiablePactMessages.new(represented, nil).pact_version_short_description }
 
         nested :verificationProperties do
           include PactBroker::Api::PactBrokerUrls
 
           property :pending,
-            if: ->(context) { context[:options][:user_options][:include_pending_status] }
+            if: ->(options:, **_other) { options.dig(:user_options, :include_pending_status) }
           property :wip,
-            if: -> (context) { context[:represented].wip }
+            if: -> (represented:, **_other) { represented.wip }
           property :notices,
-            getter: -> (context) { context[:decorator].notices(context[:options][:user_options]) }
+            getter: -> (decorator:, options:, **) { decorator.notices(options[:user_options]) }
 
           def notices(user_options)
             metadata = represented.wip ? { wip: true } : nil

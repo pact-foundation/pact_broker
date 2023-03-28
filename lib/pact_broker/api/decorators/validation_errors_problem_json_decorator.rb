@@ -15,12 +15,12 @@ module PactBroker
         end
 
         # @return [Hash]
-        def to_hash(decorator_options = {})
+        def to_hash(user_options:, **)
           error_list = []
-          walk_errors(errors, error_list, "", decorator_options.dig(:user_options, :base_url))
+          walk_errors(errors, error_list, "", user_options[:base_url])
           {
             "title" => "Validation errors",
-            "type" => "#{decorator_options.dig(:user_options, :base_url)}/problems/validation-error",
+            "type" => "#{user_options[:base_url]}/problems/validation-error",
             "status" => 400,
             "instance" => "/",
             "errors" => error_list
@@ -28,8 +28,8 @@ module PactBroker
         end
 
         # @return [String] JSON
-        def to_json(decorator_options = {})
-          to_hash(decorator_options).to_json
+        def to_json(*args, **kwargs)
+          to_hash(*args, **kwargs).to_json
         end
 
         private

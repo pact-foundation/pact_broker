@@ -7,7 +7,7 @@ module PactBroker
         describe "#to_json" do
           let(:decorator_options) { { user_options: { base_url: "http://example.org" } } }
 
-          subject { ValidationErrorsProblemJSONDecorator.new(validation_errors).to_hash(decorator_options) }
+          subject { ValidationErrorsProblemJSONDecorator.new(validation_errors).to_hash(**decorator_options) }
 
           context "with a hash of errors" do
             let(:validation_errors) do
