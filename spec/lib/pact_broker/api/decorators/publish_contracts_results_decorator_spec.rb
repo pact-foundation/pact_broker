@@ -41,7 +41,7 @@ module PactBroker
 
           let(:decorator) { PublishContractsResultsDecorator.new(results) }
 
-          subject { decorator.to_hash(decorator_options) }
+          subject { decorator.to_hash(**decorator_options) }
 
           it {
             Approvals.verify(subject, :name => "publish_contracts_results_decorator", format: :json)

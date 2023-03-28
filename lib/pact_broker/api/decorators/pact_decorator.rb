@@ -9,7 +9,7 @@ module PactBroker
 
         include Timestamps
 
-        def to_hash(options = {})
+        def to_hash(*)
           parsed_content = represented.content_hash
           if parsed_content.is_a?(::Hash)
             parsed_content.merge super

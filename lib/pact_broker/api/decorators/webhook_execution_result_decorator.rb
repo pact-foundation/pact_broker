@@ -56,10 +56,12 @@ module PactBroker
           end
         end
 
-        property :error, :extend => ErrorDecorator, if: lambda { |context| context[:options][:user_options][:show_response] }
+        property :error, :extend => ErrorDecorator, if: lambda { |options:, **| options.dig(:user_options, :show_response) }
         property :request, :extend => HTTPRequestDecorator
-        property :response, :extend => HTTPResponseDecorator, if: lambda { |context| context[:options][:user_options][:show_response] }
-        property :response_hidden_message, as: :message, exec_context: :decorator, if: lambda { |context| !context[:options][:user_options][:show_response] }
+        property :response, :extend => HTTPResponseDecorator, if: lambda { |options:, **| options.dig(:user_options, :show_response) }
+        property :message,
+          if: lambda { |options:, **| !options.dig(:user_options, :show_response) },
+          getter: lambda { |represented:, options:, **| PactBroker::Messages.message("messages.response_body_hidden", base_url: options.dig(:user_options, :base_url))  }
         property :logs
         property :success?, as: :success
 
@@ -76,15 +78,6 @@ module PactBroker
             title: "Execute the webhook again",
             href: options.fetch(:resource_url)
           }
-        end
-
-        def to_hash(options)
-          @to_hash_options = options
-          super
-        end
-
-        def response_hidden_message
-          PactBroker::Messages.message("messages.response_body_hidden", base_url: @to_hash_options[:user_options][:base_url])
         end
       end
     end

@@ -11,18 +11,18 @@ module PactBroker
         end
 
         # @return [Hash]
-        def to_hash(decorator_options = {})
+        def to_hash(user_options:, **)
           {
             "title" => "Server error",
-            "type" => "#{decorator_options.dig(:user_options, :base_url)}/problems/server_error",
+            "type" => "#{user_options[:base_url]}/problems/server_error",
             "detail" => message,
             "status" => 500
           }
         end
 
         # @return [String] JSON
-        def to_json(decorator_options = {})
-          to_hash(decorator_options).to_json
+        def to_json(*args, **kwargs)
+          to_hash(*args, **kwargs).to_json
         end
 
         private

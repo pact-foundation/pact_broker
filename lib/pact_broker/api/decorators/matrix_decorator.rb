@@ -16,18 +16,18 @@ module PactBroker
           @query_results_with_deployment_status_summary = query_results_with_deployment_status_summary
         end
 
-        def to_json(options)
-          to_hash(options).to_json
+        def to_json(*args, **kwargs)
+          to_hash(*args, **kwargs).to_json
         end
 
-        def to_hash(options)
+        def to_hash(user_options:, **_other)
           {
             summary: {
               deployable: deployable,
               reason: reason
             },
             notices: notices,
-            matrix: matrix(options[:user_options][:base_url])
+            matrix: matrix(user_options[:base_url])
           }.tap do | hash |
             hash[:summary].merge!(query_results_with_deployment_status_summary.deployment_status_summary.counts)
           end

@@ -18,7 +18,7 @@ module PactBroker
 
         property :uuid
 
-        property :description, getter: lambda { |context| context[:represented].display_description }
+        property :description, getter: lambda { |represented:, **| represented.display_description }
 
         property :consumer, class: Domain::WebhookPacticipant, default: nil do
           property :name
@@ -107,7 +107,7 @@ module PactBroker
           }
         end
 
-        def from_json represented
+        def from_json(represented)
           super.tap do | webhook |
             if webhook.events == nil
               webhook.events = [PactBroker::Webhooks::WebhookEvent.new(name: PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME)]

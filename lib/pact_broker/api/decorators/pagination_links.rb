@@ -8,13 +8,13 @@ module PactBroker
         include Roar::JSON::HAL
         include Roar::JSON::HAL::Links
 
-        property :page, getter: lambda { |context|
-          if context[:represented].respond_to?(:current_page)
+        property :page, getter: lambda { |represented:, **|
+          if represented.respond_to?(:current_page)
             {
-              number: context[:represented].current_page,
-              size: context[:represented].page_size,
-              totalElements: context[:represented].pagination_record_count,
-              totalPages: context[:represented].page_count,
+              number: represented.current_page,
+              size: represented.page_size,
+              totalElements: represented.pagination_record_count,
+              totalPages: represented.page_count,
             }
           end
         }

@@ -32,7 +32,7 @@ module PactBroker
 
         # TODO rather than remove the contract keys that we added in the super class,
         # it would be better to inherit from a shared super class
-        def to_hash(options = {})
+        def to_hash(*)
           keys_to_remove = represented.content_hash.keys
           super.each_with_object({}) do | (key, value), new_hash |
             new_hash[key] = value unless keys_to_remove.include?(key)
