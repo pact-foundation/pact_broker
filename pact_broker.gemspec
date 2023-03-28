@@ -53,7 +53,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency "psych", "~> 4.0" # TODO identify breaking changes and see if we can use 5
   gem.add_runtime_dependency "roar", "~> 1.1"
   gem.add_runtime_dependency "dry-validation", "~> 1.8"
-  gem.add_runtime_dependency "reform", "~> 2.3"
+  gem.add_runtime_dependency "reform", "~> 2.6"
   gem.add_runtime_dependency "sequel", "~> 5.28"
   gem.add_runtime_dependency "webmachine", "1.6.0"
   gem.add_runtime_dependency "semver2", "~> 3.4.2"
