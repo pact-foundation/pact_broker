@@ -61,7 +61,7 @@ module PactBroker
         property :response, :extend => HTTPResponseDecorator, if: lambda { |options:, **| options.dig(:user_options, :show_response) }
         property :message,
           if: lambda { |options:, **| !options.dig(:user_options, :show_response) },
-          getter: lambda { |represented:, options:, **| PactBroker::Messages.message("messages.response_body_hidden", base_url: options.dig(:user_options, :base_url))  }
+          getter: lambda { |options:, **| PactBroker::Messages.message("messages.response_body_hidden", base_url: options.dig(:user_options, :base_url))  }
         property :logs
         property :success?, as: :success
 
