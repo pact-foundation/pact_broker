@@ -23,52 +23,74 @@ begin
   require "pact_broker/test/http_test_data_builder"
   base_url = ENV["PACT_BROKER_BASE_URL"] || "http://localhost:9292"
 
+  CONSUMER = "FooService"
+  PROVIDER = "BarService"
+
+  puts "THIS IS THE SCENARIO WITH THE PROBLEM"
+  puts ""
+  puts ""
+
   td = PactBroker::Test::HttpTestDataBuilder.new(base_url)
-  td.delete_pacticipant("foo-consumer-1")
-    .delete_pacticipant("foo-consumer-2")
-    .delete_pacticipant("bar-provider-1")
-    .delete_pacticipant("bar-provider-2")
-    .publish_pact_the_old_way(consumer: "foo-consumer-1", consumer_version: "1", provider: "bar-provider-1", content_id: "111", branch: "feat/x")
+  td.delete_pacticipant(CONSUMER)
+    .delete_pacticipant(PROVIDER)
+    .create_pacticipant(CONSUMER, main_branch: "main")
+    .publish_contract(consumer: CONSUMER, consumer_version: "2", provider: PROVIDER, content_id: "111", branch: "feature/fun-123")
     .get_pacts_for_verification(
+      provider: PROVIDER,
       enable_pending: true,
-      provider_version_branch: "main",
+      provider_version_branch: "feature/fun-123",
       include_wip_pacts_since: "2020-01-01",
-      consumer_version_selectors: [{ branch: "main" }]
+      consumer_version_selectors: [{ mainBranch: true }, { matchingBranch: true } , { deployedOrReleased: true }]
     )
     .verify_pact(
       index: 0,
-      provider_version_tag: "main",
-      provider_version: "1",
+      provider_version_branch: "feature/fun-123",
+      provider_version: "2",
       success: true
     )
-    .publish_pact_the_old_way(consumer: "foo-consumer-2", consumer_version: "1", provider: "bar-provider-1", content_id: "112", branch: "feat/y")
+    .can_i_deploy(pacticipant: PROVIDER, version: "2", to_environment: "test")
     .get_pacts_for_verification(
+      provider: PROVIDER,
       enable_pending: true,
       provider_version_branch: "main",
       include_wip_pacts_since: "2020-01-01",
-      consumer_version_selectors: [{ branch: "main" }]
+      consumer_version_selectors: [{ mainBranch: true }, { matchingBranch: true } , { deployedOrReleased: true }]
     )
-    .verify_pact(
-      index: 0,
-      provider_version_tag: "main",
-      provider_version: "1",
-      success: true
-    )
-    .publish_pact_the_old_way(consumer: "foo-consumer-2", consumer_version: "2", provider: "bar-provider-2", content_id: "113", branch: "feat/z")
-    .get_pacts_for_verification(
-      enable_pending: true,
-      provider_version_branch: "main",
-      include_wip_pacts_since: "2020-01-01",
-      consumer_version_selectors: [{ branch: "main" }]
-    )
-    .verify_pact(
-      index: 0,
-      provider_version_tag: "main",
-      provider_version: "1",
-      success: true
-    )
-    .deploy_to_prod(pacticipant: "foo-consumer-2", version: "2")
-    .can_i_deploy(pacticipant: "bar-provider-1", version: "1", to: "prod")
+
+    puts ""
+    puts ""
+    puts ""
+    puts ""
+    puts "THIS IS AN ALTERNATIVE APPROACH THAT KEEPS THE PACT WIP ON MAIN"
+    puts "The { matchingBranch: true } selector has been removed"
+    puts ""
+    puts ""
+
+    td.delete_pacticipant(CONSUMER)
+      .delete_pacticipant(PROVIDER)
+      .create_pacticipant(CONSUMER, main_branch: "main")
+      .publish_contract(consumer: CONSUMER, consumer_version: "2", provider: PROVIDER, content_id: "111", branch: "feature/fun-123")
+      .get_pacts_for_verification(
+        provider: PROVIDER,
+        enable_pending: true,
+        provider_version_branch: "feature/fun-123",
+        include_wip_pacts_since: "2020-01-01",
+        consumer_version_selectors: [{ mainBranch: true } , { deployedOrReleased: true }]
+      )
+      .verify_pact(
+        index: 0,
+        provider_version_branch: "feature/fun-123",
+        provider_version: "2",
+        success: true
+      )
+      .can_i_deploy(pacticipant: PROVIDER, version: "2", to_environment: "test")
+      .get_pacts_for_verification(
+        provider: PROVIDER,
+        enable_pending: true,
+        provider_version_branch: "main",
+        include_wip_pacts_since: "2020-01-01",
+        consumer_version_selectors: [{ mainBranch: true }, { deployedOrReleased: true }]
+      )
 
 rescue StandardError => e
   puts "#{e.class} #{e.message}"
