@@ -34,9 +34,10 @@ module PactBroker
       end
 
       describe DeprecatedPacticipantCollectionDecorator do
-        let(:options) { { user_options: { base_url: "http://example.org" } } }
+        let(:options) { { user_options: { base_url: base_url } } }
         let(:pacticipant) { PactBroker::Domain::Pacticipant.new(name: "Name", created_at: DateTime.new, updated_at: DateTime.new)}
         let(:pacticipants) { [pacticipant] }
+        let(:base_url) { "http://example.org" }
         let(:json) { DeprecatedPacticipantCollectionDecorator.new(pacticipants).to_json(**options) }
 
         subject { JSON.parse(json, symbolize_names: true) }
@@ -55,6 +56,15 @@ module PactBroker
 
         it "includes a deprecation warning in the non-embedded pacticipant title" do
           expect(subject[:pacticipants].first[:title]).to include "DEPRECATED"
+        end
+
+        it "passes in the options correctly (Representable does inconsistent things with the args of to_json and to_hash)" do
+          allow_any_instance_of(PactBroker::Api::PactBrokerUrls). to receive(:pacticipants_url) do | _instance, actual_base_url |
+            @actual_base_url = actual_base_url
+            ""
+          end
+          subject
+          expect(@actual_base_url).to eq base_url
         end
       end
     end

@@ -46,9 +46,9 @@ module PactBroker
 
       # TODO deprecate this - breaking change for v 3.0
       class DeprecatedPacticipantCollectionDecorator < PacticipantCollectionDecorator
-        def to_hash(*options, **kwargs)
+        def to_hash(options)
           embedded_pacticipant_hash = super
-          non_embedded_pacticipant_hash = NonEmbeddedPacticipantCollectionDecorator.new(represented).to_hash(*options, **kwargs)
+          non_embedded_pacticipant_hash = NonEmbeddedPacticipantCollectionDecorator.new(represented).to_hash(options)
           embedded_pacticipant_hash.merge(non_embedded_pacticipant_hash)
         end
       end
