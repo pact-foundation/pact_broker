@@ -106,9 +106,10 @@ module PactBroker
           }]
         end
 
-        def to_hash(*options, **kwargs)
+        # representable passes through the kwargs from to_json as normal args
+        def to_hash(options)
           h = super
-          dasherized = DasherizedVersionDecorator.new(represented).to_hash(*options, **kwargs)
+          dasherized = DasherizedVersionDecorator.new(represented).to_hash(options)
           if dasherized["_embedded"]
             if dasherized["_embedded"]["latest-version"]
               dasherized["_embedded"]["latest-version"]["title"] = "DEPRECATED - please use latestVersion"
