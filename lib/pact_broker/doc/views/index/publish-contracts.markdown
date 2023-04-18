@@ -33,7 +33,7 @@ This endpoint is designed to be used by a command line tool, and hence, the resp
 ### Success
 
 * `notices`
-  * `level`: one of `debug`, `info`, `warning`,`prompt`,`success`, `error`, `danger`
+  * `type`: one of `debug`, `info`, `warning`,`prompt`,`success`, `error`, `danger`
   * `text`: the text of the notice. This is designed to be displayed in the output of a CLI.
 
 The `_links` section will contain links to all the resources created by the publication. The relations are:
@@ -105,19 +105,19 @@ If there is a conflict with an existing published pact and `allow_dangerous_cont
       {
         "notices": [
           {
-            "level": "debug",
+            "type": "debug",
             "text": "Created Foo version dc5eb529230038a4673b8c971395bd2922d8b240 with branch main and tags main"
           },
           {
-            "level": "info",
+            "type": "info",
             "text": "Pact published for Foo version dc5eb529230038a4673b8c971395bd2922d8b240 and provider Bar."
           },
           {
-            "level": "debug",
+            "type": "debug",
             "text": "  Events detected: contract_published, contract_content_changed (first time any pact published for this consumer with consumer version tagged main)"
           },
           {
-            "level": "debug",
+            "type": "debug",
             "text": "  Webhook \"foo webhook\" triggered for event contract_content_changed.\n    See logs at http://example.org/triggered-webhooks/1234/logs\""
           }
         ],
