@@ -1,6 +1,8 @@
 require "webmachine/adapters/rack_mapped"
 require "pact_broker/string_refinements"
 
+Dry::Schema.load_extensions(:json_schema)
+
 module Webmachine
   class DescribeRoutes
     using PactBroker::StringRefinements
@@ -30,6 +32,10 @@ module Webmachine
 
       def route_param_names
         path_spec.select { | component | component.is_a?(Symbol) }
+      end
+
+      def json_schema_for(method)
+        schemas[method][:class].schema.json_schema
       end
 
       # Creates a Webmachine Resource for the given route for use in tests.
@@ -107,10 +113,9 @@ module Webmachine
 
     # This is not entirely accurate, because some GET requests have schemas too, but we can't tell that statically at the moment
     def self.schemas(allowed_methods, resource, path_info)
-      (allowed_methods - ["GET", "OPTIONS", "DELETE"]).collect do | http_method |
-        resource.new(dummy_request(http_method: http_method, path_info: path_info), Webmachine::Response.new).send(:schema)
-      end.uniq.collect do | schema_class |
-        {
+      (allowed_methods - ["OPTIONS", "DELETE"]).each_with_object({}) do | http_method, schemas_for_methods |
+        schema_class = resource.new(dummy_request(http_method: http_method, path_info: path_info), Webmachine::Response.new).send(:schema)
+        schemas_for_methods[http_method] = {
           class: schema_class,
           location: source_location_for(schema_class)
         }

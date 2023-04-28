@@ -21,7 +21,9 @@ module PactBroker
         private
 
         def schema
-          PactBroker::Api::Contracts::CanIDeployQuerySchema
+          if request.get?
+            PactBroker::Api::Contracts::CanIDeployQuerySchema
+          end
         end
 
         def parsed_query

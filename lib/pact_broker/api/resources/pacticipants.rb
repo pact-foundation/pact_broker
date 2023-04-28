@@ -69,7 +69,9 @@ module PactBroker
         private
 
         def schema
-          PactBroker::Api::Contracts::PacticipantCreateSchema
+          if request.post?
+            PactBroker::Api::Contracts::PacticipantCreateSchema
+          end
         end
 
         def pacticipants

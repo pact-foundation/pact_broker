@@ -57,7 +57,9 @@ module PactBroker
         private
 
         def schema
-          api_contract_class(:webhook_contract)
+          if request.post?
+            api_contract_class(:webhook_contract)
+          end
         end
 
         def consumer

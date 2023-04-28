@@ -119,7 +119,9 @@ module PactBroker
         end
 
         def schema
-          api_contract_class(:put_pact_params_contract)
+          if request.patch? || request.really_put?
+            api_contract_class(:put_pact_params_contract)
+          end
         end
       end
     end

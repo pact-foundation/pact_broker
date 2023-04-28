@@ -83,7 +83,9 @@ module PactBroker
         end
 
         def schema
-          PactBroker::Api::Contracts::PacticipantSchema
+          if request.patch? || request.really_put?
+            PactBroker::Api::Contracts::PacticipantSchema
+          end
         end
 
         def update_existing_pacticipant

@@ -69,7 +69,9 @@ module PactBroker
         end
 
         def schema
-          api_contract_class(:publish_contracts_schema)
+          if request.post?
+            api_contract_class(:publish_contracts_schema)
+          end
         end
 
         def decode_and_parse_content(contract)

@@ -68,7 +68,9 @@ module PactBroker
         end
 
         def schema
-          api_contract_class(:environment_schema)
+          if request.put?
+            api_contract_class(:environment_schema)
+          end
         end
       end
     end

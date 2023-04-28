@@ -78,7 +78,9 @@ module PactBroker
         end
 
         def schema
-          api_contract_class(:webhook_contract)
+          if request.put?
+            api_contract_class(:webhook_contract)
+          end
         end
 
         def uuid

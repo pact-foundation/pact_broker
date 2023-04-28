@@ -85,7 +85,9 @@ module PactBroker
         end
 
         def schema
-          PactBroker::Api::Contracts::VerificationContract
+          if request.post?
+            PactBroker::Api::Contracts::VerificationContract
+          end
         end
       end
     end
