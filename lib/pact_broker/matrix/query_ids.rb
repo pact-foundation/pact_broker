@@ -17,10 +17,10 @@ module PactBroker
 
       def self.from_selectors(selectors)
         most_specific_criteria = selectors.collect(&:most_specific_criterion)
-        all_pacticipant_ids = selectors.collect(&:pacticipant_id)
-        specified_pacticipant_ids = selectors.select(&:specified?).collect(&:pacticipant_id)
-        pacticipant_version_ids = collect_ids(most_specific_criteria, :pacticipant_version_id)
-        pacticipant_ids = collect_ids(most_specific_criteria, :pacticipant_id)
+        all_pacticipant_ids = selectors.collect(&:pacticipant_id).uniq
+        specified_pacticipant_ids = selectors.select(&:specified?).collect(&:pacticipant_id).uniq
+        pacticipant_version_ids = collect_ids(most_specific_criteria, :pacticipant_version_id).uniq
+        pacticipant_ids = collect_ids(most_specific_criteria, :pacticipant_id).uniq
         QueryIds.new(all_pacticipant_ids, specified_pacticipant_ids, pacticipant_ids, pacticipant_version_ids)
       end
 
