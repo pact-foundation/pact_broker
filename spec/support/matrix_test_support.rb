@@ -11,7 +11,7 @@ module PactBroker
 
       results.deployment_status_summary.reasons.each do | reason |
         puts reason
-        puts PactBroker::Api::Decorators::ReasonDecorator.new(reason).to_s
+        puts PactBroker::Api::Decorators::ReasonDecorator.new(reason)
       end
     end
   end
