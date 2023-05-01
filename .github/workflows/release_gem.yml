@@ -5,6 +5,19 @@ on:
     types:
       - release-triggered
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Provide custom version ONLY if the desired version cannot be determined from the commit history'
+        required: false
+      increment:
+        description: 'Provide custom increment ONLY if the desired version cannot be determined from the commit history'
+        required: false
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+          - pre
 
 jobs:
   release:
@@ -21,32 +34,34 @@ jobs:
     #   env:
     #     GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
     - id: release-gem
-      uses: pact-foundation/release-gem@v0.0.13
+      #uses: pact-foundation/release-gem@v0.0.13
       env:
         GEM_HOST_API_KEY: '${{ secrets.RUBYGEMS_API_KEY }}'
         GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-        INCREMENT: '${{ github.event.client_payload.increment }}'
+        INCREMENT: '${{ github.event.inputs.increment }}${{ github.event.client_payload.increment }}'
+        VERSION: '${{ github.event.inputs.version }}${{ github.event.client_payload.version }}'
+      run: env
     outputs:
       gem_name: "${{ steps.release-gem.outputs.gem_name }}"
       version: "${{ steps.release-gem.outputs.version }}"
       increment: "${{ steps.release-gem.outputs.increment }}"
 
-  notify-gem-released:
-    needs: release
-    strategy:
-      matrix:
-        repository: [pact-foundation/pact-broker-docker, pact-foundation/pact_broker]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Notify ${{ matrix.repository }} of gem release
-        uses: peter-evans/repository-dispatch@v2
-        with:
-          token: ${{ secrets.GHTOKENNOTIFYPBRELEASED }}
-          repository: ${{ matrix.repository }}
-          event-type: gem-released
-          client-payload: |
-              {
-                "name": "${{ needs.release.outputs.gem_name }}",
-                "version": "${{ needs.release.outputs.version }}",
-                "increment": "${{ needs.release.outputs.increment }}"
-              }
+  # notify-gem-released:
+  #   needs: release
+  #   strategy:
+  #     matrix:
+  #       repository: [pact-foundation/pact-broker-docker, pact-foundation/pact_broker]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Notify ${{ matrix.repository }} of gem release
+  #       uses: peter-evans/repository-dispatch@v2
+  #       with:
+  #         token: ${{ secrets.GHTOKENNOTIFYPBRELEASED }}
+  #         repository: ${{ matrix.repository }}
+  #         event-type: gem-released
+  #         client-payload: |
+  #             {
+  #               "name": "${{ needs.release.outputs.gem_name }}",
+  #               "version": "${{ needs.release.outputs.version }}",
+  #               "increment": "${{ needs.release.outputs.increment }}"
+  #             }
