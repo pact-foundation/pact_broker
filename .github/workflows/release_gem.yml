@@ -28,15 +28,8 @@ jobs:
     - uses: actions/checkout@v3
       with:
         fetch-depth: 0
-    # - name: 'Wait for status checks'
-    #   id: wait-for-status-checks
-    #   uses: "WyriHaximus/github-action-wait-for-status@v2"
-    #   with:
-    #     checkInterval: 15
-    #   env:
-    #     GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
     - id: release-gem
-      #uses: pact-foundation/release-gem@v0.0.13
+      uses: pact-foundation/release-gem@v0.0.13
       env:
         GEM_HOST_API_KEY: '${{ secrets.RUBYGEMS_API_KEY }}'
         GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
@@ -48,22 +41,22 @@ jobs:
       version: "${{ steps.release-gem.outputs.version }}"
       increment: "${{ steps.release-gem.outputs.increment }}"
 
-  # notify-gem-released:
-  #   needs: release
-  #   strategy:
-  #     matrix:
-  #       repository: [pact-foundation/pact-broker-docker, pact-foundation/pact_broker]
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Notify ${{ matrix.repository }} of gem release
-  #       uses: peter-evans/repository-dispatch@v2
-  #       with:
-  #         token: ${{ secrets.GHTOKENNOTIFYPBRELEASED }}
-  #         repository: ${{ matrix.repository }}
-  #         event-type: gem-released
-  #         client-payload: |
-  #             {
-  #               "name": "${{ needs.release.outputs.gem_name }}",
-  #               "version": "${{ needs.release.outputs.version }}",
-  #               "increment": "${{ needs.release.outputs.increment }}"
-  #             }
+  notify-gem-released:
+    needs: release
+    strategy:
+      matrix:
+        repository: [pact-foundation/pact-broker-docker, pact-foundation/pact_broker]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify ${{ matrix.repository }} of gem release
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.GHTOKENNOTIFYPBRELEASED }}
+          repository: ${{ matrix.repository }}
+          event-type: gem-released
+          client-payload: |
+              {
+                "name": "${{ needs.release.outputs.gem_name }}",
+                "version": "${{ needs.release.outputs.version }}",
+                "increment": "${{ needs.release.outputs.increment }}"
+              }
