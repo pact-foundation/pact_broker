@@ -12,8 +12,10 @@ on:
       increment:
         description: 'Provide custom increment ONLY if the desired version cannot be determined from the commit history'
         required: false
+        default: ""
         type: choice
         options:
+          - ""
           - patch
           - minor
           - major
