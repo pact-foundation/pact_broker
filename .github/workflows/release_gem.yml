@@ -5,6 +5,21 @@ on:
     types:
       - release-triggered
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Provide custom version ONLY if the desired version cannot be determined from the commit history'
+        required: false
+      increment:
+        description: 'Provide custom increment ONLY if the desired version cannot be determined from the commit history'
+        required: false
+        default: ""
+        type: choice
+        options:
+          - ""
+          - patch
+          - minor
+          - major
+          - pre
 
 jobs:
   release:
@@ -13,19 +28,13 @@ jobs:
     - uses: actions/checkout@v3
       with:
         fetch-depth: 0
-    # - name: 'Wait for status checks'
-    #   id: wait-for-status-checks
-    #   uses: "WyriHaximus/github-action-wait-for-status@v2"
-    #   with:
-    #     checkInterval: 15
-    #   env:
-    #     GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
     - id: release-gem
       uses: pact-foundation/release-gem@v0.0.13
       env:
         GEM_HOST_API_KEY: '${{ secrets.RUBYGEMS_API_KEY }}'
         GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-        INCREMENT: '${{ github.event.client_payload.increment }}'
+        INCREMENT: '${{ github.event.inputs.increment }}${{ github.event.client_payload.increment }}'
+        VERSION: '${{ github.event.inputs.version }}${{ github.event.client_payload.version }}'
     outputs:
       gem_name: "${{ steps.release-gem.outputs.gem_name }}"
       version: "${{ steps.release-gem.outputs.version }}"
