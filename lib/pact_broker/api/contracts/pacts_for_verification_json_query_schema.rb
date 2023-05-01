@@ -6,8 +6,6 @@ module PactBroker
   module Api
     module Contracts
       class PactsForVerificationJSONQuerySchema < BaseContract
-        include PactBroker::Logging
-
         json do
           optional(:providerVersionBranch).maybe(:string)
           optional(:providerVersionTags).maybe(:array?)
@@ -20,7 +18,7 @@ module PactBroker
         # providerVersionBranch at all (most likely unintentionally.)
         # When we added
         #   optional(:providerVersionBranch).filled(:string)
-        # during the dry-validation upgrade, we discovered that many users/pact clients were requesting pacts for verification
+        # during the dry-validation upgrade, we discovered that some users/pact clients were requesting pacts for verification
         # with an empty string in the providerVersionBranch
         # This complicated logic tries to not break those customers as much as possible, while still raising an error
         # when the blank string is most likely a configuration error
@@ -43,8 +41,7 @@ module PactBroker
             # There are no tags, the user specified wip or pending, and they set a branch, but the branch is an empty or blank string...
             if !tags&.any? && (wip || include_pending) && branch && ValidationHelpers.blank?(branch)
               # most likely a user error - return a message
-              #key.failure(validation_message("pacts_for_verification_selector_provider_version_branch_empty"))
-              logger.info("pacts_for_verification_empty_provider_version", values.data)
+              key.failure(validation_message("pacts_for_verification_selector_provider_version_branch_empty"))
             end
           end
 

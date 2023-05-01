@@ -106,7 +106,7 @@ en:
         pacts_for_verification_selector_deployed_and_released_disallowed: cannot specify both deployed=true and released=true
         pacts_for_verification_selector_deployed_and_deployed_or_released_disallowed: cannot specify both deployed=true and deployedOrReleased=true
         pacts_for_verification_selector_released_and_deployed_or_released_disallowed: cannot specify both released=true and deployedOrReleased=true
-        pacts_for_verification_selector_provider_version_branch_empty: when pending or WIP pacts are enabled and there are no tags provided, the provider version branch must not be an empty string (as this suggests it is a user error in configuration) - a value must be provided (recommended), or it must not be set at all
+        pacts_for_verification_selector_provider_version_branch_empty: when pending or WIP pacts are enabled and there are no tags provided, the provider version branch must not be an empty string, as it is used in the calculations for WIP/pending. A value must be provided (recommended), or it must not be set at all.
         pact_name_in_path_mismatch_name_in_pact: "name in pact '%{name_in_pact}' does not match name in URL path '%{name_in_path}'."
         base64: "is not valid Base64"
         non_utf_8_char_in_contract: "contract content has a non UTF-8 character at char %{char_number} and cannot be parsed as JSON. Fragment preceding invalid character is: '%{fragment}'"

@@ -22,6 +22,12 @@ module PactBroker
 
         subject { PactsForVerificationJSONQuerySchema.(params) }
 
+        context "when nothing is specified" do
+          let(:params) { {} }
+
+          it { is_expected.to be_empty }
+        end
+
         context "when the params are valid" do
           it "has no errors" do
             expect(subject).to eq({})
@@ -390,6 +396,130 @@ module PactBroker
           end
 
           its([:providerVersionBranch, 0]) { is_expected.to include "cannot be blank"}
+        end
+
+        context "when the providerVersionBranch is an empty string and there are tags provided" do
+          let(:params) do
+            {
+              providerVersionBranch: provider_version_branch,
+              consumerVersionSelectors: consumer_version_selectors,
+              providerVersionTags: provider_version_tags
+            }
+          end
+
+          let(:provider_version_branch) { "" }
+
+          it "does not have any errors because the original schema (before dry-validation upgrade) didn't have any validation for the providerVersionBranch and if we introduce it now, we'll break everyone's builds (we know because we did it :grimace:)" do
+            expect(subject).to be_empty
+          end
+        end
+
+        context "when the providerVersionBranch is an empty string" do
+          let(:params) do
+            {
+              providerVersionBranch: provider_version_branch,
+              consumerVersionSelectors: consumer_version_selectors,
+              includePendingStatus: include_pending_status,
+              includeWipPactsSince: include_wip_pacts_since,
+              providerVersionTags: provider_version_tags
+            }.compact
+          end
+
+          let(:include_pending_status) { false }
+          let(:include_wip_pacts_since) { nil }
+          let(:provider_version_tags) { nil }
+          let(:provider_version_branch) { "" }
+
+          context "when includePendingStatus is true" do
+            let(:include_pending_status) { true }
+
+            context "there are no tags provided" do
+              it "return an error because we need the branch or tags to properly calculate the pending status, and a blank string is most likely user error" do
+                expect(subject[:providerVersionBranch]).to_not be_empty
+              end
+            end
+
+            context "when the tags is an empty array" do
+              let(:provider_version_tags) { [] }
+
+              its([:providerVersionBranch]) { is_expected.to_not be_empty }
+            end
+
+            context "when the tags are provided" do
+              let(:provider_version_tags) { ["foo"] }
+
+              it { is_expected.to_not have_key(:providerVersionBranch) }
+            end
+          end
+
+          context "when includePendingStatus is false" do
+            it "does not return an error because we're not using the branch for anything anyway" do
+              expect(subject).to be_empty
+            end
+          end
+
+          context "when includeWipPactsSince is set" do
+            let(:include_wip_pacts_since) { "2020-01-01" }
+
+            context "there are no tags provided" do
+              it "return an error because we need the branch or tags to properly calculate the pending status, and a blank string is most likely user error" do
+                expect(subject[:providerVersionBranch]).to_not be_empty
+              end
+            end
+
+            context "when the tags is an empty array" do
+              let(:provider_version_tags) { [] }
+
+              its([:providerVersionBranch]) { is_expected.to_not be_empty }
+            end
+
+            context "when the tags are provided" do
+              let(:provider_version_tags) { ["foo"] }
+
+              it { is_expected.to_not have_key(:providerVersionBranch) }
+            end
+          end
+
+          context "when includeWipPactsSince is not set" do
+            it "does not return an error because we're not using the branch for anything anyway" do
+              expect(subject).to be_empty
+            end
+          end
+        end
+
+        context "when the providerVersionBranch is a space" do
+          let(:params) do
+            {
+              providerVersionBranch: provider_version_branch,
+              consumerVersionSelectors: consumer_version_selectors
+            }
+          end
+
+          let(:provider_version_branch) { " " }
+
+          it "does not allow it" do
+            expect(subject[:providerVersionBranch]).to_not be_empty
+          end
+        end
+
+        context "when mainBranch is true, and latest is false" do
+          let(:params) do
+            {
+              consumerVersionSelectors: [ { mainBranch: true, latest: false }]
+            }
+          end
+
+          its([:consumerVersionSelectors, 0]) { is_expected.to match("cannot specify") }
+        end
+
+        context "when mainBranch is true, and latest is true" do
+          let(:params) do
+            {
+              consumerVersionSelectors: [ { mainBranch: true, latest: true }]
+            }
+          end
+
+          it { is_expected.to_not have_key(:consumerVersionSelectors) }
         end
       end
     end
