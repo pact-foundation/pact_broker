@@ -1,3 +1,24 @@
+<a name="v2.107.0.beta.1"></a>
+### v2.107.0.beta.1 (2023-05-01)
+
+#### Features
+
+* add index to webhook_executions pact_publication_id column	 ([37d1a4cf](/../../commit/37d1a4cf))
+* update webmachine to support ruby 3	 ([9bb014e6](/../../commit/9bb014e6))
+* upgrade dry-validation gem in preparation for ruby 3 upgrade	 ([3b4b66bf](/../../commit/3b4b66bf))
+* restructure logs from DeleteOverwrittenData to match CleanIncremental	 ([f11a9417](/../../commit/f11a9417))
+* add branch_heads_branch_version_id_index	 ([b1b4cefb](/../../commit/b1b4cefb))
+
+#### Bug Fixes
+
+* **pacts for verification**
+  * do not allow empty string for provider version branch when it is required for calculating WIP/pending pacts	 ([412c4289](/../../commit/412c4289))
+
+* fix error raised when clean selectors include a selector with a max age and a selector with a max age and a branch	 ([53b171bd](/../../commit/53b171bd))
+
+* **can-i-deploy**
+  * correct logic for detecting when only the pacticipant name has been specified for a selector	 ([85bcdb35](/../../commit/85bcdb35))
+
 <a name="v2.106.0"></a>
 ### v2.106.0 (2023-01-31)
 
