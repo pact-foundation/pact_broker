@@ -35,7 +35,6 @@ jobs:
         GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
         INCREMENT: '${{ github.event.inputs.increment }}${{ github.event.client_payload.increment }}'
         VERSION: '${{ github.event.inputs.version }}${{ github.event.client_payload.version }}'
-      run: env
     outputs:
       gem_name: "${{ steps.release-gem.outputs.gem_name }}"
       version: "${{ steps.release-gem.outputs.version }}"
