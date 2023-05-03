@@ -1,3 +1,10 @@
+<a name="v2.107.1"></a>
+### v2.107.1 (2023-05-02)
+
+#### Bug Fixes
+
+* add missing require in migration	 ([6b540235](/../../commit/6b540235))
+
 <a name="v2.107.0"></a>
 ### v2.107.0 (2023-05-02)
 
