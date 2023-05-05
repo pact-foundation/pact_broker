@@ -30,7 +30,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        postgres_docker_image_tag: ["14", "9.6"]
+        postgres_docker_image_tag: ["15", "14", "9.6"]
     steps:
       - uses: actions/checkout@v3
       - run: script/test/run-rake-on-docker-compose-postgres.sh
