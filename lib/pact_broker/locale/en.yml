@@ -89,6 +89,7 @@ en:
         environment_with_name_not_found: "Environment with name '%{name}' does not exist"
         cannot_modify_version_branch: "The branch for a pacticipant version cannot be changed once set (currently '%{old_branch}', proposed value '%{new_branch}'). Your pact publication/verification publication configurations may be in conflict with each other if you are seeing this error. If the current branch value is incorrect, you must delete the pacticipant version resource at %{version_url} and publish the pacts/verification results again with a consistent branch name."
         invalid_content_for_content_type: "content could not be parsed as %{content_type}"
+        invalid_parsed_contract_class: "parsed content was expected to be a Hash but was a %{actual_class}"
         cannot_set_currently_deployed_true: The currentlyDeployed property cannot be set back to true. Please record a new deployment.
         cannot_set_currently_supported_true: The currentlySupported property cannot be set back to true. Please record a new deployment.
         invalid_limit: The limit must be 1 or greater.

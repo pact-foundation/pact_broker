@@ -125,6 +125,12 @@ module PactBroker
           its([:contracts, 0]) { is_expected.to include "blank" }
         end
 
+        context "when the contract has been successfully JSON parsed to an object that is not a hash" do
+          let(:decoded_parsed_content) { "contract" }
+
+          its([:contracts, 0]) { is_expected.to eq "parsed content was expected to be a Hash but was a String (at index 0)" }
+        end
+
         context "when the consumer name is missing and there is a validation error with the content" do
           let(:params) do
             JSON.parse(File.read("spec/fixtures/invalid-publish-contract-body.json"), symbolize_names: true)
