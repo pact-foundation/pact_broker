@@ -28,6 +28,10 @@ Lint/AssignmentInCondition:
   StyleGuide: 'https://github.com/bbatsov/ruby-style-guide#safe-assignment-in-condition'
   Enabled: true
 
+Lint/RedundantConditional:
+  Description: "Don't use redundant conditionals"
+  Enabled: true
+
 Layout/BlockAlignment:
   Description: 'Align block ends correctly.'
   Enabled: true
