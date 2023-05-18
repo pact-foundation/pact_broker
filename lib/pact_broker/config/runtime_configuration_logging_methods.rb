@@ -28,7 +28,7 @@ module PactBroker
           (self.class.config_attributes - [:base_url]).collect(&:to_s).each_with_object({})do | key, new_hash |
             new_hash[key] = {
               value: self.send(key.to_sym),
-              source: source_info.dig(key, :source) || {:type=>:defaults}
+              source: source_info.dig(key, :source) || source_info.dig(key) || { type: :defaults }
             }
           end.sort_by { |key, _| key }.each { |key, value| log_config_inner(key, value, logger) }
           if self.webhook_redact_sensitive_data == false
