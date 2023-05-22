@@ -107,10 +107,18 @@ module PactBroker
           end
         end
 
-        context "with both the list format and the hash format" do
-          it "blows up (can't work out how to make these two work together)" do
+        context "with the list env var defined first and the individual env vars defined last" do
+          it "uses the individual env vars" do
             with_env("PACT_BROKER_FEATURES" => "feat1 feat2 feat3", "PACT_BROKER_FEATURES__FEAT4" => "true", "PACT_BROKER_FEATURES__FEAT5" => "false") do
-              expect { RuntimeConfiguration.new }.to raise_error IndexError
+              expect(RuntimeConfiguration.new.features).to eq feat4: true, feat5: false
+            end
+          end
+        end
+
+        context "with the individual env vars defined first and the list env var defined last" do
+          it "uses the list env var" do
+            with_env("PACT_BROKER_FEATURES__FEAT4" => "true", "PACT_BROKER_FEATURES__FEAT5" => "false", "PACT_BROKER_FEATURES" => "feat1 feat2 feat3") do
+              expect(RuntimeConfiguration.new.features).to eq feat1: true, feat2: true, feat3: true
             end
           end
         end
