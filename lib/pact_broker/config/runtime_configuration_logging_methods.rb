@@ -25,16 +25,19 @@ module PactBroker
         # base_url raises a not implemented error
         def log_configuration(logger)
           source_info = to_source_trace
-          (self.class.config_attributes - [:base_url]).collect(&:to_s).each_with_object({})do | key, new_hash |
+          attributes_to_log.collect(&:to_s).each_with_object({}) do | key, new_hash |
             new_hash[key] = {
               value: self.send(key.to_sym),
               source: source_info.dig(key, :source) || source_info.dig(key) || { type: :defaults }
             }
           end.sort_by { |key, _| key }.each { |key, value| log_config_inner(key, value, logger) }
-          if self.webhook_redact_sensitive_data == false
-            logger.warn("WARNING!!! webhook_redact_sensitive_data is set to false. This will allow authentication information to be included in the webhook logs. This should only be used for debugging purposes. Do not run the application permanently in production with this value.")
-          end
+          print_warnings
         end
+
+        def attributes_to_log
+          self.class.config_attributes - [:base_url]
+        end
+        private :attributes_to_log
 
         def log_config_inner(key, value, logger)
           # TODO fix the source display for webhook_certificates set by environment variables
@@ -68,6 +71,13 @@ module PactBroker
           end
         end
         private :redact
+
+        def print_warnings
+          if self.webhook_redact_sensitive_data == false
+            logger.warn("WARNING!!! webhook_redact_sensitive_data is set to false. This will allow authentication information to be included in the webhook logs. This should only be used for debugging purposes. Do not run the application permanently in production with this value.")
+          end
+        end
+        private :print_warnings
       end
 
       def self.included(receiver)
