@@ -31,6 +31,8 @@ module PactBroker
       include RuntimeConfigurationDatabaseMethods
       include RuntimeConfigurationBasicAuthMethods
 
+      config_name :pact_broker
+
       # logging attributes
       attr_config(
         log_dir: File.expand_path("./log"),
@@ -91,7 +93,7 @@ module PactBroker
         allow_dangerous_contract_modification: false,
         semver_formats: ["%M.%m.%p%s%d", "%M.%m", "%M"],
         seed_example_data: true,
-        features: []
+        features: {}
       )
 
       def self.getter_and_setter_method_names
@@ -105,8 +107,19 @@ module PactBroker
         config_attributes + config_attributes.collect{ |k| "#{k}=".to_sym } + extra_methods  - [:base_url]
       end
 
-      config_name :pact_broker
+      COERCE_FEATURES = lambda { | value |
+        if value.is_a?(String)
+          value.split(" ").each_with_object({}) { | k, h | h[k.downcase.to_sym] = true }
+        elsif value.is_a?(Array)
+          value.each_with_object({}) { | k, h | h[k.downcase.to_sym] = true }
+        elsif value.is_a?(Hash)
+          value.each_with_object({}) { | (k, v), new_hash | new_hash[k.downcase.to_sym] = Anyway::AutoCast.call(v) }
+        else
+          raise_validation_error("Expected a String, Hash or Array for features but got a #{value.class.name}")
+        end
+      }
 
+      coerce_types(features: COERCE_FEATURES)
       sensitive_values(:database_url, :database_password)
 
       def log_level= log_level
@@ -177,10 +190,6 @@ module PactBroker
 
       def main_branch_candidates= main_branch_candidates
         super(value_to_string_array(main_branch_candidates, "main_branch_candidates"))
-      end
-
-      def features= features
-        super(value_to_string_array(features, "features").collect(&:downcase))
       end
 
       def rack_protection_use= rack_protection_use

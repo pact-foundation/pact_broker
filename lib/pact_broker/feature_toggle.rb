@@ -15,7 +15,7 @@ module PactBroker
     end
 
     def self.feature_in_env_var?(feature)
-      PactBroker.configuration.features.include?(feature.to_s.downcase)
+      PactBroker.configuration.features[feature.to_s.downcase.to_sym] == true
     end
   end
 
