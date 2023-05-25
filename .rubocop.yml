@@ -28,7 +28,7 @@ Lint/AssignmentInCondition:
   StyleGuide: 'https://github.com/bbatsov/ruby-style-guide#safe-assignment-in-condition'
   Enabled: true
 
-Lint/RedundantConditional:
+Style/RedundantConditional:
   Description: "Don't use redundant conditionals"
   Enabled: true
 
