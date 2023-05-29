@@ -5,6 +5,18 @@ module PactBroker
   module Config
     module RuntimeConfigurationCoercionMethods
 
+      COERCE_FEATURES = lambda { | value |
+        if value.is_a?(String)
+          value.split(" ").each_with_object({}) { | k, h | h[k.downcase.to_sym] = true }
+        elsif value.is_a?(Array)
+          value.each_with_object({}) { | k, h | h[k.downcase.to_sym] = true }
+        elsif value.is_a?(Hash)
+          value.each_with_object({}) { | (k, v), new_hash | new_hash[k.downcase.to_sym] = Anyway::AutoCast.call(v) }
+        else
+          raise PactBroker::ConfigurationError, "Expected a String, Hash or Array for features but got a #{value.class.name}"
+        end
+      }
+
       def all_keys_are_number_strings?(hash)
         hash.keys.all? { | k | k.to_s.to_i.to_s == k } # is an integer as a string
       end
