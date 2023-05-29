@@ -107,18 +107,6 @@ module PactBroker
         config_attributes + config_attributes.collect{ |k| "#{k}=".to_sym } + extra_methods  - [:base_url]
       end
 
-      COERCE_FEATURES = lambda { | value |
-        if value.is_a?(String)
-          value.split(" ").each_with_object({}) { | k, h | h[k.downcase.to_sym] = true }
-        elsif value.is_a?(Array)
-          value.each_with_object({}) { | k, h | h[k.downcase.to_sym] = true }
-        elsif value.is_a?(Hash)
-          value.each_with_object({}) { | (k, v), new_hash | new_hash[k.downcase.to_sym] = Anyway::AutoCast.call(v) }
-        else
-          raise_validation_error("Expected a String, Hash or Array for features but got a #{value.class.name}")
-        end
-      }
-
       coerce_types(features: COERCE_FEATURES)
       sensitive_values(:database_url, :database_password)
 
