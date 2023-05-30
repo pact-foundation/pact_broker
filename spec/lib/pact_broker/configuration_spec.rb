@@ -38,38 +38,44 @@ module PactBroker
     describe "override_runtime_configuration!" do
       let(:logger) { double("logger", debug?: true, debug: nil, warn: nil) }
 
-      let(:duped_config) { PactBroker.configuration.dup }
+      let(:config) { PactBroker.configuration.dup }
 
-      it "overrides the specified runtime configuration attributes within the block" do
-        duped_config.override_runtime_configuration!(disable_ssl_verification: "true")
-        expect(duped_config.disable_ssl_verification).to eq true
+      it "overrides the specified runtime configuration attributes" do
+        config.override_runtime_configuration!(disable_ssl_verification: "true")
+        expect(config.disable_ssl_verification).to eq true
         expect(PactBroker.configuration.disable_ssl_verification).to eq false
       end
 
       it "logs the overrides at debug level" do
-        allow(duped_config).to receive(:logger).and_return(logger)
+        allow(config).to receive(:logger).and_return(logger)
         expect(logger).to receive(:debug).with("Overridding runtime configuration", hash_including(overrides: { disable_ssl_verification: true }))
-        duped_config.override_runtime_configuration!(disable_ssl_verification: "true")
+        config.override_runtime_configuration!(disable_ssl_verification: "true")
       end
 
-      it "does not override the other runtime configuration attributes within the block" do
-        attribute_in_block = PactBroker.configuration.webhook_scheme_whitelist
-        duped_config.override_runtime_configuration!(disable_ssl_verification: "true")
-        expect(duped_config.webhook_scheme_whitelist).to eq attribute_in_block
+      it "does not override the other runtime configuration attributes" do
+        expect { config.override_runtime_configuration!(disable_ssl_verification: "true") }.to_not change { config.webhook_scheme_whitelist }
       end
 
       context "when the specified runtime attribute does not exist" do
         it "logs that it has ignored those attributes" do
-          allow(duped_config).to receive(:logger).and_return(logger)
+          allow(config).to receive(:logger).and_return(logger)
           expect(logger).to receive(:debug).with("Overridding runtime configuration", hash_including(ignoring: { no_existy: true }))
-          duped_config.override_runtime_configuration!(no_existy: "true")
+          config.override_runtime_configuration!(no_existy: "true")
+        end
+      end
+
+      context "when overriding config items that are hashes" do
+        it "merges them" do
+          config.features = { feat_a: true, feat_b: false }
+          config.override_runtime_configuration!(features: { feat_a: false, feat_c: true })
+          expect(config.features).to eq feat_a: false, feat_b: false, feat_c: true
         end
       end
 
       context "when the configuration is frozen" do
         it "raises an error" do
-          duped_config.freeze
-          expect { duped_config.override_runtime_configuration!(disable_ssl_verification: "true") }.to raise_error FrozenError
+          config.freeze
+          expect { config.override_runtime_configuration!(disable_ssl_verification: "true") }.to raise_error FrozenError
         end
       end
     end
