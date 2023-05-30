@@ -82,23 +82,14 @@ module PactBroker
 
     def override_runtime_configuration!(overrides)
       new_runtime_configuration = runtime_configuration.dup
-      valid_overrides = {}
-      invalid_overrides = {}
-
-      overrides.each do | key, value |
-        if new_runtime_configuration.respond_to?("#{key}=")
-          valid_overrides[key] = Anyway::AutoCast.call(value)
-        else
-          invalid_overrides[key] = Anyway::AutoCast.call(value)
-        end
-      end
+      valid_overrides, invalid_overrides = identify_valid_and_invalid_configuration_overrides(new_runtime_configuration, overrides)
 
       if logger.debug?
         logger.debug("Overridding runtime configuration", overrides: valid_overrides, ignoring: invalid_overrides)
       end
 
       valid_overrides.each do | key, value |
-        new_runtime_configuration.public_send("#{key}=", value)
+        override_or_merge_value(new_runtime_configuration, key, value)
       end
 
       self.runtime_configuration = new_runtime_configuration
@@ -219,6 +210,32 @@ module PactBroker
       # Can't require a Sequel::Model class before the connection has been set
       require "pact_broker/config/load"
       PactBroker::Config::Load.call(runtime_configuration)
+    end
+
+    private
+
+    def identify_valid_and_invalid_configuration_overrides(new_runtime_configuration, overrides)
+      valid_overrides = {}
+      invalid_overrides = {}
+
+      overrides.each do | key, value |
+        if new_runtime_configuration.respond_to?("#{key}=")
+          valid_overrides[key] = Anyway::AutoCast.call(value)
+        else
+          invalid_overrides[key] = Anyway::AutoCast.call(value)
+        end
+      end
+
+      return valid_overrides, invalid_overrides
+    end
+
+    def override_or_merge_value(new_runtime_configuration, key, value)
+      # Do a merge if original value and new value are both hashes
+      if value.is_a?(Hash) && new_runtime_configuration.public_send(key).is_a?(Hash)
+        new_runtime_configuration.public_send("#{key}=", new_runtime_configuration.public_send(key).merge(value))
+      else
+        new_runtime_configuration.public_send("#{key}=", value)
+      end
     end
   end
 end

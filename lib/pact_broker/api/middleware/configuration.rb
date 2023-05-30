@@ -1,5 +1,7 @@
 require "pact_broker/logging"
 
+# Allows the load-time configuration to be overridden on a per-request basis (for Pactflow)
+
 module PactBroker
   module Api
     module Middleware
