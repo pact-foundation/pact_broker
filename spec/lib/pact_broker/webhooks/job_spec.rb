@@ -14,7 +14,8 @@ module PactBroker
       end
 
       let(:base_url) { "http://broker" }
-      let(:triggered_webhook) { instance_double("PactBroker::Webhooks::TriggeredWebhook", webhook_uuid: "1234", id: 1) }
+      let(:triggered_webhook) { instance_double("PactBroker::Webhooks::TriggeredWebhook", webhook_uuid: "1234", id: 1, webhook: webhook) }
+      let(:webhook) { double("webhook") }
       let(:result) { instance_double("PactBroker::Domain::WebhookExecutionResult", success?: success) }
       let(:webhook_execution_configuration) do
         instance_double(PactBroker::Webhooks::ExecutionConfiguration, retry_schedule: retry_schedule, to_hash: webhook_execution_configuration_hash)
@@ -172,7 +173,7 @@ module PactBroker
         end
       end
 
-      context "when the webhook gets deleted between executions" do
+      context "when the triggered webhook gets deleted between executions" do
         before do
           allow(PactBroker::Webhooks::TriggeredWebhook).to receive(:find).and_return(nil)
         end
@@ -180,6 +181,26 @@ module PactBroker
         it "does not reschedule the job" do
           expect(Job).to_not receive(:perform_in)
           expect(logger).to receive(:info).with(/Could not find webhook with id: 1/)
+          subject
+        end
+      end
+
+      context "when the webhook gets deleted between executions" do
+        let(:webhook) { nil }
+
+        it "updates the triggered_webhook status to 'failure'" do
+          expect(PactBroker::Webhooks::Service).to receive(:update_triggered_webhook_status)
+            .with(triggered_webhook, TriggeredWebhook::STATUS_FAILURE)
+          subject
+        end
+
+        it "logs a message" do
+          expect(logger).to receive(:info).with("Webhook with uuid 1234 cannot be executed it has been deleted. Marking triggered webhook as failed.")
+          subject
+        end
+
+        it "does not reschedule the job" do
+          expect(Job).to_not receive(:perform_in)
           subject
         end
       end
