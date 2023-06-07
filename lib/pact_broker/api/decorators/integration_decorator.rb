@@ -15,8 +15,6 @@ module PactBroker
           property :name
         end
 
-        property :verificationStatus, getter: ->(represented:, **) { represented.verification_status_for_latest_pact.to_s }
-
         link "pb:dashboard" do | options |
           {
             title: "BETA: Pacts to show on the dashboard",
