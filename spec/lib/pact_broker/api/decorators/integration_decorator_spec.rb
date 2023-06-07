@@ -31,7 +31,6 @@ module PactBroker
             "provider" => {
               "name" => "the provider"
             },
-            "verificationStatus" => "some_status",
             "_links" => {
               "pb:dashboard" => {
                 "href" => "/dashboard"
