@@ -36,11 +36,15 @@ module PactBroker
       def perform_with_triggered_webhook
         @error_count = data[:error_count] || 0
         begin
-          webhook_execution_result = PactBroker::Webhooks::TriggerService.execute_triggered_webhook_now(triggered_webhook, webhook_options(data))
-          if webhook_execution_result.success?
-            handle_success
+          if triggered_webhook.webhook
+            webhook_execution_result = PactBroker::Webhooks::TriggerService.execute_triggered_webhook_now(triggered_webhook, webhook_options(data))
+            if webhook_execution_result.success?
+              handle_success
+            else
+              handle_failure
+            end
           else
-            handle_failure
+            handle_webhook_deleted
           end
         rescue StandardError => e
           handle_error e
@@ -73,17 +77,22 @@ module PactBroker
       end
 
       def handle_success
-        update_triggered_webhook_status TriggeredWebhook::STATUS_SUCCESS
+        update_triggered_webhook_status(TriggeredWebhook::STATUS_SUCCESS)
       end
 
       def handle_failure
         if reschedule_job?
           reschedule_job
-          update_triggered_webhook_status TriggeredWebhook::STATUS_RETRYING
+          update_triggered_webhook_status(TriggeredWebhook::STATUS_RETRYING)
         else
           logger.info "Failed to execute webhook #{triggered_webhook.webhook_uuid} after #{retry_schedule.size + 1} attempts."
-          update_triggered_webhook_status TriggeredWebhook::STATUS_FAILURE
+          update_triggered_webhook_status(TriggeredWebhook::STATUS_FAILURE)
         end
+      end
+
+      def handle_webhook_deleted
+        logger.info("Webhook with uuid #{triggered_webhook.webhook_uuid} cannot be executed it has been deleted. Marking triggered webhook as failed.")
+        update_triggered_webhook_status(TriggeredWebhook::STATUS_FAILURE)
       end
 
       def reschedule_job?
