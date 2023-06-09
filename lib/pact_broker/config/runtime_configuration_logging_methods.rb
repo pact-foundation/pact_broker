@@ -31,7 +31,7 @@ module PactBroker
               source: source_info.dig(key, :source) || source_info.dig(key) || { type: :defaults }
             }
           end.sort_by { |key, _| key }.each { |key, value| log_config_inner(key, value, logger) }
-          print_warnings
+          print_warnings(logger)
         end
 
         def attributes_to_log
@@ -72,7 +72,7 @@ module PactBroker
         end
         private :redact
 
-        def print_warnings
+        def print_warnings(logger)
           if self.webhook_redact_sensitive_data == false
             logger.warn("WARNING!!! webhook_redact_sensitive_data is set to false. This will allow authentication information to be included in the webhook logs. This should only be used for debugging purposes. Do not run the application permanently in production with this value.")
           end
