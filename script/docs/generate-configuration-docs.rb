@@ -26,7 +26,7 @@ def escape_backticks value
 end
 
 def in_backticks value
-  if value =~ /\s\(.+\)/
+  if value.is_a?(String) && value =~ /\s\(.+\)/
     "`#{escape_backticks(value)}".gsub(" (", "` (")
   else
     "`#{escape_backticks(value)}`"
