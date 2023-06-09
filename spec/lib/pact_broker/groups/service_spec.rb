@@ -46,7 +46,7 @@ module PactBroker
         context "when a max_pacticipants is specified" do
           subject  { Service.find_group_containing(app_b, max_pacticipants: 2) }
 
-          it "returns stops before reaching the end of the group" do
+          it "stops searching before reaching the end of the group" do
             expect(subject.size).to eq 1
             expect(subject).to include(have_attributes(consumer_name: "app b", provider_name: "app y"))
           end

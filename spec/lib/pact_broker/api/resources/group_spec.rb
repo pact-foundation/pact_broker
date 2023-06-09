@@ -23,7 +23,7 @@ module PactBroker::Api
           allow(decorator).to receive(:to_csv).and_return(csv)
         end
 
-        subject { get "/groups/Some%20Service", "", {"HTTP_X_My_App_Version" => "2"} }
+        subject { get "/groups/Some%20Service", "", { "HTTP_X_My_App_Version" => "2" } }
 
         context "when the pacticipant exists" do
 
@@ -58,7 +58,7 @@ module PactBroker::Api
           end
 
           context "when maxPacticipants is specified" do
-            subject { get "/groups/Some%20Service", { "maxPacticipants" => "30" }, {"HTTP_X_My_App_Version" => "2"} }
+            subject { get "/groups/Some%20Service", { "maxPacticipants" => "30" }, { "HTTP_X_My_App_Version" => "2" } }
 
             it "finds the group containing the pacticipant" do
               expect(PactBroker::Groups::Service).to receive(:find_group_containing).with(pacticipant, max_pacticipants: 30)
