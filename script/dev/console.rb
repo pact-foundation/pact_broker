@@ -36,6 +36,7 @@ database_opts = {
 puts "Connecting to #{database_connection_string}"
 connection = Sequel.connect(database_connection_string, database_opts)
 connection.timezone = :utc
+connection.extension(:pagination)
 
 require "pact_broker"
 require "pact_broker/db"
