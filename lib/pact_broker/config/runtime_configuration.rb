@@ -93,7 +93,7 @@ module PactBroker
         allow_dangerous_contract_modification: false,
         semver_formats: ["%M.%m.%p%s%d", "%M.%m", "%M"],
         seed_example_data: true,
-        network_diagram_max_pacticipants: 40,
+        network_diagram_max_pacticipants: 150,
         features: {}
       )
 
