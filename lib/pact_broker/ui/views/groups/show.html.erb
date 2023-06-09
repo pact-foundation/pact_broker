@@ -329,8 +329,9 @@ window.onload = function() {
         .attr("d","M 10 0 L 10 10 L 0 5 z")
         .attr("fill", "#A0A0A0");
 
+    const maxPacticipants = new URL(location).searchParams.get("maxPacticipants") || <%= max_pacticipants %>;
 
-    d3.text("<%= csv_path %>", "text/csv", function(unparsedData) {
+    d3.text(`<%= csv_path %>?maxPacticipants=${maxPacticipants}`, "text/csv", function(unparsedData) {
         var data=d3.csv.parseRows(unparsedData);
         pacticipants = parseCSV(data);
         pacticipantNameArray = getPacticipantNames(pacticipants);

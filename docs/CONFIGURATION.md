@@ -666,6 +666,16 @@ The maximum amount of time in seconds to attempt to generate the diff between tw
 **YAML configuration key name:** `pact_content_diff_timeout`<br/>
 **Default:** `15`<br/>
 
+### network_diagram_max_pacticipants
+
+The maximum number of pacticipants to include in the network diagram. When too many pacticipants are included, the diagram becomes unreadable,
+and at large numbers, the graph will not render due to browser performance issues.
+
+**Environment variable name:** `PACT_BROKER_NETWORK_DIAGRAM_MAX_PACTICIPANTS`<br/>
+**YAML configuration key name:** `network_diagram_max_pacticipants`<br/>
+**Default:** `150`<br/>
+**Allowed values:** A positive integer<br/>
+
 <br/>
 
 ## Miscellaneous

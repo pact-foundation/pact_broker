@@ -33,7 +33,7 @@ module PactBroker::Api
           end
 
           it "finds the group containing the pacticipant" do
-            expect(PactBroker::Groups::Service).to receive(:find_group_containing).with(pacticipant)
+            expect(PactBroker::Groups::Service).to receive(:find_group_containing).with(pacticipant, max_pacticipants: nil)
             subject
           end
 
@@ -55,6 +55,15 @@ module PactBroker::Api
           it "returns a CSV of pacticipants that are in the same group as the given pacticipant" do
             subject
             expect(last_response.body).to eq csv
+          end
+
+          context "when maxPacticipants is specified" do
+            subject { get "/groups/Some%20Service", { "maxPacticipants" => "30" }, {"HTTP_X_My_App_Version" => "2"} }
+
+            it "finds the group containing the pacticipant" do
+              expect(PactBroker::Groups::Service).to receive(:find_group_containing).with(pacticipant, max_pacticipants: 30)
+              subject
+            end
           end
         end
 
