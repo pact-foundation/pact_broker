@@ -93,6 +93,7 @@ module PactBroker
         allow_dangerous_contract_modification: false,
         semver_formats: ["%M.%m.%p%s%d", "%M.%m", "%M"],
         seed_example_data: true,
+        network_diagram_max_pacticipants: 150,
         features: {}
       )
 
@@ -107,7 +108,10 @@ module PactBroker
         config_attributes + config_attributes.collect{ |k| "#{k}=".to_sym } + extra_methods  - [:base_url]
       end
 
-      coerce_types(features: COERCE_FEATURES)
+      coerce_types(
+        features: COERCE_FEATURES,
+        network_diagram_max_pacticipants: :integer
+      )
       sensitive_values(:database_url, :database_password)
 
       def log_level= log_level
