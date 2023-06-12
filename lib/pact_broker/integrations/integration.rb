@@ -75,6 +75,12 @@ module PactBroker
         end
       end)
 
+      dataset_module do
+        def including_pacticipant_id(pacticipant_id)
+          where(consumer_id: pacticipant_id).or(provider_id: pacticipant_id)
+        end
+      end
+
       def self.compare_by_last_action_date a, b
         if b.latest_pact_or_verification_publication_date && a.latest_pact_or_verification_publication_date
           b.latest_pact_or_verification_publication_date <=> a.latest_pact_or_verification_publication_date
@@ -110,6 +116,10 @@ module PactBroker
 
       def provider_name
         provider.name
+      end
+
+      def pacticipant_ids
+        [consumer_id, provider_id]
       end
     end
   end

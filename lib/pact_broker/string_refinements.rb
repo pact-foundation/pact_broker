@@ -37,6 +37,10 @@ module PactBroker
     end
 
     refine String do
+      def integer?
+        self =~ /^\d+$/
+      end
+
       def present?
         !blank?
       end

@@ -460,6 +460,12 @@ groups:
           The maximum amount of time in seconds to attempt to generate the diff between two pacts before aborting the request. This is required due to performance issues in the underlying diff generation code.
         default_value: 15
         supported_versions: From 2.99.0
+      network_diagram_max_pacticipants:
+        description: |-
+          The maximum number of pacticipants to include in the network diagram. When too many pacticipants are included, the diagram becomes unreadable,
+          and at large numbers, the graph will not render due to browser performance issues.
+        default_value: 150
+        allowed_values_description: A positive integer
   - title: Miscellaneous
     vars:
       features:
