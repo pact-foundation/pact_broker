@@ -103,6 +103,14 @@ module PactBroker
         it "returns the pacticipants with the given label" do
           expect(subject.collect(&:name)).to eq ["Bar", "Foo"]
         end
+
+        context "with search query" do
+          subject { Repository.new.find query_string: "wif" }
+
+          it "returns the pacticipants with the given label" do
+            expect(subject.collect(&:name)).to eq ["Wiffle"]
+          end
+        end
       end
 
       describe "#find_by_name" do

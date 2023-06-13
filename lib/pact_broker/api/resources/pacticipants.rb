@@ -12,7 +12,6 @@ module PactBroker
         using PactBroker::HashRefinements
         include PaginationMethods
 
-
         def content_types_provided
           [["application/hal+json", :to_json]]
         end
@@ -47,7 +46,7 @@ module PactBroker
         end
 
         def to_json
-          generate_json(pacticipant_service.find_all_pacticipants(pagination_options))
+          generate_json(pacticipant_service.find_all_pacticipants(filter_options, pagination_options))
         end
 
         def generate_json pacticipants
@@ -72,8 +71,12 @@ module PactBroker
           PactBroker::Api::Contracts::PacticipantCreateSchema
         end
 
-        def pacticipants
-          @pacticipants ||= pacticipant_service.find_all_pacticipants
+        def filter_options
+          if (request.query.has_key?("q"))
+            { query_string: request.query["q"] }
+          else
+            {}
+          end
         end
       end
     end

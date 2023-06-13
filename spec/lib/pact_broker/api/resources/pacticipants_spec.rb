@@ -5,6 +5,39 @@ module PactBroker
   module Api
     module Resources
       describe Pacticipants do
+        describe "GET" do
+          let(:query) do
+            {
+              "pageSize" => "10",
+              "pageNumber" => "1",
+              "q" => "search"
+            }
+          end
+          let(:headers) do
+            {
+              "HTTP_ACCEPT" => "application/hal+json",
+            }
+          end
+          let(:pacticipants) {
+            [
+              PactBroker::Domain::Pacticipant.new(name: "Pacticipant 1"),
+              PactBroker::Domain::Pacticipant.new(name: "Pacticipant 2"),
+            ]
+          }
+
+          before do
+            allow(PactBroker::Pacticipants::Service).to receive(:find_all_pacticipants).and_return(pacticipants)
+          end
+
+          subject { get("/pacticipants", query, headers) }
+          it "returns the pacticipants" do
+            expect(PactBroker::Pacticipants::Service).to receive(:find_all_pacticipants).
+              with({ :query_string => "search" }, { :page_number => 1, :page_size => 10 }).
+              and_return(pacticipants)
+            expect(subject.status).to eq 200
+          end
+        end
+
         describe "POST" do
           let(:params) { { name: "New Consumer" } }
           let(:request_body) { params.to_json }
