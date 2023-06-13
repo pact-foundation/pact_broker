@@ -4,39 +4,10 @@ require "pact_broker/repositories/helpers"
 require "pact_broker/domain/label"
 require "pact_broker/string_refinements"
 require "pact_broker/pacticipants/generate_display_name"
+require "pact_broker/pacticipants/latest_version_for_pacticipant_eager_loader"
 
 module PactBroker
   module Domain
-    class LatestVersionForPacticipantEagerLoader
-      def self.call(eo, **_other)
-        populate_associations(eo[:rows])
-      end
-
-      def self.populate_associations(pacticipants)
-        pacticipants.each { | pacticipant | pacticipant.associations[:latest_version] = nil }
-        pacticipant_ids = pacticipants.collect(&:id)
-
-        max_orders = PactBroker::Domain::Version
-                      .where(pacticipant_id: pacticipant_ids)
-                      .select_group(:pacticipant_id)
-                      .select_append { max(order).as(latest_order) }
-
-        max_orders_join = {
-          Sequel[:max_orders][:latest_order] => Sequel[:versions][:order],
-          Sequel[:max_orders][:pacticipant_id] => Sequel[:versions][:pacticipant_id]
-        }
-
-        latest_versions = PactBroker::Domain::Version
-                            .select_all_qualified
-                            .join(max_orders, max_orders_join, { table_alias: :max_orders})
-
-        latest_versions.each do | version |
-          pacticipant = pacticipants.find{ | p | p.id == version.pacticipant_id }
-          pacticipant.associations[:latest_version] = version
-        end
-      end
-    end
-
     class Pacticipant < Sequel::Model
 
       include Messages
@@ -55,7 +26,7 @@ module PactBroker
       one_to_one :latest_version, :class => "PactBroker::Domain::Version",
         primary_key: :id, key: :pacticipant_id,
         dataset: lambda { PactBroker::Domain::Version.where(pacticipant_id: id).order(Sequel.desc(:order)).limit(1) },
-        eager_loader: LatestVersionForPacticipantEagerLoader
+        eager_loader: PactBroker::Pacticipants::LatestVersionForPacticipantEagerLoader
 
       one_to_many :branch_heads, class: "PactBroker::Versions::BranchHead", primary_key: :id, key: :pacticipant_id
       one_to_many :branches, class: "PactBroker::Versions::Branch", primary_key: :id, key: :pacticipant_id
