@@ -35,12 +35,13 @@ module PactBroker
         PactBroker::Domain::Pacticipant.where(id: id).single_record
       end
 
-      def find_all(pagination_options = {})
-        find({}, pagination_options)
+      def find_all(options = {}, pagination_options = {})
+        find(options, pagination_options)
       end
 
       def find(options = {}, pagination_options = {})
         query = scope_for(PactBroker::Domain::Pacticipant).select_all_qualified
+        query = query.where(Sequel.ilike(:name, "%#{options[:query_string].gsub("_", "\\_")}%")) if options[:query_string]
         query = query.label(options[:label_name]) if options[:label_name]
         query.order_ignore_case(Sequel[:pacticipants][:name]).eager(:labels).eager(:latest_version).all_with_pagination_options(pagination_options)
       end
