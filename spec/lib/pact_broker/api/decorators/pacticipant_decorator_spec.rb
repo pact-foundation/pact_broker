@@ -6,6 +6,12 @@ module PactBroker
   module Api
     module Decorators
       describe PacticipantDecorator do
+        describe ".eager_load_associations" do
+          subject { PacticipantDecorator }
+
+          its(:eager_load_associations) { is_expected.to eq [:labels, :latest_version] }
+        end
+
         describe "from_json" do
           let(:pacticipant) { OpenStruct.new }
           let(:decorator) { PacticipantDecorator.new(pacticipant) }
@@ -21,6 +27,7 @@ module PactBroker
           its(:name) { is_expected.to eq "Foo" }
           its(:main_branch) { is_expected.to eq "main" }
         end
+
         describe "to_json" do
           let(:pacticipant) do
             td.create_pacticipant("Name")

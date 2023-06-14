@@ -14,8 +14,8 @@ module PactBroker
 
         include PaginationLinks
 
-        def self.eager_loading_associations
-          PactBroker::Api::Decorators::PacticipantDecorator.eager_loading_associations
+        def self.eager_load_associations
+          PactBroker::Api::Decorators::PacticipantDecorator.eager_load_associations
         end
 
         link :self do | options |

@@ -46,7 +46,7 @@ module PactBroker
         end
 
         def to_json
-          generate_json(pacticipant_service.find_all_pacticipants(filter_options, pagination_options, eager_loading_associations))
+          generate_json(pacticipant_service.find_all_pacticipants(filter_options, pagination_options, eager_load_associations))
         end
 
         def generate_json pacticipants
@@ -71,8 +71,8 @@ module PactBroker
           PactBroker::Api::Contracts::PacticipantCreateSchema
         end
 
-        def eager_loading_associations
-          decorator_class(:deprecated_pacticipants_decorator).eager_loading_associations
+        def eager_load_associations
+          decorator_class(:deprecated_pacticipants_decorator).eager_load_associations
         end
 
         def filter_options
