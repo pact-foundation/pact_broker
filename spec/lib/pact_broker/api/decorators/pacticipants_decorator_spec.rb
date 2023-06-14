@@ -1,14 +1,14 @@
 require "spec_helper"
-require "pact_broker/api/decorators/pacticipant_collection_decorator"
+require "pact_broker/api/decorators/pacticipants_decorator"
 require "pact_broker/domain/pacticipant"
 
 module PactBroker
   module Api
     module Decorators
-      describe PacticipantCollectionDecorator do
+      describe PacticipantsDecorator do
         let(:options) { {user_options: {base_url: "http://example.org"} } }
         let(:pacticipants) { [] }
-        let(:json) { PacticipantCollectionDecorator.new(pacticipants).to_json(**options) }
+        let(:json) { PacticipantsDecorator.new(pacticipants).to_json(**options) }
 
         subject { JSON.parse json, symbolize_names: true }
 
@@ -33,12 +33,12 @@ module PactBroker
         end
       end
 
-      describe DeprecatedPacticipantCollectionDecorator do
+      describe DeprecatedPacticipantsDecorator do
         let(:options) { { user_options: { base_url: base_url } } }
         let(:pacticipant) { PactBroker::Domain::Pacticipant.new(name: "Name", created_at: DateTime.new, updated_at: DateTime.new)}
         let(:pacticipants) { [pacticipant] }
         let(:base_url) { "http://example.org" }
-        let(:json) { DeprecatedPacticipantCollectionDecorator.new(pacticipants).to_json(**options) }
+        let(:json) { DeprecatedPacticipantsDecorator.new(pacticipants).to_json(**options) }
 
         subject { JSON.parse(json, symbolize_names: true) }
 

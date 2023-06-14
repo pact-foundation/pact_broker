@@ -8,7 +8,7 @@ require "pact_broker/api/decorators/pacticipant_decorator"
 module PactBroker
   module Api
     module Decorators
-      class PacticipantCollectionDecorator < BaseDecorator
+      class PacticipantsDecorator < BaseDecorator
 
         collection :entries, :as => :pacticipants, :class => PactBroker::Domain::Pacticipant, :extend => PactBroker::Api::Decorators::PacticipantDecorator, embedded: true
 
@@ -31,12 +31,12 @@ module PactBroker
         end
 
         links :'pb:pacticipants' do | options |
-          represented.collect{ | pacticipant | {:href => pacticipant_url(options[:base_url], pacticipant), title: "Pacticipant", name: pacticipant.name } }
+          represented.collect{ | pacticipant | { href: pacticipant_url(options[:base_url], pacticipant), title: "Pacticipant", name: pacticipant.name } }
         end
 
         # TODO deprecate in v3
         links :pacticipants do | options |
-          represented.collect{ | pacticipant | {:href => pacticipant_url(options[:base_url], pacticipant), :title => pacticipant.name, name: "DEPRECATED - please use pb:pacticipants" } }
+          represented.collect{ | pacticipant | { href: pacticipant_url(options[:base_url], pacticipant), :title => pacticipant.name, name: "DEPRECATED - please use pb:pacticipants" } }
         end
       end
 
@@ -49,7 +49,7 @@ module PactBroker
       end
 
       # TODO deprecate this - breaking change for v 3.0
-      class DeprecatedPacticipantCollectionDecorator < PacticipantCollectionDecorator
+      class DeprecatedPacticipantsDecorator < PacticipantsDecorator
         def to_hash(options)
           embedded_pacticipant_hash = super
           non_embedded_pacticipant_hash = NonEmbeddedPacticipantCollectionDecorator.new(represented).to_hash(options)

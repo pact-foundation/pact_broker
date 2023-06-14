@@ -50,7 +50,7 @@ module PactBroker
         end
 
         def generate_json pacticipants
-          decorator_class(:deprecated_pacticipant_collection_decorator).new(pacticipants).to_json(**decorator_options)
+          decorator_class(:deprecated_pacticipants_decorator).new(pacticipants).to_json(**decorator_options)
         end
 
         def decorator_for model
@@ -72,7 +72,7 @@ module PactBroker
         end
 
         def eager_loading_associations
-          decorator_class(:deprecated_pacticipant_collection_decorator).eager_loading_associations
+          decorator_class(:deprecated_pacticipants_decorator).eager_loading_associations
         end
 
         def filter_options

@@ -36,7 +36,7 @@ module PactBroker
               with(
                 { :query_string => "search" },
                 { :page_number => 1, :page_size => 10 },
-                PactBroker::Api::Decorators::DeprecatedPacticipantCollectionDecorator.eager_loading_associations
+                PactBroker::Api::Decorators::DeprecatedPacticipantsDecorator.eager_loading_associations
               ).
               and_return(pacticipants)
             expect(subject.status).to eq 200

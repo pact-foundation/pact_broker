@@ -1,5 +1,5 @@
 require "pact_broker/api/resources/base_resource"
-require "pact_broker/api/decorators/pacticipant_collection_decorator"
+require "pact_broker/api/decorators/pacticipants_decorator"
 
 module PactBroker
   module Api
@@ -19,7 +19,7 @@ module PactBroker
         end
 
         def generate_json pacticipants
-          decorator_class(:pacticipant_collection_decorator).new(pacticipants).to_json(**decorator_options)
+          decorator_class(:pacticipants_decorator).new(pacticipants).to_json(**decorator_options)
         end
 
         def policy_name
