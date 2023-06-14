@@ -19,6 +19,10 @@ module PactBroker
           @camelize = true
         end
 
+        def self.eager_load_associations
+          representable_attrs.values.select{ | attr| attr[:collection] || attr[:embedded] }.collect{ |attr| attr[:name].to_sym }
+        end
+
         def self.property(name, options={}, &block)
           if options.delete(:camelize) || @camelize
             camelized_name = name.to_s.camelcase(false).to_sym

@@ -27,7 +27,7 @@ module PactBroker
         # The associations that should be eager loaded on the Pacticipant so that this
         # decorator can be used without any extra calls to the database.
         # @return Array<Symbol>
-        def self.eager_loading_associations
+        def self.eager_load_associations
           [:labels, :latest_version]
         end
 
