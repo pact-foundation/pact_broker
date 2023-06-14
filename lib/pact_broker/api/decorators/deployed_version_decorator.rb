@@ -11,12 +11,13 @@ module PactBroker
         property :currently_deployed, camelize: true
         property :target, camelize: true # deprecated
         property :applicationInstance, getter: lambda { |_| target }
-        include Timestamps
         property :undeployedAt, getter: lambda { |_|  undeployed_at ? FormatDateTime.call(undeployed_at) : nil }, writeable: false
 
         property :pacticipant, :extend => EmbeddedPacticipantDecorator, writeable: false, embedded: true
         property :version, :extend => EmbeddedVersionDecorator, writeable: false, embedded: true
         property :environment, :extend => EnvironmentDecorator, writeable: false, embedded: true
+
+        include Timestamps
 
         link :self do | user_options |
           {

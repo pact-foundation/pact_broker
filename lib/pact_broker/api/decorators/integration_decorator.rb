@@ -7,10 +7,12 @@ module PactBroker
       class IntegrationDecorator < BaseDecorator
         include PactBroker::Api::PactBrokerUrls
 
+        # TODO should be embedded in v3
         property :consumer do
           property :name
         end
 
+        # TODO should be embedded in v3
         property :provider do
           property :name
         end

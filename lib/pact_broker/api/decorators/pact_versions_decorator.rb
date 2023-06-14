@@ -5,7 +5,6 @@ module PactBroker
   module Api
     module Decorators
       class PactVersionsDecorator < BaseDecorator
-
         collection :entries, as: :pacts, embedded: true, :extend => PactBroker::Api::Decorators::PactVersionDecorator
 
         link :self do | context |

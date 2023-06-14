@@ -6,7 +6,6 @@ require_relative "triggered_webhook_decorator"
 module PactBroker
   module Api
     module Decorators
-
       class PactWebhooksStatusDecorator < BaseDecorator
 
         property :summary, exec_context: :decorator do
