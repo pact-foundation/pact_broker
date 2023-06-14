@@ -25,6 +25,13 @@ module PactBroker
 
         include Timestamps
 
+        # The associations that should be eager loaded on the Pacticipant so that this
+        # decorator can be used without any extra calls to the database.
+        # @return Array<Symbol>
+        def self.eager_loading_associations
+          [:labels, :latest_version]
+        end
+
         link :self do | options |
           pacticipant_url(options[:base_url], represented)
         end

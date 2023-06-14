@@ -14,6 +14,10 @@ module PactBroker
 
         include PaginationLinks
 
+        def self.eager_loading_associations
+          PactBroker::Api::Decorators::PacticipantDecorator.eager_loading_associations
+        end
+
         link :self do | options |
           pacticipants_url options[:base_url]
         end
