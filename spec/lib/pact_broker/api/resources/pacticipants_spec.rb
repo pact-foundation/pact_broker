@@ -30,9 +30,14 @@ module PactBroker
           end
 
           subject { get("/pacticipants", query, headers) }
+
           it "returns the pacticipants" do
             expect(PactBroker::Pacticipants::Service).to receive(:find_all_pacticipants).
-              with({ :query_string => "search" }, { :page_number => 1, :page_size => 10 }).
+              with(
+                { :query_string => "search" },
+                { :page_number => 1, :page_size => 10 },
+                PactBroker::Api::Decorators::DeprecatedPacticipantCollectionDecorator.eager_loading_associations
+              ).
               and_return(pacticipants)
             expect(subject.status).to eq 200
           end
