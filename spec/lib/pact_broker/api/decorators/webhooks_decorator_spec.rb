@@ -1,4 +1,3 @@
-require "spec_helper"
 require "pact_broker/api/decorators/webhooks_decorator"
 
 module PactBroker

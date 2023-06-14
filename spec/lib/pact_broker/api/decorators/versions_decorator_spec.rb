@@ -1,4 +1,3 @@
-require "spec_helper"
 require "pact_broker/api/decorators/versions_decorator"
 require "pact_broker/domain/version"
 

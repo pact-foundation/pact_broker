@@ -1,4 +1,3 @@
-require "spec_helper"
 require "pact_broker/webhooks/service"
 require "pact_broker/webhooks/triggered_webhook"
 require "pact_broker/webhooks/webhook_event"

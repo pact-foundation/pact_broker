@@ -1,4 +1,3 @@
-require "spec_helper"
 require "pact/doc/markdown/index_renderer"
 
 module Pact

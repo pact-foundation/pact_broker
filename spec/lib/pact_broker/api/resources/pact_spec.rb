@@ -1,4 +1,3 @@
-require "spec_helper"
 require "pact_broker/api/resources/pact"
 require "rack/test"
 require "pact_broker/pacts/service"

@@ -1,4 +1,3 @@
-require "spec_helper"
 require "pact_broker/ui/view_models/index_item"
 require "pact_broker/domain/index_item"
 

@@ -1,4 +1,3 @@
-require "spec_helper"
 require "pact/doc/markdown/consumer_contract_renderer"
 require "pact/support"
 

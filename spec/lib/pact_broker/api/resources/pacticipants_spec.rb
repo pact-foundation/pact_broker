@@ -1,4 +1,3 @@
-require "spec_helper"
 require "pact_broker/api/resources/pacticipants"
 
 module PactBroker

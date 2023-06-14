@@ -1,4 +1,3 @@
-require "spec_helper"
 require "pact_broker/api/decorators/latest_pact_decorator"
 
 module PactBroker

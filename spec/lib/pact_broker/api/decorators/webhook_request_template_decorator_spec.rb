@@ -1,4 +1,3 @@
-require "spec_helper"
 require "pact_broker/api/decorators/webhook_request_template_decorator"
 require "json"
 
