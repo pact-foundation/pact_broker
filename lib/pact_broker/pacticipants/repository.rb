@@ -35,15 +35,15 @@ module PactBroker
         PactBroker::Domain::Pacticipant.where(id: id).single_record
       end
 
-      def find_all(options = {}, pagination_options = {})
-        find(options, pagination_options)
+      def find_all(options = {}, pagination_options = {}, eager_load_associations = [])
+        find(options, pagination_options, eager_load_associations)
       end
 
-      def find(options = {}, pagination_options = {})
+      def find(options = {}, pagination_options = {}, eager_load_associations = [])
         query = scope_for(PactBroker::Domain::Pacticipant).select_all_qualified
         query = query.where(Sequel.ilike(:name, "%#{options[:query_string].gsub("_", "\\_")}%")) if options[:query_string]
         query = query.label(options[:label_name]) if options[:label_name]
-        query.order_ignore_case(Sequel[:pacticipants][:name]).eager(:labels).eager(:latest_version).all_with_pagination_options(pagination_options)
+        query.order_ignore_case(Sequel[:pacticipants][:name]).eager(*eager_load_associations).all_with_pagination_options(pagination_options)
       end
 
       def find_by_name_or_create name
