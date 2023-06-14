@@ -1,4 +1,3 @@
-require "spec_helper"
 require "pact_broker/build_http_options"
 
 module PactBroker

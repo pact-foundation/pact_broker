@@ -1,4 +1,3 @@
-require "spec_helper"
 require "pact_broker/pacts/diff"
 require "pact_broker/pacts/pact_params"
 

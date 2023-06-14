@@ -1,4 +1,3 @@
-require "spec_helper"
 require "pact_broker/ui/controllers/clusters"
 require "rack/test"
 

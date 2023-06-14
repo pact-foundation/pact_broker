@@ -1,4 +1,3 @@
-require "spec_helper"
 require "spec/support/test_data_builder"
 require "pact_broker/domain/order_versions.rb"
 

@@ -1,4 +1,3 @@
-require "spec_helper"
 require "pact_broker/api/decorators/embedded_version_decorator"
 
 module PactBroker

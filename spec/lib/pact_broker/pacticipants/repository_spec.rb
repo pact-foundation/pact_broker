@@ -1,4 +1,3 @@
-require "spec_helper"
 require "pact_broker/pacticipants/repository"
 require "support/test_data_builder"
 
