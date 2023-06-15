@@ -1,4 +1,3 @@
-require "pact_broker/db"
 require "pact_broker/json"
 require "pact_broker/pacts/content"
 

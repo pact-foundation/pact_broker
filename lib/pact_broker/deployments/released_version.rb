@@ -1,5 +1,4 @@
-require "sequel"
-require "pact_broker/repositories/helpers"
+require "pact_broker/dataset"
 
 module PactBroker
   module Deployments
@@ -14,7 +13,7 @@ module PactBroker
       plugin :insert_ignore, identifying_columns: [:version_id, :environment_id]
 
       dataset_module do
-        include PactBroker::Repositories::Helpers
+        include PactBroker::Dataset
 
         def currently_supported
           where(support_ended_at: nil)

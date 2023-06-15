@@ -1,5 +1,4 @@
-require "pact_broker/db"
-require "pact_broker/repositories/helpers"
+require "pact_broker/dataset"
 require "pact_broker/tags/eager_loaders"
 
 module PactBroker
@@ -24,7 +23,7 @@ module PactBroker
         eager_loader: PactBroker::Tags::EagerLoaders::HeadTag
 
       dataset_module do
-        include PactBroker::Repositories::Helpers
+        include PactBroker::Dataset
 
         def join_pact_publications
           join(:pact_publications, { Sequel[:tags][:version_id] => Sequel[:pact_publications][:consumer_version_id] } )

@@ -1,6 +1,4 @@
-require "sequel"
-require "pact_broker/db"
-require "pact_broker/repositories/helpers"
+require "pact_broker/dataset"
 
 module PactBroker
   module Webhooks
@@ -15,11 +13,9 @@ module PactBroker
       set_primary_key :id
       plugin :timestamps
 
-      dataset_module do
-        include PactBroker::Repositories::Helpers
-      end
-
       associate(:many_to_one, :triggered_webhook, :class => "PactBroker::Webhooks::TriggeredWebhook", :key => :triggered_webhook_id, :primary_key => :id)
+
+      dataset_module(PactBroker::Dataset)
 
       def <=> other
         comp = created_date <=> other.created_date

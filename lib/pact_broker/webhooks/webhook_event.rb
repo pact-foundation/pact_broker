@@ -1,5 +1,4 @@
-require "sequel"
-require "pact_broker/repositories/helpers"
+require "pact_broker/dataset"
 
 module PactBroker
   module Webhooks
@@ -17,9 +16,7 @@ module PactBroker
 
       EVENT_NAMES = [CONTRACT_PUBLISHED, CONTRACT_CONTENT_CHANGED, VERIFICATION_PUBLISHED, VERIFICATION_SUCCEEDED, VERIFICATION_FAILED, CONTRACT_REQUIRING_VERIFICATION_PUBLISHED]
 
-      dataset_module do
-        include PactBroker::Repositories::Helpers
-      end
+      dataset_module(PactBroker::Dataset)
 
       def contract_published?
         name == CONTRACT_PUBLISHED

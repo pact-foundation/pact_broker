@@ -1,4 +1,3 @@
-require "sequel"
 require "pact_broker/logging"
 require "pact_broker/domain/version"
 require "pact_broker/tags/repository"

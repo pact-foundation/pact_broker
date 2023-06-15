@@ -1,5 +1,4 @@
-require "pact_broker/db"
-require "pact_broker/repositories/helpers"
+require "pact_broker/dataset"
 
 module PactBroker
   module Versions
@@ -11,9 +10,7 @@ module PactBroker
       associate(:many_to_one, :pacticipant, :class => "PactBroker::Domain::Pacticipant", :key => :pacticipant_id, :primary_key => :id)
       associate(:one_to_many, :branch_versions, :class => "PactBroker::Versions::BranchVersion", :key => :branch_id, :primary_key => :id)
 
-      dataset_module do
-        include PactBroker::Repositories::Helpers
-      end
+      dataset_module(PactBroker::Dataset)
     end
   end
 end

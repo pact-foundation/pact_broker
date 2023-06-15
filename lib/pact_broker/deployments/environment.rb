@@ -1,6 +1,4 @@
-require "sequel"
 require "sequel/plugins/serialization"
-
 
 module PactBroker
   module Deployments

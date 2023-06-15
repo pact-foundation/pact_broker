@@ -1,6 +1,5 @@
+require "pact_broker/dataset"
 require "json"
-require "sequel"
-require "pact_broker/repositories/helpers"
 require "pact_broker/tags/tag_with_latest_flag"
 require "pact_broker/pacts/content"
 require "sequel/extensions/symbol_aref_refinement"
@@ -27,7 +26,7 @@ module PactBroker
       end
 
       dataset_module do
-        include PactBroker::Repositories::Helpers
+        include PactBroker::Dataset
 
         def for_provider_name(provider_name)
           where(provider: PactBroker::Domain::Pacticipant.find_by_name(provider_name))

@@ -1,6 +1,5 @@
-require "pact_broker/db"
+require "pact_broker/dataset"
 require "pact_broker/domain/order_versions"
-require "pact_broker/repositories/helpers"
 require "pact_broker/tags/tag_with_latest_flag"
 require "pact_broker/versions/eager_loaders"
 
@@ -51,7 +50,7 @@ module PactBroker
         eager_loader: PactBroker::Versions::EagerLoaders::LatestVersionForPacticipant
 
       dataset_module do
-        include PactBroker::Repositories::Helpers
+        include PactBroker::Dataset
 
         def with_branch
           where(id: PactBroker::Versions::BranchVersion.select(:version_id))

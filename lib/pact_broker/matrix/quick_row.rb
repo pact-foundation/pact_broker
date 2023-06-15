@@ -1,7 +1,5 @@
-require "pact_broker/repositories/helpers"
+require "pact_broker/dataset"
 require "pact_broker/matrix/query_builder"
-require "sequel"
-require "pact_broker/repositories/helpers"
 require "pact_broker/logging"
 require "pact_broker/pacts/pact_version"
 require "pact_broker/domain/pacticipant"
@@ -85,7 +83,7 @@ module PactBroker
       associate(:one_to_many, :provider_version_tags, :class => "PactBroker::Tags::TagWithLatestFlag", primary_key: :provider_version_id, key: :version_id)
 
       dataset_module do
-        include PactBroker::Repositories::Helpers
+        include PactBroker::Dataset
 
         select(*SELECT_ALL_COLUMN_ARGS)
         select(*SELECT_PACTICIPANT_IDS_ARGS)

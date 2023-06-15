@@ -1,4 +1,4 @@
-require "pact_broker/repositories/helpers"
+require "pact_broker/dataset"
 
 module PactBroker
   module Pacts
@@ -7,9 +7,7 @@ module PactBroker
       unrestrict_primary_key
       plugin :upsert, identifying_columns: [:provider_id, :consumer_version_id]
 
-      dataset_module do
-        include PactBroker::Repositories::Helpers
-      end
+      dataset_module PactBroker::Dataset
     end
   end
 end

@@ -1,6 +1,3 @@
-require "sequel"
-require "pact_broker/repositories/helpers"
-
 module PactBroker
   module Verifications
     class Sequence < Sequel::Model(:verification_sequence_number)

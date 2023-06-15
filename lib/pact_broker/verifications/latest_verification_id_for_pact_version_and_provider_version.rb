@@ -1,4 +1,4 @@
-require "pact_broker/domain/verification"
+require "pact_broker/dataset"
 
 module PactBroker
   module Verifications
@@ -8,9 +8,7 @@ module PactBroker
 
       plugin :upsert, identifying_columns: [:pact_version_id, :provider_version_id]
 
-      dataset_module do
-        include PactBroker::Repositories::Helpers
-      end
+      dataset_module(PactBroker::Dataset)
     end
   end
 end
