@@ -30,6 +30,7 @@ module PactBroker
           .eager(:latest_verification)
           .all
           .sort { | a, b| Integration.compare_by_last_action_date(a, b) }
+      end
 
       # Callback to invoke when a consumer contract, verification result (or provider contract in Pactflow) is published
       # @param [PactBroker::Domain::Pacticipant] consumer or nil
