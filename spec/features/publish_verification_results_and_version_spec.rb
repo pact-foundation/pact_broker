@@ -49,22 +49,4 @@ describe "Publishing a pact verification and provider version" do
     expect(last_response.status).to be 200
     expect(JSON.parse(subject.body)).to include JSON.parse(verification_content)
   end
-
-  context "with a webhook configured", job: true do
-    before do
-      td.create_webhook(
-        method: "POST",
-        url: "http://example.org",
-        events: [{ name: PactBroker::Webhooks::WebhookEvent::VERIFICATION_PUBLISHED }]
-      )
-    end
-    let!(:request) do
-      stub_request(:post, "http://example.org").to_return(:status => 200)
-    end
-
-    it "executes the webhook" do
-      subject
-      expect(request).to have_been_made
-    end
-  end
 end

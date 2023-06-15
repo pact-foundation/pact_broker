@@ -23,6 +23,12 @@ module Webmachine
   end
 end
 
+# Not sure where to put this - it's a global subscription
+require "pact_broker/events/subscriber"
+require "pact_broker/integrations/event_listener"
+
+PactBroker::Events.subscribe(PactBroker::Integrations::EventListener.new)
+
 module PactBroker
   # rubocop: disable Metrics/MethodLength
   def self.build_api(application_context = PactBroker::ApplicationContext.default_application_context)

@@ -6,7 +6,7 @@ require "pact_broker/verifications/latest_verification_for_consumer_and_provider
 
 module PactBroker
   module Integrations
-    class Integration < Sequel::Model(Sequel::Model.db[:integrations].select(:id, :consumer_id, :provider_id))
+    class Integration < Sequel::Model(Sequel::Model.db[:integrations].select(:id, :consumer_id, :provider_id, :contract_data_updated_at))
       set_primary_key :id
       plugin :insert_ignore, identifying_columns: [:consumer_id, :provider_id]
       associate(:many_to_one, :consumer, :class => "PactBroker::Domain::Pacticipant", :key => :consumer_id, :primary_key => :id)
