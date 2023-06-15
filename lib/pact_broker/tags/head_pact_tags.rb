@@ -1,12 +1,9 @@
-require "pact_broker/db"
-require "pact_broker/repositories/helpers"
+require "pact_broker/dataset"
 
 module PactBroker
   module Tags
     class HeadPactTag < Sequel::Model
-      dataset_module do
-        include PactBroker::Repositories::Helpers
-      end
+      dataset_module(PactBroker::Dataset)
     end
   end
 end

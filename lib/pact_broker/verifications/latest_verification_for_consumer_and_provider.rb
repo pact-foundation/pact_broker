@@ -2,9 +2,6 @@ require "pact_broker/domain/verification"
 
 module PactBroker
   module Verifications
-
-    include PactBroker::Repositories::Helpers
-
     class LatestVerificationForConsumerAndProvider < PactBroker::Domain::Verification
       set_dataset(:latest_verifications_for_consumer_and_provider)
 

@@ -1,6 +1,3 @@
-require "pact_broker/db"
-require "pact_broker/repositories/helpers"
-
 module PactBroker
   module Versions
     class BranchVersion < Sequel::Model(:branch_versions)

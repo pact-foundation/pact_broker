@@ -1,5 +1,4 @@
-require "sequel"
-require "pact_broker/repositories/helpers"
+require "pact_broker/dataset"
 require "pact_broker/webhooks/execution"
 require "pact_broker/hash_refinements"
 
@@ -23,7 +22,7 @@ module PactBroker
       STATUS_FAILURE = "failure".freeze
 
       dataset_module do
-        include PactBroker::Repositories::Helpers
+        include PactBroker::Dataset
 
         def delete
           require "pact_broker/webhooks/execution"

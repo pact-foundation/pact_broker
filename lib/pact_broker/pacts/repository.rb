@@ -1,4 +1,3 @@
-require "sequel"
 require "ostruct"
 require "pact_broker/logging"
 require "pact_broker/pacts/generate_sha"

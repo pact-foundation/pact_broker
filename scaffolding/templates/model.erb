@@ -1,5 +1,5 @@
 require "sequel"
-require "pact_broker/repositories/helpers"
+require "pact_broker/dataset"
 
 module <%= model_top_module %>
   module <%= model_secondary_module %>
@@ -7,7 +7,7 @@ module <%= model_top_module %>
       plugin :timestamps, update_on_create: true
 
       dataset_module do
-        include PactBroker::Repositories::Helpers
+        include PactBroker::Dataset
       end
     end
   end

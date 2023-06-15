@@ -1,5 +1,3 @@
-require "sequel"
-
 module PactBroker
   module Versions
     class Sequence < Sequel::Model(:version_sequence_number)

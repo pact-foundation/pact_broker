@@ -1,7 +1,7 @@
 require "forwardable"
+require "pact_broker/dataset"
 require "pact_broker/domain/pact"
 require "pact_broker/pacts/pact_version"
-require "pact_broker/repositories/helpers"
 require "pact_broker/integrations/integration"
 require "pact_broker/tags/head_pact_tags"
 require "pact_broker/pacts/pact_publication_dataset_module"
@@ -52,7 +52,7 @@ module PactBroker
       plugin :timestamps, update_on_create: true
 
       dataset_module do
-        include PactBroker::Repositories::Helpers
+        include PactBroker::Dataset
         include PactPublicationDatasetModule
         include PactPublicationCleanSelectorDatasetModule
         include PactPublicationWipDatasetModule

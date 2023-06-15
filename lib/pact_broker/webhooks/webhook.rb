@@ -1,4 +1,4 @@
-require "sequel"
+require "pact_broker/dataset"
 require "pact_broker/domain/webhook"
 require "pact_broker/webhooks/webhook_request_template"
 require "pact_broker/domain/pacticipant"
@@ -15,7 +15,7 @@ module PactBroker
       one_to_many :events, :class => "PactBroker::Webhooks::WebhookEvent", :reciprocal => :webhook
 
       dataset_module do
-        include PactBroker::Repositories::Helpers
+        include PactBroker::Dataset
 
         # Keep the triggered webhooks after the webhook has been deleted
         def delete

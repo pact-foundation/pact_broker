@@ -1,5 +1,4 @@
-require "pact_broker/db"
-require "pact_broker/repositories/helpers"
+require "pact_broker/dataset"
 
 module PactBroker
   module Tags
@@ -7,10 +6,7 @@ module PactBroker
     # TODO remove this class now we have eager loaders for head_tag
     class TagWithLatestFlag < Sequel::Model(:tags_with_latest_flag)
       associate(:many_to_one, :version, :class => "PactBroker::Domain::Version", :key => :version_id, :primary_key => :id)
-
-      dataset_module do
-        include PactBroker::Repositories::Helpers
-      end
+      dataset_module(PactBroker::Dataset)
 
       def latest?
         !values[:latest].nil?

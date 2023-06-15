@@ -1,6 +1,5 @@
-require "pact_broker/db"
+require "pact_broker/dataset"
 require "pact_broker/messages"
-require "pact_broker/repositories/helpers"
 require "pact_broker/domain/label"
 require "pact_broker/string_refinements"
 require "pact_broker/pacticipants/generate_display_name"
@@ -32,7 +31,7 @@ module PactBroker
       one_to_many :branches, class: "PactBroker::Versions::Branch", primary_key: :id, key: :pacticipant_id
 
       dataset_module do
-        include PactBroker::Repositories::Helpers
+        include PactBroker::Dataset
 
         def with_main_branch_set
           exclude(main_branch: nil)

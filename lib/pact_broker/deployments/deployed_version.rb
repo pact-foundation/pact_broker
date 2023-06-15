@@ -1,4 +1,4 @@
-require "pact_broker/repositories/helpers"
+require "pact_broker/dataset"
 require "pact_broker/deployments/currently_deployed_version_id"
 
 module PactBroker
@@ -15,7 +15,7 @@ module PactBroker
       plugin :insert_ignore, identifying_columns: [:pacticipant_id, :version_id, :environment_id, :target_for_index]
 
       dataset_module do
-        include PactBroker::Repositories::Helpers
+        include PactBroker::Dataset
 
         def user_created
           where(auto_created: false)

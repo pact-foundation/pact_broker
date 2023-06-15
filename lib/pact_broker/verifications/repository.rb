@@ -1,4 +1,3 @@
-require "sequel"
 require "pact_broker/domain/verification"
 require "pact_broker/verifications/sequence"
 require "pact_broker/verifications/latest_verification_id_for_pact_version_and_provider_version"
@@ -8,9 +7,8 @@ require "pact_broker/repositories/scopes"
 module PactBroker
   module Verifications
     class Repository
-
-      include PactBroker::Repositories::Helpers
       include PactBroker::Repositories
+      include PactBroker::Repositories::Helpers
       include PactBroker::Repositories::Scopes
 
       # Ideally this would just be a sequence, but Sqlite and MySQL don't support sequences

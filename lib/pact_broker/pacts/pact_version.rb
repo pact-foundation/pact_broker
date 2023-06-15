@@ -1,5 +1,4 @@
-require "sequel"
-require "pact_broker/repositories/helpers"
+require "pact_broker/dataset"
 require "pact_broker/pacts/content"
 require "pact_broker/pacts/pact_version_association_loaders"
 
@@ -52,7 +51,7 @@ module PactBroker
       )
 
       dataset_module do
-        include PactBroker::Repositories::Helpers
+        include PactBroker::Dataset
 
         def for_pact_domain(pact_domain)
           where(

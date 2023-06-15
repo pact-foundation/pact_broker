@@ -1,4 +1,3 @@
-require "sequel"
 require "pact_broker/domain/webhook"
 require "pact_broker/domain/pacticipant"
 require "pact_broker/db"

@@ -1,5 +1,4 @@
-require "sequel"
-require "pact_broker/repositories/helpers"
+require "pact_broker/dataset"
 
 module PactBroker
   module Deployments
@@ -8,9 +7,7 @@ module PactBroker
 
       plugin :upsert, identifying_columns: [:pacticipant_id, :environment_id, :target_for_index]
 
-      dataset_module do
-        include PactBroker::Repositories::Helpers
-      end
+      dataset_module(PactBroker::Dataset)
     end
   end
 end
