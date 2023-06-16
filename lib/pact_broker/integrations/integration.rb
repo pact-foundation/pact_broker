@@ -1,4 +1,4 @@
-require "pact_broker/repositories/helpers"
+require "pact_broker/dataset"
 require "pact_broker/verifications/pseudo_branch_status"
 require "pact_broker/domain/verification"
 require "pact_broker/webhooks/latest_triggered_webhook"
@@ -76,7 +76,7 @@ module PactBroker
       end)
 
       dataset_module do
-        include PactBroker::Repositories::Helpers
+        include PactBroker::Dataset
 
         def including_pacticipant_id(pacticipant_id)
           where(consumer_id: pacticipant_id).or(provider_id: pacticipant_id)
