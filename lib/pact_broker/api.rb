@@ -5,6 +5,7 @@ require "pact_broker/api/decorators"
 require "pact_broker/api/contracts"
 require "pact_broker/application_context"
 require "pact_broker/feature_toggle"
+require "pact_broker/initializers/subscriptions"
 
 module Webmachine
   class Request
@@ -22,12 +23,6 @@ module Webmachine
     end
   end
 end
-
-# Not sure where to put this - it's a global subscription
-require "pact_broker/events/subscriber"
-require "pact_broker/integrations/event_listener"
-
-PactBroker::Events.subscribe(PactBroker::Integrations::EventListener.new)
 
 module PactBroker
   # rubocop: disable Metrics/MethodLength
