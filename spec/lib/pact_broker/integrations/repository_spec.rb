@@ -52,9 +52,10 @@ module PactBroker
           end
 
           it "updates all the integrations for the provider" do
-            expect { subject }.to change {
-              Integration.select_all_qualified.including_pacticipant_id(bar.id).collect(&:contract_data_updated_at)
-            }.from([nil, nil]).to([now, now])
+            subject
+            integrations = Integration.select_all_qualified.including_pacticipant_id(bar.id)
+            expect(integrations.first.contract_data_updated_at).to be_date_time(now)
+            expect(integrations.last.contract_data_updated_at).to be_date_time(now)
           end
         end
       end
