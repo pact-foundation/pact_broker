@@ -32,11 +32,19 @@ module PactBroker
     extend self
 
     def subscribe(*args)
-      result = nil
-      TemporaryListeners.subscribe(*args) do
-        result = yield
+      if block_given?
+        result = nil
+        TemporaryListeners.subscribe(*args) do
+          result = yield
+        end
+        result
+      else
+        Wisper.subscribe(*args)
       end
-      result
+    end
+
+    def unsubscribe(*args)
+      Wisper.unsubscribe(*args)
     end
   end
 end

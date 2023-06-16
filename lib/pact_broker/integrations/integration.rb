@@ -1,3 +1,4 @@
+require "pact_broker/dataset"
 require "pact_broker/verifications/pseudo_branch_status"
 require "pact_broker/domain/verification"
 require "pact_broker/webhooks/latest_triggered_webhook"
@@ -6,7 +7,7 @@ require "pact_broker/verifications/latest_verification_for_consumer_and_provider
 
 module PactBroker
   module Integrations
-    class Integration < Sequel::Model(Sequel::Model.db[:integrations].select(:id, :consumer_id, :provider_id))
+    class Integration < Sequel::Model(Sequel::Model.db[:integrations].select(:id, :consumer_id, :provider_id, :contract_data_updated_at))
       set_primary_key :id
       plugin :insert_ignore, identifying_columns: [:consumer_id, :provider_id]
       associate(:many_to_one, :consumer, :class => "PactBroker::Domain::Pacticipant", :key => :consumer_id, :primary_key => :id)
@@ -75,6 +76,8 @@ module PactBroker
       end)
 
       dataset_module do
+        include PactBroker::Dataset
+
         def including_pacticipant_id(pacticipant_id)
           where(consumer_id: pacticipant_id).or(provider_id: pacticipant_id)
         end

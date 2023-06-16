@@ -493,6 +493,10 @@ module PactBroker
         instance_variable_get("@#{instance_variable_name}")
       end
 
+      def clear_now
+        @now = nil
+      end
+
       def set_now date
         @now = date.to_date
         self
