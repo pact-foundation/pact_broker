@@ -21,6 +21,7 @@ RSpec.describe "publishing a pact using the all in one endpoint" do
   let(:rack_headers) { { "CONTENT_TYPE" => "application/json", "HTTP_ACCEPT" => "application/hal+json" } }
   let(:encoded_contract) { Base64.strict_encode64(contract) }
   let(:path) { "/contracts/publish" }
+  let(:contract) { td.fixed_json_content("Foo", "Bar", "1") }
 
   subject { post(path, request_body_hash.to_json, rack_headers) }
 
@@ -29,5 +30,10 @@ RSpec.describe "publishing a pact using the all in one endpoint" do
 
     its(:status) { is_expected.to eq 400 }
     its(:body) { is_expected.to include("non UTF-8 character") }
+  end
+
+  it "sets the contract_data_updated_at on the integration" do
+    subject
+    expect(PactBroker::Integrations::Integration.last.contract_data_updated_at).to_not be nil
   end
 end

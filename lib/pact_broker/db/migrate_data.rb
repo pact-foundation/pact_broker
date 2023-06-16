@@ -29,6 +29,7 @@ module PactBroker
         DataMigrations::CreateBranches.call(database_connection)
         DataMigrations::MigrateIntegrations.call(database_connection)
         DataMigrations::MigratePactVersionProviderTagSuccessfulVerifications.call(database_connection)
+        DataMigrations::SetContractDataUpdatedAtForIntegrations.call(database_connection)
       end
     end
   end
