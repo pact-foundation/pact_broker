@@ -28,7 +28,8 @@ module PactBroker
         end
 
         it "updates the contract_data_updated_at to now" do
-          expect { subject }.to change { Integration.last.contract_data_updated_at }.from(nil).to(now)
+          subject
+          expect(Integration.last.contract_data_updated_at).to be_date_time(now)
         end
 
         it "does not update the other integrations" do
