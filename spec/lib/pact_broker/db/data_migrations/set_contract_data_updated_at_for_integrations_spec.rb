@@ -43,7 +43,6 @@ module PactBroker
           expect(integrations.first[:contract_data_updated_at]).to eq day_3
           expect(integrations.last[:contract_data_updated_at]).to eq day_4
         end
-
       end
     end
   end
