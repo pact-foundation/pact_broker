@@ -1,5 +1,7 @@
 require "pact_broker/services"
 
+# Listens for events that happen in the Pact Broker that are relevant to the Integrations objects.
+
 module PactBroker
   module Integrations
     class EventListener
