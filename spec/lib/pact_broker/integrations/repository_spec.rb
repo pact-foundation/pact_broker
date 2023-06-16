@@ -18,10 +18,12 @@ module PactBroker
 
         let(:then) { Date.today - 20 }
         let(:now) { DateTime.new(2010, 11, 1, 1, 1, 1) }
+        let(:foo) { td.and_return(:consumer) }
+        let(:bar) { td.and_return(:provider) }
 
         subject do
           Timecop.freeze(now) do
-            Repository.new.set_contract_data_updated_at(td.and_return(:consumer), td.and_return(:provider))
+            Repository.new.set_contract_data_updated_at(foo, bar)
           end
         end
 
@@ -45,13 +47,13 @@ module PactBroker
 
           subject do
             Timecop.freeze(now) do
-              Repository.new.set_contract_data_updated_at(nil, td.and_return(:provider))
+              Repository.new.set_contract_data_updated_at(nil, bar)
             end
           end
 
           it "updates all the integrations for the provider" do
             expect { subject }.to change {
-              Integration.select_all_qualified.filter_by_pacticipant("Bar").all.collect(&:contract_data_updated_at)
+              Integration.select_all_qualified.including_pacticipant_id(bar.id).collect(&:contract_data_updated_at)
             }.from([nil, nil]).to([now, now])
           end
         end
