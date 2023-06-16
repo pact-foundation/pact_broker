@@ -40,8 +40,8 @@ module PactBroker
         it "sets the contract_data_updated_at to the latest of the pact publication and verification publication dates for that integration" do
           subject
           integrations = db[:integrations].order(:id)
-          expect(integrations.first[:contract_data_updated_at].to_s).to eq day_3.to_s # using to_s because dates are loaded as strings when running with MySQL
-          expect(integrations.last[:contract_data_updated_at].to_s).to eq day_4.to_s
+          expect(integrations.first[:contract_data_updated_at]).to be_date_time(day_3)
+          expect(integrations.last[:contract_data_updated_at]).to be_date_time(day_4)
         end
       end
     end
