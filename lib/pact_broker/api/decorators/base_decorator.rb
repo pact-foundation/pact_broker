@@ -48,7 +48,7 @@ module PactBroker
         # Returns true if this class is a decorator for a collection
         # @return [true, false]
         def self.is_collection_resource?
-          representable_attrs_without_links = representable_attrs.to_h.without("links")
+          representable_attrs_without_links = representable_attrs.to_h.without("links", "page")
           representable_attrs_without_links.size == 1 &&
             representable_attrs_without_links.values.first[:collection] &&
             representable_attrs_without_links.values.first[:extend]
@@ -64,7 +64,7 @@ module PactBroker
 
         # @return [Class] The decorator class used to decorate the items in the collection
         def self.collection_item_decorator_class
-          representable_attrs.to_h.without("links").values.first[:extend].call
+          representable_attrs.to_h.without("links", "page").values.first[:extend].call
         end
         private_class_method :collection_item_decorator_class
       end
