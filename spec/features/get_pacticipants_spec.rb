@@ -25,21 +25,11 @@ describe "Get pacticipants" do
     context "with pagination options" do
       subject { get(path, { "pageSize" => "2", "pageNumber" => "1" }) }
 
-      it "paginates the response" do
+      it "only returns the number of items specified in the pageSize" do
         expect(response_body_hash[:_links][:"pacticipants"].size).to eq 2
       end
 
-      it "includes the pagination relations" do
-        expect(response_body_hash[:_links]).to have_key(:next)
-      end
-
-      it "includes the page section" do
-        expect(response_body_hash).to have_key(:page)
-      end
-
-      it "outputs a whole number for total pages" do
-        expect(response_body_hash[:page][:totalPages]).to eq(2)
-      end
+      it_behaves_like "a paginated response"
     end
   end
 end
