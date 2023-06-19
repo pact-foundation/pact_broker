@@ -12,7 +12,7 @@ module PactBroker
         query = query.filter_by_pacticipant(filter_options[:query_string]) if filter_options[:query_string]
         query
           .eager(*eager_load_associations)
-          .order(Sequel.desc(:contract_data_updated_at))
+          .order(Sequel.desc(:contract_data_updated_at, nulls: :last))
           .all_with_pagination_options(pagination_options)
       end
 
