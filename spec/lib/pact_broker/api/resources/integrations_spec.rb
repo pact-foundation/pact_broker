@@ -27,7 +27,6 @@ module PactBroker
 
           subject { get(path, params, rack_headers) }
 
-
           it "validates the query params" do
             expect(PactBroker::Api::Contracts::PaginationQueryParamsSchema).to receive(:call).with(params)
             subject

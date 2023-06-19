@@ -92,8 +92,6 @@ module PactBroker
     def escape_wildcards(value)
       value.gsub("_", "\\_").gsub("%", "\\%")
     end
-
     private :escape_wildcards
-
   end
 end
