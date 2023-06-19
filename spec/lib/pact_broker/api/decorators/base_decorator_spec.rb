@@ -1,16 +1,20 @@
 require "pact_broker/api/decorators/base_decorator"
+require "pact_broker/api/decorators/pagination_links"
 
 module PactBroker
   module Api
     module Decorators
       describe BaseDecorator do
         class TestItemDecorator < BaseDecorator
+          include PactBroker::Api::Decorators::PaginationLinks
+
           collection :children
           property :foo, embedded: true
 
           property :bar do
             property :name
           end
+
           property :other
         end
 
