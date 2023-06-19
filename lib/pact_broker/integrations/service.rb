@@ -14,22 +14,8 @@ module PactBroker
       include PactBroker::Logging
       extend PactBroker::Repositories::Scopes
 
-      def self.find_all
-        # The only reason the pact_version needs to be loaded is that
-        # the Verification::PseudoBranchStatus uses it to determine if
-        # the pseudo branch is 'stale'.
-        # Because this is the status for a pact, and not a pseudo branch,
-        # the status can never be 'stale',
-        # so it would be better to create a Verification::PactStatus class
-        # that doesn't have the 'stale' logic in it.
-        # Then we can remove the eager loading of the pact_version
-        scope_for(PactBroker::Integrations::Integration)
-          .eager(:consumer)
-          .eager(:provider)
-          .eager(:latest_pact) # latest_pact eager loader is custom, can't take any more options
-          .eager(:latest_verification)
-          .all
-          .sort { | a, b| Integration.compare_by_last_action_date(a, b) }
+      def self.find_all(filter_options = {}, pagination_options = {}, eager_load_associations = [])
+        integration_repository.find(filter_options, pagination_options, eager_load_associations)
       end
 
       # Callback to invoke when a consumer contract, verification result (or provider contract in Pactflow) is published
