@@ -78,6 +78,12 @@ module PactBroker
       dataset_module do
         include PactBroker::Dataset
 
+        def filter_by_pacticipant(query_string)
+          matching_pacticipants = PactBroker::Domain::Pacticipant.filter(:name, query_string)
+          pacticipants_join = Sequel.|({ Sequel[:integrations][:consumer_id] => Sequel[:p][:id] }, { Sequel[:integrations][:provider_id] => Sequel[:p][:id] })
+          join(matching_pacticipants, pacticipants_join, table_alias: :p)
+        end
+
         def including_pacticipant_id(pacticipant_id)
           where(consumer_id: pacticipant_id).or(provider_id: pacticipant_id)
         end
@@ -122,6 +128,10 @@ module PactBroker
 
       def pacticipant_ids
         [consumer_id, provider_id]
+      end
+
+      def to_s
+        "Integration: consumer #{associations[:consumer]&.name || consumer_id}/provider #{associations[:provider]&.name || provider_id}"
       end
     end
   end

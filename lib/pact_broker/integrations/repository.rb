@@ -1,8 +1,21 @@
 require "pact_broker/integrations/integration"
+require "pact_broker/repositories/scopes"
 
 module PactBroker
   module Integrations
     class Repository
+
+      include PactBroker::Repositories::Scopes
+
+      def find(filter_options = {}, pagination_options = {}, eager_load_associations = [])
+        query = scope_for(PactBroker::Integrations::Integration).select_all_qualified
+        query = query.filter_by_pacticipant(filter_options[:query_string]) if filter_options[:query_string]
+        query
+          .eager(*eager_load_associations)
+          .order(Sequel.desc(:contract_data_updated_at, nulls: :last))
+          .all_with_pagination_options(pagination_options)
+      end
+
       def create_for_pact(consumer_id, provider_id)
         if Integration.where(consumer_id: consumer_id, provider_id: provider_id).empty?
           Integration.new(

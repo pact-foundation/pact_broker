@@ -4,6 +4,39 @@ require "timecop"
 module PactBroker
   module Integrations
     describe Repository do
+      describe "find" do
+        before do
+          Timecop.freeze(Date.today - 5) do
+            td.publish_pact(consumer_name: "Foo", provider_name: "Bar", consumer_version_number: "1")
+          end
+
+          Timecop.freeze(Date.today - 4) do
+            td.create_verification(provider_version: "2")
+          end
+
+          Timecop.freeze(Date.today - 3) do
+            td.publish_pact(consumer_name: "Apple", provider_name: "Pear", consumer_version_number: "1")
+          end
+
+          Timecop.freeze(Date.today - 2) do
+            td.create_verification(provider_version: "2")
+          end
+
+          # No contract data date
+          td.create_consumer("Dog")
+            .create_provider("Cat")
+            .create_integration
+        end
+
+        subject { Repository.new.find }
+
+        it "it orders by most recent event" do
+          expect(subject[0]).to have_attributes(consumer_name: "Apple")
+          expect(subject[1]).to have_attributes(consumer_name: "Foo")
+          expect(subject[2]).to have_attributes(consumer_name: "Dog")
+        end
+      end
+
       describe "#set_contract_data_updated_at" do
         before do
           # A -> B
