@@ -3,6 +3,45 @@ require "pact_broker/integrations/integration"
 module PactBroker
   module Integrations
     describe Integration do
+      describe "filter" do
+        before do
+          td.create_consumer("Foo")
+            .create_provider("Bar")
+            .create_integration
+            .create_consumer("Cat")
+            .create_provider("Dog")
+            .create_integration
+            .create_consumer("Y")
+            .create_provider("Z")
+            .create_integration
+        end
+
+        subject { Integration.select_all_qualified.filter_by_pacticipant(query_string).all }
+
+        context "with a filter matching the consumer" do
+          let(:query_string) { "oo" }
+
+          it { is_expected.to contain_exactly(have_attributes(consumer_name: "Foo", provider_name: "Bar")) }
+        end
+
+        context "with a filter matching the provider" do
+          let(:query_string) { "ar" }
+
+          it { is_expected.to contain_exactly(have_attributes(consumer_name: "Foo", provider_name: "Bar")) }
+        end
+
+        context "with a filter matching both consumer and provider" do
+          let(:query_string) { "o" }
+
+          it "returns the matching integrations" do
+            expect(subject).to contain_exactly(
+              have_attributes(consumer_name: "Foo", provider_name: "Bar"),
+              have_attributes(consumer_name: "Cat", provider_name: "Dog")
+            )
+          end
+        end
+      end
+
       describe "relationships" do
         before do
           td.set_now(DateTime.new(2018, 1, 7))

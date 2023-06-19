@@ -5,6 +5,14 @@ Sequel.extension :escaped_like
 
 module PactBroker
   module Dataset
+
+    # Return a dataset that only includes the rows where the specified column
+    # includes the given query string.
+    # @return [Sequel::Dataset]
+    def filter(column_name, query_string)
+      where(Sequel.ilike(column_name, "%" + escape_wildcards(query_string) + "%"))
+    end
+
     def name_like column_name, value
       if PactBroker.configuration.use_case_sensitive_resource_names
         if mysql?
@@ -80,5 +88,10 @@ module PactBroker
     def postgres?
       Sequel::Model.db.adapter_scheme.to_s =~ /postgres/
     end
+
+    def escape_wildcards(value)
+      value.gsub("_", "\\_").gsub("%", "\\%")
+    end
+    private :escape_wildcards
   end
 end
