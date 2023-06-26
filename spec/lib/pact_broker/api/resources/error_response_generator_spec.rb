@@ -26,6 +26,14 @@ module PactBroker
             expect(subject["error"]).to include "reference" => "bYWfnyWPlf"
           end
 
+          context "when a custom message is provided" do
+            let(:headers_and_body) { ErrorResponseGenerator.call(error, error_reference, rack_env, message: "This is a custom message.") }
+
+            it "uses the custom message" do
+              expect(subject["error"]["message"]).to include "This is a custom message."
+            end
+          end
+
           context "when the Accept header includes application/problem+json" do
             let(:rack_env) { { "HTTP_ACCEPT" => "application/hal+json, application/problem+json", "pactbroker.base_url" => "http://example.org" } }
 

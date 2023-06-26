@@ -1,5 +1,6 @@
 require "pact_broker/configuration"
 require "pact_broker/api/decorators/runtime_error_problem_json_decorator"
+require "pact_broker/errors"
 
 module PactBroker
   module Api
@@ -11,13 +12,15 @@ module PactBroker
         # @param error_reference [String] an error reference to display to the user
         # @param env [Hash] the rack env
         # @return [Hash, String] the response headers to set, the response body to set
-        def self.call error, error_reference, env = {}
-          body = response_body_hash(error, error_reference, env, display_message(error, obfuscated_error_message(error_reference)))
+        def self.call(error, error_reference, env, message: nil)
+          body = response_body_hash(error, error_reference, env, display_message(error, message, obfuscated_error_message(error_reference)))
           return headers(env), body.to_json
         end
 
-        def self.display_message(error, obfuscated_message)
-          if PactBroker.configuration.show_backtrace_in_error_response?
+        def self.display_message(error, message, obfuscated_message)
+          if message
+            message
+          elsif PactBroker.configuration.show_backtrace_in_error_response?
             error.message || obfuscated_message
           else
             PactBroker::Errors.reportable_error?(error) ? obfuscated_message : error.message

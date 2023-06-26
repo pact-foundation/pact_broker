@@ -8,11 +8,13 @@ module PactBroker
 
         # @override
         def handle_exception(error)
+          # generate reference
           error_reference = PactBroker::Errors.generate_error_reference
+          # log error
           application_context.error_logger.call(error, error_reference, request.env)
-          if PactBroker::Errors.reportable_error?(error)
-            PactBroker::Errors.report(error, error_reference, request.env)
-          end
+          # report error
+          application_context.error_reporter.call(error, error_reference, request.env)
+          # generate response
           headers, body = application_context.error_response_generator.call(error, error_reference, request.env)
           headers.each { | key, value | response.headers[key] = value }
           response.body = body
