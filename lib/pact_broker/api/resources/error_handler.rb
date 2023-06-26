@@ -28,7 +28,7 @@ module PactBroker
 
 
           # generate response
-          headers, body = error_response_generator.call(error, error_reference, env)
+          headers, body = error_response_generator.call(error, error_reference, env, message: message)
           headers.each { | key, value | response.headers[key] = value }
           return headers, body
         end
