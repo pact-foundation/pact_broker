@@ -55,7 +55,7 @@ module PactBroker
       @configuration.freeze
     end
 
-    # Allows middleware to be inserted at the bottom of the shared middlware stack
+    # Allows middleware to be inserted at the bottom of the shared middleware stack
     # (ie just before the cascade is called for diagnostic, UI and API).
     # To insert middleware at the top of the stack, initialize
     # the middleware with the app, and run it manually.

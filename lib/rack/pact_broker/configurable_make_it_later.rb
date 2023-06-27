@@ -1,5 +1,5 @@
 
-# Allows a default Rack middlware implementation to be set,
+# Allows a default Rack middleware implementation to be set,
 # and then be optionally changed out for a different implementation
 # after the app has been built.
 # Used for allowing the authorization code to set after the
