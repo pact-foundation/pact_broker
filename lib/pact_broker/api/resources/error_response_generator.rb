@@ -1,12 +1,14 @@
 require "pact_broker/configuration"
 require "pact_broker/api/decorators/runtime_error_problem_json_decorator"
 require "pact_broker/errors"
+require "pact_broker/messages"
 
 module PactBroker
   module Api
     module Resources
       class ErrorResponseGenerator
         include PactBroker::Logging
+        extend PactBroker::Messages
 
         # @param error [StandardError]
         # @param error_reference [String] an error reference to display to the user
@@ -53,7 +55,7 @@ module PactBroker
         end
 
         private_class_method def self.obfuscated_error_message(error_reference)
-          "An error has occurred. The details have been logged with the reference #{error_reference}"
+          message("errors.runtime.with_error_reference", error_reference: error_reference)
         end
 
         private_class_method def self.headers(env)

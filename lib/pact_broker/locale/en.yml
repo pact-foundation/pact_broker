@@ -60,6 +60,8 @@ en:
         webhooks: Configure separate %{provider_name} pact verification build and webhook to trigger it when the pact content changes. See https://docs.pact.io/go/webhooks
         version_branch: Configure the version branch to be the value of your repository branch.
     errors:
+      runtime:
+        with_error_reference: "An error has occurred. The details have been logged with the reference %{error_reference}"
       validation:
         no_spaces: "cannot contain spaces"
         single_line: "cannot contain multiple lines"
