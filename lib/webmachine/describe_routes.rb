@@ -92,10 +92,7 @@ module Webmachine
 
         dummy_resource = webmachine_route.resource.new(dummy_request, Webmachine::Response.new)
         if dummy_resource
-          {
-            allowed_methods: dummy_resource.allowed_methods,
-            schemas: dummy_resource.respond_to?(:schema, true) && dummy_resource.send(:schema) ? schemas(dummy_resource.allowed_methods, webmachine_route.resource, path_info) : nil
-          }.compact
+          info_from_dummy_resource(dummy_resource, webmachine_route, path_info)
         else
           {}
         end
@@ -103,6 +100,13 @@ module Webmachine
     rescue StandardError => e
       puts "Could not determine instance info for #{webmachine_route.resource}. #{e.class} - #{e.message}"
       {}
+    end
+
+    def self.info_from_dummy_resource(dummy_resource, webmachine_route, path_info)
+      {
+        allowed_methods: dummy_resource.allowed_methods,
+        schemas: dummy_resource.respond_to?(:schema, true) && dummy_resource.send(:schema) ? schemas(dummy_resource.allowed_methods, webmachine_route.resource, path_info) : nil
+      }.compact
     end
 
     # This is not entirely accurate, because some GET requests have schemas too, but we can't tell that statically at the moment
