@@ -74,6 +74,23 @@ module PactBroker
             expect(subject.headers["Location"]).to eq "http://error_badge_url"
           end
         end
+
+        context "when there is an error creating the badge URL" do
+          before do
+            allow(badge_service). to receive(:can_i_deploy_badge_url).and_raise(StandardError.new("some error"))
+            allow_any_instance_of(CanIDeployPacticipantVersionByBranchToEnvironmentBadge).to receive(:log_and_report_error).and_return("error_ref")
+          end
+
+          it "logs and reports the error" do
+            expect_any_instance_of(CanIDeployPacticipantVersionByBranchToEnvironmentBadge).to receive(:log_and_report_error)
+            subject
+          end
+
+          it "returns an error badge URL" do
+            expect(badge_service).to receive(:error_badge_url).with("error", "reference: error_ref")
+            expect(subject.headers["Location"]).to eq "http://error_badge_url"
+          end
+        end
       end
     end
   end
