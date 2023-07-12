@@ -14,7 +14,7 @@ module PactBroker
           elsif pacticipant.nil?
             badge_service.error_badge_url("pacticipant", "not found")
           elsif version.nil?
-            if branch_service.find_branch(identifier_from_path.slice(:pacticipant_name, :branch_name)).nil?
+            if branch_service.find_branch(**identifier_from_path.slice(:pacticipant_name, :branch_name)).nil?
               badge_service.error_badge_url("branch", "not found")
             else
               badge_service.error_badge_url("version", "not found")

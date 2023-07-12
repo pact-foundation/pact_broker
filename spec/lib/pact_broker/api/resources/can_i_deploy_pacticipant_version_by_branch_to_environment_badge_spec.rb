@@ -47,6 +47,15 @@ module PactBroker
           end
         end
 
+        context "when the version is not found" do
+          let(:version) { nil }
+
+          it "attempts to find the branch" do
+            expect(branch_service).to receive(:find_branch).with(pacticipant_name: "Foo", branch_name: "main")
+            subject
+          end
+        end
+
         context "when the version is not found and the branch is not found" do
           let(:version) { nil }
           let(:branch) { nil }
