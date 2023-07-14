@@ -3,6 +3,13 @@ require "pact_broker/api/decorators/runtime_error_problem_json_decorator"
 require "pact_broker/errors"
 require "pact_broker/messages"
 
+# Generates the response headers and body for use when there is an unexpected
+# error when executing a Webmachine resource request.
+# Uses the Accept header to determine whether to return application/problem+json
+# or application/hal+json, for backwards compatibility.
+# In the next major version of the Pact Broker, all error responses
+# should use problem+json, regardless of Accept headers.
+
 module PactBroker
   module Api
     module Resources
