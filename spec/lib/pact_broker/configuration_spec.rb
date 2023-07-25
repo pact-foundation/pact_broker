@@ -47,7 +47,7 @@ module PactBroker
 
       it "logs the overrides at debug level" do
         allow(config).to receive(:logger).and_return(logger)
-        expect(logger).to receive(:debug).with("Overridding runtime configuration", hash_including(overrides: { disable_ssl_verification: true }))
+        expect(logger).to receive(:debug).with("Overriding runtime configuration", hash_including(overrides: { disable_ssl_verification: true }))
         config.override_runtime_configuration!(disable_ssl_verification: "true")
       end
 
@@ -58,7 +58,7 @@ module PactBroker
       context "when the specified runtime attribute does not exist" do
         it "logs that it has ignored those attributes" do
           allow(config).to receive(:logger).and_return(logger)
-          expect(logger).to receive(:debug).with("Overridding runtime configuration", hash_including(ignoring: { no_existy: true }))
+          expect(logger).to receive(:debug).with("Overriding runtime configuration", hash_including(ignoring: { no_existy: true }))
           config.override_runtime_configuration!(no_existy: "true")
         end
       end
