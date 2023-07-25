@@ -85,7 +85,7 @@ module PactBroker
       valid_overrides, invalid_overrides = identify_valid_and_invalid_configuration_overrides(new_runtime_configuration, overrides)
 
       if logger.debug?
-        logger.debug("Overridding runtime configuration", overrides: valid_overrides, ignoring: invalid_overrides)
+        logger.debug("Overriding runtime configuration", overrides: valid_overrides, ignoring: invalid_overrides)
       end
 
       valid_overrides.each do | key, value |
