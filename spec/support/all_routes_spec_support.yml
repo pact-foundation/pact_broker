@@ -56,6 +56,7 @@ requests_which_are_exected_to_have_no_policy_record:
   - latest_pact_publication GET
   - latest_untagged_pact_publication GET
   - latest_untagged_pact_badge GET
+  - latest_pact_publication_for_branch GET
   - latest_tagged_pact_publication GET
   - latest_tagged_pact_badge GET
   - latest_verification_results_for_latest_tagged_pact_publication GET
