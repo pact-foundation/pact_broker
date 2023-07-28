@@ -30,6 +30,10 @@ module PactBroker
         version_repository.find_all_pacticipant_versions_in_reverse_order(name, pagination_options)
       end
 
+      def self.find_pacticipant_versions_in_reverse_order(pacticipant_name, options, pagination_options = {})
+        version_repository.find_pacticipant_versions_in_reverse_order(pacticipant_name, options, pagination_options)
+      end
+
       def self.create_or_overwrite(pacticipant_name, version_number, version)
         pacticipant = pacticipant_repository.find_by_name_or_create(pacticipant_name)
         version = version_repository.create_or_overwrite(pacticipant, version_number, version)

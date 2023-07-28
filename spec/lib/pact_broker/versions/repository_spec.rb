@@ -49,6 +49,41 @@ module PactBroker
         end
       end
 
+      describe "#find_pacticipant_versions_in_reverse_order" do
+        before do
+          td
+            .create_consumer("Foo")
+            .create_consumer_version("1", branch: "main")
+            .create_consumer_version("2", branch: "foo")
+            .create_consumer_version("3", branch: "main")
+            .create_consumer("Bar")
+            .create_consumer_version("5", branch: "main")
+        end
+
+        let(:options) { {} }
+        subject { Repository.new.find_pacticipant_versions_in_reverse_order("Foo", options) }
+
+        it "returns all the application versions for the given consumer" do
+          expect(subject.collect(&:number)).to eq ["3", "2", "1"]
+        end
+
+        context "with a branch_name in the options" do
+          let(:options) { { branch_name: "main"} }
+
+          it "returns only the versions for the branch" do
+            expect(subject.collect(&:number)).to eq ["3", "1"]
+          end
+        end
+
+        context "with pagination options" do
+          subject { Repository.new.find_pacticipant_versions_in_reverse_order "Foo", options, { page_number: 1, page_size: 1 } }
+
+          it "paginates the query" do
+            expect(subject.collect(&:number)).to eq ["3"]
+          end
+        end
+      end
+
       describe "#find_by_pacticipant_name_and_latest_tag" do
         before do
           td.create_consumer("Bar")
