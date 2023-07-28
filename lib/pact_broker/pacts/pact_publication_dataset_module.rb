@@ -132,10 +132,14 @@ module PactBroker
           .remove_overridden_revisions_from_complete_query
       end
 
+      # The pact that belongs to the branch head.
+      # May return nil if the branch head does not have a pact published for it.
       def latest_for_consumer_branch(branch_name)
         for_branch_heads(branch_name)
       end
 
+      # The latest pact that belongs to a version on the specified branch (might not be the version that is the branch head)
+      # Always returns a pact, if any pacts exist for this branch.
       def old_latest_for_consumer_branch(branch_name)
         branch_versions_join = {
           Sequel[:pact_publications][:consumer_version_id] => Sequel[:branch_versions][:version_id]
@@ -148,7 +152,7 @@ module PactBroker
 
         max_orders = join(:branch_versions, branch_versions_join)
                       .join(:branches, branches_join)
-                      .select_group(:consumer_id, :provider_id, Sequel[:branches][:name].as(:branch_name))
+                      .select_group(Sequel[:pact_publications][:consumer_id], Sequel[:pact_publications][:provider_id], Sequel[:branches][:name].as(:branch_name))
                       .select_append{ max(consumer_version_order).as(latest_consumer_version_order) }
 
         max_join = {

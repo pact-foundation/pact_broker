@@ -23,7 +23,7 @@ module PactBroker
       extend SquashPactsForVerification
 
       def find_latest_pact params
-        pact_repository.find_latest_pact(params[:consumer_name], params[:provider_name], params[:tag])
+        pact_repository.find_latest_pact(params[:consumer_name], params[:provider_name], params[:tag], params[:branch_name])
       end
 
       def search_for_latest_pact params

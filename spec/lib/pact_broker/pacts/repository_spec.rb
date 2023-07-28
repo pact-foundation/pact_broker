@@ -965,6 +965,26 @@ module PactBroker
             end
           end
         end
+
+        context "with a branch specified" do
+          before do
+            td.create_consumer("Consumer")
+              .create_provider("Provider")
+              .create_consumer_version("1.0.0", branch: "main")
+              .create_pact
+              .create_consumer_version("1.2.3", branch: "main")
+              .create_pact
+              .create_consumer_version("2.3.4", branch: "main")
+              .create_consumer_version("4", branch: "foo")
+              .create_pact
+          end
+
+          subject { Repository.new.find_latest_pact("Consumer", "Provider", nil, "main") }
+
+          it "returns the latest pact that belongs to a version on the specified branch" do
+            expect(subject.consumer_version.number).to eq("1.2.3")
+          end
+        end
       end
 
       describe "search_for_latest_pact" do

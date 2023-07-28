@@ -200,7 +200,7 @@ module PactBroker
           .sort
       end
 
-      def find_latest_pact(consumer_name, provider_name, tag = nil)
+      def find_latest_pact(consumer_name, provider_name, tag = nil, branch_name = nil)
         query = scope_for(PactPublication)
           .eager_for_domain_with_content
           .select_all_qualified
@@ -211,6 +211,8 @@ module PactBroker
           query = query.untagged
         elsif tag
           query = query.for_consumer_version_tag_all_revisions(tag)
+        elsif branch_name
+          query = query.old_latest_for_consumer_branch(branch_name)
         end
         query.latest_by_consumer_version_order.all.collect(&:to_domain_with_content)[0]
       end
