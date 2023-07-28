@@ -88,6 +88,7 @@ module PactBroker
 
         # Versions
         add ["pacticipants", :pacticipant_name, "versions"], Api::Resources::Versions, {resource_name: "pacticipant_versions"}
+        add ["pacticipants", :pacticipant_name, "branches", :branch_name, "versions"], Api::Resources::BranchVersions, {resource_name: "pacticipant_branch_versions"}
         add ["pacticipants", :pacticipant_name, "versions", :pacticipant_version_number], Api::Resources::Version, {resource_name: "pacticipant_version"}
         add ["pacticipants", :pacticipant_name, "latest-version", :tag], Api::Resources::LatestVersion, {resource_name: "latest_tagged_pacticipant_version"}
         add ["pacticipants", :pacticipant_name, "latest-version", :tag, "can-i-deploy", "to", :to], Api::Resources::CanIDeployPacticipantVersionByTagToTag, { resource_name: "can_i_deploy_latest_tagged_version_to_tag" }

@@ -70,6 +70,22 @@ module PactBroker
         query.all_with_pagination_options(pagination_options)
       end
 
+      def find_pacticipant_versions_in_reverse_order(pacticipant_name, options = {}, pagination_options = {})
+        pacticipant = pacticipant_repository.find_by_name!(pacticipant_name)
+        query = PactBroker::Domain::Version
+                  .where(pacticipant: pacticipant)
+                  .eager(:pacticipant)
+                  .eager(branch_versions: [:version, :branch_head, { branch: :pacticipant }])
+                  .eager(tags: :head_tag)
+                  .eager(:pact_publications)
+                  .reverse_order(:order)
+
+        if options[:branch_name]
+          query = query.where_branch_name(options[:branch_name])
+        end
+        query.all_with_pagination_options(pagination_options)
+      end
+
       # There may be a race condition if two simultaneous requests come in to create the same version
       def create(args)
         version_params = {

@@ -49,6 +49,7 @@ requests_which_are_exected_to_have_no_policy_record:
   - pacticipant_version_tag GET
   - pacticipant_version_tag PUT
   - pacticipant_version_tag DELETE
+  - pacticipant_branch_versions GET
   - pacticipants_for_label GET
   - latest_pacts GET
   - provider_pact_publications GET
