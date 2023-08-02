@@ -10,6 +10,14 @@ module PactBroker
       def pacticipant_names
         contracts.flat_map(&:pacticipant_names).uniq
       end
+
+      def provider_names
+        contracts.flat_map(&:provider_name).uniq
+      end
+
+      def logging_info
+        to_h.slice(:pacticipant_name, :pacticipant_version_number, :tags, :branch, :build_url).merge(provider_names: provider_names)
+      end
     end
   end
 end

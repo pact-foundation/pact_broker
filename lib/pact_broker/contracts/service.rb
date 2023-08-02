@@ -31,6 +31,7 @@ module PactBroker
       end
 
       def publish(parsed_contracts, base_url: )
+        logger.info("Publishing contracts", parsed_contracts.logging_info)
         version, version_notices = create_version(parsed_contracts)
         tags = create_tags(parsed_contracts, version)
         pacts, pact_notices = create_pacts(parsed_contracts, base_url)
