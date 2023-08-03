@@ -18,6 +18,10 @@ module PactBroker
           ["GET", "OPTIONS"]
         end
 
+        def malformed_request?
+          super || request.get? && validation_errors_for_schema?(schema, request.query)
+        end
+
         def resource_exists?
           !!pacticipant
         end
@@ -32,6 +36,14 @@ module PactBroker
 
         def policy_name
           :'versions::versions'
+        end
+
+        private
+
+        def schema
+          if request.get?
+            PactBroker::Api::Contracts::PaginationQueryParamsSchema
+          end
         end
       end
     end

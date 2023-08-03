@@ -40,6 +40,17 @@ module PactBroker
               and_return(pacticipants)
             expect(subject.status).to eq 200
           end
+
+          context "with invalid pagination params" do
+            let(:query) do
+              {
+                "pageSize" => "0",
+                "pageNumber" => "0",
+              }
+            end
+
+            it_behaves_like "an invalid pagination params response"
+          end
         end
 
         describe "POST" do
