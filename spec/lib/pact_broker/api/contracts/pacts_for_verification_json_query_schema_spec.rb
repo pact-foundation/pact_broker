@@ -4,6 +4,8 @@ module PactBroker
   module Api
     module Contracts
       describe PactsForVerificationJSONQuerySchema do
+        include PactBroker::Test::ApiContractSupport
+
         let(:params) do
           {
             providerVersionTags: provider_version_tags,
@@ -20,7 +22,7 @@ module PactBroker
           }]
         end
 
-        subject { PactsForVerificationJSONQuerySchema.(params) }
+        subject { format_errors_the_old_way(PactsForVerificationJSONQuerySchema.(params)) }
 
         context "when nothing is specified" do
           let(:params) { {} }

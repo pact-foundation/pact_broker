@@ -257,8 +257,9 @@ module PactBroker
         end
 
         def validation_errors_for_schema?(schema_to_use = schema, params_to_validate = params)
-          if (errors = schema_to_use.call(params_to_validate)).any?
-            set_json_validation_error_messages(errors)
+          result = schema_to_use.call(params_to_validate)
+          if result.errors.any?
+            set_json_validation_error_messages(result.errors)
             true
           else
             false

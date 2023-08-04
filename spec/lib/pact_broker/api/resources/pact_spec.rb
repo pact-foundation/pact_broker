@@ -82,7 +82,7 @@ module PactBroker::Api
           let(:errors) { { messages: ["messages"] } }
 
           before do
-            allow(Contracts::PutPactParamsContract).to receive(:call).and_return(errors)
+            allow(Contracts::PutPactParamsContract).to receive(:call).and_return(double("result", errors: errors))
           end
 
           it "returns a 400 error" do

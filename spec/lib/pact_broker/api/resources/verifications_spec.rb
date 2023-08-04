@@ -23,7 +23,7 @@ module PactBroker
           before do
             allow_any_instance_of(Verifications).to receive(:handle_webhook_events) { |&block| block.call }
             allow(PactBroker::Verifications::Service).to receive(:create).and_return(verification)
-            allow(PactBroker::Api::Contracts::VerificationContract).to receive(:call).and_return(errors)
+            allow(PactBroker::Api::Contracts::VerificationContract).to receive(:call).and_return(double("result", errors: errors))
             allow(PactBrokerUrls).to receive(:decode_pact_metadata).and_return(parsed_metadata)
           end
 

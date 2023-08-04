@@ -4,6 +4,8 @@ module PactBroker
   module Api
     module Contracts
       describe PublishContractsSchema do
+        include PactBroker::Test::ApiContractSupport
+
         let(:params) do
           {
             :pacticipantName => pacticipant_name,
@@ -41,7 +43,7 @@ module PactBroker
         let(:decoded_parsed_content) { contract_hash }
         let(:content_type) { "application/json" }
 
-        subject { PublishContractsSchema.call(params) }
+        subject { format_errors_the_old_way(PublishContractsSchema.call(params)) }
 
         context "with valid params" do
           it { is_expected.to be_empty }

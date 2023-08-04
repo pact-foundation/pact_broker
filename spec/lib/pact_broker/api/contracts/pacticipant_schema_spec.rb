@@ -4,6 +4,8 @@ module PactBroker
   module Api
     module Contracts
       describe PacticipantSchema do
+        include PactBroker::Test::ApiContractSupport
+
         let(:params) do
           {
             name: "pact-broker",
@@ -17,7 +19,7 @@ module PactBroker
 
         let(:main_branch) { "main" }
 
-        subject { PacticipantSchema.call(params) }
+        subject { format_errors_the_old_way(PacticipantSchema.call(params)) }
 
         context "with valid params" do
           it { is_expected.to be_empty }

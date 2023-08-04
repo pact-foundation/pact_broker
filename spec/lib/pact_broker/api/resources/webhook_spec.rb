@@ -56,7 +56,7 @@ module PactBroker::Api
           allow(PactBroker::Webhooks::Service).to receive(:create).and_return(created_webhook)
           allow_any_instance_of(Webhook).to receive(:consumer).and_return(consumer)
           allow_any_instance_of(Webhook).to receive(:provider).and_return(provider)
-          allow(PactBroker::Api::Contracts::WebhookContract).to receive(:call).and_return(errors)
+          allow(PactBroker::Api::Contracts::WebhookContract).to receive(:call).and_return(double("result", errors: errors))
         end
 
 

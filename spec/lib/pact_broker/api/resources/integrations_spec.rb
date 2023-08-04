@@ -10,7 +10,7 @@ module PactBroker
             allow(integration_service).to receive(:find_all).and_return(integrations)
             allow_any_instance_of(described_class).to receive(:decorator_class).and_return(decorator_class)
             allow_any_instance_of(described_class).to receive_message_chain(:decorator_class, :eager_load_associations).and_return(eager_load_associations)
-            allow(PactBroker::Api::Contracts::PaginationQueryParamsSchema).to receive(:call).and_return(errors)
+            allow(PactBroker::Api::Contracts::PaginationQueryParamsSchema).to receive(:call).and_return(double("result", errors: errors))
           end
 
           let(:integration_service) { class_double("PactBroker::Integrations::Service").as_stubbed_const }

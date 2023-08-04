@@ -57,7 +57,7 @@ module PactBroker
           before do
             allow(PactBroker::Pacticipants::Service).to receive(:create).and_return(created_model)
             allow(decorator_class).to receive(:new).and_return(decorator)
-            allow(schema).to receive(:call).and_return(errors)
+            allow(schema).to receive(:call).and_return(double("result", errors: errors))
           end
 
           subject { post "/pacticipants", request_body, "CONTENT_TYPE" => "application/json" }
