@@ -28,6 +28,19 @@ shared_examples_for "a paginated response" do
   end
 end
 
+shared_examples_for "an invalid pagination params response" do
+  let(:response_body_hash) { JSON.parse(subject.body, symbolize_names: true) }
+
+  it "returns a a 400 status code" do
+    expect(subject.status).to eq 400
+  end
+
+  it "includes the parameter validation errors" do
+    expect(response_body_hash[:errors].has_key?(:pageNumber)).to be_truthy
+    expect(response_body_hash[:errors].has_key?(:pageSize)).to be_truthy
+  end
+end
+
 require "rspec/expectations"
 
 RSpec::Matchers.define :be_a_hal_json_success_response do

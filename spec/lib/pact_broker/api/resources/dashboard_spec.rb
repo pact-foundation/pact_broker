@@ -30,6 +30,12 @@ module PactBroker
             expect(response_body_hash["items"].size).to eq 1
           end
         end
+
+        context "with invalid pagination" do
+          subject { get(path, { pageNumber: -1, pageSize: -1 }) }
+
+          it_behaves_like "an invalid pagination params response"
+        end
       end
     end
   end

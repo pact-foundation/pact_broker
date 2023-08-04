@@ -25,7 +25,15 @@ module PactBroker
         end
 
         def malformed_request?
-          super || (request.post? && validation_errors_for_schema?)
+          if super
+            true
+          elsif request.post? && validation_errors_for_schema?
+            true
+          elsif request.get? && validation_errors_for_schema?(schema, request.query)
+            true
+          else
+            false
+          end
         end
 
         def request_body_required?
@@ -68,7 +76,11 @@ module PactBroker
         private
 
         def schema
-          PactBroker::Api::Contracts::PacticipantCreateSchema
+          if request.get?
+            PactBroker::Api::Contracts::PaginationQueryParamsSchema
+          else
+            PactBroker::Api::Contracts::PacticipantCreateSchema
+          end
         end
 
         def eager_load_associations
