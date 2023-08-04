@@ -20,6 +20,10 @@ module PactBroker
           ["GET", "OPTIONS"]
         end
 
+        def malformed_request?
+          super || (request.get? && validation_errors_for_schema?(schema, request.query))
+        end
+
         def to_json
           decorator_class(:dashboard_decorator).new(index_items).to_json(**decorator_options)
         end
@@ -33,6 +37,12 @@ module PactBroker
         end
 
         private
+
+        def schema
+          if request.get?
+            PactBroker::Api::Contracts::PaginationQueryParamsSchema
+          end
+        end
 
         def index_items
           index_service.find_index_items_for_api(**identifier_from_path.merge(pagination_options))

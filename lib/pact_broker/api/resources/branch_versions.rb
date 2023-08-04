@@ -18,6 +18,10 @@ module PactBroker
           ["GET", "OPTIONS"]
         end
 
+        def malformed_request?
+          super || request.get? && validation_errors_for_schema?(schema, request.query)
+        end
+
         def resource_exists?
           !!branch
         end
@@ -40,6 +44,14 @@ module PactBroker
 
         def resource_title
           "Versions for branch #{branch.name} of #{branch.pacticipant.name}"
+        end
+
+        private
+
+        def schema
+          if request.get?
+            PactBroker::Api::Contracts::PaginationQueryParamsSchema
+          end
         end
       end
     end
