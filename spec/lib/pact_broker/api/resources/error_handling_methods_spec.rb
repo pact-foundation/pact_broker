@@ -8,7 +8,7 @@ module PactBroker
 
         describe "#set_json_validation_error_messages" do
           before do
-            allow(application_context.api_contract_configuration).to receive(:validation_error_decorator_class_for).and_return(decorator_class)
+            allow(application_context.decorator_configuration).to receive(:validation_error_decorator_class_for).and_return(decorator_class)
           end
           let(:decorator_class) { double("decorator class", new: decorator) }
           let(:decorator) { double("Decorator", to_json: "body")}
@@ -24,7 +24,7 @@ module PactBroker
           subject { resource.set_json_validation_error_messages(errors) }
 
           it "gets the decorator for the errors" do
-            expect(application_context.api_contract_configuration).to receive(:validation_error_decorator_class_for).with(Hash, "application/hal+json,application/problem+json")
+            expect(application_context.decorator_configuration).to receive(:validation_error_decorator_class_for).with(Hash, "application/hal+json,application/problem+json")
             subject
           end
 

@@ -1,8 +1,8 @@
-require "pact_broker/api/contracts/configuration"
+require "pact_broker/api/decorators/configuration"
 
 module PactBroker
   module Api
-    module Contracts
+    module Decorators
       describe Configuration do
         describe "#validation_error_decorator_class_for" do
           let(:configuration) { Configuration.new }
