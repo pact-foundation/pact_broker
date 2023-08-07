@@ -25,18 +25,15 @@ module PactBroker
           error_reference
         end
 
-        def set_json_error_message detail, title: "Server error", type: "server_error", status: 500
+        # @param [String] detail
+        def set_json_error_message(detail, title: "Server error", type: "server_error", status: 500)
           response.headers["Content-Type"] = error_response_content_type
           response.body = error_response_body(detail, title, type, status)
         end
 
-        def set_json_validation_error_messages errors
+        def set_json_validation_error_messages(errors)
           response.headers["Content-Type"] = error_response_content_type
-          if problem_json_error_content_type?
-            response.body = PactBroker::Api::Decorators::ValidationErrorsProblemJSONDecorator.new(errors).to_json(**decorator_options)
-          else
-            response.body = { errors: errors }.to_json
-          end
+          response.body = validation_errors_response_body(errors)
         end
 
         def error_response_content_type
@@ -49,14 +46,28 @@ module PactBroker
 
         def error_response_body(detail, title, type, status)
           if problem_json_error_content_type?
-            PactBroker::Api::Decorators::CustomErrorProblemJSONDecorator.new(detail: detail, title: title, type: type, status: status).to_json(**decorator_options)
+            PactBroker::Api::Decorators::CustomErrorProblemJSONDecorator.new(detail: detail, title: title, type: type, status: status).to_json(**decorator_options_for_error)
           else
-            { error: detail }.to_json
+            PactBroker::Api::Decorators::ErrorDecorator.new(detail).to_json
           end
+        end
+
+        def validation_errors_response_body(errors)
+          validation_errors_decorator_class(errors).new(errors).to_json(**decorator_options_for_error)
+        end
+
+        def validation_errors_decorator_class(errors)
+          application_context.api_contract_configuration.validation_error_decorator_class_for(errors.class, request.headers["Accept"])
         end
 
         def problem_json_error_content_type?
           request.headers["Accept"]&.include?("application/problem+json")
+        end
+
+        # If we use the normal decorator options that have policy objects we can get into recursive loops in Pactflow, so just make a simple variant of the
+        # decorator options here
+        def decorator_options_for_error
+          { user_options: { base_url: base_url } }
         end
       end
     end

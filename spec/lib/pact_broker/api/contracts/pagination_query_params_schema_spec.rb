@@ -4,11 +4,13 @@ module PactBroker
   module Api
     module Contracts
       describe PaginationQueryParamsSchema do
+        include PactBroker::Test::ApiContractSupport
+
         let(:params) do
           {}
         end
 
-        subject { PaginationQueryParamsSchema.call(params) }
+        subject { format_errors_the_old_way(PaginationQueryParamsSchema.call(params)) }
 
         context "with empty params" do
           it { is_expected.to be_empty }

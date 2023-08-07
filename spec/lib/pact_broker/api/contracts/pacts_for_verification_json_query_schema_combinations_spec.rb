@@ -4,6 +4,8 @@ module PactBroker
   module Api
     module Contracts
       describe PactsForVerificationJSONQuerySchema do
+        include PactBroker::Test::ApiContractSupport
+
         ALL_PROPERTIES = {
           mainBranch: true,
           matchingBranch: true,
@@ -49,7 +51,7 @@ module PactBroker
 
             it "is valid" do
               params = { consumerVersionSelectors: [selector], providerVersionBranch: "main" }
-              expect(PactsForVerificationJSONQuerySchema.(params)).to be_empty
+              expect(PactsForVerificationJSONQuerySchema.(params).errors).to be_empty
             end
 
             extra_keys = ALL_PROPERTIES.keys - valid_key_combination - [:consumer]
@@ -61,11 +63,11 @@ module PactBroker
               describe "with #{selector_with_extra_key}" do
                 if expect_to_be_valid
                   it "is valid" do
-                    expect(PactsForVerificationJSONQuerySchema.(params)).to be_empty
+                    expect(PactsForVerificationJSONQuerySchema.(params).errors).to be_empty
                   end
                 else
                   it "is not valid" do
-                    expect(PactsForVerificationJSONQuerySchema.(params)).to_not be_empty
+                    expect(PactsForVerificationJSONQuerySchema.(params).errors).to_not be_empty
                   end
                 end
               end
@@ -76,7 +78,7 @@ module PactBroker
                 it "is valid" do
                   params = { consumerVersionSelectors: [selector_with_consumer], providerVersionBranch: "main" }
 
-                  expect(PactsForVerificationJSONQuerySchema.(params).empty?).to be true
+                  expect(PactsForVerificationJSONQuerySchema.(params).errors.empty?).to be true
                 end
               end
             end

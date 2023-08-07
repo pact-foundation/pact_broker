@@ -23,7 +23,7 @@ module PactBroker
         # @return [Hash] the validation errors to display to the user
         def self.call(params)
           params_to_validate = params.respond_to?(:symbolize_keys) ? params.symbolize_keys : params
-          format_errors(new.call(params_to_validate).errors)
+          new.call(params_to_validate)
         end
       end
     end

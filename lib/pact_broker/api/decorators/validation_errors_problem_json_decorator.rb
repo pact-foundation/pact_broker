@@ -1,5 +1,4 @@
-# Formats a nested Hash of errors as it comes out of the Dry Validation library
-# into application/problem+json format.
+# Formats a nested Hash of errors into application/problem+json format.
 require "pact_broker/string_refinements"
 
 module PactBroker

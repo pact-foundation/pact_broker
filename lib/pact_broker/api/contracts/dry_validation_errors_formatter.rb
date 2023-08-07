@@ -5,6 +5,8 @@ module PactBroker
     module Contracts
       module DryValidationErrorsFormatter
 
+        extend self
+
         # Formats the dry validation errors in the expected PactBroker error format of { :key => ["errors"] }
         # where there are no nested hashes.
         # @param [Dry::Validation::MessageSet] errors

@@ -4,6 +4,8 @@ module PactBroker
   module Api
     module Contracts
       describe EnvironmentSchema do
+        include PactBroker::Test::ApiContractSupport
+
         before do
           allow(PactBroker::Deployments::EnvironmentService).to receive(:find_by_name).and_return(existing_environment)
         end
@@ -27,7 +29,7 @@ module PactBroker
           }]
         end
 
-        subject { EnvironmentSchema.call(params) }
+        subject { format_errors_the_old_way(EnvironmentSchema.call(params)) }
 
         context "with valid params" do
           it { is_expected.to be_empty }

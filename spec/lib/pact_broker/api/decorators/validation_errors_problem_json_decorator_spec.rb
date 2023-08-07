@@ -96,7 +96,7 @@ module PactBroker
             it { is_expected.to match_pact(expected_hash, allow_unexpected_keys: false)}
           end
 
-          context "with an array of strings (shouldn't happen, but can't guarantee it doesn't" do
+          context "with an array of strings (PactBroker::Matrix::Service.validate_selectors returns this :grimace:)" do
             let(:validation_errors) do
               ["error 1", "error 2"]
             end
