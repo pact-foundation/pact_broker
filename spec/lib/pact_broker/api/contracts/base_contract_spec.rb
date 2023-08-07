@@ -4,6 +4,7 @@ module PactBroker
   module Api
     module Contracts
       describe BaseContract do
+        include PactBroker::Test::ApiContractSupport
 
         class TestContract < BaseContract
           json do
@@ -13,7 +14,7 @@ module PactBroker
 
         describe ".call" do
           context "when an array is supplied" do
-            subject { TestContract.call([1]) }
+            subject { format_errors_the_old_way(TestContract.call([1])) }
 
             it "doesn't blow up" do
               expect(subject[:name]).to eq ["is missing"]

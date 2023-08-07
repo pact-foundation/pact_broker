@@ -6,16 +6,17 @@ module PactBroker
   module Api
     module Contracts
       describe VerificationContract do
+        include PactBroker::Test::ApiContractSupport
 
-        subject { VerificationContract.call(params) }
         let(:verification) { PactBroker::Domain::Verification.new }
         let(:valid_params) { { success: success, providerApplicationVersion: provider_version, buildUrl: build_url } }
         let(:params) { valid_params }
-
         let(:success) { true }
         let(:provider_version) { "4.5.6" }
         let(:build_url) { "http://foo" }
         let(:order_versions_by_date) { false }
+
+        subject { format_errors_the_old_way(VerificationContract.call(params)) }
 
         def modify hash, options
           hash.delete(options.fetch(:without))

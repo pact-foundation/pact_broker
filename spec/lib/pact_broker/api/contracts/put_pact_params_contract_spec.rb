@@ -5,6 +5,8 @@ module PactBroker
   module Api
     module Contracts
       describe PutPactParamsContract do
+        include PactBroker::Test::ApiContractSupport
+
         before do
           allow(PactBroker.configuration).to receive(:order_versions_by_date).and_return(order_versions_by_date)
         end
@@ -24,7 +26,7 @@ module PactBroker
           }
         end
 
-        subject { PutPactParamsContract.call(pact_params) }
+        subject { format_errors_the_old_way(PutPactParamsContract.call(pact_params)) }
 
         describe "errors" do
           let(:attributes) { valid_attributes }

@@ -1,16 +1,19 @@
 require "pact_broker/api/contracts/can_i_deploy_query_schema"
+require "pact_broker/api/contracts/dry_validation_errors_formatter"
 
 module PactBroker
   module Api
     module Contracts
       describe CanIDeployQuerySchema do
+        include PactBroker::Test::ApiContractSupport
+
         before do
           allow(PactBroker::Pacticipants::Service).to receive(:find_pacticipant_by_name).and_return(pacticipant)
         end
 
         let(:pacticipant) { double("pacticipant") }
 
-        subject { CanIDeployQuerySchema.call(params) }
+        subject { format_errors_the_old_way(CanIDeployQuerySchema.call(params)) }
 
         context "with valid params" do
           let(:params) do

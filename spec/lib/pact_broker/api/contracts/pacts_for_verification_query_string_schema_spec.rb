@@ -4,6 +4,8 @@ module PactBroker
   module Api
     module Contracts
       describe PactsForVerificationQueryStringSchema do
+        include PactBroker::Test::ApiContractSupport
+
         let(:params) do
           {
             provider_version_tags: provider_version_tags,
@@ -20,7 +22,7 @@ module PactBroker
           }]
         end
 
-        subject { PactsForVerificationQueryStringSchema.(params) }
+        subject { format_errors_the_old_way(PactsForVerificationQueryStringSchema.(params)) }
 
         context "when the params are valid" do
           it "has no errors" do

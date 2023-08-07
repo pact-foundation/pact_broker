@@ -5,6 +5,8 @@ module PactBroker
   module Api
     module Contracts
       describe WebhookContract do
+        include PactBroker::Test::ApiContractSupport
+
         let(:json) { load_fixture "webhook_valid_with_pacticipants.json" }
         let(:hash) { JSON.parse(json) }
         let(:webhook) { PactBroker::Api::Decorators::WebhookDecorator.new(Domain::Webhook.new).from_json(json) }
@@ -12,7 +14,7 @@ module PactBroker
         let(:consumer) { double("consumer") }
         let(:provider) { double("provider") }
 
-        subject { WebhookContract.call(hash) }
+        subject { format_errors_the_old_way(WebhookContract.call(hash)) }
 
         def valid_webhook_with
           hash = load_json_fixture "webhook_valid_with_pacticipants.json"

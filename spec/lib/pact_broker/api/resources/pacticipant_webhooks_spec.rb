@@ -118,7 +118,7 @@ module PactBroker::Api
         before do
           allow(webhook_service).to receive(:create).and_return(saved_webhook)
           allow(webhook_service).to receive(:next_uuid).and_return(next_uuid)
-          allow(PactBroker::Api::Contracts::WebhookContract).to receive(:call).and_return(errors)
+          allow(PactBroker::Api::Contracts::WebhookContract).to receive(:call).and_return(double("result", errors: errors))
           allow(PactBroker::Domain::Webhook).to receive(:new).and_return(webhook)
         end
 
