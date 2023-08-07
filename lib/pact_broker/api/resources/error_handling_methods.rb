@@ -57,7 +57,7 @@ module PactBroker
         end
 
         def validation_errors_decorator_class(errors)
-          application_context.api_contract_configuration.validation_error_decorator_class_for(errors.class, request.headers["Accept"])
+          application_context.decorator_configuration.validation_error_decorator_class_for(errors.class, request.headers["Accept"])
         end
 
         def problem_json_error_content_type?
