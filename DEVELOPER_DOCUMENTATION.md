@@ -124,29 +124,6 @@ pact publication resource will be created with an incremented revision number, b
 
 * `matrix` - The matrix of every pact publication and verification. Includes every pact revision (eg. publishing to the same consumer version twice, or using PATCH) and every verification (including 'overwritten' ones. eg. when the same provider build runs twice.)
 
-### Dependencies
-
-```
-= head_matrix view
-  -> latest_pact_publications view
-    -> latest_pact_publications_by_consumer_versions view
-      -> latest_pact_publication_ids_by_consumer_versions
-      -> all_pact_publications
-        -> versions, pacticipants, pact_publications, pact_versions
-  -> latest_verifications_for_pact_versions
-    -> latest_verification_ids_for_pact_versions
-    -> versions
-  -> latest_tagged_pact_consumer_version_orders
-  -> latest_pact_publications_by_consumer_versions
-
-= head_pact_publications
-  -> latest_pact_publications
-    -> latest_pact_publication_ids_for_consumer_versions
-  -> latest_tagged_pact_publications
-    -> latest_pact_publications_by_consumer_versions (optimised for pp_ids)
-    -> latest_tagged_pact_consumer_version_orders (optimised for pp_ids)
-
-```
 
 ### Database modeling approach
 
@@ -154,7 +131,7 @@ In the beginning, I made a lot of Sequel models based on views that pulled in th
 
 ### Useful to know stuff
 
-* The supported database types are Postgres (recommended), MySQL (sigh) and Sqlite (just for testing, not recommended
+* The supported database types are Postgres (recommended), MySQL (but not officially) and Sqlite (just for testing, not recommended
   for production). Check the travis.yml file for the supported database versions.
 * Any migration that uses the "order" column has to be defined using the Sequel DSL rather than pure SQL, because the
   word "order" is a key word, and it has to be escaped correctly and differently on each database (Postgres, MySQL,
