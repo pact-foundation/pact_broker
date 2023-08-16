@@ -35,7 +35,7 @@ module Webmachine
       title = options[:title] if options[:title]
       message = options[:message] if options[:message]
 
-      res.body = error_response_body(message, title, title.dasherize.gsub(/^\d+\-/, ""), code, req)
+      res.body = error_response_body(req, message, title, title.dasherize.gsub(/^\d+\-/, ""), code, req)
       res.headers[CONTENT_TYPE] = error_response_content_type(req)
     end
     ensure_content_length(res)
@@ -60,11 +60,13 @@ module Webmachine
     end
   end
 
-  def self.error_response_body(detail, title, type, status, request)
+  # rubocop: disable Metrics/ParameterLists
+  def self.error_response_body(req, detail, title, type, status, request)
     if problem_json_error_content_type?(request)
-      PactBroker::Api::Decorators::CustomErrorProblemJSONDecorator.new(detail: detail, title: title, type: type, status: status).to_json
+      req.path_info[:application_context].decorator_configuration.class_for(:custom_error_problem_json_decorator).new(detail: detail, title: title, type: type, status: status).to_json
     else
-      { error: detail }.to_json
+      req.path_info[:application_context].decorator_configuration.class_for(:error_decorator).new(detail).to_json
     end
   end
+  # rubocop: enable Metrics/ParameterLists
 end
