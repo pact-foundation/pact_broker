@@ -19,11 +19,11 @@ module PactBroker
         end
 
         let(:selector_1) do
-          PactBroker::Matrix::ResolvedSelector.for_pacticipant(foo, {}, :specified, false)
+          PactBroker::Matrix::ResolvedSelector.for_pacticipant(foo, PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: "Foo"), :specified, false)
         end
 
         let(:selector_2) do
-          PactBroker::Matrix::ResolvedSelector.for_pacticipant(bar, {}, :specified, false)
+          PactBroker::Matrix::ResolvedSelector.for_pacticipant(bar, PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: "Bar"), :specified, false)
         end
 
         let(:selectors) { [selector_1, selector_2] }

@@ -213,6 +213,7 @@ module PactBroker
         end
 
         # rubocop: disable Metrics/CyclomaticComplexity
+        # @param [PactBroker::Matrix::UnresolvedSelector] selector
         def for_selector(selector)
           query = self
           query = query.where_pacticipant_name(selector.pacticipant_name) if selector.pacticipant_name

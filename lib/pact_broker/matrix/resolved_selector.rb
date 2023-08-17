@@ -187,6 +187,10 @@ module PactBroker
         !ignore?
       end
 
+      def original_selector
+        self[:original_selector]
+      end
+
       # rubocop: disable Metrics/CyclomaticComplexity, Metrics/MethodLength
       def description
         if latest_tagged? && pacticipant_version_number

@@ -195,7 +195,8 @@ module PactBroker
       # rubocop: enable Metrics/CyclomaticComplexity
 
       def query_matrix selectors, options
-        query = base_model(options).select_all_columns
+        query = base_model(options)
+                  #.select_all_columns
                   .matching_selectors(selectors)
                   .order_by_last_action_date
 

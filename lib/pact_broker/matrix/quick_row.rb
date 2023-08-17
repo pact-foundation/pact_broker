@@ -27,8 +27,8 @@ module PactBroker
   module Matrix
     # TODO rename this to just Row
     # rubocop: disable Metrics/ClassLength
-    class QuickRow < Sequel::Model(Sequel.as(:latest_pact_publication_ids_for_consumer_versions, :p))
 
+    class QuickRow < Sequel::Model(Sequel.as(:latest_pact_publication_ids_for_consumer_versions, :p))
       # Tables
       LV = :latest_verification_id_for_pact_version_and_provider_version
       LP = :latest_pact_publication_ids_for_consumer_versions
@@ -69,6 +69,7 @@ module PactBroker
       # cachable select arguments
       SELECT_ALL_COLUMN_ARGS = [:select_all_columns] + ALL_COLUMNS
       SELECT_PACTICIPANT_IDS_ARGS = [:select_pacticipant_ids, Sequel[:p][:consumer_id], Sequel[:p][:provider_id]]
+      SELECT_PACT_COLUMNS_ARGS = [:select_pact_columns] + PACT_COLUMNS
 
       EAGER_LOADED_RELATIONSHIPS_FOR_VERSION = { current_deployed_versions: :environment, current_supported_released_versions: :environment, branch_versions: [:branch_head, :version, branch: :pacticipant] }
 
@@ -82,12 +83,34 @@ module PactBroker
       associate(:one_to_many, :consumer_version_tags, :class => "PactBroker::Tags::TagWithLatestFlag", primary_key: :consumer_version_id, key: :version_id)
       associate(:one_to_many, :provider_version_tags, :class => "PactBroker::Tags::TagWithLatestFlag", primary_key: :provider_version_id, key: :version_id)
 
+      class Verification < Sequel::Model(Sequel.as(:latest_verification_id_for_pact_version_and_provider_version, :v))
+        dataset_module do
+          select(*([:select_verification_columns] + QuickRow::VERIFICATION_COLUMNS + [Sequel[:v][:pact_version_id]]))
+          select(:select_pact_version_id, Sequel[:v][:pact_version_id])
+
+          def select_distinct_pact_version_id
+            select_pact_version_id.distinct
+          end
+
+          def join_versions(versions_dataset)
+            join(versions_dataset, { Sequel[:v][:provider_version_id] => Sequel[:versions][:id] }, table_alias: :versions)
+          end
+        end
+      end
+
       dataset_module do
         include PactBroker::Dataset
 
         select(*SELECT_ALL_COLUMN_ARGS)
+        select(*SELECT_PACT_COLUMNS_ARGS)
         select(*SELECT_PACTICIPANT_IDS_ARGS)
+        select(:select_pacticipant_and_pact_version_ids, Sequel[:p][:consumer_id], Sequel[:p][:provider_id], Sequel[:p][:pact_version_id])
 
+        def select_distinct_pacticipant_and_pact_version_ids
+          select_pacticipant_and_pact_version_ids.distinct
+        end
+
+        # @param [PactBroker::Matrix::ResolvedSelector] selector
         def distinct_integrations_for_selector_as_consumer(selector)
           select(:consumer_id, :provider_id)
             .distinct
@@ -98,19 +121,23 @@ module PactBroker
             .join_providers(:integrations, :providers)
         end
 
-        def distinct_integrations selectors, infer_integrations
+        # @param [Array<PactBroker::Matrix::ResolvedSelector>] selectors
+        def distinct_integrations(selectors)
           query = if selectors.size == 1
                     pacticipant_ids_matching_one_selector_optimised(selectors)
                   else
-                    query = select_pacticipant_ids.distinct
-                    if infer_integrations
-                      query.matching_any_of_multiple_selectors(selectors)
+                    if selectors.all?(&:only_pacticipant_name_specified?)
+                      matching_multiple_selectors_without_joining_verifications(selectors)
+                        .select_pacticipant_ids
+                        .distinct
                     else
-                      if selectors.all?(&:only_pacticipant_name_specified?)
-                        query.matching_multiple_selectors_without_joining_verifications(selectors)
-                      else
-                        query.matching_multiple_selectors_joining_verifications(selectors)
-                      end
+                      matching_multiple_selectors_joining_verifications(
+                          selectors,
+                          pact_columns: :select_distinct_pacticipant_and_pact_version_ids,
+                          verifications_columns: :select_distinct_pact_version_id
+                        )
+                        .select_pacticipant_ids
+                        .distinct
                     end
                   end
 
@@ -125,11 +152,16 @@ module PactBroker
             .join_providers(:pacticipant_ids, :p)
         end
 
+        # The matrix query used to determine the final dataset
+        # @param [Array<PactBroker::Matrix::ResolvedSelector>] selectors
         def matching_selectors selectors
           if selectors.size == 1
-            matching_one_selector(selectors)
+            select_all_columns.matching_one_selector(selectors)
           else
-            matching_multiple_selectors_joining_verifications(selectors)
+            matching_multiple_selectors_joining_verifications(
+              selectors,
+              pact_columns: :select_pact_columns,
+              verifications_columns: :select_verification_columns)
           end
         end
 
@@ -172,7 +204,6 @@ module PactBroker
             }
 
           rows_where_selector_matches_provider_cols = inner_join_verifications_matching_one_selector_provider_or_provider_version(query_ids)
-
           rows_where_selector_matches_consumer_cols.union(rows_where_selector_matches_provider_cols)
         end
 
@@ -208,17 +239,41 @@ module PactBroker
         # Instead, we need to filter the verifications dataset down to only the ones specified in the selectors first,
         # and THEN join them to the pacts, so that we get a row for the pact with null provider version
         # and verification fields.
+        # @param [Array<PactBroker::Matrix::ResolvedSelector>] selectors
+        def matching_multiple_selectors_joining_verifications(selectors, pact_columns:, verifications_columns: )
+          pact_publications = pact_publications_matching_selectors_as_consumer(selectors, pact_columns: pact_columns).from_self(alias: :p)
+          verifications = verifications_matching_selectors_as_provider(selectors, verifications_columns: verifications_columns)
+          specified_pacticipant_ids = selectors.select(&:specified?).collect(&:pacticipant_id).uniq
 
-        def matching_multiple_selectors_joining_verifications(selectors)
-          query_ids = QueryIds.from_selectors(selectors)
-          join_verifications_for(query_ids)
-            .where {
-              Sequel.&(
-                QueryBuilder.consumer_or_consumer_version_matches(query_ids, :p),
-                QueryBuilder.provider_or_provider_version_matches_or_pact_unverified(query_ids, :v, :p),
-                QueryBuilder.either_consumer_or_provider_was_specified_in_query(query_ids, :p)
-              )
-            }
+          pact_publications
+            .left_outer_join(verifications, { Sequel[:p][:pact_version_id] => Sequel[:v][:pact_version_id] }, { table_alias: :v })
+            .where(consumer_id: specified_pacticipant_ids).or(provider_id: specified_pacticipant_ids)
+        end
+
+        # @param [Array<PactBroker::Matrix::ResolvedSelector>] selectors
+        def pact_publications_matching_selectors_as_consumer(selectors, pact_columns:)
+          unresolved_selectors = selectors.collect(&:original_selector).uniq
+          versions = unresolved_selectors.collect{ | selector | PactBroker::Domain::Version.select(Sequel[:versions][:id]).for_selector(selector).select(:id) }.reduce(&:union)
+          pacticipant_ids = selectors.collect(&:pacticipant_id).uniq
+          versions_join = { Sequel[:p][:consumer_version_id] => Sequel[:versions][:id] }
+          self.model.from_self(alias: :p).send(pact_columns).join(versions, versions_join, table_alias: :versions).where(provider_id: pacticipant_ids)
+        end
+
+
+        # @param [Array<PactBroker::Matrix::ResolvedSelector>] selectors
+        def verifications_matching_selectors_as_provider(selectors, verifications_columns: )
+          unresolved_selectors = selectors.collect(&:original_selector).uniq
+          versions = unresolved_selectors.collect{ | selector | PactBroker::Domain::Version.select(Sequel[:versions][:id]).for_selector(selector).select(:id) }.reduce(&:union)
+          pacticipant_ids = selectors.collect(&:pacticipant_id).uniq
+          verification_model
+            .send(verifications_columns)
+            .join_versions(versions)
+            .where(consumer_id: pacticipant_ids)
+        end
+
+
+        def verification_model
+          QuickRow::Verification
         end
 
         def matching_multiple_selectors_without_joining_verifications(selectors)
@@ -351,6 +406,14 @@ module PactBroker
 
       def to_s
         "#{consumer_name} v#{consumer_version_number} #{provider_name} #{provider_version_number} #{success}"
+      end
+
+      def consumer_deets
+        "#{consumer_name} v#{consumer_version_number} #{provider_name}"
+      end
+
+      def provider_deets
+        "#{provider_name} #{provider_version_number} #{success}"
       end
 
       def compare_number_desc number1, number2

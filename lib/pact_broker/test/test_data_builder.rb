@@ -386,6 +386,14 @@ module PactBroker
         self
       end
 
+      # @param [Hash] parameters
+      # @option parameters [String] :provider_version
+      # @option parameters [Array<String>] :tag_names
+      # @option parameters [String] :branch
+      # @option parameters [Boolean] :success
+      # @option parameters [Integer] :number
+      # @option parameters [Boolean] :wip
+      # @option parameters [Boolean] :test_results
       def create_verification parameters = {}
         # This should use the verification service. what a mess
         parameters.delete(:comment)

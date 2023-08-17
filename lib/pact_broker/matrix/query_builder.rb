@@ -46,11 +46,11 @@ module PactBroker
         Sequel.|(*ors)
       end
 
-      # Some selecters are specified in the query, others are implied (when only one pacticipant is specified,
-      # the integrations are automatically worked out, and the selectors for these are of type :implied )
+      # Some selecters are specified in the query, others are inferred (when only one pacticipant is specified,
+      # the integrations are automatically worked out, and the selectors for these are of type :inferred )
       # When there are 3 pacticipants that each have dependencies on each other (A->B, A->C, B->C), the query
-      # to deploy C (implied A, implied B, specified C) was returning the A->B row because it matched the
-      # implied selectors as well.
+      # to deploy C (inferred A, inferred B, specified C) was returning the A->B row because it matched the
+      # inferred selectors as well.
       # This extra filter makes sure that every row that is returned actually matches one of the specified
       # selectors.
       def self.either_consumer_or_provider_was_specified_in_query(query_ids, qualifier = nil)
