@@ -65,8 +65,7 @@ module PactBroker
 
       ALL_COLUMNS = PACT_COLUMNS + VERIFICATION_COLUMNS
 
-
-      # cachable select arguments
+      # cacheable select arguments
       SELECT_ALL_COLUMN_ARGS = [:select_all_columns] + ALL_COLUMNS
       SELECT_PACTICIPANT_IDS_ARGS = [:select_pacticipant_ids, Sequel[:p][:consumer_id], Sequel[:p][:provider_id]]
       SELECT_PACT_COLUMNS_ARGS = [:select_pact_columns] + PACT_COLUMNS
@@ -85,6 +84,7 @@ module PactBroker
 
       class Verification < Sequel::Model(Sequel.as(:latest_verification_id_for_pact_version_and_provider_version, :v))
         dataset_module do
+          # declaring the selects this way makes them cacheable
           select(*([:select_verification_columns] + QuickRow::VERIFICATION_COLUMNS + [Sequel[:v][:pact_version_id]]))
           select(:select_pact_version_id, Sequel[:v][:pact_version_id])
 
@@ -121,6 +121,7 @@ module PactBroker
             .join_providers(:integrations, :providers)
         end
 
+        # Find all the integrations (consumer/provider pairs) that involve the given selectors.
         # @param [Array<PactBroker::Matrix::ResolvedSelector>] selectors
         def distinct_integrations(selectors)
           query = if selectors.size == 1
@@ -251,10 +252,11 @@ module PactBroker
         end
 
         # @param [Array<PactBroker::Matrix::ResolvedSelector>] selectors
-        def pact_publications_matching_selectors_as_consumer(selectors, pact_columns:)
-          unresolved_selectors = selectors.collect(&:original_selector).uniq
+        def pact_publications_matching_selectors_as_consumer(resolved_selectors, pact_columns:)
+          # get the UnresolvedSelector objects back out of the resolved_selectors because the Version.for_selector() method uses the UnresolvedSelector
+          unresolved_selectors = resolved_selectors.collect(&:original_selector).uniq
           versions = unresolved_selectors.collect{ | selector | PactBroker::Domain::Version.select(Sequel[:versions][:id]).for_selector(selector).select(:id) }.reduce(&:union)
-          pacticipant_ids = selectors.collect(&:pacticipant_id).uniq
+          pacticipant_ids = resolved_selectors.collect(&:pacticipant_id).uniq
           versions_join = { Sequel[:p][:consumer_version_id] => Sequel[:versions][:id] }
           self.model.from_self(alias: :p).send(pact_columns).join(versions, versions_join, table_alias: :versions).where(provider_id: pacticipant_ids)
         end
@@ -262,6 +264,7 @@ module PactBroker
 
         # @param [Array<PactBroker::Matrix::ResolvedSelector>] selectors
         def verifications_matching_selectors_as_provider(selectors, verifications_columns: )
+          # get the UnresolvedSelector objects back out of the resolved_selectors because the Version.for_selector() method uses the UnresolvedSelector
           unresolved_selectors = selectors.collect(&:original_selector).uniq
           versions = unresolved_selectors.collect{ | selector | PactBroker::Domain::Version.select(Sequel[:versions][:id]).for_selector(selector).select(:id) }.reduce(&:union)
           pacticipant_ids = selectors.collect(&:pacticipant_id).uniq

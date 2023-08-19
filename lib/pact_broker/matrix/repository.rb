@@ -1,26 +1,18 @@
-require "pact_broker/logging"
-require "pact_broker/repositories/helpers"
 require "pact_broker/matrix/quick_row"
 require "pact_broker/matrix/every_row"
-require "pact_broker/error"
 require "pact_broker/matrix/query_results"
 require "pact_broker/matrix/integration"
 require "pact_broker/matrix/query_results_with_deployment_status_summary"
-require "pact_broker/matrix/resolved_selector"
 require "pact_broker/matrix/unresolved_selector"
 require "pact_broker/verifications/latest_verification_id_for_pact_version_and_provider_version"
+require "pact_broker/matrix/integrations_repository"
+require "pact_broker/matrix/resolved_selectors_builder"
+require "pact_broker/matrix/row_ignorer"
 
 module PactBroker
   module Matrix
-
-    class Error < PactBroker::Error; end
-
     class Repository
-      include PactBroker::Repositories::Helpers
       include PactBroker::Repositories
-      include PactBroker::Logging
-
-      # TODO move latest verification logic in to database
 
       # Used when using table_print to output query results
       TP_COLS = [ :consumer_version_number, :pact_revision_number, :provider_version_number, :verification_number]
@@ -29,43 +21,29 @@ module PactBroker
       GROUP_BY_PROVIDER = [:consumer_name, :consumer_version_number, :provider_name]
       GROUP_BY_PACT = [:consumer_name, :provider_name]
 
-      # rubocop: disable Metrics/CyclomaticComplexity
-      def find_ids_for_pacticipant_names params
-        criteria  = {}
+      # THE METHOD for querying the Matrix
+      # @param [Array<PactBroker::Matrix::UnresolvedSelector>] unresolved_specified_selectors
+      # @param [Hash] options
+      def find(unresolved_specified_selectors, options = {})
+        infer_selectors = infer_selectors_for_integrations?(options)
+        resolved_selectors_builder = ResolvedSelectorsBuilder.new
+        resolved_selectors_builder.resolve_selectors(unresolved_specified_selectors, options.fetch(:ignore_selectors, []))
+        integrations = matrix_integration_repository.find_integrations_for_specified_selectors(resolved_selectors_builder.specified_selectors, infer_selectors)
+        resolved_selectors_builder.resolve_inferred_selectors(integrations, options) if infer_selectors
 
-        if params[:consumer_name] || params[:provider_name]
-          if params[:consumer_name]
-            pacticipant = PactBroker::Domain::Pacticipant.where(name_like(:name, params[:consumer_name])).single_record
-            criteria[:consumer_id] = pacticipant.id if pacticipant
-          end
-
-          if params[:provider_name]
-            pacticipant = PactBroker::Domain::Pacticipant.where(name_like(:name, params[:provider_name])).single_record
-            criteria[:provider_id] = pacticipant.id if pacticipant
-          end
-        end
-
-        if params[:pacticipant_name]
-          pacticipant = PactBroker::Domain::Pacticipant.where(name_like(:name, params[:pacticipant_name])).single_record
-          criteria[:pacticipant_id] = pacticipant.id if pacticipant
-        end
-
-        criteria[:tag_name] = params[:tag_name] if params[:tag_name].is_a?(String) # Could be a sym from resource parameters in api.rb
-        criteria
-      end
-      # rubocop: enable Metrics/CyclomaticComplexity
-
-      # Return the latest matrix row (pact/verification) for each consumer_version_number/provider_version_number
-      def find specified_selectors, options = {}
-        resolved_ignore_selectors = resolve_ignore_selectors(options)
-        resolved_specified_selectors = resolve_versions_and_add_ids(specified_selectors, :specified, resolved_ignore_selectors)
-        integrations = find_integrations_for_specified_selectors(resolved_specified_selectors, options)
-        resolved_selectors = add_any_inferred_selectors(resolved_specified_selectors, resolved_ignore_selectors, integrations, options)
-        considered_rows, ignored_rows = find_considered_and_ignored_rows(resolved_selectors, resolved_ignore_selectors, options)
-        QueryResults.new(considered_rows.sort, ignored_rows.sort, specified_selectors, options, resolved_selectors, resolved_ignore_selectors, integrations)
+        considered_rows, ignored_rows = find_considered_and_ignored_rows(resolved_selectors_builder.all_selectors, resolved_selectors_builder.ignore_selectors, options)
+        QueryResults.new(
+          considered_rows.sort,
+          ignored_rows.sort,
+          unresolved_specified_selectors,
+          options,
+          resolved_selectors_builder.all_selectors,
+          resolved_selectors_builder.ignore_selectors,
+          integrations
+        )
       end
 
-      def find_for_consumer_and_provider pacticipant_1_name, pacticipant_2_name
+      def find_for_consumer_and_provider(pacticipant_1_name, pacticipant_2_name)
         selectors = [ UnresolvedSelector.new(pacticipant_name: pacticipant_1_name), UnresolvedSelector.new(pacticipant_name: pacticipant_2_name)]
         options = { latestby: "cvpv" }
         find(selectors, options)
@@ -73,88 +51,22 @@ module PactBroker
 
       private
 
-      def find_considered_and_ignored_rows(resolved_selectors, resolved_ignore_selectors, options)
-        rows = query_matrix(resolved_selectors, options)
+      # If the user has specified --to TAG or --to-environment ENVIRONMENT in the CLI
+      # (or nothing, which to defaults to latest=true - "with the latest version of the other integrated applications")
+      # we need to work out what the integrations are between the specified selectors and the other pacticipant versions
+      # in the target environment/branches/tags.
+      # @param [Hash] options the matrix options
+      # @return [Boolean]
+      def infer_selectors_for_integrations?(options)
+        options[:latest] || options[:tag] || options[:branch] || options[:environment_name] || options[:main_branch]
+      end
+
+      def find_considered_and_ignored_rows(all_resolved_selectors, resolved_ignore_selectors, options)
+        rows = query_matrix(all_resolved_selectors, options)
         rows = apply_latestby(options, rows)
         rows = apply_success_filter(rows, options)
-        considered_rows, ignored_rows = split_rows_into_considered_and_ignored(rows, resolved_ignore_selectors)
+        considered_rows, ignored_rows = RowIgnorer.split_rows_into_considered_and_ignored(rows, resolved_ignore_selectors)
         return considered_rows, ignored_rows
-      end
-
-      def find_integrations_for_specified_selectors(resolved_specified_selectors, options)
-        if infer_selectors_for_integrations?(options)
-          find_integrations_for_specified_selectors_with_inferred_integrations(resolved_specified_selectors)
-        else
-          find_integrations_for_specified_selectors_only(resolved_specified_selectors)
-        end
-      end
-
-      def find_integrations_for_specified_selectors_only(resolved_specified_selectors)
-        specified_pacticipant_names = resolved_specified_selectors.collect(&:pacticipant_name)
-        base_model_for_integrations
-          .distinct_integrations(resolved_specified_selectors, false)
-          .collect(&:to_hash)
-          .collect do | integration_hash |
-            required = is_a_row_for_this_integration_required?(specified_pacticipant_names, integration_hash[:consumer_name])
-            Integration.from_hash(integration_hash.merge(required: required))
-          end
-      end
-
-      def find_integrations_for_specified_selectors_with_inferred_integrations(resolved_specified_selectors)
-        integrations = integrations_where_specified_selector_is_consumer(resolved_specified_selectors) +
-                        integrations_where_specified_selector_is_provider(resolved_specified_selectors)
-        deduplicate_integrations(integrations)
-      end
-
-      def integrations_where_specified_selector_is_consumer(resolved_specified_selectors)
-        resolved_specified_selectors.flat_map do | selector |
-          base_model_for_integrations
-            .distinct_integrations_for_selector_as_consumer(selector)
-            .all
-            .collect do | integration |
-              Integration.from_hash(
-                consumer_id: integration[:consumer_id],
-                consumer_name: integration[:consumer_name],
-                provider_id: integration[:provider_id],
-                provider_name: integration[:provider_name],
-                required: true # synchronous consumer requires the provider to be present
-              )
-            end
-        end
-      end
-
-      # Why does the consumer equivalent of this method use the QuickRow distinct_integrations_for_selector_as_consumer
-      # while this method uses the Integration?
-      def integrations_where_specified_selector_is_provider(resolved_specified_selectors)
-        integrations_involving_specified_providers = PactBroker::Integrations::Integration
-                                                      .where(provider_id: resolved_specified_selectors.collect(&:pacticipant_id))
-                                                      .eager(:consumer, :provider)
-                                                      .all
-
-        integrations_involving_specified_providers.collect do | integration |
-          Integration.from_hash(
-            consumer_id: integration.consumer.id,
-            consumer_name: integration.consumer.name,
-            provider_id: integration.provider.id,
-            provider_name: integration.provider.name,
-            required: false # synchronous provider does not require the consumer to be present
-          )
-        end
-      end
-
-      def deduplicate_integrations(integrations)
-        integrations
-          .group_by{ | integration| [integration.consumer_id, integration.provider_id] }
-          .values
-          .collect { | duplicate_integrations | duplicate_integrations.find(&:required?) || duplicate_integrations.first }
-      end
-
-      def add_any_inferred_selectors(resolved_specified_selectors, resolved_ignore_selectors, integrations, options)
-        if infer_selectors_for_integrations?(options)
-          resolved_specified_selectors + inferred_selectors(resolved_specified_selectors, resolved_ignore_selectors, integrations, options)
-        else
-          resolved_specified_selectors
-        end
       end
 
       def apply_success_filter(rows_with_latest_by_applied, options)
@@ -167,17 +79,9 @@ module PactBroker
         end
       end
 
-      # If a specified pacticipant is a consumer, then its provider is required to be deployed
-      # to the same environment before the consumer can be deployed.
-      # If a specified pacticipant is a provider only, then it may be deployed
-      # without the consumer being present.
-      def is_a_row_for_this_integration_required?(specified_pacticipant_names, consumer_name)
-        specified_pacticipant_names.include?(consumer_name)
-      end
-
       # rubocop: disable Metrics/CyclomaticComplexity
       # It would be nicer to do this in the SQL, but it requires time that I don't have at the moment
-      def apply_latestby options, lines
+      def apply_latestby(options, lines)
         return lines unless options[:latestby]
         group_by_columns = case options[:latestby]
                            when "cvpv" then GROUP_BY_PROVIDER_VERSION_NUMBER
@@ -194,10 +98,9 @@ module PactBroker
       end
       # rubocop: enable Metrics/CyclomaticComplexity
 
-      def query_matrix selectors, options
+      def query_matrix(all_resolved_selectors, options)
         query = base_model(options)
-                  #.select_all_columns
-                  .matching_selectors(selectors)
+                  .matching_selectors(all_resolved_selectors)
                   .order_by_last_action_date
 
         query = query.limit(options[:limit]) if options[:limit]
@@ -206,142 +109,6 @@ module PactBroker
 
       def base_model(options = {})
         options[:latestby] ? QuickRow : EveryRow
-      end
-
-      def resolve_ignore_selectors(options)
-        resolve_versions_and_add_ids(options.fetch(:ignore_selectors, []), :ignored)
-      end
-
-      # To make it easy for pf to override
-      def base_model_for_integrations
-        QuickRow
-      end
-
-      # Find the version number for selectors with the latest and/or tag specified
-      def resolve_versions_and_add_ids(unresolved_selectors, selector_type, resolved_ignore_selectors = [])
-        names = unresolved_selectors.collect(&:pacticipant_name)
-        pacticipants = PactBroker::Domain::Pacticipant.where(name: names).to_a.group_by(&:name).transform_values(&:first)
-        unresolved_selectors.collect do | unresolved_selector |
-          pacticipant = pacticipants[unresolved_selector.pacticipant_name]
-          if pacticipant
-            versions = find_versions_for_selector(unresolved_selector)
-            build_resolved_selectors(pacticipant, versions, unresolved_selector, selector_type, resolved_ignore_selectors)
-          else
-            selector_for_non_existing_pacticipant(unresolved_selector, selector_type)
-          end
-        end.flatten
-      end
-
-      def find_versions_for_selector(selector)
-        # For selectors that just set the pacticipant name, there's no need to resolve the version -
-        # only the pacticipant ID will be used in the query
-        return nil if selector.all_for_pacticipant?
-        versions = version_repository.find_versions_for_selector(selector)
-
-        if selector.latest
-          [versions.first]
-        else
-          versions.empty? ? [nil] : versions
-        end
-      end
-
-      # When a single selector specifies multiple versions (eg. "all prod pacts"), this expands
-      # the single selector into one selector for each version.
-      def build_resolved_selectors(pacticipant, versions, unresolved_selector, selector_type, resolved_ignore_selectors)
-        if versions
-          one_of_many = versions.compact.size > 1
-          versions.collect do | version |
-            if version
-              selector_for_found_version(pacticipant, version, unresolved_selector, selector_type, one_of_many, resolved_ignore_selectors)
-            else
-              selector_for_non_existing_version(pacticipant, unresolved_selector, selector_type, resolved_ignore_selectors)
-            end
-          end
-        else
-          selector_for_all_versions_of_a_pacticipant(pacticipant, unresolved_selector, selector_type, resolved_ignore_selectors)
-        end
-      end
-
-      # The user has specified --to TAG or --to-environment ENVIRONMENT in the CLI
-      # (or nothing, which to defaults to latest=true - "with the latest version of the other integrated applications")
-      def infer_selectors_for_integrations?(options)
-        options[:latest] || options[:tag] || options[:branch] || options[:environment_name] || options[:main_branch]
-      end
-
-      # When only one selector is specified, (eg. checking to see if Foo version 2 can be deployed to prod),
-      # need to look up all integrated pacticipants, and determine their relevant (eg. latest prod) versions
-      def inferred_selectors(resolved_specified_selectors, resolved_ignore_selectors, integrations, options)
-        all_pacticipant_names = integrations.collect(&:pacticipant_names).flatten.uniq
-        specified_names = resolved_specified_selectors.collect{ |s| s[:pacticipant_name] }
-        inferred_pacticipant_names = all_pacticipant_names - specified_names
-        build_inferred_selectors(inferred_pacticipant_names, resolved_ignore_selectors, options)
-      end
-
-      def build_inferred_selectors(inferred_pacticipant_names, resolved_ignore_selectors, options)
-        selectors = inferred_pacticipant_names.collect do | pacticipant_name |
-          selector = UnresolvedSelector.new(pacticipant_name: pacticipant_name)
-          selector.tag = options[:tag] if options[:tag]
-          selector.branch = options[:branch] if options[:branch]
-          selector.main_branch = options[:main_branch] if options[:main_branch]
-          selector.latest = options[:latest] if options[:latest]
-          selector.environment_name = options[:environment_name] if options[:environment_name]
-          selector
-        end
-        resolve_versions_and_add_ids(selectors, :inferred, resolved_ignore_selectors)
-      end
-
-      def selector_for_non_existing_version(pacticipant, unresolved_selector, selector_type, resolved_ignore_selectors)
-        ignore = resolved_ignore_selectors.any? do | s |
-          s.pacticipant_id == pacticipant.id && s.only_pacticipant_name_specified?
-        end
-        ResolvedSelector.for_pacticipant_and_non_existing_version(pacticipant, unresolved_selector, selector_type, ignore)
-      end
-
-      # rubocop: disable Metrics/ParameterLists
-      def selector_for_found_version(pacticipant, version, unresolved_selector, selector_type, one_of_many, resolved_ignore_selectors)
-        ignore = resolved_ignore_selectors.any? do | s |
-          s.pacticipant_id == pacticipant.id && (s.only_pacticipant_name_specified? || s.pacticipant_version_id == version.id)
-        end
-        ResolvedSelector.for_pacticipant_and_version(pacticipant, version, unresolved_selector, selector_type, ignore, one_of_many)
-      end
-      # rubocop: enable Metrics/ParameterLists
-
-      def selector_for_all_versions_of_a_pacticipant(pacticipant, unresolved_selector, selector_type, resolved_ignore_selectors)
-        # Doesn't make sense to ignore this, as you can't have a can-i-deploy query
-        # for "all versions of a pacticipant". But whatever.
-        ignore = resolved_ignore_selectors.any? do | s |
-          s.pacticipant_id == pacticipant.id && s.only_pacticipant_name_specified?
-        end
-        ResolvedSelector.for_pacticipant(pacticipant, unresolved_selector, selector_type, ignore)
-      end
-
-      # only relevant for ignore selectors, validation stops this happening for the normal
-      # selectors
-      def selector_for_non_existing_pacticipant(unresolved_selector, selector_type)
-        ResolvedSelector.for_non_existing_pacticipant(unresolved_selector, selector_type, false)
-      end
-
-      def split_rows_into_considered_and_ignored(rows, resolved_ignore_selectors)
-        if resolved_ignore_selectors.any?
-          considered, ignored = [], []
-          rows.each do | row |
-            if ignore_row?(resolved_ignore_selectors, row)
-              ignored << row
-            else
-              considered << row
-            end
-          end
-          return considered, ignored
-        else
-          return rows, []
-        end
-      end
-
-      def ignore_row?(resolved_ignore_selectors, row)
-        resolved_ignore_selectors.any? do | s |
-          s.pacticipant_id == row.consumer_id  && (s.only_pacticipant_name_specified? || s.pacticipant_version_id == row.consumer_version_id) ||
-            s.pacticipant_id == row.provider_id  && (s.only_pacticipant_name_specified? || s.pacticipant_version_id == row.provider_version_id)
-        end
       end
     end
   end
