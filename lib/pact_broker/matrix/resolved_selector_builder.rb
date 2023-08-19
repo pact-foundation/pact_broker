@@ -50,7 +50,6 @@ module PactBroker
         ResolvedSelector.for_pacticipant_and_non_existing_version(pacticipant, unresolved_selector, selector_type, ignore)
       end
 
-      # rubocop: disable Metrics/ParameterLists
       def selector_for_found_version(pacticipant, version, unresolved_selector, selector_type, one_of_many)
         ResolvedSelector.for_pacticipant_and_version(
           pacticipant,
@@ -61,7 +60,6 @@ module PactBroker
           one_of_many
         )
       end
-      # rubocop: enable Metrics/ParameterLists
 
       def selector_for_all_versions_of_a_pacticipant(pacticipant, unresolved_selector, selector_type)
         # Doesn't make sense to ignore this, as you can't have a can-i-deploy query
