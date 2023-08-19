@@ -8,7 +8,6 @@ module PactBroker::Api
     describe Pact do
       include Rack::Test::Methods
 
-      let(:app) { PactBroker::API }
       let(:json) { {some: "json"}.to_json }
 
       describe "GET" do

@@ -23,6 +23,7 @@ require "rack/pact_broker/no_auth"
 require "rack/pact_broker/reset_thread_data"
 require "rack/pact_broker/add_vary_header"
 require "rack/pact_broker/use_when"
+require "rack/pact_broker/application_context"
 require "sucker_punch"
 require "pact_broker/api/middleware/configuration"
 require "pact_broker/api/middleware/basic_auth"
@@ -30,6 +31,7 @@ require "pact_broker/config/basic_auth_configuration"
 require "pact_broker/api/authorization/resource_access_policy"
 require "pact_broker/api/middleware/http_debug_logs"
 require "sequel/postgres_advisory_lock"
+require "pact_broker/application_context"
 
 module PactBroker
 
@@ -37,15 +39,16 @@ module PactBroker
     include PactBroker::Logging
     using Rack::PactBroker::UseWhen
 
-    attr_accessor :configuration
+    attr_accessor :configuration, :application_context
 
-    def initialize
+    def initialize(application_context = PactBroker::ApplicationContext.default_application_context)
+      @application_context = application_context
       @app_builder = ::Rack::Builder.new
       @cascade_apps = []
       @make_it_later_api_auth = ::Rack::PactBroker::ConfigurableMakeItLater.new(Rack::PactBroker::NoAuth)
       @make_it_later_ui_auth = ::Rack::PactBroker::ConfigurableMakeItLater.new(Rack::PactBroker::NoAuth)
       # Can only be required after database connection has been made because the decorators rely on the Sequel models
-      @create_pact_broker_api_block = ->() { require "pact_broker/api"; PactBroker::API }
+      @create_pact_broker_api_block = ->() { require "pact_broker/api"; PactBroker.build_api(application_context) }
       @configuration = PactBroker.configuration
       yield configuration if block_given?
       post_configure
@@ -194,6 +197,7 @@ module PactBroker
       @app_builder.use Rack::PactBroker::ConvertFileExtensionToAcceptHeader
       # Rack::PactBroker::SetBaseUrl needs to be before the Rack::PactBroker::HalBrowserRedirect
       @app_builder.use Rack::PactBroker::SetBaseUrl, configuration.base_urls
+      @app_builder.use Rack::PactBroker::ApplicationContext, application_context
 
       if configuration.use_hal_browser
         logger.info "Mounting HAL browser"
