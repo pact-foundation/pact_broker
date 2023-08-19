@@ -206,6 +206,7 @@ module PactBroker
           rows_where_selector_matches_consumer_cols.union(rows_where_selector_matches_provider_cols)
         end
 
+
         # When the user has specified multiple selectors, we only want to join the verifications for
         # the specified selectors. This is because of the behaviour of the left outer join.
         # Imagine a pact has been verified by a provider version that was NOT specified in the selectors.
@@ -215,6 +216,7 @@ module PactBroker
         # Instead, we need to filter the verifications dataset down to only the ones specified in the selectors first,
         # and THEN join them to the pacts, so that we get a row for the pact with null provider version
         # and verification fields.
+        # IDEA FOR OPTIMISATION - would it work to limit the pact_publications query and the verifications query to the limit of the overall query?
         # @param [Array<PactBroker::Matrix::ResolvedSelector>] selectors
         # @param [Symbol] pact_columns the method to call on the QuickRow/EveryRow model to get the right columns required for the particular query
         # @param [Symbol] verifications_columns the method to call on the QuickRow::Verifications/EveryRow::Verifications model to get the right columns required for the particular query
