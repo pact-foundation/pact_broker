@@ -87,9 +87,7 @@ module PactBroker
               .create_consumer_version("2", branch: "main")
           end
 
-          let(:branch_version) { BranchVersion.first }
-
-          subject { BranchVersionRepository.new.delete_branch_version(BranchVersion.first) }
+          let(:branch_version) { BranchVersion.order(:id).first }
 
           it "does not update the branch head" do
             expect { subject }.to_not change { BranchHead.first.version_id }
@@ -118,7 +116,7 @@ module PactBroker
 
           let(:branch_version) { BranchVersion.first }
 
-          it "does not create a new branch head" do
+          it "deletes the branch head" do
             expect { subject }.to change { BranchHead.count }.by(-1)
           end
         end
