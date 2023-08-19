@@ -99,35 +99,6 @@ module PactBroker
           expect(subject.all?(&:has_verification?)).to be true
         end
       end
-
-      describe "join_verifications_for" do
-        before do
-          td.create_pact_with_verification("Foo", "1", "Bar", "2")
-            .create_provider("Wiffle")
-            .create_pact
-            .create_verification(provider_version: "5")
-        end
-
-        let(:query_ids) do
-          double("query_ids",
-            all_pacticipant_ids: [foo.id, bar.id],
-            pacticipant_version_ids: [],
-            pacticipant_ids: [foo.id, bar.id]
-          )
-        end
-
-        subject do
-          EveryRow
-            .select_all_columns
-            .join_verifications_for(query_ids)
-            .all
-        end
-
-        it "pre-filters the verifications before joining them" do
-          expect(subject.size).to eq 2
-          expect(subject.find{ |r| r.provider_id == wiffle.id && !r.has_verification? }).to_not be nil
-        end
-      end
     end
   end
 end

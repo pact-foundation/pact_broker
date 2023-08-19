@@ -64,7 +64,7 @@ module PactBroker
         resolved_specified_selectors.flat_map do | selector |
           # Could optimise this to all in one query, but it's a small gain
           base_model_for_integrations
-            .distinct_integrations_for_selector_as_consumer(selector)
+            .integrations_for_selector_as_consumer(selector)
             .all
             .collect do | integration |
               Integration.from_hash(
@@ -78,7 +78,7 @@ module PactBroker
         end
       end
 
-      # Why does the consumer equivalent of this method use the QuickRow distinct_integrations_for_selector_as_consumer
+      # Why does the consumer equivalent of this method use the QuickRow integrations_for_selector_as_consumer
       # while this method uses the Integration?
       # Find all the consumers for the providers specified in the query. Does not take into consideration the provider version (not sure why).
       # @param [Array<PactBroker::Matrix::ResolvedSelector>] the resolved selectors that were specified in the query

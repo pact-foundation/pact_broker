@@ -14,7 +14,7 @@ module PactBroker
             select_pact_version_id.distinct
           end
 
-          def join_versions(versions_dataset)
+          def join_versions_dataset(versions_dataset)
             join(versions_dataset, { Sequel[:verifications][:provider_version_id] => Sequel[:versions][:id] }, table_alias: :versions)
           end
         end
@@ -58,10 +58,7 @@ module PactBroker
           EveryRow::Verification
         end
 
-        def inner_join_verifications
-          join(:verifications, P_V_JOIN, { table_alias: :v } )
-        end
-
+        # TODO refactor this to get rid of QueryIds
         def inner_join_verifications_matching_one_selector_provider_or_provider_version(query_ids)
           verifications = db[:verifications]
             .select(*JOINED_VERIFICATION_COLUMNS)
@@ -70,17 +67,6 @@ module PactBroker
             }
 
           join(verifications, P_V_JOIN, { table_alias: :v } )
-        end
-
-        def verifications_for(query_ids)
-          db[:verifications]
-            .select(*JOINED_VERIFICATION_COLUMNS)
-            .where {
-              Sequel.&(
-                QueryBuilder.consumer_in_pacticipant_ids(query_ids),
-                QueryBuilder.provider_or_provider_version_matches(query_ids)
-              )
-            }
         end
       end
     end
