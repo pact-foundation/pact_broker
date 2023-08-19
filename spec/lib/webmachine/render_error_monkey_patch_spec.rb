@@ -4,13 +4,14 @@ require "webmachine/adapters/rack"
 module Webmachine
   describe ".render_error" do
     let(:request) do
-      r = Webmachine::Adapters::Rack::RackRequest.new("GET", "http://example.org/foo", request_headers, "", "", nil, nil)
+      r = Webmachine::Adapters::Rack::RackRequest.new("GET", "http://example.org/foo", request_headers, "", "", nil, rack_env)
       r.path_info = { application_context: PactBroker::ApplicationContext.default_application_context }
       r
     end
     let(:request_headers) { Webmachine::Headers.new }
     let(:response) { Webmachine::Response.new }
     let(:options) { {} }
+    let(:rack_env) { { "pactbroker.application_context" => PactBroker::ApplicationContext.default_application_context }}
 
     subject { Webmachine.render_error(404, request, response, options); response }
 
