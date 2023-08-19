@@ -3,7 +3,7 @@
 module PactBroker
   module Api
     module Decorators
-      class CustomErrorProblemJSONDecorator
+      class CustomErrorProblemJsonDecorator
 
         # @option title [String]
         # @option type [String]
