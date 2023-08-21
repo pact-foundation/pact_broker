@@ -34,6 +34,10 @@ module PactBroker
 
       # When a single selector specifies multiple versions (eg. "all prod pacts"), this expands
       # the single selector into one selector for each version.
+      # When a pacticipant is found, but there are no versions matching the selector,
+      # the versions array will be have a single item which is nil (`[nil]`).
+      # See PactBroker::Matrix::SelectorResolver#find_versions_for_selector
+      # There may be a better way to pass in this information.
       def build_resolved_selectors_for_versions(pacticipant, versions, unresolved_selector, selector_type)
         one_of_many = versions.compact.size > 1
         versions.collect do | version |
@@ -62,8 +66,6 @@ module PactBroker
       end
 
       def selector_for_all_versions_of_a_pacticipant(pacticipant, unresolved_selector, selector_type)
-        # Doesn't make sense to ignore this, as you can't have a can-i-deploy query
-        # for "all versions of a pacticipant". But whatever.
         ResolvedSelector.for_pacticipant(
           pacticipant,
           unresolved_selector,
