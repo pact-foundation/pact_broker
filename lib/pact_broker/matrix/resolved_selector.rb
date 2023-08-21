@@ -4,7 +4,9 @@ require "pact_broker/hash_refinements"
 # This is created from either specified or inferred data, based on the user's query
 # eg.
 # can-i-deploy --pacticipant Foo --version 1 (this is a specified selector)
-#              --to prod (this is used to create inferred selectors)
+#              --to prod (this is used to create inferred selectors, one for each integrated pacticipant in that environment)
+# When an UnresolvedSelector specifies multiple application versions (eg. { tag: "prod" }) then a ResolvedSelector
+# is created for every Version object found for the original selector.
 
 module PactBroker
   module Matrix
@@ -185,6 +187,10 @@ module PactBroker
 
       def consider?
         !ignore?
+      end
+
+      def original_selector
+        self[:original_selector]
       end
 
       # rubocop: disable Metrics/CyclomaticComplexity, Metrics/MethodLength

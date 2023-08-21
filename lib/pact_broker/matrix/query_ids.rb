@@ -1,3 +1,5 @@
+# This is left over from the old way of querying the matrix, and should eventually be deleted entirely
+
 module PactBroker
   module Matrix
     class QueryIds
@@ -26,14 +28,6 @@ module PactBroker
 
       def self.collect_ids(hashes, key)
         hashes.collect{ |s| s[key] }.flatten.compact
-      end
-
-      def pacticipant_id
-        pacticipant_ids.first
-      end
-
-      def pacticipant_version_id
-        pacticipant_version_ids.first
       end
     end
   end
