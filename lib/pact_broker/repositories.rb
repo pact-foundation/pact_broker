@@ -55,6 +55,10 @@ module PactBroker
       get_repository(:integration_repository)
     end
 
+    def matrix_integration_repository
+      get_repository(:matrix_integration_repository)
+    end
+
     # rubocop: disable Metrics/MethodLength
     def register_default_repositories
       register_repository(:pacticipant_repository) do
@@ -104,6 +108,12 @@ module PactBroker
       register_repository(:integration_repository) do
         require "pact_broker/integrations/repository"
         PactBroker::Integrations::Repository.new
+      end
+
+      register_repository(:matrix_integration_repository) do
+        require "pact_broker/matrix/integrations_repository"
+        require "pact_broker/matrix/quick_row"
+        PactBroker::Matrix::IntegrationsRepository.new(PactBroker::Matrix::QuickRow)
       end
 
       # rubocop: enable Metrics/MethodLength
