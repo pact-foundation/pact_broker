@@ -1,3 +1,5 @@
+require "pact_broker/dataset"
+
 module PactBroker
   module Domain
     class Label < Sequel::Model
@@ -12,6 +14,9 @@ module PactBroker
         name <=> other.name
       end
 
+      dataset_module do
+        include PactBroker::Dataset
+      end
     end
   end
 end

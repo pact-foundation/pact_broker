@@ -10,7 +10,6 @@ module PactBroker
     class Repository
 
       include PactBroker::Logging
-      include PactBroker::Repositories::Helpers
       include PactBroker::Repositories
 
       def find_by_pacticipant_id_and_number pacticipant_id, number

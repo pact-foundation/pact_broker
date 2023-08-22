@@ -31,9 +31,9 @@ module PactBroker
 
         def for(pacticipant_name, version_number, tag_name)
           where(
-            version_id: db[:versions].select(:id).where(
+            version_id: PactBroker::Domain::Version.select(:id).where(
               number: version_number,
-              pacticipant_id: db[:pacticipants].select(:id).where(name_like(:name, pacticipant_name))
+              pacticipant_id: PactBroker::Domain::Pacticipant.select(:id).where_name_like(:name, pacticipant_name)
             ),
             name: tag_name
           ).single_record

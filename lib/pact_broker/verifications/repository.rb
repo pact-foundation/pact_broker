@@ -8,7 +8,6 @@ module PactBroker
   module Verifications
     class Repository
       include PactBroker::Repositories
-      include PactBroker::Repositories::Helpers
       include PactBroker::Repositories::Scopes
 
       # Ideally this would just be a sequence, but Sqlite and MySQL don't support sequences
@@ -138,8 +137,8 @@ module PactBroker
         consumer = pacticipant_repository.find_by_name!(consumer_name)
         provider = pacticipant_repository.find_by_name!(provider_name)
 
-        consumer_tag_filter = PactBroker::Repositories::Helpers.name_like(Sequel.qualify(:consumer_tags, :name), consumer_version_tag)
-        provider_tag_filter = PactBroker::Repositories::Helpers.name_like(Sequel.qualify(:provider_tags, :name), provider_version_tag)
+        consumer_tag_filter = Sequel.name_like(Sequel.qualify(:consumer_tags, :name), consumer_version_tag)
+        provider_tag_filter = Sequel.name_like(Sequel.qualify(:provider_tags, :name), provider_version_tag)
 
         query = scope_for(PactBroker::Domain::Verification)
           .select_all_qualified

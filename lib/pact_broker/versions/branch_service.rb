@@ -31,7 +31,7 @@ module PactBroker
         Branch
           .select_all_qualified
           .join(:pacticipants, { Sequel[:branches][:pacticipant_id] => Sequel[:pacticipants][:id] }) do
-            PactBroker::Repositories::Helpers.name_like(Sequel[:pacticipants][:name], pacticipant_name)
+            Sequel.name_like(Sequel[:pacticipants][:name], pacticipant_name)
           end
           .where(Sequel[:branches][:name] => branch_name)
           .single_record
