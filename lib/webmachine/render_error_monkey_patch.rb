@@ -63,7 +63,10 @@ module Webmachine
   # rubocop: disable Metrics/ParameterLists
   def self.error_response_body(req, detail, title, type, status, request)
     if problem_json_error_content_type?(request)
-      decorator_configuration(req).class_for(:custom_error_problem_json_decorator).new(detail: detail, title: title, type: type, status: status).to_json(user_options: { base_url: req.env["pactbroker.base_url"]})
+      decorator_configuration(req)
+        .class_for(:custom_error_problem_json_decorator)
+        .new(detail: detail, title: title, type: type, status: status)
+        .to_json(user_options: { base_url: req.env["pactbroker.base_url"] })
     else
       decorator_configuration(req).class_for(:error_decorator).new(detail).to_json
     end
