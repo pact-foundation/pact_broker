@@ -11,7 +11,7 @@ module Webmachine
     let(:request_headers) { Webmachine::Headers.new }
     let(:response) { Webmachine::Response.new }
     let(:options) { {} }
-    let(:rack_env) { { "pactbroker.application_context" => PactBroker::ApplicationContext.default_application_context }}
+    let(:rack_env) { { "pactbroker.application_context" => PactBroker::ApplicationContext.default_application_context, "pactbroker.base_url" => "http://example.org" }}
 
     subject { Webmachine.render_error(404, request, response, options); response }
 
@@ -38,7 +38,7 @@ module Webmachine
           "detail" => "The requested document was not found on this server.",
           "status" => 404,
           "title" => "404 Not Found",
-          "type" => "/problem/not-found"
+          "type" => "http://example.org/problem/not-found"
         }
       end
 
@@ -56,7 +56,7 @@ module Webmachine
             "detail" => "hello world",
             "status" => 404,
             "title" => "Title",
-            "type" => "/problem/title"
+            "type" => "http://example.org/problem/title"
           }
         end
 
