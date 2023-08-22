@@ -10,6 +10,7 @@ require "pact_broker/pacts/pact_params"
 require "pact_broker/api/resources/authentication"
 require "pact_broker/api/resources/authorization"
 require "pact_broker/errors"
+require "pact_broker/messages"
 require "pact_broker/api/resources/error_handling_methods"
 require "pact_broker/api/contracts/utf_8_validation"
 
@@ -26,7 +27,7 @@ module PactBroker
         include PactBroker::Api::Resources::Authorization
         include PactBroker::Api::Resources::ErrorHandlingMethods
         include PactBroker::Api::Contracts::UTF8Validation
-
+        include PactBroker::Messages
         include PactBroker::Logging
 
         attr_accessor :user
