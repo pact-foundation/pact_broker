@@ -1,12 +1,8 @@
 require "pact_broker/domain/tag"
-require "pact_broker/repositories/helpers"
 
 module PactBroker
   module Tags
     class Repository
-
-      include PactBroker::Repositories::Helpers
-
       def create args
         params = {
           name: args.fetch(:name),
@@ -22,9 +18,9 @@ module PactBroker
           .select_all_qualified
           .join(:versions, { id: :version_id })
           .join(:pacticipants, {Sequel.qualify("pacticipants", "id") => Sequel.qualify("versions", "pacticipant_id")})
-          .where(name_like(Sequel.qualify("tags", "name"), args.fetch(:tag_name)))
-          .where(name_like(Sequel.qualify("versions", "number"), args.fetch(:pacticipant_version_number)))
-          .where(name_like(Sequel.qualify("pacticipants", "name"), args.fetch(:pacticipant_name)))
+          .where(Sequel.name_like(Sequel.qualify("tags", "name"), args.fetch(:tag_name)))
+          .where(Sequel.name_like(Sequel.qualify("versions", "number"), args.fetch(:pacticipant_version_number)))
+          .where(Sequel.name_like(Sequel.qualify("pacticipants", "name"), args.fetch(:pacticipant_name)))
           .single_record
       end
 

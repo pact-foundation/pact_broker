@@ -1,7 +1,6 @@
 require "pact_broker/repositories"
 require "pact_broker/logging"
 require "pact_broker/domain/index_item"
-require "pact_broker/repositories/helpers"
 require "pact_broker/index/page"
 require "pact_broker/verifications/latest_verification_for_consumer_version_tag"
 require "pact_broker/string_refinements"

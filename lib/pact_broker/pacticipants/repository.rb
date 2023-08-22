@@ -1,5 +1,4 @@
 require "pact_broker/domain/pacticipant"
-require "pact_broker/repositories/helpers"
 require "pact_broker/error"
 require "pact_broker/repositories/scopes"
 
@@ -8,11 +7,10 @@ module PactBroker
     class Repository
 
       include PactBroker::Repositories
-      include PactBroker::Repositories::Helpers
       include PactBroker::Repositories::Scopes
 
       def find_by_name name
-        pacticipants = PactBroker::Domain::Pacticipant.where(name_like(:name, name)).all
+        pacticipants = PactBroker::Domain::Pacticipant.where(Sequel.name_like(:name, name)).all
         handle_multiple_pacticipants_found(name, pacticipants) if pacticipants.size > 1
         pacticipants.first
       end
@@ -26,7 +24,7 @@ module PactBroker
       # @param [Array<String>] the array of names by which to find the pacticipants
       def find_by_names(names)
         return [] if names.empty?
-        name_likes = names.collect{ | name | name_like(:name, name) }
+        name_likes = names.collect{ | name | Sequel.name_like(:name, name) }
         scope_for(PactBroker::Domain::Pacticipant).where(Sequel.|(*name_likes)).all
       end
 

@@ -8,7 +8,6 @@ require "pact_broker/domain"
 require "pact_broker/pacts/parse"
 require "pact_broker/pacts/latest_pact_publication_id_for_consumer_version"
 require "pact_broker/pacts/verifiable_pact"
-require "pact_broker/repositories/helpers"
 require "pact_broker/pacts/selected_pact"
 require "pact_broker/pacts/selector"
 require "pact_broker/pacts/selectors"
@@ -23,7 +22,6 @@ module PactBroker
     class Repository
       include PactBroker::Logging
       include PactBroker::Repositories
-      include PactBroker::Repositories::Helpers
 
       def scope_for(scope)
         PactBroker.policy_scope!(scope)

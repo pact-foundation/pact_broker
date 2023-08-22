@@ -1,3 +1,4 @@
+require "pact_broker/pacts/pact_publication"
 require "sequel/plugins/upsert"
 require "sequel"
 
@@ -37,7 +38,7 @@ module Sequel
         end
 
         let!(:new_pact_publication) do
-          pact_publication_values = PactBroker::Pacts::PactPublication.first.values.dup
+          pact_publication_values = ::PactBroker::Pacts::PactPublication.first.values.dup
           pact_publication_values.delete(:id)
           pact_publication_values.delete(:created_at)
           pact_publication_values.delete(:updated_at)

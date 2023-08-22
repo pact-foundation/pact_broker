@@ -2,7 +2,6 @@ require "pact_broker/logging"
 require "pact_broker/pacts/pact_publication"
 require "pact_broker/domain"
 require "pact_broker/pacts/verifiable_pact"
-require "pact_broker/repositories/helpers"
 require "pact_broker/pacts/selected_pact"
 require "pact_broker/pacts/selector"
 require "pact_broker/pacts/selectors"
@@ -16,7 +15,6 @@ module PactBroker
       include PactBroker::Logging
       include PactBroker::Repositories
       include PactBroker::Services
-      include PactBroker::Repositories::Helpers
       include PactBroker::Repositories::Scopes
 
       PUBLICATION_ASSOCIATIONS_FOR_EAGER_LOAD = [

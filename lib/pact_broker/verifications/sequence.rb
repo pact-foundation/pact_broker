@@ -5,7 +5,7 @@ module PactBroker
         # The easiest way to implement a cross database compatible sequence.
         # Sad, I know.
         def next_val
-          if PactBroker::Repositories::Helpers.postgres?
+          if PactBroker::Dataset::Helpers.postgres?
             db.execute("SELECT nextval('verification_number_sequence') as val") { |v| v.first["val"].to_i }
           else
             db.transaction do
