@@ -58,7 +58,7 @@ module PactBroker
       # @param [Hash] options the matrix options
       # @return [Boolean]
       def infer_selectors_for_integrations?(options)
-        options[:latest] || options[:tag] || options[:branch] || options[:environment_name] || options[:main_branch]
+        options[:latest] || !!options[:tag] || !!options[:branch] || !!options[:environment_name] || options[:main_branch]
       end
 
       def find_considered_and_ignored_rows(all_resolved_selectors, resolved_ignore_selectors, options)

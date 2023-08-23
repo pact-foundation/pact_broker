@@ -177,18 +177,23 @@ module PactBroker
 
         # @param [Array<PactBroker::Matrix::ResolvedSelector>] selectors
         def build_query_for_pacticipant_ids(selectors)
-          if selectors.all?(&:only_pacticipant_name_specified?)
-            matching_selectors_for_pacticipants_only(selectors)
-              .select_pacticipant_ids
-              .distinct
+          # only used by pf
+          if selectors.size == 1
+            pacticipant_ids_matching_one_selector_optimised(selectors)
           else
-            matching_multiple_selectors_joining_verifications(
-                selectors,
-                pact_columns: :select_distinct_pacticipant_and_pact_version_ids,
-                verifications_columns: :select_distinct_pact_version_id
-              )
-              .select_pacticipant_ids
-              .distinct
+            if selectors.all?(&:only_pacticipant_name_specified?)
+              matching_selectors_for_pacticipants_only(selectors)
+                .select_pacticipant_ids
+                .distinct
+            else
+              matching_multiple_selectors_joining_verifications(
+                  selectors,
+                  pact_columns: :select_distinct_pacticipant_and_pact_version_ids,
+                  verifications_columns: :select_distinct_pact_version_id
+                )
+                .select_pacticipant_ids
+                .distinct
+            end
           end
         end
 
@@ -307,6 +312,33 @@ module PactBroker
 
         def join_verifications
           left_outer_join(LV, LP_LV_JOIN, { table_alias: :v } )
+        end
+
+        def pacticipant_ids_matching_one_selector_optimised(selectors)
+          query_ids = QueryIds.from_selectors(selectors)
+          distinct_pacticipant_ids_where_consumer_or_consumer_version_matches(query_ids)
+            .union(distinct_pacticipant_ids_where_provider_or_provider_version_matches(query_ids), all: true)
+        end
+
+        def distinct_pacticipant_ids_where_consumer_or_consumer_version_matches(query_ids)
+          select_pacticipant_ids
+            .distinct
+            .where {
+              QueryBuilder.consumer_or_consumer_version_matches(query_ids, :p)
+            }
+        end
+
+        def distinct_pacticipant_ids_where_provider_or_provider_version_matches(query_ids)
+          select_pacticipant_ids
+            .distinct
+            .inner_join_verifications
+            .where {
+              QueryBuilder.provider_or_provider_version_matches(query_ids, :v, :v)
+            }
+        end
+
+        def inner_join_verifications
+          join(LV, LP_LV_JOIN, { table_alias: :v } )
         end
       end # end dataset_module
 
