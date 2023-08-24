@@ -4,6 +4,7 @@
 # knows whether or not that particular depdency is required in the context of the specific matrix query.
 # eg. a HTTP consumer will always require that a provider is deployed, but a provider can be deployed if the consumer does not exist
 # in the given environment yet.
+# The "integrations for selectors" query is used to work out what what integrations are involved for a can-i-deploy query.
 
 module PactBroker
   module Matrix
@@ -17,6 +18,19 @@ module PactBroker
 
       # Find all the Integrations required for this query, using the options to determine whether to find
       # the inferred integrations or not.
+      # The infer_selectors_for_integrations only makes a difference when there are multiple selectors.
+      # When it is false, then only integrations are returned that exist *between* the versions of
+      # the selectors. When it is true, then all integrations that involve any of the versions of the selectors
+      # are returned.
+      #
+      # eg.
+      # Foo v1 has verified contract with Bar v2
+      # Waffle v3 has verified contract with Bar v2
+      # Foo v1 has unverified contract with Frog
+      #
+      # With selectors Foo v1 and Bar v2, and infer_selectors_for_integrations false, the returned integrations are Foo/Bar
+      # With the same selectors and infer_selectors_for_integrations true, the returned integrations are Foo/Bar, Waffle/Bar and Foo/Frog.
+      #
       # @param [Array<PactBroker::Matrix::ResolvedSelector>] resolved_specified_selectors
       # @param [Boolean] infer_selectors_for_integrations
       # @return [Array<PactBroker::Matrix::Integration>]
