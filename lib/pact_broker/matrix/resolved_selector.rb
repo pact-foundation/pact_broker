@@ -33,6 +33,9 @@ module PactBroker
         )
       end
 
+      # This is not possible for specified selectors, as there is validation at the HTTP query level to
+      # ensure that all pacticipants in the specified selectors exist.
+      # It is possible for the ignore selectors however.
       def self.for_non_existing_pacticipant(original_selector, type, ignore)
         ResolvedSelector.new(
           pacticipant_id: NULL_PACTICIPANT_ID,

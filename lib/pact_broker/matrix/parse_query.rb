@@ -26,6 +26,7 @@ module PactBroker
           options[:latestby] = params["latestby"]
         end
 
+        # Don't think this is used anywhere...
         if params.key?("days") && params["days"] != ""
           options[:days] = params["days"].to_i
         end
