@@ -36,9 +36,9 @@ module PactBroker
       # @return [Array<PactBroker::Matrix::Integration>]
       def find_integrations_for_specified_selectors(resolved_specified_selectors, infer_selectors_for_integrations)
         if infer_selectors_for_integrations
-          find_integrations_for_specified_selectors_with_inferred_integrations(resolved_specified_selectors)
+          find_integrations_involving_any_specfied_selectors(resolved_specified_selectors)
         else
-          find_integrations_for_specified_selectors_only(resolved_specified_selectors)
+          find_integrations_between_specified_selectors(resolved_specified_selectors)
         end
       end
 
@@ -46,10 +46,10 @@ module PactBroker
 
       attr_reader :base_model_for_integrations
 
-      # Find the Integrations only for the selectors specifed in the query (don't infer any others)
+      # Find the Integrations that only involve the versions from the selectors specifed in the query.
       # @param [Array<PactBroker::Matrix::ResolvedSelector>] resolved_specified_selectors
       # @return [Array<PactBroker::Matrix::Integration>]
-      def find_integrations_for_specified_selectors_only(resolved_specified_selectors)
+      def find_integrations_between_specified_selectors(resolved_specified_selectors)
         specified_pacticipant_names = resolved_specified_selectors.collect(&:pacticipant_name)
         base_model_for_integrations
           .distinct_integrations(resolved_specified_selectors)
@@ -61,10 +61,10 @@ module PactBroker
           end
       end
 
-      # Find the Integrations for the specified selectors and infer the other Integrations
+      # Find all Integrations where any of the specified selectors are involved.
       # @param [Array<PactBroker::Matrix::ResolvedSelector>] resolved_specified_selectors
       # @return [Array<PactBroker::Matrix::Integration>]
-      def find_integrations_for_specified_selectors_with_inferred_integrations(resolved_specified_selectors)
+      def find_integrations_involving_any_specfied_selectors(resolved_specified_selectors)
         integrations = integrations_where_specified_selector_is_consumer(resolved_specified_selectors) +
                         integrations_where_specified_selector_is_provider(resolved_specified_selectors)
         deduplicate_integrations(integrations)
