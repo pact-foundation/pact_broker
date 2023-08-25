@@ -88,7 +88,7 @@ module PactBroker
           let(:selectors) { build_selectors({ "Bar" => "1" })}
           let(:options) { { main_branch: true, latest: true } }
 
-          it "returns the rows between the provider and the latest version of each consumer's main branche" do
+          it "returns the rows between the provider and the latest version of each consumer's main branches" do
             expect(subject.sort).to eq ["Beep2 Bar1", "Foo2 Bar1"]
           end
 
