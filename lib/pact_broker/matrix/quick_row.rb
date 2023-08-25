@@ -100,8 +100,8 @@ module PactBroker
         select(*SELECT_PACTICIPANT_IDS_ARGS)
         select(:select_pacticipant_and_pact_version_ids, Sequel[:p][:consumer_id], Sequel[:p][:provider_id], Sequel[:p][:pact_version_id])
 
-        def select_distinct_pacticipant_and_pact_version_ids
-          select_pacticipant_and_pact_version_ids.distinct
+        def select_distinct_pacticipant_ids
+          select_pacticipant_ids.distinct
         end
 
         # Return the distinct consumer/provider ids and names for the integrations which involve the given resolved selector
@@ -189,11 +189,7 @@ module PactBroker
               .select_pacticipant_ids
               .distinct
           else
-            matching_only_selectors_joining_verifications(
-                selectors,
-                pact_columns: :select_distinct_pacticipant_and_pact_version_ids,
-                verifications_columns: :select_distinct_pact_version_id
-              )
+            pact_publications_matching_selectors_as_consumer(selectors, pact_columns: :select_distinct_pacticipant_ids)
               .select_pacticipant_ids
               .distinct
           end
@@ -238,7 +234,8 @@ module PactBroker
             .where(consumer_id: specified_pacticipant_ids).or(provider_id: specified_pacticipant_ids)
         end
 
-        # @param [Array<PactBroker::Matrix::ResolvedSelector>] selectors
+        # Return pact publications where the consumer version is described by any of the resolved_selectors, AND the provider is described by any of the resolved selectors.
+        # @param [Array<PactBroker::Matrix::ResolvedSelector>] resolved_selectors
         # @param [Symbol] pact_columns the method to call on the Model class to get the right columns required for the particular query
         # @return [Sequel::Dataset<QuickRow>]
         def pact_publications_matching_selectors_as_consumer(resolved_selectors, pact_columns:)
@@ -249,7 +246,6 @@ module PactBroker
           versions_join = { Sequel[:p][:consumer_version_id] => Sequel[:versions][:id] }
           self.model.from_self(alias: :p).send(pact_columns).join(versions, versions_join, table_alias: :versions).where(provider_id: pacticipant_ids)
         end
-
 
         # @param [Array<PactBroker::Matrix::ResolvedSelector>] selectors
         # @param [Symbol] verifications_columns the method to call on the QuickRow::Verifications/EveryRow::Verifications model to get the right columns required for the particular query
