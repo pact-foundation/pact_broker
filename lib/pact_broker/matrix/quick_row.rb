@@ -116,7 +116,8 @@ module PactBroker
             .join_providers(:integrations, :providers)
         end
 
-        # Find all the integrations (consumer/provider pairs) that involve the given selectors.
+        # TODO rename to distinct_integrations_involving_only_given_selectors
+        # Find all the integrations (consumer/provider pairs) that involve ONLY the given selectors.
         # @param [Array<PactBroker::Matrix::ResolvedSelector>] selectors
         # @return [Sequel::Dataset] for rows with consumer_id, consumer_name, provider_id and provider_name
         def distinct_integrations(selectors)
@@ -139,7 +140,7 @@ module PactBroker
           if selectors.size == 1
             select_all_columns.matching_one_selector(selectors)
           else
-            matching_multiple_selectors_joining_verifications(
+            matching_only_selectors_joining_verifications(
               selectors,
               pact_columns: :select_pact_columns,
               verifications_columns: :select_verification_columns)
@@ -186,7 +187,7 @@ module PactBroker
                 .select_pacticipant_ids
                 .distinct
             else
-              matching_multiple_selectors_joining_verifications(
+              matching_only_selectors_joining_verifications(
                   selectors,
                   pact_columns: :select_distinct_pacticipant_and_pact_version_ids,
                   verifications_columns: :select_distinct_pact_version_id
@@ -226,7 +227,7 @@ module PactBroker
         # @param [Symbol] pact_columns the method to call on the QuickRow/EveryRow model to get the right columns required for the particular query
         # @param [Symbol] verifications_columns the method to call on the QuickRow::Verifications/EveryRow::Verifications model to get the right columns required for the particular query
         # @return [Sequel::Dataset<QuickRow>]
-        def matching_multiple_selectors_joining_verifications(selectors, pact_columns:, verifications_columns: )
+        def matching_only_selectors_joining_verifications(selectors, pact_columns:, verifications_columns: )
           pact_publications = pact_publications_matching_selectors_as_consumer(selectors, pact_columns: pact_columns).from_self(alias: :p)
           verifications = verifications_matching_selectors_as_provider(selectors, verifications_columns: verifications_columns)
           specified_pacticipant_ids = selectors.select(&:specified?).collect(&:pacticipant_id).uniq
@@ -269,6 +270,7 @@ module PactBroker
         end
 
         # TODO refactor this to get rid of QueryIds
+        # Does not join pacts to verifications
         def matching_selectors_for_pacticipants_only(selectors)
           # There are no versions specified in these selectors, so we can do the whole
           # query based on the consumer/provider IDs, which we have in the pact_publication

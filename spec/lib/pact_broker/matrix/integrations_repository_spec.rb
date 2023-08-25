@@ -29,20 +29,22 @@ module PactBroker
 
       subject { PactBroker::Matrix::IntegrationsRepository.new(PactBroker::Matrix::QuickRow).find_integrations_for_specified_selectors(resolved_selectors, infer_selectors_for_integrations) }
 
-      context "for a provider version" do
+      context "for one provider version" do
         let(:unresolved_selectors) { [UnresolvedSelector.new(pacticipant_name: "Bar", pacticipant_version_number: "2")] }
 
-        it do
-          is_expected.to eq [
-            Integration.new(foo.id, foo.name, bar.id, bar.name, false),
-            Integration.new(waffle.id, waffle.name, bar.id, bar.name, false)
-          ]
+        context "when not inferring other integrations (having a single selector and not inferring integrations is supported by the code but is not a scenario accessible through the UI or CLI)" do
+          it do
+            is_expected.to eq [
+              Integration.new(foo.id, foo.name, bar.id, bar.name, false),
+              Integration.new(waffle.id, waffle.name, bar.id, bar.name, false)
+            ]
+          end
         end
 
-        context "when inferring other integrations" do
+        context "when inferring other integrations (this is the most common scenario, and is used for can-i-deploy)" do
           let(:infer_selectors_for_integrations) { true }
 
-          it do
+          it "is exactly the same as not inferring selectors" do
             is_expected.to eq [
               Integration.new(foo.id, foo.name, bar.id, bar.name, false),
               Integration.new(waffle.id, waffle.name, bar.id, bar.name, false)
@@ -51,20 +53,22 @@ module PactBroker
         end
       end
 
-      context "for a provider" do
+      context "for one provider" do
         let(:unresolved_selectors) { [UnresolvedSelector.new(pacticipant_name: "Bar")] }
 
-        it do
-          is_expected.to eq [
-            Integration.new(foo.id, foo.name, bar.id, bar.name, false),
-            Integration.new(waffle.id, waffle.name, bar.id, bar.name, false)
-          ]
+        context "when not inferring integrations" do
+          it do
+            is_expected.to eq [
+              Integration.new(foo.id, foo.name, bar.id, bar.name, false),
+              Integration.new(waffle.id, waffle.name, bar.id, bar.name, false)
+            ]
+          end
         end
 
         context "when inferring other integrations" do
           let(:infer_selectors_for_integrations) { true }
 
-          it do
+          it "is exactly the same as not inferring selectors" do
             is_expected.to eq [
               Integration.new(foo.id, foo.name, bar.id, bar.name, false),
               Integration.new(waffle.id, waffle.name, bar.id, bar.name, false)
@@ -73,20 +77,22 @@ module PactBroker
         end
       end
 
-      context "for a consumer version" do
+      context "for one consumer version" do
         let(:unresolved_selectors) { [UnresolvedSelector.new(pacticipant_name: "Foo", pacticipant_version_number: "1")] }
 
-        it do
-          is_expected.to eq [
-            Integration.new(foo.id, foo.name, bar.id, bar.name, true),
-            Integration.new(foo.id, foo.name, frog.id, frog.name, true),
-          ]
+        context "when not inferring integrations" do
+          it do
+            is_expected.to eq [
+              Integration.new(foo.id, foo.name, bar.id, bar.name, true),
+              Integration.new(foo.id, foo.name, frog.id, frog.name, true),
+            ]
+          end
         end
 
-        context "when inferring other integrations" do
+        context "when inferring other integrations (this is the most common scenario, and is used for can-i-deploy)" do
           let(:infer_selectors_for_integrations) { true }
 
-          it do
+          it "is exactly the same as not inferring selectors" do
             is_expected.to eq [
               Integration.new(foo.id, foo.name, bar.id, bar.name, true),
               Integration.new(foo.id, foo.name, frog.id, frog.name, true),
@@ -95,20 +101,22 @@ module PactBroker
         end
       end
 
-      context "for a consumer" do
+      context "for one consumer" do
         let(:unresolved_selectors) { [UnresolvedSelector.new(pacticipant_name: "Foo")] }
 
-        it do
-          is_expected.to eq [
-            Integration.new(foo.id, foo.name, bar.id, bar.name, true),
-            Integration.new(foo.id, foo.name, frog.id, frog.name, true),
-          ]
+        context "when not inferring integrations" do
+          it do
+            is_expected.to eq [
+              Integration.new(foo.id, foo.name, bar.id, bar.name, true),
+              Integration.new(foo.id, foo.name, frog.id, frog.name, true),
+            ]
+          end
         end
 
         context "when inferring other integrations" do
           let(:infer_selectors_for_integrations) { true }
 
-          it do
+          it "is exactly the same as not inferring selectors" do
             is_expected.to eq [
               Integration.new(foo.id, foo.name, bar.id, bar.name, true),
               Integration.new(foo.id, foo.name, frog.id, frog.name, true),
@@ -125,16 +133,47 @@ module PactBroker
           ]
         end
 
-        it do
-          is_expected.to eq [
-            Integration.new(foo.id, foo.name, bar.id, bar.name, true)
-          ]
+        context "when not inferring integrations" do
+          it "only returns the integrations that exist between the specified selectors" do
+            is_expected.to eq [
+              Integration.new(foo.id, foo.name, bar.id, bar.name, true)
+            ]
+          end
         end
 
         context "when inferring other integrations" do
           let(:infer_selectors_for_integrations) { true }
 
-          it do
+          it "returns all the integrations that involve any of the specified selectors" do
+            is_expected.to eq [
+              Integration.new(foo.id, foo.name, bar.id, bar.name, true),
+              Integration.new(foo.id, foo.name, frog.id, frog.name, true),
+              Integration.new(waffle.id, waffle.name, bar.id, bar.name, false)
+            ]
+          end
+        end
+      end
+
+      context "with multiple selectors without versions (this is the default landing page for the pactflow integration matrix)" do
+        let(:unresolved_selectors) do
+          [
+            UnresolvedSelector.new(pacticipant_name: "Bar"),
+            UnresolvedSelector.new(pacticipant_name: "Foo")
+          ]
+        end
+
+        context "when not inferring integrations" do
+          it "only returns integrations between the spefied selectors" do
+            is_expected.to eq [
+              Integration.new(foo.id, foo.name, bar.id, bar.name, true)
+            ]
+          end
+        end
+
+        context "when inferring other integrations" do
+          let(:infer_selectors_for_integrations) { true }
+
+          it "returns all the integrations that involve any of the specified selectors" do
             is_expected.to eq [
               Integration.new(foo.id, foo.name, bar.id, bar.name, true),
               Integration.new(foo.id, foo.name, frog.id, frog.name, true),
@@ -157,7 +196,7 @@ module PactBroker
           ]
         end
 
-        it do
+        it "returns an integration for each direction" do
           is_expected.to eq [
             Integration.new(foo.id, foo.name, bar.id, bar.name, true),
             Integration.new(bar.id, bar.name, foo.id, foo.name, true)
@@ -167,7 +206,7 @@ module PactBroker
         context "when inferring other integrations" do
           let(:infer_selectors_for_integrations) { true }
 
-          it do
+          it "returns an integrationfor each direction, and all the other integrations" do
             is_expected.to eq [
               Integration.new(bar.id, bar.name, foo.id, foo.name, true),
               Integration.new(foo.id, foo.name, bar.id, bar.name, true),
