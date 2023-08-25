@@ -185,6 +185,8 @@ module PactBroker
         # @param [Array<PactBroker::Matrix::ResolvedSelector>] selectors
         def build_query_for_distinct_pacticipant_ids(selectors)
           if selectors.all?(&:only_pacticipant_name_specified?)
+            # this is an optimisation, not a different behaviour.
+            # TODO get rid of this - think it's not necessary any more
             matching_selectors_for_pacticipants_only(selectors)
               .select_pacticipant_ids
               .distinct
