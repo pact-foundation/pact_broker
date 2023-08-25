@@ -104,24 +104,30 @@ module PactBroker
           select_pacticipant_and_pact_version_ids.distinct
         end
 
-        # @param [PactBroker::Matrix::ResolvedSelector] selector
+        # Return the distinct consumer/provider ids and names for the integrations which involve the given resolved selector
+        # in the role of consumer. The resolved selector must have a pacticipant_id, and may or may not have a pacticipant_version_id.
+        # @public
+        # @param [PactBroker::Matrix::ResolvedSelector] resolved_selector
         # @return [Sequel::Dataset] for rows with consumer_id, consumer_name, provider_id and provider_name
-        def integrations_for_selector_as_consumer(selector)
+        def integrations_for_selector_as_consumer(resolved_selector)
           select(:consumer_id, :provider_id)
             .distinct
-            .where({ consumer_id: selector.pacticipant_id, consumer_version_id: selector.pacticipant_version_id }.compact)
+            .where({ consumer_id: resolved_selector.pacticipant_id, consumer_version_id: resolved_selector.pacticipant_version_id }.compact)
             .from_self(alias: :integrations)
             .select(:consumer_id, :provider_id, Sequel[:consumers][:name].as(:consumer_name), Sequel[:providers][:name].as(:provider_name))
             .join_consumers(:integrations, :consumers)
             .join_providers(:integrations, :providers)
         end
 
-        # TODO rename to distinct_integrations_involving_only_given_selectors
         # Find all the integrations (consumer/provider pairs) that involve ONLY the given selectors.
+        # @public
         # @param [Array<PactBroker::Matrix::ResolvedSelector>] selectors
         # @return [Sequel::Dataset] for rows with consumer_id, consumer_name, provider_id and provider_name
-        def distinct_integrations(selectors)
-          query = build_query_for_pacticipant_ids(selectors)
+        def distinct_integrations_between_given_selectors(selectors)
+          if selectors.size == 1
+            raise ArgumentError.new("Expected multiple selectors to be provided, but only received one #{selectors}")
+          end
+          query = build_query_for_distinct_pacticipant_ids(selectors)
 
           query.from_self(alias: :pacticipant_ids)
             .select(
@@ -177,24 +183,19 @@ module PactBroker
         # PRIVATE METHODS
 
         # @param [Array<PactBroker::Matrix::ResolvedSelector>] selectors
-        def build_query_for_pacticipant_ids(selectors)
-          # only used by pf
-          if selectors.size == 1
-            pacticipant_ids_matching_one_selector_optimised(selectors)
+        def build_query_for_distinct_pacticipant_ids(selectors)
+          if selectors.all?(&:only_pacticipant_name_specified?)
+            matching_selectors_for_pacticipants_only(selectors)
+              .select_pacticipant_ids
+              .distinct
           else
-            if selectors.all?(&:only_pacticipant_name_specified?)
-              matching_selectors_for_pacticipants_only(selectors)
-                .select_pacticipant_ids
-                .distinct
-            else
-              matching_only_selectors_joining_verifications(
-                  selectors,
-                  pact_columns: :select_distinct_pacticipant_and_pact_version_ids,
-                  verifications_columns: :select_distinct_pact_version_id
-                )
-                .select_pacticipant_ids
-                .distinct
-            end
+            matching_only_selectors_joining_verifications(
+                selectors,
+                pact_columns: :select_distinct_pacticipant_and_pact_version_ids,
+                verifications_columns: :select_distinct_pact_version_id
+              )
+              .select_pacticipant_ids
+              .distinct
           end
         end
 
@@ -212,7 +213,7 @@ module PactBroker
           rows_where_selector_matches_consumer_cols.union(rows_where_selector_matches_provider_cols)
         end
 
-
+        # Find the matrix rows
         # When the user has specified multiple selectors, we only want to join the verifications for
         # the specified selectors. This is because of the behaviour of the left outer join.
         # Imagine a pact has been verified by a provider version that was NOT specified in the selectors.
@@ -314,33 +315,6 @@ module PactBroker
 
         def join_verifications
           left_outer_join(LV, LP_LV_JOIN, { table_alias: :v } )
-        end
-
-        def pacticipant_ids_matching_one_selector_optimised(selectors)
-          query_ids = QueryIds.from_selectors(selectors)
-          distinct_pacticipant_ids_where_consumer_or_consumer_version_matches(query_ids)
-            .union(distinct_pacticipant_ids_where_provider_or_provider_version_matches(query_ids), all: true)
-        end
-
-        def distinct_pacticipant_ids_where_consumer_or_consumer_version_matches(query_ids)
-          select_pacticipant_ids
-            .distinct
-            .where {
-              QueryBuilder.consumer_or_consumer_version_matches(query_ids, :p)
-            }
-        end
-
-        def distinct_pacticipant_ids_where_provider_or_provider_version_matches(query_ids)
-          select_pacticipant_ids
-            .distinct
-            .inner_join_verifications
-            .where {
-              QueryBuilder.provider_or_provider_version_matches(query_ids, :v, :v)
-            }
-        end
-
-        def inner_join_verifications
-          join(LV, LP_LV_JOIN, { table_alias: :v } )
         end
       end # end dataset_module
 

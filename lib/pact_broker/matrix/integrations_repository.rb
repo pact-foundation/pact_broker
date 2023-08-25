@@ -31,11 +31,13 @@ module PactBroker
       # With selectors Foo v1 and Bar v2, and infer_selectors_for_integrations false, the returned integrations are Foo/Bar
       # With the same selectors and infer_selectors_for_integrations true, the returned integrations are Foo/Bar, Waffle/Bar and Foo/Frog.
       #
+      # When there is a single selector, the result is exactly the same whether infer_selectors_for_integrations is true or false.
+      #
       # @param [Array<PactBroker::Matrix::ResolvedSelector>] resolved_specified_selectors
       # @param [Boolean] infer_selectors_for_integrations
       # @return [Array<PactBroker::Matrix::Integration>]
       def find_integrations_for_specified_selectors(resolved_specified_selectors, infer_selectors_for_integrations)
-        if infer_selectors_for_integrations
+        if infer_selectors_for_integrations || resolved_specified_selectors.size == 1
           find_integrations_involving_any_specfied_selectors(resolved_specified_selectors)
         else
           find_integrations_between_specified_selectors(resolved_specified_selectors)
@@ -52,7 +54,7 @@ module PactBroker
       def find_integrations_between_specified_selectors(resolved_specified_selectors)
         specified_pacticipant_names = resolved_specified_selectors.collect(&:pacticipant_name)
         base_model_for_integrations
-          .distinct_integrations(resolved_specified_selectors)
+          .distinct_integrations_between_given_selectors(resolved_specified_selectors)
           .all
           .collect(&:to_hash)
           .collect do | integration_hash |
