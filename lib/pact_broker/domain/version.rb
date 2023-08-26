@@ -252,6 +252,15 @@ module PactBroker
         end
         # rubocop: enable Metrics/CyclomaticComplexity
 
+        # Return the IDs of the versions described by the given unresolved selectors
+        # @return Sequel::Dataset<PactBroker::Domain::Version>
+        def ids_for_selectors(unresolved_selectors)
+          # Need the select at the start and at the end to stop extra columns being returned (eg. branch name, environment name)
+          unresolved_selectors
+            .collect{ |selector| self.select(Sequel[:versions][:id]).for_selector(selector).select(:id) }
+            .reduce(&:union)
+        end
+
         def pacticipants_set
           from_self(alias: :v)
             .select_group(Sequel[:v][:pacticipant_id])

@@ -50,7 +50,7 @@ module PactBroker
         subject do
           EveryRow
             .select_all_columns
-            .join_verifications
+            .left_outer_join_verifications
             .eager_all_the_things
             .all
         end
@@ -79,7 +79,7 @@ module PactBroker
       end
 
 
-      describe "join_verifications" do
+      describe "left_outer_join_verifications" do
         before do
           td.create_pact_with_verification("Foo", "1", "Bar", "2")
             .create_provider("Wiffle")
@@ -90,7 +90,7 @@ module PactBroker
         subject do
           EveryRow
             .select_all_columns
-            .join_verifications
+            .left_outer_join_verifications
             .all
         end
 
