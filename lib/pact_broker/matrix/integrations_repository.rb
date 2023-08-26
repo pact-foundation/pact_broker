@@ -1,3 +1,4 @@
+require "pact_broker/matrix/integration_row"
 # A "find only" repository for the PactBroker::Matrix::Integration object.
 # The PactBroker::Matrix::Integration object is not a Sequel Model like the PactBroker::Integrations::Integration - it is built from the
 # matrix data specifically for a given matrix query, and as well as the consumer/provider attributes, it also
@@ -9,13 +10,6 @@
 module PactBroker
   module Matrix
     class IntegrationsRepository
-
-      # This is parameterised to Pactflow can have its own base model
-      # @param [Class<QuickRow>] base_model_for_integrations
-      def initialize(base_model_for_integrations)
-        @base_model_for_integrations = base_model_for_integrations
-      end
-
       # Find all the Integrations required for this query, using the options to determine whether to find
       # the inferred integrations or not.
       # The infer_selectors_for_integrations only makes a difference when there are multiple selectors.
@@ -46,14 +40,12 @@ module PactBroker
 
       private
 
-      attr_reader :base_model_for_integrations
-
       # Find the Integrations that only involve the versions from the selectors specifed in the query.
       # @param [Array<PactBroker::Matrix::ResolvedSelector>] resolved_specified_selectors
       # @return [Array<PactBroker::Matrix::Integration>]
       def find_integrations_between_specified_selectors(resolved_specified_selectors)
         specified_pacticipant_names = resolved_specified_selectors.collect(&:pacticipant_name)
-        base_model_for_integrations
+        IntegrationRow
           .distinct_integrations_between_given_selectors(resolved_specified_selectors)
           .all
           .collect(&:to_hash)
@@ -80,7 +72,7 @@ module PactBroker
       def integrations_where_specified_selector_is_consumer(resolved_specified_selectors)
         resolved_specified_selectors.flat_map do | selector |
           # Could optimise this to all in one query, but it's a small gain
-          base_model_for_integrations
+          IntegrationRow
             .integrations_for_selector_as_consumer(selector)
             .all
             .collect do | integration |

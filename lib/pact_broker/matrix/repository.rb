@@ -8,6 +8,7 @@ require "pact_broker/verifications/latest_verification_id_for_pact_version_and_p
 require "pact_broker/matrix/integrations_repository"
 require "pact_broker/matrix/resolved_selectors_builder"
 require "pact_broker/matrix/row_ignorer"
+require "pact_broker/matrix/integrations_repository"
 
 module PactBroker
   module Matrix
@@ -50,6 +51,10 @@ module PactBroker
       end
 
       private
+
+      def matrix_integration_repository
+        PactBroker::Matrix::IntegrationsRepository.new
+      end
 
       # If the user has specified --to TAG or --to-environment ENVIRONMENT in the CLI
       # (or nothing, which to defaults to latest=true - "with the latest version of the other integrated applications")

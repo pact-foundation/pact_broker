@@ -1,10 +1,18 @@
 require "pact_broker/matrix/quick_row"
 
+# Same as PactBroker::Matrix::QuickRow
+# except the data is sourced from the pact_publications table, and contains
+# every pact publication, not just the latest publication for the consumer version.
+# This is used when there is no "latestby" in the matrix query.
 module PactBroker
   module Matrix
     class EveryRow < PactBroker::Matrix::QuickRow
       set_dataset(Sequel.as(:pact_publications, :p))
 
+      # Same as PactBroker::Matrix::QuickRow::Verification
+      # except the data is sourced from the verifications table, and contains
+      # every verification, not just the latest verification for the pact version and the provider version.
+      # This is used when there is no "latestby" in the matrix query.
       class Verification < PactBroker::Matrix::QuickRow::Verification
         set_dataset(:verifications)
 
@@ -18,22 +26,15 @@ module PactBroker
             Sequel[:verifications][:pact_version_id]
           )
 
-          # select(:select_verification_columns_2, # as(:verification_id)
-          #   Sequel[:verifications][:id],
-          #   Sequel[:verifications][:provider_version_id],
-          #   Sequel[:verifications][:created_at], #.as(:provider_version_created_at),
-          #   Sequel[:verifications][:pact_version_id]
-          # )
-          def select_verification_columns_2
-            select(
-                Sequel[:verifications][:id],
-                Sequel[:verifications][:provider_version_id],
-                Sequel[:verifications][:created_at], #.as(:provider_version_created_at),
-                Sequel[:verifications][:pact_version_id]
-            )
-          end
+          # @override the definition from PactBroker::Matrix::QuickRow::Verification, with the equivalent column names from the
+          # verifications table.
+          select(:select_verification_columns_2,
+            Sequel[:verifications][:id],
+            Sequel[:verifications][:provider_version_id],
+            Sequel[:verifications][:created_at],
+            Sequel[:verifications][:pact_version_id]
+          )
         end
-
       end
 
       P_V_JOIN = { Sequel[:p][:pact_version_id] => Sequel[:v][:pact_version_id] }
@@ -55,16 +56,9 @@ module PactBroker
         Sequel[:v][:created_at].as(:provider_version_created_at)
       ]
 
-      JOINED_VERIFICATION_COLUMNS = [:id, :pact_version_id, :provider_id, :provider_version_id, :created_at]
-
-      ALL_COLUMNS = PACT_COLUMNS + VERIFICATION_COLUMNS
-
-      SELECT_ALL_COLUMN_ARGS = [:select_all_columns] + ALL_COLUMNS
-      SELECT_PACT_COLUMNS_ARGS = [:select_pact_columns] + PACT_COLUMNS
-
       dataset_module do
-        select(*SELECT_ALL_COLUMN_ARGS)
-        select(*SELECT_PACT_COLUMNS_ARGS)
+        select(:select_all_columns, *PACT_COLUMNS, *VERIFICATION_COLUMNS)
+        select(:select_pact_columns, *PACT_COLUMNS)
 
         def left_outer_join_verifications
           left_outer_join(:verifications, P_V_JOIN, { table_alias: :v } )
