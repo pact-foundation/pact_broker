@@ -72,8 +72,9 @@ module PactBroker
         deduplicate_integrations(integrations)
       end
 
-      # Find all the providers for the consumers specified in the query. Takes into account the consumer versions specified in the query,
-      # not just the consumer names.
+      # Find all the providers for the consumer versions specified in the query.
+      # We must identify the providers for the consumer *versions*, not just the *consumers* (via the integrations table)
+      # because the providers may change over time, as integrations get added and removed.
       # @param [Array<PactBroker::Matrix::ResolvedSelector>] the resolved selectors that were specified in the query
       # @return [Array<PactBroker::Matrix::Integration>]
       def integrations_where_specified_selector_is_consumer(resolved_specified_selectors)
@@ -94,8 +95,10 @@ module PactBroker
         end
       end
 
-      # Why does the consumer equivalent of this method use the QuickRow integrations_for_selector_as_consumer
-      # while this method uses the Integration?
+      # Returns a list of *potential* integrations for the pacticipants in the selectors, where the pacticipant is a provider.
+      # Can't tell from the verifications table if a particular provider version has a consumer, as that is determined
+      # by what is deployed to the environment, not what is verified. By looking in the integration table, we can identify
+      # what consumers *may* be present in the target environment.
       # Find all the consumers for the providers specified in the query. Does not take into consideration the provider version (not sure why).
       # @param [Array<PactBroker::Matrix::ResolvedSelector>] the resolved selectors that were specified in the query
       # @return [Array<PactBroker::Matrix::Integration>]

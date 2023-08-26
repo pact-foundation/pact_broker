@@ -5,19 +5,35 @@ module PactBroker
     class EveryRow < PactBroker::Matrix::QuickRow
       set_dataset(Sequel.as(:pact_publications, :p))
 
-      class Verification < Sequel::Model(:verifications)
+      class Verification < PactBroker::Matrix::QuickRow::Verification
+        set_dataset(:verifications)
+
         dataset_module do
-          select(:select_verification_columns, Sequel[:verifications][:id].as(:verification_id), :provider_version_id, Sequel[:verifications][:created_at].as(:provider_version_created_at), Sequel[:verifications][:pact_version_id])
-          select(:select_pact_version_id, Sequel[:verifications][:pact_version_id])
+          # @override the definition from PactBroker::Matrix::QuickRow::Verification, with the equivalent column names from the
+          # verifications table.
+          select(:select_verification_columns,
+            Sequel[:verifications][:id].as(:verification_id),
+            Sequel[:verifications][:provider_version_id],
+            Sequel[:verifications][:created_at].as(:provider_version_created_at),
+            Sequel[:verifications][:pact_version_id]
+          )
 
-          def select_distinct_pact_version_id
-            select_pact_version_id.distinct
-          end
-
-          def join_versions_dataset(versions_dataset)
-            join(versions_dataset, { Sequel[:verifications][:provider_version_id] => Sequel[:versions][:id] }, table_alias: :versions)
+          # select(:select_verification_columns_2, # as(:verification_id)
+          #   Sequel[:verifications][:id],
+          #   Sequel[:verifications][:provider_version_id],
+          #   Sequel[:verifications][:created_at], #.as(:provider_version_created_at),
+          #   Sequel[:verifications][:pact_version_id]
+          # )
+          def select_verification_columns_2
+            select(
+                Sequel[:verifications][:id],
+                Sequel[:verifications][:provider_version_id],
+                Sequel[:verifications][:created_at], #.as(:provider_version_created_at),
+                Sequel[:verifications][:pact_version_id]
+            )
           end
         end
+
       end
 
       P_V_JOIN = { Sequel[:p][:pact_version_id] => Sequel[:v][:pact_version_id] }
@@ -50,23 +66,12 @@ module PactBroker
         select(*SELECT_ALL_COLUMN_ARGS)
         select(*SELECT_PACT_COLUMNS_ARGS)
 
-        def join_verifications
+        def left_outer_join_verifications
           left_outer_join(:verifications, P_V_JOIN, { table_alias: :v } )
         end
 
         def verification_model
           EveryRow::Verification
-        end
-
-        # TODO refactor this to get rid of QueryIds
-        def inner_join_verifications_matching_one_selector_provider_or_provider_version(query_ids)
-          verifications = db[:verifications]
-            .select(*JOINED_VERIFICATION_COLUMNS)
-            .where {
-              QueryBuilder.provider_or_provider_version_matches(query_ids)
-            }
-
-          join(verifications, P_V_JOIN, { table_alias: :v } )
         end
       end
     end

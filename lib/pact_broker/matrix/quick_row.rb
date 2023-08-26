@@ -1,5 +1,4 @@
 require "pact_broker/dataset"
-require "pact_broker/matrix/query_builder"
 require "pact_broker/logging"
 require "pact_broker/pacts/pact_version"
 require "pact_broker/domain/pacticipant"
@@ -7,7 +6,7 @@ require "pact_broker/domain/version"
 require "pact_broker/domain/verification"
 require "pact_broker/pacts/pact_publication"
 require "pact_broker/tags/tag_with_latest_flag"
-require "pact_broker/matrix/query_ids"
+require "pact_broker/matrix/integration_dataset_module"
 
 # The PactBroker::Matrix::QuickRow represents a row in the table that is created when
 # the consumer versions are joined to the provider versions via the pacts and verifications tables,
@@ -79,72 +78,55 @@ module PactBroker
       class Verification < Sequel::Model(Sequel.as(:latest_verification_id_for_pact_version_and_provider_version, :v))
         dataset_module do
           # declaring the selects this way makes them cacheable
-          select(*([:select_verification_columns] + QuickRow::VERIFICATION_COLUMNS + [Sequel[:v][:pact_version_id]]))
-          select(:select_pact_version_id, Sequel[:v][:pact_version_id])
+          select(*[:select_verification_columns, *QuickRow::VERIFICATION_COLUMNS, Sequel[:v][:pact_version_id]])
 
-          def select_distinct_pact_version_id
-            select_pact_version_id.distinct
+          select(
+            :select_verification_columns_2,
+            Sequel[:verification_id],
+            Sequel[:provider_version_id],
+            Sequel[:created_at],
+            Sequel[:pact_version_id]
+          )
+
+          # @param [Array<PactBroker::Matrix::ResolvedSelector>] selectors
+          # @param [Symbol] verifications_columns the method to call on the QuickRow::Verifications/EveryRow::Verifications model to get the right columns required for the particular query
+          # @return [Sequel::Dataset<QuickRow>]
+          def matching_selectors_as_provider(resolved_selectors)
+            # get the UnresolvedSelector objects back out of the resolved_selectors because the Version.for_selector() method uses the UnresolvedSelector
+            pacticipant_ids = resolved_selectors.collect(&:pacticipant_id).uniq
+            self
+              .inner_join_versions_for_selectors_as_provider(resolved_selectors)
+              .where(consumer_id: pacticipant_ids)
+          end
+
+          def inner_join_versions_for_selectors_as_provider(resolved_selectors)
+            # get the UnresolvedSelector objects back out of the resolved_selectors because the Version.for_selector() method uses the UnresolvedSelector
+            unresolved_selectors = resolved_selectors.collect(&:original_selector).uniq
+            versions = PactBroker::Domain::Version.ids_for_selectors(unresolved_selectors)
+            join_versions_dataset(versions)
           end
 
           def join_versions_dataset(versions_dataset)
-            join(versions_dataset, { Sequel[:v][:provider_version_id] => Sequel[:versions][:id] }, table_alias: :versions)
+            join(versions_dataset, { Sequel[self.model.table_name][:provider_version_id] => Sequel[:versions][:id] }, table_alias: :versions)
           end
         end
       end
 
       dataset_module do
         include PactBroker::Dataset
+        include PactBroker::Matrix::IntegrationDatasetModule
 
         select(*SELECT_ALL_COLUMN_ARGS)
         select(*SELECT_PACT_COLUMNS_ARGS)
         select(*SELECT_PACTICIPANT_IDS_ARGS)
         select(:select_pacticipant_and_pact_version_ids, Sequel[:p][:consumer_id], Sequel[:p][:provider_id], Sequel[:p][:pact_version_id])
 
-        def select_distinct_pacticipant_ids
-          select_pacticipant_ids.distinct
-        end
-
-        # Return the distinct consumer/provider ids and names for the integrations which involve the given resolved selector
-        # in the role of consumer. The resolved selector must have a pacticipant_id, and may or may not have a pacticipant_version_id.
-        # @public
-        # @param [PactBroker::Matrix::ResolvedSelector] resolved_selector
-        # @return [Sequel::Dataset] for rows with consumer_id, consumer_name, provider_id and provider_name
-        def integrations_for_selector_as_consumer(resolved_selector)
-          select(:consumer_id, :provider_id)
-            .distinct
-            .where({ consumer_id: resolved_selector.pacticipant_id, consumer_version_id: resolved_selector.pacticipant_version_id }.compact)
-            .from_self(alias: :integrations)
-            .select(:consumer_id, :provider_id, Sequel[:consumers][:name].as(:consumer_name), Sequel[:providers][:name].as(:provider_name))
-            .join_consumers(:integrations, :consumers)
-            .join_providers(:integrations, :providers)
-        end
-
-        # Find all the integrations (consumer/provider pairs) that involve ONLY the given selectors.
-        # @public
-        # @param [Array<PactBroker::Matrix::ResolvedSelector>] selectors
-        # @return [Sequel::Dataset] for rows with consumer_id, consumer_name, provider_id and provider_name
-        def distinct_integrations_between_given_selectors(selectors)
-          if selectors.size == 1
-            raise ArgumentError.new("Expected multiple selectors to be provided, but only received one #{selectors}")
-          end
-          query = build_query_for_distinct_pacticipant_ids(selectors)
-
-          query.from_self(alias: :pacticipant_ids)
-            .select(
-              :consumer_id,
-              Sequel[:c][:name].as(:consumer_name),
-              :provider_id,
-              Sequel[:p][:name].as(:provider_name)
-            )
-            .join_consumers(:pacticipant_ids, :c)
-            .join_providers(:pacticipant_ids, :p)
-        end
-
         # The matrix query used to determine the final dataset
         # @param [Array<PactBroker::Matrix::ResolvedSelector>] selectors
         def matching_selectors selectors
           if selectors.size == 1
-            select_all_columns.matching_one_selector(selectors)
+            select_all_columns
+              .matching_one_selector_for_either_consumer_or_provider(selectors)
           else
             matching_only_selectors_joining_verifications(
               selectors,
@@ -155,10 +137,6 @@ module PactBroker
 
         def order_by_last_action_date
           from_self(alias: :unordered_rows).select(LAST_ACTION_DATE, Sequel[:unordered_rows].* ).order(Sequel.desc(:last_action_date), Sequel.desc(:pact_order), Sequel.desc(:verification_id))
-        end
-
-        def order_by_pact_publication_created_at
-          order(Sequel.desc(:consumer_version_created_at), Sequel.desc(:pact_order))
         end
 
         # eager load tags?
@@ -177,38 +155,23 @@ module PactBroker
         end
 
         def default_scope
-          select_all_columns.join_verifications.from_self
+          select_all_columns.left_outer_join_verifications.from_self
         end
 
         # PRIVATE METHODS
 
-        # @param [Array<PactBroker::Matrix::ResolvedSelector>] selectors
-        def build_query_for_distinct_pacticipant_ids(selectors)
-          if selectors.all?(&:only_pacticipant_name_specified?)
-            # this is an optimisation, not a different behaviour.
-            # TODO get rid of this - think it's not necessary any more
-            matching_selectors_for_pacticipants_only(selectors)
-              .select_pacticipant_ids
-              .distinct
-          else
-            pact_publications_matching_selectors_as_consumer(selectors, pact_columns: :select_distinct_pacticipant_ids)
-              .select_pacticipant_ids
-              .distinct
-          end
-        end
-
+        # Final matrix query with one selector (not the normal use case)
         # When we have one selector, we need to join ALL the verifications to find out
         # what integrations exist
-        # TODO refactor this to get rid of QueryIds
-        def matching_one_selector(selectors)
-          query_ids = QueryIds.from_selectors(selectors)
-          rows_where_selector_matches_consumer_cols = join_verifications
-            .where {
-              QueryBuilder.consumer_or_consumer_version_matches(query_ids, :p)
-            }
+        def matching_one_selector_for_either_consumer_or_provider(resolved_selectors)
+          if resolved_selectors.size != 1
+            raise ArgumentError.new("Expected one selector to be provided, but received #{resolved_selectors.size}:  #{resolved_selectors}")
+          end
 
-          rows_where_selector_matches_provider_cols = inner_join_verifications_matching_one_selector_provider_or_provider_version(query_ids)
-          rows_where_selector_matches_consumer_cols.union(rows_where_selector_matches_provider_cols)
+          rows_where_selector_matches_consumer = inner_join_versions_for_selectors_as_consumer(resolved_selectors).left_outer_join_verifications
+          verifications_matching_provider = verification_model.select_verification_columns_2.inner_join_versions_for_selectors_as_provider(resolved_selectors)
+          rows_where_selector_matches_provider = join(verifications_matching_provider, LP_LV_JOIN, { table_alias: :v } )
+          rows_where_selector_matches_consumer.union(rows_where_selector_matches_provider)
         end
 
         # Find the matrix rows
@@ -228,7 +191,7 @@ module PactBroker
         # @return [Sequel::Dataset<QuickRow>]
         def matching_only_selectors_joining_verifications(selectors, pact_columns:, verifications_columns: )
           pact_publications = pact_publications_matching_selectors_as_consumer(selectors, pact_columns: pact_columns).from_self(alias: :p)
-          verifications = verifications_matching_selectors_as_provider(selectors, verifications_columns: verifications_columns)
+          verifications = verification_model.select_verification_columns.matching_selectors_as_provider(selectors)
           specified_pacticipant_ids = selectors.select(&:specified?).collect(&:pacticipant_id).uniq
 
           pact_publications
@@ -241,58 +204,29 @@ module PactBroker
         # @param [Symbol] pact_columns the method to call on the Model class to get the right columns required for the particular query
         # @return [Sequel::Dataset<QuickRow>]
         def pact_publications_matching_selectors_as_consumer(resolved_selectors, pact_columns:)
-          # get the UnresolvedSelector objects back out of the resolved_selectors because the Version.for_selector() method uses the UnresolvedSelector
-          unresolved_selectors = resolved_selectors.collect(&:original_selector).uniq
-          versions = unresolved_selectors.collect{ | selector | PactBroker::Domain::Version.select(Sequel[:versions][:id]).for_selector(selector).select(:id) }.reduce(&:union)
           pacticipant_ids = resolved_selectors.collect(&:pacticipant_id).uniq
-          versions_join = { Sequel[:p][:consumer_version_id] => Sequel[:versions][:id] }
-          self.model.from_self(alias: :p).send(pact_columns).join(versions, versions_join, table_alias: :versions).where(provider_id: pacticipant_ids)
+
+          self
+            .send(pact_columns)
+            .inner_join_versions_for_selectors_as_consumer(resolved_selectors)
+            .where(provider_id: pacticipant_ids)
         end
 
-        # @param [Array<PactBroker::Matrix::ResolvedSelector>] selectors
-        # @param [Symbol] verifications_columns the method to call on the QuickRow::Verifications/EveryRow::Verifications model to get the right columns required for the particular query
-        # @return [Sequel::Dataset<QuickRow>]
-        def verifications_matching_selectors_as_provider(selectors, verifications_columns: )
+        def inner_join_versions_for_selectors_as_consumer(resolved_selectors)
           # get the UnresolvedSelector objects back out of the resolved_selectors because the Version.for_selector() method uses the UnresolvedSelector
-          unresolved_selectors = selectors.collect(&:original_selector).uniq
-          versions = unresolved_selectors.collect{ | selector | PactBroker::Domain::Version.select(Sequel[:versions][:id]).for_selector(selector).select(:id) }.reduce(&:union)
-          pacticipant_ids = selectors.collect(&:pacticipant_id).uniq
-          verification_model
-            .send(verifications_columns)
-            .join_versions_dataset(versions)
-            .where(consumer_id: pacticipant_ids)
+          unresolved_selectors = resolved_selectors.collect(&:original_selector).uniq
+          versions = PactBroker::Domain::Version.ids_for_selectors(unresolved_selectors)
+          inner_join_versions_dataset(versions)
+        end
+
+        def inner_join_versions_dataset(versions)
+          versions_join = { Sequel[:p][:consumer_version_id] => Sequel[:versions][:id] }
+          join(versions, versions_join, table_alias: :versions)
         end
 
         # Allow this to be overriden in EveryRow
         def verification_model
           QuickRow::Verification
-        end
-
-        # TODO refactor this to get rid of QueryIds
-        # Does not join pacts to verifications
-        def matching_selectors_for_pacticipants_only(selectors)
-          # There are no versions specified in these selectors, so we can do the whole
-          # query based on the consumer/provider IDs, which we have in the pact_publication
-          # table without having to do a join.
-          query_ids = QueryIds.from_selectors(selectors)
-          where {
-            Sequel.&(
-              QueryBuilder.consumer_matches(query_ids, :p),
-              QueryBuilder.provider_matches(query_ids, :p),
-              QueryBuilder.either_consumer_or_provider_was_specified_in_query(query_ids, :p)
-            )
-          }
-        end
-
-        # TODO refactor this to get rid of QueryIds
-        def inner_join_verifications_matching_one_selector_provider_or_provider_version(query_ids)
-          verifications = db[LV]
-            .select(*JOINED_VERIFICATION_COLUMNS)
-            .where {
-              QueryBuilder.provider_or_provider_version_matches(query_ids)
-            }
-
-          join(verifications, LP_LV_JOIN, { table_alias: :v } )
         end
 
         def join_consumers qualifier = :p, table_alias = :consumers
@@ -311,7 +245,7 @@ module PactBroker
           )
         end
 
-        def join_verifications
+        def left_outer_join_verifications
           left_outer_join(LV, LP_LV_JOIN, { table_alias: :v } )
         end
       end # end dataset_module
