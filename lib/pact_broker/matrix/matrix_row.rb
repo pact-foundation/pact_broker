@@ -8,19 +8,19 @@ require "pact_broker/pacts/pact_publication"
 require "pact_broker/tags/tag_with_latest_flag"
 require "pact_broker/matrix/integration_dataset_module"
 
-# The PactBroker::Matrix::QuickRow represents a row in the table that is created when
+# The PactBroker::Matrix::MatrixRow represents a row in the table that is created when
 # the consumer versions are joined to the provider versions via the pacts and verifications tables,
 # aka "The Matrix". The difference between this class and the EveryRow class is that
 # the EveryRow class includes results for overridden pact verisons and verifications (used only when there is no latestby
-# set in the matrix query), where as the QuickRow class does not.
-# It is called the QuickRow because the initial implementation was called the Row, and this is an optimised
+# set in the matrix query), where as the MatrixRow class does not.
+# It is called the MatrixRow because the initial implementation was called the Row, and this is an optimised
 # version. It needs to be renamed back to Row now that the old Row class has been deleted.
 
 module PactBroker
   module Matrix
     # TODO rename this to just Row
 
-    class QuickRow < Sequel::Model(Sequel.as(:latest_pact_publication_ids_for_consumer_versions, :p))
+    class MatrixRow < Sequel::Model(Sequel.as(:latest_pact_publication_ids_for_consumer_versions, :p))
       # Tables
       LV = :latest_verification_id_for_pact_version_and_provider_version
       LP = :latest_pact_publication_ids_for_consumer_versions
@@ -69,7 +69,7 @@ module PactBroker
         dataset_module do
           # declaring the selects this way makes them cacheable
 
-          select(*[:select_verification_columns, *QuickRow::VERIFICATION_COLUMNS, Sequel[:v][:pact_version_id]])
+          select(*[:select_verification_columns, *MatrixRow::VERIFICATION_COLUMNS, Sequel[:v][:pact_version_id]])
 
           select(
             :select_verification_columns_2,
@@ -80,8 +80,8 @@ module PactBroker
           )
 
           # @param [Array<PactBroker::Matrix::ResolvedSelector>] selectors
-          # @param [Symbol] verifications_columns the method to call on the QuickRow::Verifications/EveryRow::Verifications model to get the right columns required for the particular query
-          # @return [Sequel::Dataset<QuickRow>]
+          # @param [Symbol] verifications_columns the method to call on the MatrixRow::Verifications/EveryRow::Verifications model to get the right columns required for the particular query
+          # @return [Sequel::Dataset<MatrixRow>]
           def matching_selectors_as_provider(resolved_selectors)
             # get the UnresolvedSelector objects back out of the resolved_selectors because the Version.for_selector() method uses the UnresolvedSelector
             pacticipant_ids = resolved_selectors.collect(&:pacticipant_id).uniq
@@ -171,9 +171,9 @@ module PactBroker
         # and verification fields.
         # IDEA FOR OPTIMISATION - would it work to limit the pact_publications query and the verifications query to the limit of the overall query?
         # @param [Array<PactBroker::Matrix::ResolvedSelector>] selectors
-        # @param [Symbol] pact_columns the method to call on the QuickRow/EveryRow model to get the right columns required for the particular query
-        # @param [Symbol] verifications_columns the method to call on the QuickRow::Verifications/EveryRow::Verifications model to get the right columns required for the particular query
-        # @return [Sequel::Dataset<QuickRow>]
+        # @param [Symbol] pact_columns the method to call on the MatrixRow/EveryRow model to get the right columns required for the particular query
+        # @param [Symbol] verifications_columns the method to call on the MatrixRow::Verifications/EveryRow::Verifications model to get the right columns required for the particular query
+        # @return [Sequel::Dataset<MatrixRow>]
         def matching_only_selectors_joining_verifications(selectors)
           pact_publications = pact_publications_matching_selectors_as_consumer(selectors).from_self(alias: :p)
           verifications = verification_model.select_verification_columns.matching_selectors_as_provider(selectors)
@@ -187,7 +187,7 @@ module PactBroker
         # Return pact publications where the consumer version is described by any of the resolved_selectors, AND the provider is described by any of the resolved selectors.
         # @param [Array<PactBroker::Matrix::ResolvedSelector>] resolved_selectors
         # @param [Symbol] pact_columns the method to call on the Model class to get the right columns required for the particular query
-        # @return [Sequel::Dataset<QuickRow>]
+        # @return [Sequel::Dataset<MatrixRow>]
         def pact_publications_matching_selectors_as_consumer(resolved_selectors)
           pacticipant_ids = resolved_selectors.collect(&:pacticipant_id).uniq
 
@@ -210,7 +210,7 @@ module PactBroker
 
         # Allow this to be overriden in EveryRow
         def verification_model
-          QuickRow::Verification
+          MatrixRow::Verification
         end
 
         def left_outer_join_verifications

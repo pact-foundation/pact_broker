@@ -1,4 +1,4 @@
-require "pact_broker/matrix/quick_row"
+require "pact_broker/matrix/matrix_row"
 require "pact_broker/matrix/every_row"
 require "pact_broker/matrix/query_results"
 require "pact_broker/matrix/integration"
@@ -113,7 +113,7 @@ module PactBroker
       end
 
       def base_model(options = {})
-        options[:latestby] ? QuickRow : EveryRow
+        options[:latestby] ? MatrixRow : EveryRow
       end
     end
   end

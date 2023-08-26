@@ -1,11 +1,11 @@
-require "pact_broker/matrix/quick_row"
+require "pact_broker/matrix/matrix_row"
 require "pact_broker/ui/view_models/matrix_line"
 
 module PactBroker
   module UI
     module ViewDomain
       describe MatrixLine do
-        let(:line) { instance_spy(PactBroker::Matrix::QuickRow) }
+        let(:line) { instance_spy(PactBroker::Matrix::MatrixRow) }
 
         subject(:matrix_line) { described_class.new(line) }
 

@@ -1,7 +1,7 @@
 require "pact_broker/api/decorators/matrix_decorator"
 require "pact_broker/matrix/query_results_with_deployment_status_summary"
 require "pact_broker/matrix/deployment_status_summary"
-require "pact_broker/matrix/quick_row"
+require "pact_broker/matrix/matrix_row"
 
 module PactBroker
   module Api
@@ -17,7 +17,7 @@ module PactBroker
           let(:row_1_success) { true }
           let(:row_2_success) { true }
           let(:row_1) do
-            instance_double("PactBroker::Matrix::QuickRow",
+            instance_double("PactBroker::Matrix::MatrixRow",
               {
                 consumer_name: "Consumer",
                 consumer_version_number: "1.0.0",
@@ -41,7 +41,7 @@ module PactBroker
           end
 
           let(:row_2) do
-            instance_double("PactBroker::Matrix::QuickRow",
+            instance_double("PactBroker::Matrix::MatrixRow",
               {
                 consumer_name: "Consumer",
                 consumer_version_number: "1.0.0",

@@ -1,9 +1,9 @@
-require "pact_broker/matrix/quick_row"
+require "pact_broker/matrix/matrix_row"
 require "pact_broker/matrix/resolved_selector"
 
 module PactBroker
   module Matrix
-    describe QuickRow do
+    describe MatrixRow do
       describe "the interface" do
         before do
           td.create_pact_with_hierarchy("A", "1", "B")
@@ -21,8 +21,8 @@ module PactBroker
         end
 
         it "behaves like a Row, except quicker" do
-          a_id = QuickRow.db[:pacticipants].where(name: "A").select(:id).single_record[:id]
-          rows = QuickRow.default_scope.where(consumer_id: a_id).eager(:consumer).eager(:verification).all
+          a_id = MatrixRow.db[:pacticipants].where(name: "A").select(:id).single_record[:id]
+          rows = MatrixRow.default_scope.where(consumer_id: a_id).eager(:consumer).eager(:verification).all
           expect(rows.first.consumer).to be rows.last.consumer
           expect(rows.first.verification).to_not be nil
           expect(rows.first.consumer_name).to_not be nil
@@ -32,7 +32,7 @@ module PactBroker
       end
 
       describe "order_by_last_action_date" do
-        subject { QuickRow.default_scope.order_by_last_action_date }
+        subject { MatrixRow.default_scope.order_by_last_action_date }
 
         context "when there are two pacts verified at the same time" do
           before do
