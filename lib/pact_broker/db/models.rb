@@ -17,7 +17,7 @@ require "pact_broker/deployments/released_version"
 require "pact_broker/versions/branch"
 require "pact_broker/versions/branch_version"
 require "pact_broker/versions/branch_head"
-require "pact_broker/matrix/quick_row"
+require "pact_broker/matrix/matrix_row"
 require "pact_broker/matrix/every_row"
 
 module PactBroker

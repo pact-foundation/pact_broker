@@ -1,23 +1,23 @@
-require "pact_broker/matrix/quick_row"
+require "pact_broker/matrix/matrix_row"
 
-# Same as PactBroker::Matrix::QuickRow
+# Same as PactBroker::Matrix::MatrixRow
 # except the data is sourced from the pact_publications table, and contains
 # every pact publication, not just the latest publication for the consumer version.
 # This is used when there is no "latestby" in the matrix query.
 module PactBroker
   module Matrix
-    class EveryRow < PactBroker::Matrix::QuickRow
+    class EveryRow < PactBroker::Matrix::MatrixRow
       set_dataset(Sequel.as(:pact_publications, :p))
 
-      # Same as PactBroker::Matrix::QuickRow::Verification
+      # Same as PactBroker::Matrix::MatrixRow::Verification
       # except the data is sourced from the verifications table, and contains
       # every verification, not just the latest verification for the pact version and the provider version.
       # This is used when there is no "latestby" in the matrix query.
-      class Verification < PactBroker::Matrix::QuickRow::Verification
+      class Verification < PactBroker::Matrix::MatrixRow::Verification
         set_dataset(:verifications)
 
         dataset_module do
-          # @override the definition from PactBroker::Matrix::QuickRow::Verification, with the equivalent column names from the
+          # @override the definition from PactBroker::Matrix::MatrixRow::Verification, with the equivalent column names from the
           # verifications table.
           select(:select_verification_columns,
             Sequel[:verifications][:id].as(:verification_id),
@@ -26,7 +26,7 @@ module PactBroker
             Sequel[:verifications][:pact_version_id]
           )
 
-          # @override the definition from PactBroker::Matrix::QuickRow::Verification, with the equivalent column names from the
+          # @override the definition from PactBroker::Matrix::MatrixRow::Verification, with the equivalent column names from the
           # verifications table.
           select(:select_verification_columns_2,
             Sequel[:verifications][:id],
