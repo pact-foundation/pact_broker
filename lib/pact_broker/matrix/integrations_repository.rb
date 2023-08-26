@@ -32,9 +32,9 @@ module PactBroker
       # @return [Array<PactBroker::Matrix::Integration>]
       def find_integrations_for_specified_selectors(resolved_specified_selectors, infer_selectors_for_integrations)
         if infer_selectors_for_integrations || resolved_specified_selectors.size == 1
-          find_integrations_involving_any_specfied_selectors(resolved_specified_selectors)
+          find_integrations_involving_any_specfied_selectors(resolved_specified_selectors).sort_by(&:pacticipant_names)
         else
-          find_integrations_between_specified_selectors(resolved_specified_selectors)
+          find_integrations_between_specified_selectors(resolved_specified_selectors).sort_by(&:pacticipant_names)
         end
       end
 

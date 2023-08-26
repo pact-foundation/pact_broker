@@ -198,8 +198,8 @@ module PactBroker
 
         it "returns an integration for each direction" do
           is_expected.to eq [
-            Integration.new(foo.id, foo.name, bar.id, bar.name, true),
-            Integration.new(bar.id, bar.name, foo.id, foo.name, true)
+            Integration.new(bar.id, bar.name, foo.id, foo.name, true),
+            Integration.new(foo.id, foo.name, bar.id, bar.name, true)
           ]
         end
 
