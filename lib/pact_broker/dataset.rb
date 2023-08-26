@@ -111,7 +111,7 @@ module Sequel
     if PactBroker.configuration.use_case_sensitive_resource_names
       if PactBroker::Dataset::Helpers.mysql?
         # sigh, mysql, this is the only way to perform a case sensitive search
-        Sequel.like(column_name, escape_wildcards(value), { case_insensitive: false })
+        Sequel.like(column_name, PactBroker::Dataset::Helpers.escape_wildcards(value), { case_insensitive: false })
       else
         { column_name => value }
       end
