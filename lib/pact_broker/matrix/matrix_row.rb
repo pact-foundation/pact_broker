@@ -6,20 +6,16 @@ require "pact_broker/domain/version"
 require "pact_broker/domain/verification"
 require "pact_broker/pacts/pact_publication"
 require "pact_broker/tags/tag_with_latest_flag"
-require "pact_broker/matrix/integration_dataset_module"
 
 # The PactBroker::Matrix::MatrixRow represents a row in the table that is created when
 # the consumer versions are joined to the provider versions via the pacts and verifications tables,
 # aka "The Matrix". The difference between this class and the EveryRow class is that
 # the EveryRow class includes results for overridden pact verisons and verifications (used only when there is no latestby
-# set in the matrix query), where as the MatrixRow class does not.
-# It is called the MatrixRow because the initial implementation was called the Row, and this is an optimised
-# version. It needs to be renamed back to Row now that the old Row class has been deleted.
+# set in the matrix query), where as the MatrixRow class only includes the latest pact for each consumer version,
+# and the latest verification for each provider version.
 
 module PactBroker
   module Matrix
-    # TODO rename this to just Row
-
     class MatrixRow < Sequel::Model(Sequel.as(:latest_pact_publication_ids_for_consumer_versions, :p))
       # Tables
       LV = :latest_verification_id_for_pact_version_and_provider_version
