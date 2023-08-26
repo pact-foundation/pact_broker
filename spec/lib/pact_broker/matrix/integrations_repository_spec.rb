@@ -27,7 +27,7 @@ module PactBroker
       let(:resolved_selectors) { PactBroker::Matrix::SelectorResolver.resolve_specified_selectors(unresolved_selectors, []) }
       let(:infer_selectors_for_integrations) { false }
 
-      subject { PactBroker::Matrix::IntegrationsRepository.new(PactBroker::Matrix::QuickRow).find_integrations_for_specified_selectors(resolved_selectors, infer_selectors_for_integrations) }
+      subject { PactBroker::Matrix::IntegrationsRepository.new.find_integrations_for_specified_selectors(resolved_selectors, infer_selectors_for_integrations) }
 
       context "for one provider version" do
         let(:unresolved_selectors) { [UnresolvedSelector.new(pacticipant_name: "Bar", pacticipant_version_number: "2")] }
