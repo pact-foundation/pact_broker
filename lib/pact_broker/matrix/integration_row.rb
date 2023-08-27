@@ -89,8 +89,6 @@ module PactBroker
           versions_join = { Sequel[:p][:consumer_version_id] => Sequel[:versions][:id] }
           join(versions, versions_join, table_alias: :versions)
         end
-
-        private :inner_join_versions_dataset
       end
     end
   end
