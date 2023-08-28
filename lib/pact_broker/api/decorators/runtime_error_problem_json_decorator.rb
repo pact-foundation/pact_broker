@@ -14,7 +14,7 @@ module PactBroker
         def to_hash(user_options:, **)
           {
             "title" => "Server error",
-            "type" => "#{user_options[:base_url]}/problems/server_error",
+            "type" => "#{user_options[:base_url]}/problems/server-error",
             "detail" => message,
             "status" => 500
           }

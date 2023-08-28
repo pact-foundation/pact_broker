@@ -44,7 +44,7 @@ module PactBroker
             it "returns a problem JSON body" do
               expect(subject).to include(
                 "title" => "Server error",
-                "type" => "http://example.org/problems/server_error",
+                "type" => "http://example.org/problems/server-error",
                 "detail" => "An error has occurred. The details have been logged with the reference bYWfnyWPlf"
               )
             end
