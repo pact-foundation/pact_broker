@@ -87,8 +87,8 @@ module PactBroker
       # @param [Array<PactBroker::Matrix::ResolvedSelector>] resolved_selectors
       # @return [Sequel::Dataset<MatrixRow>]
       def matching_only_selectors_joining_verifications(resolved_selectors)
-        pact_publications = pact_publications_matching_selectors_as_consumer(resolved_selectors)
-        verifications = verifications_matching_selectors_as_provider(resolved_selectors)
+        pact_publications = matching_only_selectors_as_consumer(resolved_selectors)
+        verifications = verification_model.matching_only_selectors_as_provider(resolved_selectors)
 
         specified_pacticipant_ids = resolved_selectors.select(&:specified?).collect(&:pacticipant_id).uniq
 
@@ -102,20 +102,13 @@ module PactBroker
       # Return pact publications where the consumer version is described by any of the resolved_selectors, AND the provider is described by any of the resolved selectors.
       # @private
       # @param [Array<PactBroker::Matrix::ResolvedSelector>] resolved_selectors
-      # @param [Symbol] pact_columns the method to call on the Model class to get the right columns required for the particular query
       # @return [Sequel::Dataset<MatrixRow>]
-      def pact_publications_matching_selectors_as_consumer(resolved_selectors)
+      def matching_only_selectors_as_consumer(resolved_selectors)
         pacticipant_ids = resolved_selectors.collect(&:pacticipant_id).uniq
 
         select_pact_columns_with_aliases
           .inner_join_versions_for_selectors_as_consumer(resolved_selectors)
           .where(provider_id: pacticipant_ids)
-      end
-
-      # @param [Array<PactBroker::Matrix::ResolvedSelector>] resolved_selectors
-      # @return [Sequel::Dataset<Verification>]
-      def verifications_matching_selectors_as_provider(resolved_selectors)
-        verification_model.select_verification_columns_with_aliases.matching_selectors_as_provider(resolved_selectors)
       end
 
       # @private

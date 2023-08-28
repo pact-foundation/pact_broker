@@ -8,6 +8,7 @@ require "pact_broker/pacts/pact_publication"
 require "pact_broker/tags/tag_with_latest_flag"
 require "pact_broker/matrix/matrix_row_dataset_module"
 require "pact_broker/matrix/matrix_row_instance_methods"
+require "pact_broker/matrix/matrix_row_verification_dataset_module"
 
 # The PactBroker::Matrix::MatrixRow represents a row in the table that is created when
 # the consumer versions are joined to the provider versions via the pacts and verifications tables,
@@ -19,6 +20,20 @@ require "pact_broker/matrix/matrix_row_instance_methods"
 module PactBroker
   module Matrix
     class MatrixRow < Sequel::Model(Sequel.as(:latest_pact_publication_ids_for_consumer_versions, :p))
+
+      class Verification < Sequel::Model(Sequel.as(:latest_verification_id_for_pact_version_and_provider_version, :v))
+        dataset_module do
+          select(:select_verification_columns_with_aliases,
+            Sequel[:v][:provider_version_id],
+            Sequel[:v][:verification_id],
+            Sequel[:v][:created_at].as(:provider_version_created_at),
+            Sequel[:v][:pact_version_id]
+          )
+
+          include PactBroker::Matrix::MatrixRowVerificationDatasetModule
+        end
+      end
+
       PACT_COLUMNS_WITH_ALIASES = [
         Sequel[:p][:consumer_id],
         Sequel[:p][:provider_id],
@@ -53,41 +68,6 @@ module PactBroker
       associate(:many_to_one, :verification, class: "PactBroker::Domain::Verification", :key => :verification_id, :primary_key => :id)
       associate(:one_to_many, :consumer_version_tags, :class => "PactBroker::Tags::TagWithLatestFlag", primary_key: :consumer_version_id, key: :version_id)
       associate(:one_to_many, :provider_version_tags, :class => "PactBroker::Tags::TagWithLatestFlag", primary_key: :provider_version_id, key: :version_id)
-
-
-      class Verification < Sequel::Model(Sequel.as(:latest_verification_id_for_pact_version_and_provider_version, :v))
-        dataset_module do
-          # declaring the selects this way makes them cacheable
-          select(:select_verification_columns_with_aliases,
-            Sequel[:v][:provider_version_id],
-            Sequel[:v][:verification_id],
-            Sequel[:v][:created_at].as(:provider_version_created_at),
-            Sequel[:v][:pact_version_id]
-          )
-
-          # @param [Array<PactBroker::Matrix::ResolvedSelector>] selectors
-          # @param [Symbol] verifications_columns the method to call on the MatrixRow::Verifications/EveryRow::Verifications model to get the right columns required for the particular query
-          # @return [Sequel::Dataset<MatrixRow>]
-          def matching_selectors_as_provider(resolved_selectors)
-            # get the UnresolvedSelector objects back out of the resolved_selectors because the Version.for_selector() method uses the UnresolvedSelector
-            pacticipant_ids = resolved_selectors.collect(&:pacticipant_id).uniq
-            self
-              .inner_join_versions_for_selectors_as_provider(resolved_selectors)
-              .where(consumer_id: pacticipant_ids)
-          end
-
-          def inner_join_versions_for_selectors_as_provider(resolved_selectors)
-            # get the UnresolvedSelector objects back out of the resolved_selectors because the Version.for_selector() method uses the UnresolvedSelector
-            unresolved_selectors = resolved_selectors.collect(&:original_selector).uniq
-            versions = PactBroker::Domain::Version.ids_for_selectors(unresolved_selectors)
-            join_versions_dataset(versions)
-          end
-
-          def join_versions_dataset(versions_dataset)
-            join(versions_dataset, { Sequel[self.model.table_name][:provider_version_id] => Sequel[:versions][:id] }, table_alias: :versions)
-          end
-        end
-      end
 
       dataset_module do
         include PactBroker::Dataset
