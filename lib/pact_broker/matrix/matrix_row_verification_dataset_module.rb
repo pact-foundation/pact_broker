@@ -18,6 +18,11 @@ module PactBroker
           .where(consumer_id: pacticipant_ids)
       end
 
+      def matching_selectors_as_provider_for_any_consumer(resolved_selectors)
+        select_verification_columns_with_aliases
+          .inner_join_versions_for_selectors_as_provider(resolved_selectors)
+      end
+
       # @private
       def inner_join_versions_for_selectors_as_provider(resolved_selectors)
         # get the UnresolvedSelector objects back out of the resolved_selectors because the Version.for_selector() method uses the UnresolvedSelector
