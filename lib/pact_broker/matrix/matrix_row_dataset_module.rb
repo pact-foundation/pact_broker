@@ -1,6 +1,6 @@
 # The dataset methods used by both the MatrixRow and the EveryRow classes
 # Requires the following methods to be defined on the model
-#   - verification_model
+#   - verification_dataset
 #   - select_pact_columns_with_aliases
 #   - select_all_columns_after_join
 
@@ -65,7 +65,7 @@ module PactBroker
         rows_where_selector_matches_consumer = pact_publication_matching_consumer.left_outer_join_verifications.select_all_columns_after_join
 
         # provider
-        verifications_matching_provider = verification_model.matching_selectors_as_provider_for_any_consumer(resolved_selectors)
+        verifications_matching_provider = verification_dataset.matching_selectors_as_provider_for_any_consumer(resolved_selectors)
         rows_where_selector_matches_provider = select_pact_columns_with_aliases.from_self(alias: :p).inner_join_verifications_dataset(verifications_matching_provider).select_all_columns_after_join
 
         # union
@@ -88,7 +88,7 @@ module PactBroker
       # @return [Sequel::Dataset<MatrixRow>]
       def matching_only_selectors_joining_verifications(resolved_selectors)
         pact_publications = matching_only_selectors_as_consumer(resolved_selectors)
-        verifications = verification_model.matching_only_selectors_as_provider(resolved_selectors)
+        verifications = verification_dataset.matching_only_selectors_as_provider(resolved_selectors)
 
         specified_pacticipant_ids = resolved_selectors.select(&:specified?).collect(&:pacticipant_id).uniq
 
@@ -127,7 +127,7 @@ module PactBroker
 
       # @private
       def left_outer_join_verifications
-        verifications = verification_model.select_verification_columns_with_aliases
+        verifications = verification_dataset.select_verification_columns_with_aliases
         left_outer_join(verifications, { Sequel[:p][:pact_version_id] => Sequel[:v][:pact_version_id] }, { table_alias: :v } )
       end
 

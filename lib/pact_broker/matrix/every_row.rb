@@ -71,7 +71,7 @@ module PactBroker
         select(:select_pact_columns_with_aliases, *PACT_COLUMNS_WITH_ALIASES)
         select(:select_all_columns_after_join, *ALL_COLUMNS_AFTER_JOIN)
 
-        def verification_model
+        def verification_dataset
           EveryRow::Verification
         end
       end
