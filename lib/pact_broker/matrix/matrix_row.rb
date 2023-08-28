@@ -77,7 +77,7 @@ module PactBroker
         select(:select_all_columns_after_join, *ALL_COLUMNS_AFTER_JOIN)
 
         # @private
-        def verification_model
+        def verification_dataset
           MatrixRow::Verification
         end
       end
