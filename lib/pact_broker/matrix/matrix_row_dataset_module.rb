@@ -65,7 +65,7 @@ module PactBroker
         rows_where_selector_matches_consumer = pact_publication_matching_consumer.left_outer_join_verifications.select_all_columns_after_join
 
         # provider
-        verifications_matching_provider = verification_model.select_verification_columns_with_aliases.inner_join_versions_for_selectors_as_provider(resolved_selectors)
+        verifications_matching_provider = verification_model.matching_selectors_as_provider_for_any_consumer(resolved_selectors)
         rows_where_selector_matches_provider = select_pact_columns_with_aliases.from_self(alias: :p).inner_join_verifications_dataset(verifications_matching_provider).select_all_columns_after_join
 
         # union
