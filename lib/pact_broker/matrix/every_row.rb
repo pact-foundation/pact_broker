@@ -1,6 +1,7 @@
 require "pact_broker/matrix/matrix_row"
 require "pact_broker/matrix/matrix_row_dataset_module"
 require "pact_broker/matrix/matrix_row_instance_methods"
+require "pact_broker/matrix/matrix_row_verification_dataset_module"
 
 # Same as PactBroker::Matrix::MatrixRow
 # except the data is sourced from the pact_publications table, and contains
@@ -9,6 +10,23 @@ require "pact_broker/matrix/matrix_row_instance_methods"
 module PactBroker
   module Matrix
     class EveryRow < Sequel::Model(Sequel.as(:pact_publications, :p))
+
+      # Same as PactBroker::Matrix::MatrixRow::Verification
+      # except the data is sourced from the verifications table, and contains
+      # every verification, not just the latest verification for the pact version and the provider version.
+      # This is used when there is no "latestby" in the matrix query.
+      class Verification < Sequel::Model(:verifications)
+        dataset_module do
+          select(:select_verification_columns_with_aliases,
+            Sequel[:verifications][:id].as(:verification_id),
+            Sequel[:verifications][:provider_version_id],
+            Sequel[:verifications][:created_at].as(:provider_version_created_at),
+            Sequel[:verifications][:pact_version_id]
+          )
+
+          include PactBroker::Matrix::MatrixRowVerificationDatasetModule
+        end
+      end
 
       # Must be kept in sync with PactBroker::Matrix::MatrixRow
       associate(:many_to_one, :pact_publication, :class => "PactBroker::Pacts::PactPublication", :key => :pact_publication_id, :primary_key => :id)
@@ -21,22 +39,6 @@ module PactBroker
       associate(:one_to_many, :consumer_version_tags, :class => "PactBroker::Tags::TagWithLatestFlag", primary_key: :consumer_version_id, key: :version_id)
       associate(:one_to_many, :provider_version_tags, :class => "PactBroker::Tags::TagWithLatestFlag", primary_key: :provider_version_id, key: :version_id)
 
-      # Same as PactBroker::Matrix::MatrixRow::Verification
-      # except the data is sourced from the verifications table, and contains
-      # every verification, not just the latest verification for the pact version and the provider version.
-      # This is used when there is no "latestby" in the matrix query.
-      class Verification < PactBroker::Matrix::MatrixRow::Verification
-        set_dataset(:verifications)
-
-        dataset_module do
-          select(:select_verification_columns_with_aliases,
-            Sequel[:verifications][:id].as(:verification_id),
-            Sequel[:verifications][:provider_version_id],
-            Sequel[:verifications][:created_at].as(:provider_version_created_at),
-            Sequel[:verifications][:pact_version_id]
-          )
-        end
-      end
 
       PACT_COLUMNS_WITH_ALIASES = [
         Sequel[:p][:consumer_id],
