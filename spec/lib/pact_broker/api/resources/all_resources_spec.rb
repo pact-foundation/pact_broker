@@ -46,7 +46,7 @@ module PactBroker
           end
 
           it "does not unintentionally override the decorator_class(name) method with a method that accepts no args" do
-            expect(resource.method(:decorator_class).arity).to eq 1
+            expect(resource.method(:decorator_class).owner).to eq PactBroker::Api::Resources::BaseResource
           end
 
           describe "malformed_request?" do
