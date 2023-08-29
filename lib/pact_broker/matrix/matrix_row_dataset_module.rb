@@ -95,7 +95,7 @@ module PactBroker
         pact_publications
           .from_self(alias: :p)
           .select_all_columns_after_join
-          .left_outer_join(verifications, { Sequel[:p][:pact_version_id] => Sequel[:v][:pact_version_id] }, { table_alias: :v })
+          .left_outer_join_verifications_dataset(verifications)
           .where(consumer_id: specified_pacticipant_ids).or(provider_id: specified_pacticipant_ids)
       end
 
@@ -127,7 +127,10 @@ module PactBroker
 
       # @private
       def left_outer_join_verifications
-        verifications = verification_dataset.select_verification_columns_with_aliases
+        left_outer_join_verifications_dataset(verification_dataset.select_verification_columns_with_aliases)
+      end
+
+      def left_outer_join_verifications_dataset(verifications)
         left_outer_join(verifications, { Sequel[:p][:pact_version_id] => Sequel[:v][:pact_version_id] }, { table_alias: :v } )
       end
 
