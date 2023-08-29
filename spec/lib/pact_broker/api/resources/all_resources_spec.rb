@@ -45,6 +45,10 @@ module PactBroker
             expect(resource).to respond_to(:policy_name)
           end
 
+          it "does not unintentionally override the decorator_class(name) method with a method that accepts no args" do
+            expect(resource.method(:decorator_class).arity).to eq 1
+          end
+
           describe "malformed_request?" do
             context "an invalid UTF-8 character is used in the request body" do
               before do
