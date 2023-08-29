@@ -202,10 +202,10 @@ module PactBroker
           "the latest version of #{pacticipant_name} with tag #{tag} (#{pacticipant_version_number})"
         elsif latest_tagged?
           "the latest version of #{pacticipant_name} with tag #{tag} (no such version exists)"
-        elsif main_branch? && pacticipant_version_number.nil?
-          "a version of #{pacticipant_name} from the main branch (no such version exists)"
         elsif latest_from_main_branch? && pacticipant_version_number.nil?
-          "the latest version of #{pacticipant_name} from the main branch (no such verison exists)"
+          "the latest version of #{pacticipant_name} from the main branch (no versions exist for this branch)"
+        elsif main_branch? && pacticipant_version_number.nil?
+          "any version of #{pacticipant_name} from the main branch (no versions exist for this branch)"
         elsif latest_from_branch? && pacticipant_version_number
           "the latest version of #{pacticipant_name} from branch #{branch} (#{pacticipant_version_number})"
         elsif latest_from_branch?

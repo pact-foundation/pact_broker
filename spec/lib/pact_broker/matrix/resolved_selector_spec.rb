@@ -200,8 +200,9 @@ module PactBroker
 
           context "when specified by main_branch" do
             let(:main_branch) { true }
+            let(:latest) { nil }
 
-            its(:description) { is_expected.to eq "a version of Foo from the main branch (no such version exists)" }
+            its(:description) { is_expected.to eq "any version of Foo from the main branch (no versions exist for this branch)" }
             its(:version_does_not_exist_description) { is_expected.to eq "No version of Foo from the main branch exists" }
           end
 
@@ -209,7 +210,7 @@ module PactBroker
             let(:main_branch) { true }
             let(:latest) { true }
 
-            its(:description) { is_expected.to eq "a version of Foo from the main branch (no such version exists)" }
+            its(:description) { is_expected.to eq "the latest version of Foo from the main branch (no versions exist for this branch)" }
             its(:version_does_not_exist_description) { is_expected.to eq "No version of Foo from the main branch exists" }
           end
         end
