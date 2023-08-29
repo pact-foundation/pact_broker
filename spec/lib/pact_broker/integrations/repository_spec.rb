@@ -62,11 +62,11 @@ module PactBroker
 
         it "updates the contract_data_updated_at to now" do
           subject
-          expect(Integration.last.contract_data_updated_at).to be_date_time(now)
+          expect(Integration.order(:id).last.contract_data_updated_at).to be_date_time(now)
         end
 
         it "does not update the other integrations" do
-          expect { subject }.to_not change { Integration.first.contract_data_updated_at }
+          expect { subject }.to_not change { Integration.order(:id).first.contract_data_updated_at }
         end
 
         context "with the consumer is nil (eg. when a provider contract is published in Pactflow)" do
