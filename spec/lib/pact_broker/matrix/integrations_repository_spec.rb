@@ -5,9 +5,6 @@ require "pact_broker/matrix/selector_resolver"
 module PactBroker
   module Matrix
     describe IntegrationsRepository do
-      UnresolvedSelector = PactBroker::Matrix::UnresolvedSelector
-      Integration = PactBroker::Matrix::Integration
-
       before do
         # Foo v1 -> Bar v2
         # Waffle v2 -> Bar v2
