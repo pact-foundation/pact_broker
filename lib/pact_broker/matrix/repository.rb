@@ -20,7 +20,7 @@ module PactBroker
 
       GROUP_BY_PROVIDER_VERSION_NUMBER = [:consumer_name, :consumer_version_number, :provider_name, :provider_version_number]
       GROUP_BY_PROVIDER = [:consumer_name, :consumer_version_number, :provider_name]
-      GROUP_BY_PACT = [:consumer_name, :provider_name]
+      GROUP_BY_CONSUMER_AND_PROVIDER = [:consumer_name, :provider_name]
 
       # THE METHOD for querying the Matrix
       # @param [Array<PactBroker::Matrix::UnresolvedSelector>] unresolved_specified_selectors
@@ -91,14 +91,18 @@ module PactBroker
         group_by_columns = case options[:latestby]
                            when "cvpv" then GROUP_BY_PROVIDER_VERSION_NUMBER
                            when "cvp" then GROUP_BY_PROVIDER
-                           when "cp" then GROUP_BY_PACT
+                           when "cp" then GROUP_BY_CONSUMER_AND_PROVIDER
                            end
 
         # The group with the nil provider_version_numbers will be the results of the left outer join
         # that don't have verifications, so we need to include them all.
-        lines.group_by{|line| group_by_columns.collect{|key| line.send(key) }}
+
+        lines
+          .group_by{ |line| group_by_columns.collect{ |key| line.send(key) } }
           .values
-          .collect{ | line | line.first.provider_version_number.nil? ? line : line.sort_by(&:provider_version_order).last }
+          .collect { | lines |
+            lines.first.provider_version_number.nil? ? lines.first : lines.sort_by(&:provider_version_order).last
+          }
           .flatten
       end
       # rubocop: enable Metrics/CyclomaticComplexity

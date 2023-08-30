@@ -20,24 +20,24 @@ module PactBroker
 
       describe "find" do
         before do
-          # A1 - B1
-          # A1 - B1 r2
-          # A1 - B2 r3
-          # A1 - C1
+          # A1 - B1 n1
+          # A1 - B1 n2
+          # A1 - B2 n3
+          # A1 - C1 n1
+          # A2 - C3 n1
           # A2 - B?
-          # A2 - C2
           td.create_pact_with_hierarchy("A", "1", "B")
-            .create_verification(provider_version: "1", success: false)
-            .create_verification(provider_version: "1", number: 2, success: true)
-            .create_verification(provider_version: "2", number: 3, success: true)
+            .create_verification(provider_version: "1", success: false).comment("A1 - B1 n1")
+            .create_verification(provider_version: "1", number: 2, success: true).comment("A1 - B1 n2")
+            .create_verification(provider_version: "2", number: 3, success: true).comment("A1 - B2 n3")
             .create_provider("C")
             .create_pact
-            .create_verification(provider_version: "1")
+            .create_verification(provider_version: "1").comment("A1 - C1 n1")
             .create_consumer_version("2")
-            .create_pact
-            .create_verification(provider_version: "3")
+            .create_pact.comment("A2")
+            .create_verification(provider_version: "3").comment("A2 - C3 n1")
             .use_provider("B")
-            .create_pact
+            .create_pact.comment("A2 - B?")
         end
 
         subject { shorten_rows(rows) }
@@ -89,14 +89,12 @@ module PactBroker
             end
           end
 
-          context "when latestby=cp", pending: true do
+          context "when latestby=cp" do
             let(:latestby) { "cp" }
 
             it "returns the latest rows per consumer/provider" do
               expect(subject).to include "A2 C3 n1"
               expect(subject).to include "A2 B? n?"
-              expect(subject).to include a1_c1_n1
-              expect(subject).to_not include a1_b2_n3
               expect(subject.size).to eq 2
             end
           end
