@@ -1,27 +1,6 @@
 # The Matrix
 
-The Matrix is the dataset that is created when all the pacts are joined to all the verifications in the database, and it shows every consumer and provider version that have been tested against each other. The Matrix can be queried in may ways to find out whether particular versions are compatible with each other.
-
-## Querying the matrix
-
-The matix is queried using objects called "selectors". Selectors specify at minimum, the name of the pacticipant, and usually, a particular version, or range of versions, using any of version number, branch, environment or tag.
-
-For example.
-
-
-
-## can-i-deploy
-
-The can-i-deploy query is a specific permutation of the matrix query that answers the question "can I deploy this application version(s) to a particular environment".
-
-A matrix query is a can-i-deploy query if all of the following are true:
-
-* The specified selectors each represent a single pacticipant version (because you can only deploy one version of an application at a time - it doesn't make sense to say "can I deploy every version of Foo from the main branch at once").
-* There are either multiple specified selectors OR there is a single specified selector and a "target" (that is, `--to TAG` or `--to-environment` or `--latest`)
-
-## can-i-merge
-
-The can-i-merge query is the same as can-i-deploy, except the "target" is "the main branches" of the integrated applications rather than "the versions of the integrated applications that are deployed to a particular environment".
+Read [these docs](https://docs.pact.io/pact_broker/advanced_topics/matrix_selectors) first for a introduction to matrix selectors and options from a user's perspective.
 
 ## Terminology
 
@@ -45,6 +24,9 @@ The can-i-merge query is the same as can-i-deploy, except the "target" is "the m
 
 Specified, ignore, and inferred selectors all start life as `UnresolvedSelector` objects, which then get resolved into `ResolvedSelector` objects.
 
+### Options
+
+TBC.
 
 ## How the matrix query works
 
