@@ -18,8 +18,8 @@ module PactBroker
       # Used when using table_print to output query results
       TP_COLS = [ :consumer_version_number, :pact_revision_number, :provider_version_number, :verification_number]
 
-      GROUP_BY_PROVIDER_VERSION_NUMBER = [:consumer_name, :consumer_version_number, :provider_name, :provider_version_number]
-      GROUP_BY_PROVIDER = [:consumer_name, :consumer_version_number, :provider_name]
+      GROUP_BY_CONSUMER_VERSION_AND_PROVIDER_VERSION = [:consumer_name, :consumer_version_number, :provider_name, :provider_version_number]
+      GROUP_BY_CONSUMER_VERSION_AND_PROVIDER = [:consumer_name, :consumer_version_number, :provider_name]
       GROUP_BY_CONSUMER_AND_PROVIDER = [:consumer_name, :provider_name]
 
       # THE METHOD for querying the Matrix
@@ -89,8 +89,8 @@ module PactBroker
       def apply_latestby(options, lines)
         return lines unless options[:latestby]
         group_by_columns = case options[:latestby]
-                           when "cvpv" then GROUP_BY_PROVIDER_VERSION_NUMBER
-                           when "cvp" then GROUP_BY_PROVIDER
+                           when "cvpv" then GROUP_BY_CONSUMER_VERSION_AND_PROVIDER_VERSION
+                           when "cvp" then GROUP_BY_CONSUMER_VERSION_AND_PROVIDER
                            when "cp" then GROUP_BY_CONSUMER_AND_PROVIDER
                            end
 
