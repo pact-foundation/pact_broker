@@ -835,7 +835,7 @@ module PactBroker
         end
       end
 
-      describe "when deploying a provider and the version of the consumer is not specified and multiple consumer versions have been verified by this provider version" do
+      describe "when the consumer is not specified and multiple consumer versions have been verified by this provider version and no target is specified" do
         before do
           td.create_pact_with_hierarchy("Foo", "1", "Bar")
             .create_verification(provider_version: "5")
@@ -852,8 +852,9 @@ module PactBroker
           [ UnresolvedSelector.new(pacticipant_name: "Bar", pacticipant_version_number: "5") ]
         end
 
-        it "returns only the latest consumer version row", pending: "Can't work out what this should do" do
-          expect(subject.rows.size).to eq 1
+        it "returns a row for each consumer version" do
+          expect(subject.rows.size).to eq 2
+          expect(subject.rows.last.consumer_version_number).to eq "1"
           expect(subject.rows.first.consumer_version_number).to eq "2"
         end
       end
