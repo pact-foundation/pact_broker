@@ -37,6 +37,14 @@ module PactBroker
 
           it { is_expected.to include "p" => true }
         end
+
+        context "when the selector was deployed" do
+          let(:selectors) do
+            Selectors.new([ResolvedSelector.new({ environment_name: "prod" }, consumer_version)])
+          end
+
+          its(["s"]) { is_expected.to include_hash_matching "e" => "prod" }
+        end
       end
 
       describe "parse_metadata" do
@@ -47,6 +55,7 @@ module PactBroker
 
           let(:consumer_version) { double("version", number: "2", id: 1) }
 
+          # Not an actual possible selector, just avoiding writing more tests
           let(:incoming_metadata) do
             {
               "cv" => 1,
@@ -56,7 +65,9 @@ module PactBroker
                 {
                   "l" => true,
                   "t" => "tag",
-                  "cv" => 1
+                  "cv" => 1,
+                  "e" => "prod",
+                  "b" => "main"
                 }
               ],
               "p" => true
@@ -73,7 +84,9 @@ module PactBroker
                 {
                   :latest => true,
                   :tag => "tag",
-                  :consumer_version_number => "2"
+                  :consumer_version_number => "2",
+                  :environment => "prod",
+                  :branch => "main"
                 }
               ]
             }
@@ -96,7 +109,9 @@ module PactBroker
                   {
                     :latest => true,
                     :tag => "tag",
-                    :consumer_version_number => nil
+                    :consumer_version_number => nil,
+                    :environment => "prod",
+                    :branch => "main"
                   }
                 ]
               }

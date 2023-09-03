@@ -12,6 +12,7 @@ module PactBroker
         [:consumer_version_selectors, "s"],
         [:tag, "t"],
         [:branch, "b"],
+        [:environment, "e"],
         [:latest, "l"]
       ]
 
@@ -60,13 +61,13 @@ module PactBroker
             "w" => true
           }
         else
-          # TODO support deployed and released
           {
             "s" => verifiable_pact.selectors.collect do | selector |
               {
                 "b" => selector.branch,
                 "t" => selector.tag,
                 "l" => selector.latest,
+                "e" => selector.environment_name,
                 "cv" => selector.consumer_version.id
               }.compact
             end,
