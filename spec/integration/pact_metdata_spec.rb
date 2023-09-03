@@ -20,6 +20,7 @@ RSpec.describe "the consumer version relations in the pact version resource" do
       expect(consumer_versions_relations).to be nil
     end
   end
+
   context "for a pact published webhook" do
     before do
       td.create_global_webhook(event_names: ["contract_published"], body: { "pact_url" => "${pactbroker.pactUrl}" })

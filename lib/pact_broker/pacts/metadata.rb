@@ -46,6 +46,7 @@ module PactBroker
       # parameters. This is part of ensuring that verification results webhooks
       # go back to the correct consumer version number (eg for git statuses)
       def build_metadata_for_webhook_triggered_by_pact_publication(pact)
+        # Should probably put the branch in here, but I don't think the tags are used for anything
         metadata = {
           "cvn" => pact.consumer_version_number,
           "cvt" => pact.consumer_version_tag_names
