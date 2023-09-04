@@ -20,7 +20,6 @@ services:
     environment:
       DATABASE_ADAPTER: docker_compose_postgres
       PACT_BROKER_HIDE_PACTFLOW_MESSAGES: 'true'
-      INSTALL_PG: 'true'
     volumes:
       - ./lib:/home/lib
       - ./db:/home/db
@@ -36,7 +35,6 @@ services:
     environment:
       DATABASE_ADAPTER: docker_compose_postgres
       PACT_BROKER_HIDE_PACTFLOW_MESSAGES: 'true'
-      INSTALL_PG: 'true'
     volumes:
       - ./lib:/home/lib
       - ./spec:/home/spec
@@ -70,7 +68,6 @@ services:
     environment:
       DATABASE_ADAPTER: docker_compose_mysql
       PACT_BROKER_HIDE_PACTFLOW_MESSAGES: 'true'
-      INSTALL_MYSQL: 'true'
     volumes:
       - ./lib:/home/lib
       - ./db:/home/db
@@ -86,7 +83,6 @@ services:
     environment:
       DATABASE_ADAPTER: docker_compose_mysql
       PACT_BROKER_HIDE_PACTFLOW_MESSAGES: 'true'
-      INSTALL_MYSQL: 'true'
     volumes:
       - ./lib:/home/lib
       - ./spec:/home/spec
@@ -105,7 +101,6 @@ services:
     build: .
     environment:
       PACT_BROKER_HIDE_PACTFLOW_MESSAGES: 'true'
-      INSTALL_MYSQL: 'true'
     volumes:
       - ./lib:/home/lib
       - ./spec:/home/spec

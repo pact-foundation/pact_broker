@@ -36,12 +36,12 @@ group :test do
   gem "faraday-retry", "~>2.0"
 end
 
-if ENV["INSTALL_MYSQL"] == "true"
-  gem "mysql2", "~>0.5"
+group :pg, optional: true do
+  gem "pg", "~>1.2"
 end
 
-if ENV["INSTALL_PG"] == "true"
-  gem "pg", "~>1.2"
+group :mysql, optional: true do
+  gem "mysql2", "~>0.5"
 end
 
 if ENV["X_PACT_DEVELOPMENT"] == "true"

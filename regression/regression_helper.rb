@@ -1,4 +1,3 @@
-raise "Must set INSTALL_PG=true" unless ENV["INSTALL_PG"] == "true"
 raise "Must set DATABASE_ADAPTER=docker_postgres" unless ENV["DATABASE_ADAPTER"] == "docker_postgres"
 raise "Must set RACK_ENV=development" unless ENV["RACK_ENV"] == "development"
 

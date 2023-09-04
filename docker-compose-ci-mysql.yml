@@ -19,7 +19,6 @@ services:
     environment:
       DATABASE_ADAPTER: docker_compose_mysql
       PACT_BROKER_HIDE_PACTFLOW_MESSAGES: 'true'
-      INSTALL_MYSQL: 'true'
     volumes:
       - ./lib:/home/lib
       - ./spec:/home/spec

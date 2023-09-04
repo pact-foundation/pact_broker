@@ -97,11 +97,12 @@ namespace :db do
 
   desc "Annotate the Sequel domain classes with schema information.
   Start the postgres db with script/docker/db-start.sh first and run
-  INSTALL_PG=true bundle exec rake db:annotate
+  bundle config set --local with pg
+  bundle install
+  bundle exec rake db:annotate
   "
   task :annotate do
     begin
-      raise "Need to set INSTALL_PG=true" unless ENV["INSTALL_PG"] == "true"
       ENV["RACK_ENV"] = "test"
       ENV["DATABASE_ADAPTER"] = "docker_postgres"
       load "#{__dir__}/../spec/support/test_database.rb"
