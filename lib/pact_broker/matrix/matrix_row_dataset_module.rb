@@ -12,11 +12,11 @@ module PactBroker
 
       # The matrix query used to determine the final dataset
       # @param [Array<PactBroker::Matrix::ResolvedSelector>] resolved_selectors
-      def matching_selectors(resolved_selectors)
+      def matching_selectors(resolved_selectors, limit:)
         if resolved_selectors.size == 1
-          matching_one_selector_for_either_consumer_or_provider(resolved_selectors)
+          matching_one_selector_for_either_consumer_or_provider(resolved_selectors, limit: limit)
         else
-          matching_only_selectors_joining_verifications(resolved_selectors)
+          matching_only_selectors_joining_verifications(resolved_selectors, limit: limit)
         end
       end
 
@@ -55,18 +55,18 @@ module PactBroker
       # When we have one selector, we need to join ALL the verifications to find out
       # what integrations exist
       # @private
-      def matching_one_selector_for_either_consumer_or_provider(resolved_selectors)
+      def matching_one_selector_for_either_consumer_or_provider(resolved_selectors, limit: )
         if resolved_selectors.size != 1
           raise ArgumentError.new("Expected one selector to be provided, but received #{resolved_selectors.size}:  #{resolved_selectors}")
         end
 
         # consumer
-        pact_publication_matching_consumer = select_pact_columns_with_aliases.from_self(alias: :p).inner_join_versions_for_selectors_as_consumer(resolved_selectors)
+        pact_publication_matching_consumer = select_pact_columns_with_aliases.most_recent(limit).from_self(alias: :p).inner_join_versions_for_selectors_as_consumer(resolved_selectors)
         rows_where_selector_matches_consumer = pact_publication_matching_consumer.left_outer_join_verifications.select_all_columns_after_join
 
         # provider
         verifications_matching_provider = verification_dataset.matching_selectors_as_provider_for_any_consumer(resolved_selectors)
-        rows_where_selector_matches_provider = select_pact_columns_with_aliases.from_self(alias: :p).inner_join_verifications_dataset(verifications_matching_provider).select_all_columns_after_join
+        rows_where_selector_matches_provider = select_pact_columns_with_aliases.most_recent(limit).from_self(alias: :p).inner_join_verifications_dataset(verifications_matching_provider).select_all_columns_after_join
 
         # union
         rows_where_selector_matches_consumer.union(rows_where_selector_matches_provider)
@@ -86,8 +86,8 @@ module PactBroker
       # @private
       # @param [Array<PactBroker::Matrix::ResolvedSelector>] resolved_selectors
       # @return [Sequel::Dataset<MatrixRow>]
-      def matching_only_selectors_joining_verifications(resolved_selectors)
-        pact_publications = matching_only_selectors_as_consumer(resolved_selectors)
+      def matching_only_selectors_joining_verifications(resolved_selectors, limit: )
+        pact_publications = matching_only_selectors_as_consumer(resolved_selectors, limit: limit)
         verifications = verification_dataset.matching_only_selectors_as_provider(resolved_selectors)
 
         specified_pacticipant_ids = resolved_selectors.select(&:specified?).collect(&:pacticipant_id).uniq
@@ -103,10 +103,10 @@ module PactBroker
       # @private
       # @param [Array<PactBroker::Matrix::ResolvedSelector>] resolved_selectors
       # @return [Sequel::Dataset<MatrixRow>]
-      def matching_only_selectors_as_consumer(resolved_selectors)
+      def matching_only_selectors_as_consumer(resolved_selectors, limit: )
         [
-          matching_only_selectors_as_consumer_where_only_pacticipant_name_in_selector(resolved_selectors),
-          matching_only_selectors_as_consumer_where_not_only_pacticipant_name_in_selector(resolved_selectors),
+          matching_only_selectors_as_consumer_where_only_pacticipant_name_in_selector(resolved_selectors, limit: limit),
+          matching_only_selectors_as_consumer_where_not_only_pacticipant_name_in_selector(resolved_selectors, limit: limit),
         ].compact.reduce(&:union)
       end
 
@@ -117,7 +117,7 @@ module PactBroker
       # @private
       # @param [Array<PactBroker::Matrix::ResolvedSelector>] resolved_selectors
       # @return [Sequel::Dataset<MatrixRow>, nil]
-      def matching_only_selectors_as_consumer_where_only_pacticipant_name_in_selector(resolved_selectors)
+      def matching_only_selectors_as_consumer_where_only_pacticipant_name_in_selector(resolved_selectors, limit:)
         all_pacticipant_ids = resolved_selectors.collect(&:pacticipant_id).uniq
         pacticipant_ids_for_pacticipant_only_selectors = resolved_selectors.select(&:only_pacticipant_name_specified?).collect(&:pacticipant_id).uniq
 
@@ -125,6 +125,7 @@ module PactBroker
           select_pact_columns_with_aliases
             .where(consumer_id: pacticipant_ids_for_pacticipant_only_selectors)
             .where(provider_id: all_pacticipant_ids)
+            .most_recent(limit)
         end
       end
 
@@ -136,7 +137,7 @@ module PactBroker
       # @private
       # @param [Array<PactBroker::Matrix::ResolvedSelector>] resolved_selectors
       # @return [Sequel::Dataset<MatrixRow>, nil]
-      def matching_only_selectors_as_consumer_where_not_only_pacticipant_name_in_selector(resolved_selectors)
+      def matching_only_selectors_as_consumer_where_not_only_pacticipant_name_in_selector(resolved_selectors, limit:)
         all_pacticipant_ids = resolved_selectors.collect(&:pacticipant_id).uniq
         resolved_selectors_with_versions_specified = resolved_selectors.reject(&:only_pacticipant_name_specified?)
 
@@ -144,6 +145,7 @@ module PactBroker
           select_pact_columns_with_aliases
             .inner_join_versions_for_selectors_as_consumer(resolved_selectors_with_versions_specified)
             .where(provider_id: all_pacticipant_ids)
+            .most_recent(limit)
         end
       end
 
@@ -173,6 +175,10 @@ module PactBroker
       # @private
       def inner_join_verifications_dataset(verifications_dataset)
         join(verifications_dataset, { Sequel[:p][:pact_version_id] => Sequel[:v][:pact_version_id] }, { table_alias: :v } )
+      end
+
+      def most_recent(limit)
+        order(Sequel.desc(:created_at)).limit(limit)
       end
     end
   end

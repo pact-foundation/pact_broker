@@ -109,7 +109,7 @@ module PactBroker
 
       def query_matrix(all_resolved_selectors, options)
         query = base_model(options)
-                  .matching_selectors(all_resolved_selectors)
+                  .matching_selectors(all_resolved_selectors, limit: options[:limit])
                   .order_by_last_action_date
 
         query = query.limit(options[:limit]) if options[:limit]

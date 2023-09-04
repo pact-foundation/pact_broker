@@ -28,7 +28,7 @@ module PactBroker
 
         let(:selectors) { [selector_1, selector_2] }
 
-        subject { EveryRow.matching_selectors(selectors).all }
+        subject { EveryRow.matching_selectors(selectors, limit: 100).all }
 
         let(:un_verified_row) { subject.find{ |r| r.provider_id == bar.id && !r.has_verification? } }
         let(:verified_row) { subject.find{ |r| r.provider_id == bar.id && r.has_verification? } }
