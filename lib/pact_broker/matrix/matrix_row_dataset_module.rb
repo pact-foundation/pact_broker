@@ -36,8 +36,8 @@ module PactBroker
           :pact_version,
           consumer_version: EAGER_LOADED_RELATIONSHIPS_FOR_VERSION,
           provider_version: EAGER_LOADED_RELATIONSHIPS_FOR_VERSION,
-          consumer_version_tags: { version: :pacticipant },
-          provider_version_tags: { version: :pacticipant }
+          consumer_version_tags: [:head_tag, { version: :pacticipant }],
+          provider_version_tags: [:head_tag, { version: :pacticipant }]
         )
       end
 

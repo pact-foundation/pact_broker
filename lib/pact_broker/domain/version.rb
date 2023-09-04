@@ -1,25 +1,9 @@
 require "pact_broker/dataset"
 require "pact_broker/domain/order_versions"
-require "pact_broker/tags/tag_with_latest_flag"
 require "pact_broker/versions/eager_loaders"
 
 module PactBroker
   module Domain
-
-    # Same attributes as PactBroker::Tags::TagWithLatestFlag
-    class EagerTagWithLatestFlag < SimpleDelegator
-      attr_reader :latest
-
-      def initialize(tag, latest)
-        super(tag)
-        @latest = latest
-      end
-
-      def latest?
-        latest
-      end
-    end
-
     VERSION_COLUMNS = [:id, :number, :repository_ref, :pacticipant_id, :order, :created_at, :updated_at, :build_url]
 
     class Version < Sequel::Model(Sequel::Model.db[:versions].select(*VERSION_COLUMNS.collect{ | column | Sequel.qualify(:versions, column) }))

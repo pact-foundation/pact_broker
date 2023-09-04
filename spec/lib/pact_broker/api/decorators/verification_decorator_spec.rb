@@ -35,7 +35,7 @@ module PactBroker
           )
         end
 
-        let(:provider_version_tags) { [instance_double(PactBroker::Tags::TagWithLatestFlag, name: "prod", latest?: true)] }
+        let(:provider_version_tags) { [instance_double(PactBroker::Domain::Tag, name: "prod", latest?: true)] }
 
         let(:options) { { user_options: { base_url: "http://example.org", pact: pact } } }
 

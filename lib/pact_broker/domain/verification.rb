@@ -1,6 +1,5 @@
 require "pact_broker/dataset"
 require "json"
-require "pact_broker/tags/tag_with_latest_flag"
 require "pact_broker/pacts/content"
 require "sequel/extensions/symbol_aref_refinement"
 

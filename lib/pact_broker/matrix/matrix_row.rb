@@ -4,8 +4,8 @@ require "pact_broker/pacts/pact_version"
 require "pact_broker/domain/pacticipant"
 require "pact_broker/domain/version"
 require "pact_broker/domain/verification"
+require "pact_broker/domain/tag"
 require "pact_broker/pacts/pact_publication"
-require "pact_broker/tags/tag_with_latest_flag"
 require "pact_broker/matrix/matrix_row_dataset_module"
 require "pact_broker/matrix/matrix_row_instance_methods"
 require "pact_broker/matrix/matrix_row_verification_dataset_module"
@@ -66,8 +66,8 @@ module PactBroker
       associate(:many_to_one, :provider_version, :class => "PactBroker::Domain::Version", :key => :provider_version_id, :primary_key => :id)
       associate(:many_to_one, :pact_version, class: "PactBroker::Pacts::PactVersion", :key => :pact_version_id, :primary_key => :id)
       associate(:many_to_one, :verification, class: "PactBroker::Domain::Verification", :key => :verification_id, :primary_key => :id)
-      associate(:one_to_many, :consumer_version_tags, :class => "PactBroker::Tags::TagWithLatestFlag", primary_key: :consumer_version_id, key: :version_id)
-      associate(:one_to_many, :provider_version_tags, :class => "PactBroker::Tags::TagWithLatestFlag", primary_key: :provider_version_id, key: :version_id)
+      associate(:one_to_many, :consumer_version_tags, :class => "PactBroker::Domain::Tag", primary_key: :consumer_version_id, key: :version_id)
+      associate(:one_to_many, :provider_version_tags, :class => "PactBroker::Domain::Tag", primary_key: :provider_version_id, key: :version_id)
 
       dataset_module do
         include PactBroker::Dataset

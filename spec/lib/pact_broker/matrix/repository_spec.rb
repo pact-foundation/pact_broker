@@ -594,7 +594,7 @@ module PactBroker
           end
 
           it "returns the tag information" do
-            expect(subject.first.provider_version_tags).to include_hash_matching name: "prod", latest: 1
+            expect(subject.first.provider_version_tags).to include(have_attributes(name: "prod", latest?: true))
           end
         end
 

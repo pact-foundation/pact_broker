@@ -14,8 +14,8 @@ module PactBroker
         let(:latest_verification) { instance_double("PactBroker::Domain::Verification") }
         let(:domain_relationship) { PactBroker::Domain::IndexItem.new(consumer, provider, consumer_version, latest_pact, latest, latest_verification, [], [], tags, latest_verification_latest_tags)}
         let(:tags) { [] }
-        let(:verification_tag_1) { instance_double("PactBroker::Tags::TagWithLatestFlag", name: "dev") }
-        let(:verification_tag_2) { instance_double("PactBroker::Tags::TagWithLatestFlag", name: "prod") }
+        let(:verification_tag_1) { instance_double("PactBroker::Domain::Tag", name: "dev") }
+        let(:verification_tag_2) { instance_double("PactBroker::Domain::Tag", name: "prod") }
         let(:latest_verification_latest_tags) { [verification_tag_1, verification_tag_2]  }
         let(:latest) { true }
 
