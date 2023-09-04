@@ -99,16 +99,52 @@ module PactBroker
           .where(consumer_id: specified_pacticipant_ids).or(provider_id: specified_pacticipant_ids)
       end
 
-      # Return pact publications where the consumer version is described by any of the resolved_selectors, AND the provider is described by any of the resolved selectors.
+      # Return pact publications where the consumer/consumer version is described by any of the resolved_selectors, AND the provider is described by any of the resolved selectors.
       # @private
       # @param [Array<PactBroker::Matrix::ResolvedSelector>] resolved_selectors
       # @return [Sequel::Dataset<MatrixRow>]
       def matching_only_selectors_as_consumer(resolved_selectors)
-        pacticipant_ids = resolved_selectors.collect(&:pacticipant_id).uniq
+        [
+          matching_only_selectors_as_consumer_where_only_pacticipant_name_in_selector(resolved_selectors),
+          matching_only_selectors_as_consumer_where_not_only_pacticipant_name_in_selector(resolved_selectors),
+        ].compact.reduce(&:union)
+      end
 
-        select_pact_columns_with_aliases
-          .inner_join_versions_for_selectors_as_consumer(resolved_selectors)
-          .where(provider_id: pacticipant_ids)
+
+      # Return pact publications where the consumer is described by any of the resolved_selectors *that only specify the pacticipant NAME*, AND the provider is described by any of the resolved selectors.
+      # If the original selector only specified the pacticipant name, we don't need to join to the versions table to identify the required pact_publications.
+      # Return nil if there are no resolved selectors where only the pacticipant name is specified.
+      # @private
+      # @param [Array<PactBroker::Matrix::ResolvedSelector>] resolved_selectors
+      # @return [Sequel::Dataset<MatrixRow>, nil]
+      def matching_only_selectors_as_consumer_where_only_pacticipant_name_in_selector(resolved_selectors)
+        all_pacticipant_ids = resolved_selectors.collect(&:pacticipant_id).uniq
+        pacticipant_ids_for_pacticipant_only_selectors = resolved_selectors.select(&:only_pacticipant_name_specified?).collect(&:pacticipant_id).uniq
+
+        if pacticipant_ids_for_pacticipant_only_selectors.any?
+          select_pact_columns_with_aliases
+            .where(consumer_id: pacticipant_ids_for_pacticipant_only_selectors)
+            .where(provider_id: all_pacticipant_ids)
+        end
+      end
+
+      # Return pact publications where the consumer *version* is described by any of the resolved_selectors
+      # *that specify more than just the pacticipant name*,
+      # AND the provider is described by any of the resolved selectors.
+      # If the selector uses any of the tag/branch/environment/latest attributes, we need to join to the versions table to identify the required pact_publications.
+      # Return nil if there are no resolved selectors where anything other than the pacticipant name is specified.
+      # @private
+      # @param [Array<PactBroker::Matrix::ResolvedSelector>] resolved_selectors
+      # @return [Sequel::Dataset<MatrixRow>, nil]
+      def matching_only_selectors_as_consumer_where_not_only_pacticipant_name_in_selector(resolved_selectors)
+        all_pacticipant_ids = resolved_selectors.collect(&:pacticipant_id).uniq
+        resolved_selectors_with_versions_specified = resolved_selectors.reject(&:only_pacticipant_name_specified?)
+
+        if resolved_selectors_with_versions_specified.any?
+          select_pact_columns_with_aliases
+            .inner_join_versions_for_selectors_as_consumer(resolved_selectors_with_versions_specified)
+            .where(provider_id: all_pacticipant_ids)
+        end
       end
 
       # @private
