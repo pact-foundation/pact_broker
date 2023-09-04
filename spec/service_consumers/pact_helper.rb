@@ -44,9 +44,9 @@ Pact.service_provider "Pact Broker" do
   app_version_tags [ENV["GIT_BRANCH"]] if ENV["GIT_BRANCH"]
   publish_verification_results ENV["CI"] == "true"
 
-  if ENV.fetch("PACTFLOW_PACT_OSS_TOKEN", "") != ""
+  if ENV.fetch("PACTFLOW_PACT_FOUNDATION_TOKEN", "") != ""
     honours_pacts_from_pact_broker do
-      pact_broker_base_url "https://pact-oss.pactflow.io", token: ENV["PACTFLOW_PACT_OSS_TOKEN"]
+      pact_broker_base_url "https://pact-foundation.pactflow.io", token: ENV["PACTFLOW_PACT_FOUNDATION_TOKEN"]
       consumer_version_selectors [
           { tag: "master", latest: true }
         ]
