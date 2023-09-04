@@ -19,7 +19,6 @@ services:
     environment:
       PACT_BROKER_TEST_DATABASE_URL: postgres://postgres:postgres@postgres/postgres
       PACT_BROKER_HIDE_PACTFLOW_MESSAGES: 'true'
-      INSTALL_PG: 'true'
     volumes:
       - ./lib:/home/lib
       - ./spec:/home/spec

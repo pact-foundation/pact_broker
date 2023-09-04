@@ -2,8 +2,6 @@ FROM ruby:3.2.1-alpine3.17
 
 WORKDIR /home
 
-ENV INSTALL_MYSQL=true
-ENV INSTALL_PG=true
 RUN apk update \
     && apk --no-cache add \
       "build-base>=0.5" \
@@ -28,13 +26,14 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
     && rm dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 
+# lock file does not exist on CI
 COPY Gemfile /home/Gemfile
-# COPY Gemfile.lock /home/Gemfile.lock # lock file does not exist on CI
 COPY pact_broker.gemspec /home/pact_broker.gemspec
 COPY lib/pact_broker/version.rb /home/lib/pact_broker/version.rb
 COPY .gitignore /home/.gitignore
 
 RUN gem install bundler -v '~>2.0.0' \
+    && bundle config set --local with pg mysql \
     && bundle install --jobs 3 --retry 3
 
 RUN echo '#!/bin/sh' >> /usr/local/bin/start

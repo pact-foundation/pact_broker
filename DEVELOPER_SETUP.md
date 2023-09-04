@@ -23,8 +23,20 @@ This allows you to open a shell to a development environment where you can run t
 * Spin up a container with mounted volume and open an interactive shell session
 
     ```sh
-    docker run --rm -v $(PWD):/home -w /home -it pact_broker:dev bash
+    docker run --rm \
+        -v $(PWD)/config:/home/config \
+        -v $(PWD)/db:/home/db \
+        -v $(PWD)/docs:/home/docs \
+        -v $(PWD)/lib:/home/lib \
+        -v $(PWD)/public:/home/public \
+        -v $(PWD)/spec:/home/spec \
+        -v $(PWD)/tasks:/home/tasks \
+        -v $(PWD)/vendor:/home/vendor \
+        -v $(PWD)/Rakefile:/home/Rakefile \
+        -v $(PWD)/.rspec:/home/.rspec \
+        -w /home -it pact_broker:dev bash
     ```
+We can't just mount the whole $(PWD) directory because the local Gemfile.lock and .bundle/config will override the ones in the image
 
 Remember to rebuild the image if you change any of the gems or gem versions.
 
@@ -41,7 +53,7 @@ Remember to rebuild the image if you change any of the gems or gem versions.
 * Check out the pact_broker repository and cd into it.
 * Run `bundle install`. If you have any gem conflict issues, run `bundle update`.
 
-To make the barrier to entry as low as possible, the mysql2 and pg gems are not installed by default, as they require mysql and postgres to be installed on your local machine. If you want to install them, set `INSTALL_MYSQL=true` and/or `INSTALL_PG=true` before running `bundle install`.
+To make the barrier to entry as low as possible, the mysql2 and pg gems are not installed by default, as they require mysql and postgres to be installed on your local machine. If you want to install them, run `bundle config set --local with pg mysql` before running `bundle install`.
 
 ## Running a local application
 
@@ -49,7 +61,7 @@ To make the barrier to entry as low as possible, the mysql2 and pg gems are not 
 * Run `bundle exec rackup`.
 * The application will be available on `http://localhost:9292`. It uses a sqlite database that is stored in the `./tmp` directory.
 
-You can set the `PACT_BROKER_DATABASE_URL` environment variable to use a postgres/mysql database using the format `driver://username:password@host:port/database` eg. `postgres://pact_broker:password@localhost/pact_broker`. Ensure you have set `INSTALL_MYSQL=true` or `INSTALL_PG=true` and run `bundle install` to make sure the required gems are present.
+You can set the `PACT_BROKER_DATABASE_URL` environment variable to use a postgres/mysql database using the format `driver://username:password@host:port/database` eg. `postgres://pact_broker:password@localhost/pact_broker`. Ensure you have run `bundle config set --local with pg mysql` and run `bundle install` to make sure the required gems are present.
 
 ## Listing the routes
 
@@ -118,7 +130,7 @@ The tests and files are stored in the [regression](regression) directory.
 
 To run:
 
-1. Set up your local development environment as described above, making sure you have `INSTALL_PG=true` exported in your shell.
+1. Set up your local development environment as described above, making sure you have run `bundle config set --local with pg; bundle install`.
 
 1. Make sure you have the master branch checked out.
 
