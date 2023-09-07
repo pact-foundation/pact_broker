@@ -59,11 +59,11 @@ module PactBroker
           end
 
           it "sets the selectors" do
-            expect(subject[0].selectors).to eq Selectors.create_for_latest_for_tag("feat-1")
-            expect(subject[1].selectors).to eq Selectors.create_for_latest_for_branch("branch-1")
-            expect(subject[2].selectors).to eq Selectors.create_for_latest_for_tag("feat-2")
-            expect(subject[3].selectors).to eq Selectors.create_for_latest_for_tag("feat-2")
-            expect(subject[4].selectors).to eq Selectors.create_for_latest_for_tag("feat-1")
+            expect(subject[0].selectors).to contain_exactly(have_attributes(latest: true, tag: "feat-1", consumer_version: have_attributes(number: "1")))
+            expect(subject[1].selectors).to contain_exactly(have_attributes(latest: true, branch: "branch-1", consumer_version: have_attributes(number: "2")))
+            expect(subject[2].selectors).to contain_exactly(have_attributes(latest: true, tag: "feat-2", consumer_version: have_attributes(number: "3")))
+            expect(subject[3].selectors).to contain_exactly(have_attributes(latest: true, tag: "feat-2", consumer_version: have_attributes(number: "2")))
+            expect(subject[4].selectors).to contain_exactly(have_attributes(latest: true, tag: "feat-1", consumer_version: have_attributes(number: "1")))
           end
         end
 
@@ -115,7 +115,10 @@ module PactBroker
 
           it "it has two selectors" do
             expect(subject.size).to eq 1
-            expect(subject.first.selectors).to eq Selectors.new([Selector.latest_for_branch("branch-1"), Selector.latest_for_tag("feat-1")])
+            expect(subject.first.selectors).to contain_exactly(
+              have_attributes(latest: true, branch: "branch-1", consumer_version: have_attributes(number: "2")),
+              have_attributes(latest: true, tag: "feat-1", consumer_version: have_attributes(number: "2")),
+            )
           end
         end
 
