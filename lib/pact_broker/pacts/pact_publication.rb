@@ -58,8 +58,14 @@ module PactBroker
         include PactPublicationWipDatasetModule
 
         def eager_for_domain_with_content
-          eager(:tags, :consumer, :provider, :consumer_version, :pact_version)
+          eager(:tags, :consumer, :provider, :pact_version, { consumer_version: :branch_versions })
         end
+      end
+
+      def with_version_branches_and_tags
+        consumer_version.tags
+        consumer_version.branch_versions
+        self
       end
 
       def self.subtract(a, *b)
@@ -126,7 +132,7 @@ module PactBroker
       end
 
       def to_domain
-        PactBroker::Domain::Pact.new(
+        attributes = {
           id: id,
           provider: provider,
           consumer: consumer,
@@ -139,7 +145,17 @@ module PactBroker
           created_at: created_at,
           head_tag_names: [],
           db_model: self
-        )
+        }
+
+        if associations[:tags] || consumer_version.associations[:tags]
+          attributes[:consumer_version_tag_names] = associations[:tags]&.collect(&:name) || consumer_version.associations[:tags]&.collect(&:name)
+        end
+
+        if consumer_version.associations[:branch_versions]
+          attributes[:consumer_version_branch_names] = consumer_version.branch_versions.collect(&:branch_name)
+        end
+
+        PactBroker::Domain::Pact.new(attributes)
       end
 
       def to_domain_lightweight

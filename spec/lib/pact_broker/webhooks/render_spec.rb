@@ -23,6 +23,8 @@ module PactBroker
           double("pact",
             consumer_version: consumer_version,
             consumer_version_number: "1.2.3+foo",
+            consumer_version_tag_names: consumer_version_tag_names,
+            consumer_version_branch_names: consumer_version_branch_names,
             consumer_name: "Foo",
             provider_name: "Bar",
             consumer: consumer,
@@ -36,6 +38,8 @@ module PactBroker
           double("pact",
             consumer_version: consumer_version,
             consumer_version_number: "1.2.3+foo",
+            consumer_version_tag_names: consumer_version_tag_names,
+            consumer_version_branch_names: consumer_version_branch_names,
             consumer_name: "Foo",
             provider_name: "Bar",
             consumer: consumer,
@@ -47,6 +51,8 @@ module PactBroker
           double("pact",
             consumer_version: consumer_version,
             consumer_version_number: "1.2.3+foo",
+            consumer_version_tag_names: consumer_version_tag_names,
+            consumer_version_branch_names: consumer_version_branch_names,
             consumer_name: "Foo",
             provider_name: "Bar",
             consumer: consumer,
@@ -75,16 +81,16 @@ module PactBroker
         end
 
         let(:consumer_version) do
-          double("version", tags: consumer_tags, branch_names: ["foo-branch","consumer-branch"])
+          double("version")
         end
 
         let(:provider_tags) do
           [ double("tag", name: "test"), double("tag", name: "prod") ]
         end
 
-        let(:consumer_tags) do
-          [ double("tag", name: "test") ]
-        end
+        let(:consumer_version_tag_names) { ["test"] }
+
+        let(:consumer_version_branch_names) { ["foo-branch","consumer-branch"] }
 
         let(:provider_labels) do
           [ double("label", name: "finance"), double("label", name: "IT") ]

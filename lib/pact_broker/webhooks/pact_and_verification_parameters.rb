@@ -134,7 +134,7 @@ module PactBroker
           webhook_context[:consumer_version_tags].join(", ")
         else
           if pact
-            pact.consumer_version.tags.collect(&:name).join(", ")
+            pact.consumer_version_tag_names.join(", ")
           else
             ""
           end
@@ -145,7 +145,7 @@ module PactBroker
         if webhook_context.key?(:consumer_version_branch)
           webhook_context[:consumer_version_branch] || ""
         else
-          pact&.consumer_version&.branch_names&.last || ""
+          pact&.consumer_version_branch_names&.last || ""
         end
       end
 

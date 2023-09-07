@@ -50,7 +50,7 @@ module PactBroker
           consumer_version_order: params.fetch(:version).order,
         ).upsert
         update_latest_pact_publication_ids(pact_publication)
-        pact_publication.to_domain
+        pact_publication.with_version_branches_and_tags.to_domain
       end
 
       def update id, params
@@ -72,9 +72,9 @@ module PactBroker
             created_at: Sequel.datetime_class.now
           ).upsert
           update_latest_pact_publication_ids(pact_publication)
-          pact_publication.to_domain
+          pact_publication.with_version_branches_and_tags.to_domain
         else
-          existing_model.to_domain
+          existing_model.with_version_branches_and_tags.to_domain
         end
       end
 

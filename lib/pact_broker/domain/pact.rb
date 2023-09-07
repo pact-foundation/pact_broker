@@ -21,11 +21,15 @@ module PactBroker
         :consumer_version_number,
         :revision_number,
         :pact_version_sha,
-        :head_tag_names
+        :head_tag_names,
+        :consumer_version_tag_names,
+        :consumer_version_branch_names
       attr_writer :consumer, :latest_verification
 
       def initialize attributes = {}
         @latest_verification = UnsetAttribute.new
+        @consumer_version_tag_names = UnsetAttribute.new
+        @consumer_version_branch_names = UnsetAttribute.new
         attributes.each_pair do | key, value |
           self.send(key.to_s + "=", value)
         end
@@ -44,11 +48,11 @@ module PactBroker
       end
 
       def consumer_version_tag_names
-        consumer_version.tags.collect(&:name)
+        get_attribute_if_set :consumer_version_tag_names
       end
 
-      def latest_consumer_version_tag_names= latest_consumer_version_tag_names
-        @latest_consumer_version_tag_names = latest_consumer_version_tag_names
+      def consumer_version_branch_names
+        get_attribute_if_set :consumer_version_branch_names
       end
 
       def latest_verification
