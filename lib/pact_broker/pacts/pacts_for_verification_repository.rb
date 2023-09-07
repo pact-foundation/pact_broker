@@ -218,9 +218,9 @@ module PactBroker
 
       def create_selectors_for_wip_pact(pact_publication)
         if pact_publication.values[:tag_name]
-          Selectors.create_for_latest_for_tag(pact_publication.values[:tag_name])
+          Selectors.create_for_latest_for_tag(pact_publication.values[:tag_name]).resolve(pact_publication.consumer_version)
         else
-          Selectors.create_for_latest_for_branch(pact_publication.values.fetch(:branch_name))
+          Selectors.create_for_latest_for_branch(pact_publication.values.fetch(:branch_name)).resolve(pact_publication.consumer_version)
         end
       end
 
