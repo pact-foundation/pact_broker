@@ -220,7 +220,7 @@ module PactBroker
             expect(subject.size).to eq 3
           end
 
-          it "sets the latest_consumer_version_tag_names" do
+          it "sets the tags" do
             expect(find_by_consumer_version_number("foo-latest-prod-version").selectors.collect(&:tag)).to eq ["prod"]
           end
 

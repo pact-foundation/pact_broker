@@ -69,7 +69,7 @@ module PactBroker
       def execute options
         # getting a random 'no method to_domain for null' error
         # not sure on which object, so splitting this out into two lines
-        pact = pact_publication.to_domain
+        pact = pact_publication.with_version_branches_and_tags.to_domain
         webhook.to_domain.execute(pact, verification, event_context.symbolize_keys, options)
       end
 
