@@ -9,6 +9,7 @@ gem "rake", "~>12.3.3"
 gem "sqlite3", "~>1.3"
 gem "conventional-changelog", "~>1.3"
 gem "bump", "~> 0.5"
+gem "sorbet-runtime", "~> 0.5" # keep in sync with sorbet
 
 group :development do
   gem "pry-byebug"
@@ -16,6 +17,8 @@ group :development do
   gem "rubocop-performance", "~> 1.11"
   gem "sequel-annotate", "~>1.3"
   gem "yard", "~> 0.9"
+  gem "sorbet", "~> 0.5" # keep in sync with sorbet-runtime
+  gem "tapioca", "~> 0.11", require: false
 end
 
 group :test do

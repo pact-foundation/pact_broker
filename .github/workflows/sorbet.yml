@@ -1,0 +1,14 @@
+name: Sorbet
+
+on:
+  push:
+
+jobs:
+  sqlite:
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ruby/setup-ruby@v1
+      - run: "bundle install"
+      - name: Sorbet
+        run: "bundle exec tapioca init"
