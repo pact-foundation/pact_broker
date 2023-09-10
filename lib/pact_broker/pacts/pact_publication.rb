@@ -131,6 +131,7 @@ module PactBroker
         @latest_for_branch
       end
 
+      # rubocop:disable Metrics/CyclomaticComplexity
       def to_domain
         attributes = {
           id: id,
@@ -157,6 +158,7 @@ module PactBroker
 
         PactBroker::Domain::Pact.new(attributes)
       end
+      # rubocop:enable Metrics/CyclomaticComplexity
 
       def to_domain_lightweight
         PactBroker::Domain::Pact.new(
