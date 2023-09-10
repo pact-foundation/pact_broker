@@ -24,7 +24,7 @@ end
 group :test do
   gem "simplecov", :require => false
   gem "pact", "~>1.14"
-  gem "rspec-pact-matchers", "~>0.1"
+  gem "rspec-pact-matchers", "~>0.1", ">= 0.1.1"
   gem "bundler-audit", "~>0.4"
   gem "fakefs", "~>0.4"
   gem "webmock", "~>3.9"
