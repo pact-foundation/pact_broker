@@ -2,6 +2,7 @@ name: Sorbet
 
 on:
   push:
+  workflow_dispatch:
 
 jobs:
   sqlite:
