@@ -21,10 +21,12 @@ module PactBroker
         :consumer_version_number,
         :revision_number,
         :pact_version_sha,
-        :head_tag_names,
-        :consumer_version_tag_names,
-        :consumer_version_branch_names
-      attr_writer :consumer, :latest_verification
+        :head_tag_names
+
+      attr_writer :consumer,
+                  :latest_verification,
+                  :consumer_version_tag_names,
+                  :consumer_version_branch_names
 
       def initialize attributes = {}
         @latest_verification = UnsetAttribute.new
