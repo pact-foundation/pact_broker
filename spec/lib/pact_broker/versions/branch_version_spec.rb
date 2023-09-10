@@ -31,7 +31,7 @@ module PactBroker
             .create_consumer_version("4", branch: "bar")
         end
 
-        subject { PactBroker::Versions::BranchVersion.first }
+        subject { PactBroker::Versions::BranchVersion.order(:id).first }
 
         its(:number_of_versions_from_head) { is_expected.to eq 1 }
       end
