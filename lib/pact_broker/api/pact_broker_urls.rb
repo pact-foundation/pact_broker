@@ -227,8 +227,12 @@ module PactBroker
         "#{tags_url(base_url, tag.version)}/#{url_encode(tag.name)}"
       end
 
+      def branch_url(branch, base_url = "")
+        "#{pacticipant_url(base_url, branch.pacticipant)}/branches/#{url_encode(branch.name)}"
+      end
+
       def branch_versions_url(branch, base_url = "")
-        "#{pacticipant_url(base_url, branch.pacticipant)}/branches/#{url_encode(branch.name)}/versions"
+        "#{branch_url(branch, base_url)}/versions"
       end
 
       def branch_version_url(branch_version, base_url = "")

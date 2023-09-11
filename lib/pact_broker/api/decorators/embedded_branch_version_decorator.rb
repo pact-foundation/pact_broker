@@ -10,7 +10,7 @@ module PactBroker
 
         link :self do | options |
           {
-            title: "Version branch",
+            title: "Branch version",
             name: represented.branch_name,
             href: branch_version_url(represented, options[:base_url])
           }

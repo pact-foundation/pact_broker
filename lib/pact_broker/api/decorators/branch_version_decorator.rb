@@ -13,6 +13,22 @@ module PactBroker
           }
         end
 
+        link :"pb:branch" do | user_options |
+          {
+            title: "Branch",
+            name: represented.branch.name,
+            href: branch_url(represented.branch, user_options.fetch(:base_url))
+          }
+        end
+
+        link :"pb:version" do | user_options |
+          {
+            title: "Version",
+            name: represented.version.number,
+            href: version_url(user_options.fetch(:base_url), represented.version)
+          }
+        end
+
         include Timestamps
       end
     end

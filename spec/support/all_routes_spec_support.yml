@@ -31,6 +31,8 @@ requests_which_are_exected_to_have_no_policy_record:
   - pacticipant DELETE
   - can_i_deploy_latest_branch_version_to_environment GET
   - can_i_deploy_latest_branch_version_to_environment_badge GET
+  - branch GET
+  - branch DELETE
   - branch_version GET
   - branch_version PUT
   - branch_version DELETE
