@@ -5,11 +5,10 @@ describe "Delete version" do
   let(:path) { "/pacticipants/Consumer/versions/1.2.3" }
   let(:last_response_body) { JSON.parse(subject.body, symbolize_names: true) }
 
-  subject { delete path; last_response }
+  subject { delete(path) }
 
   before do
-    TestDataBuilder.new
-      .create_consumer("Another Consumer")
+    td.create_consumer("Another Consumer")
       .create_consumer("Consumer")
       .create_consumer_version("1.2.3")
       .create_consumer_version_tag("prod")
