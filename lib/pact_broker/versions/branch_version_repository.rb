@@ -1,7 +1,24 @@
+require "pact_broker/versions/branch_version"
+require "pact_broker/services"
+
 module PactBroker
   module Versions
     class BranchVersionRepository
       include PactBroker::Services
+      include PactBroker::Repositories
+
+      def find_branch_version(pacticipant_name:, branch_name:, version_number:, **)
+        BranchVersion.where(
+          version: PactBroker::Domain::Version.where_pacticipant_name_and_version_number(pacticipant_name, version_number),
+          branch: Branch.where(name: branch_name)
+        ).single_record
+      end
+
+      def find_or_create_branch_version(pacticipant_name:, branch_name:, version_number:, **)
+        pacticipant = pacticipant_repository.find_by_name_or_create(pacticipant_name)
+        version = version_repository.find_by_pacticipant_id_and_number_or_create(pacticipant.id, version_number)
+        branch_version_repository.add_branch(version, branch_name)
+      end
 
       def add_branch(version, branch_name, auto_created: false)
         branch = find_or_create_branch(version.pacticipant, branch_name)

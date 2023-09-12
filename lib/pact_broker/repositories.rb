@@ -47,6 +47,10 @@ module PactBroker
       get_repository(:matrix_repository)
     end
 
+    def branch_repository
+      get_repository(:branch_repository)
+    end
+
     def branch_version_repository
       get_repository(:branch_version_repository)
     end
@@ -94,6 +98,11 @@ module PactBroker
       register_repository(:matrix_repository) do
         require "pact_broker/matrix/repository"
         Matrix::Repository.new
+      end
+
+      register_repository(:branch_repository) do
+        require "pact_broker/versions/branch_repository"
+        PactBroker::Versions::BranchRepository.new
       end
 
       register_repository(:branch_version_repository) do
