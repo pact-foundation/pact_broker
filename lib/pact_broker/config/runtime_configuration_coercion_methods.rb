@@ -1,9 +1,13 @@
 require "pact_broker/config/space_delimited_string_list"
 require "pact_broker/config/space_delimited_integer_list"
+require "pact_broker/hash_refinements"
+require "pact_broker/error"
 
 module PactBroker
   module Config
     module RuntimeConfigurationCoercionMethods
+
+      using PactBroker::HashRefinements
 
       COERCE_FEATURES = lambda { | value |
         if value.is_a?(String)
@@ -17,11 +21,25 @@ module PactBroker
         end
       }
 
-      def all_keys_are_number_strings?(hash)
+      COERCE_WEBHOOKS = lambda { | value |
+        if value.is_a?(Hash) # from env vars
+          if RuntimeConfigurationCoercionMethods.all_keys_are_number_strings?(value)
+            RuntimeConfigurationCoercionMethods.convert_hash_with_number_string_keys_to_array(value).collect(&:symbolize_keys)
+          else
+            raise PactBroker::ConfigurationError, "Could not coerce #{value} into an array of webhook configurations. Please check docs for the expected format."
+          end
+        elsif value.is_a?(Array) # from YAML
+          value.collect(&:symbolize_keys)
+        else
+          raise PactBroker::ConfigurationError, "Webhook certificates cannot be set using a #{value.class}"
+        end
+      }
+
+      def self.all_keys_are_number_strings?(hash)
         hash.keys.all? { | k | k.to_s.to_i.to_s == k } # is an integer as a string
       end
 
-      def convert_hash_with_number_string_keys_to_array(hash)
+      def self.convert_hash_with_number_string_keys_to_array(hash)
         hash.keys.collect{ |k| [k, k.to_i]}.sort_by(&:last).collect(&:first).collect do | key |
           hash[key]
         end

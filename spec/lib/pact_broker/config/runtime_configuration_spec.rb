@@ -71,14 +71,46 @@ module PactBroker
       end
 
       describe "webhook_certificates" do
-        context "when setting using environment variables with indexes eg PACT_BROKER_WEBHOOK_CERTIFICATES__0__LABEL" do
-          subject do
-            runtime_configuration = RuntimeConfiguration.new
-            runtime_configuration.webhook_certificates = { "0" => { "description" => "cert1", "content" => "abc" }, "1" => { "description" => "cert1", "content" => "abc" } }
-            runtime_configuration
+        context "when setting using environment variables with indexes eg PACT_BROKER_WEBHOOK_CERTIFICATES__0__DESCRIPTION" do
+          it "parses the environment variables to a list of hashes" do
+            with_env(
+                "PACT_BROKER_WEBHOOK_CERTIFICATES__0__DESCRIPTION" => "cert1",
+                "PACT_BROKER_WEBHOOK_CERTIFICATES__0__CONTENT" => "abc",
+                "PACT_BROKER_WEBHOOK_CERTIFICATES__1__DESCRIPTION" => "cert2",
+                "PACT_BROKER_WEBHOOK_CERTIFICATES__1__CONTENT" => "abc2",
+              ) do
+              expect(RuntimeConfiguration.new.webhook_certificates).to eq [{ description: "cert1", content: "abc" }, { description: "cert2", content: "abc2" }]
+            end
           end
 
-          its(:webhook_certificates) { is_expected.to eq [{ description: "cert1", content: "abc" }, { description: "cert1", content: "abc" }] }
+          context "when the environment variables are not the right structure" do
+            it "raises an error" do
+              with_env(
+                  "PACT_BROKER_WEBHOOK_CERTIFICATES__a__DESCRIPTION" => "cert1",
+                  "PACT_BROKER_WEBHOOK_CERTIFICATES__a__CONTENT" => "abc",
+                  "PACT_BROKER_WEBHOOK_CERTIFICATES__b__DESCRIPTION" => "cert2",
+                  "PACT_BROKER_WEBHOOK_CERTIFICATES__b__CONTENT" => "abc2",
+                ) do
+                expect { RuntimeConfiguration.new }.to raise_error PactBroker::ConfigurationError, /Could not coerce*/
+              end
+            end
+          end
+        end
+
+        context "when loading from YAML" do
+          it "coerces the keys to symbols" do
+            with_env("PACT_BROKER_CONF" => PactBroker.project_root.join("spec/support/config_webhook_certificates.yml").to_s) do
+              expect(RuntimeConfiguration.new.webhook_certificates.first.keys.collect(&:class).uniq).to eq [Symbol]
+            end
+          end
+        end
+
+        context "when loading from YAML with the wrong structure" do
+          it "raises an error" do
+            with_env("PACT_BROKER_CONF" => PactBroker.project_root.join("spec/support/config_webhook_certificates_wrong_structure.yml").to_s) do
+              expect { RuntimeConfiguration.new }.to raise_error PactBroker::ConfigurationError, "Webhook certificates cannot be set using a String"
+            end
+          end
         end
       end
 

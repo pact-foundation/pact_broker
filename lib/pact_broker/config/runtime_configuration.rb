@@ -110,7 +110,8 @@ module PactBroker
 
       coerce_types(
         features: COERCE_FEATURES,
-        network_diagram_max_pacticipants: :integer
+        network_diagram_max_pacticipants: :integer,
+        webhook_certificates: COERCE_WEBHOOKS
       )
       sensitive_values(:database_url, :database_password)
 
@@ -190,20 +191,6 @@ module PactBroker
 
       def rack_protection_except= rack_protection_except
         super(value_to_string_array(rack_protection_except, "rack_protection_except")&.collect(&:to_sym))
-      end
-
-      def webhook_certificates= webhook_certificates
-        if webhook_certificates.is_a?(Array)
-          super(webhook_certificates.collect(&:symbolize_keys))
-        elsif webhook_certificates.is_a?(Hash)
-          if all_keys_are_number_strings?(webhook_certificates)
-            super(convert_hash_with_number_string_keys_to_array(webhook_certificates).collect(&:symbolize_keys))
-          else
-            raise_validation_error("webhook_certificates must be an array, or a hash where each key is an integer in string format.")
-          end
-        elsif !webhook_certificates.nil?
-          raise_validation_error("webhook_certificates cannot be set using a #{webhook_certificates.class}")
-        end
       end
 
       def warning_error_classes
