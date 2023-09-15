@@ -27,7 +27,7 @@ module PactBroker
             allow_missing_migration_files: true,
             validate_database_connection_config: true,
             database_statement_timeout: 15,
-            metrics_sql_statement_timeout: 30,
+            metrics_sql_statement_timeout: 30, # TODO get rid of this in next major version
             database_connection_validation_timeout: nil
           )
 
