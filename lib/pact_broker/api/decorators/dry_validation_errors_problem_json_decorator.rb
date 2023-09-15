@@ -1,44 +1,23 @@
+require "pact_broker/api/decorators/base_decorator"
+require "pact_broker/api/decorators/embedded_error_problem_json_decorator"
 # Formats a Dry::Validation::MessageSet into application/problem+json format.
+# according to the spec at https://www.rfc-editor.org/rfc/rfc9457.html
 
+# Decorates Dry::Validation::MessageSet
+# Defaults to displaying validation errors, but the top level
+# details may be overridden to display error responses for other HTTP statuses (eg. 409)
 module PactBroker
   module Api
     module Decorators
-      class DryValidationErrorsProblemJSONDecorator
-        # @param errors [Dry::Validation::MessageSet]
-        def initialize(errors)
-          @errors = errors
-        end
+      class DryValidationErrorsProblemJsonDecorator < BaseDecorator
 
-        # @return [Hash]
-        def to_hash(user_options:, **)
-          error_list = errors.collect{ |e| error_hash(e, user_options[:base_url]) }
-          {
-            "title" => "Validation errors",
-            "type" => "#{user_options[:base_url]}/problems/validation-error",
-            "status" => 400,
-            "instance" => "/",
-            "errors" => error_list
-          }
-        end
+        property :title,    getter: -> (user_options:, **) { user_options[:title]    || "Validation errors" }
+        property :type,     getter: -> (user_options:, **) { user_options[:type]     || "#{user_options[:base_url]}/problems/validation-error" }
+        property :detail,   getter: -> (user_options:, **) { user_options[:detail]   || nil }
+        property :status,   getter: -> (user_options:, **) { user_options[:status]   || 400 }
+        property :instance, getter: -> (user_options:, **) { user_options[:instance] || "/" }
 
-        # @return [String] JSON
-        def to_json(*args, **kwargs)
-          to_hash(*args, **kwargs).to_json
-        end
-
-        private
-
-        attr_reader :errors
-
-        def error_hash(error, base_url)
-          {
-            "type" => "#{base_url}/problems/invalid-body-property-value",
-            "title" => "Validation error",
-            "detail" => error.text,
-            "pointer" => "/" + error.path.join("/"),
-            "status" => 400
-          }
-        end
+        collection :entries, as: :errors, extend: PactBroker::Api::Decorators::EmbeddedErrorProblemJsonDecorator
       end
     end
   end
