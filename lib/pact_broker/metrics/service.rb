@@ -116,14 +116,9 @@ module PactBroker
           PactBroker::Pacts::PactPublication.db[query].all.each_with_object({}) { |row, hash| hash[row[:number_of_verifications]] = row[:pact_version_count] }
       end
 
+      # This count has no real meaning and takes too long to do. Hardcode it to -1
       def matrix_count
-        begin
-          PactBroker::Matrix::EveryRow.db.with_statement_timeout(PactBroker.configuration.metrics_sql_statement_timeout) do
-            PactBroker::Matrix::EveryRow.default_scope.count
-          end
-        rescue Sequel::DatabaseError => _ex
-          -1
-        end
+        -1
       end
     end
   end
