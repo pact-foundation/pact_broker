@@ -1,5 +1,6 @@
 require "timecop"
 require "tzinfo"
+require "pact_broker/api"
 
 WEBHOOK_TESTED_DOCUMENTATION_PATHS = []
 WEBHOOKS_NO_DOCUMENTATION = %w[

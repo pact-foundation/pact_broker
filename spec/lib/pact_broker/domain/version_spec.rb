@@ -414,7 +414,7 @@ module PactBroker
 
       describe "#latest_pact_publication" do
         let!(:pact) do
-          TestDataBuilder.new
+          td
             .create_consumer
             .create_provider
             .create_consumer_version
@@ -431,7 +431,7 @@ module PactBroker
 
       describe "uq_ver_ppt_ord" do
         let(:consumer) do
-          TestDataBuilder.new
+          td
             .create_consumer
             .and_return(:consumer)
         end

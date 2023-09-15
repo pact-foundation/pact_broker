@@ -1,5 +1,6 @@
 require "timecop"
 require "tzinfo"
+require "pact_broker/api"
 
 PACTICIPANT_TESTED_DOCUMENTATION_PATHS = []
 PACTICIPANTS_NO_DOCUMENTATION = %w[

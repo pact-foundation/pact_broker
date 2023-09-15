@@ -776,7 +776,7 @@ module PactBroker
 
       describe "#find_for_consumer_and_provider" do
         before do
-          TestDataBuilder.new
+          td
             .create_pact_with_hierarchy("Consumer", "1.2.3", "Provider")
             .create_verification(provider_version: "6.7.8", execution_date: DateTime.new(2016))
             .revise_pact

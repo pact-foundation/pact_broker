@@ -14,7 +14,7 @@ module PactBroker
         let(:find_label) { subject.find options }
 
         let!(:test_data_builder) do
-          TestDataBuilder.new
+          td
             .create_pacticipant("wiffle")
             .create_label(label_name)
             .create_pacticipant(pacticipant_name)
@@ -84,7 +84,7 @@ module PactBroker
         let(:label_name) { "ios" }
 
         let!(:pacticipant) do
-          TestDataBuilder.new
+          td
             .create_pacticipant("Ignore")
             .create_label("ios")
             .create_pacticipant(pacticipant_name)
@@ -103,7 +103,7 @@ module PactBroker
 
       describe "delete_by_pacticipant_id" do
         let!(:pacticipant) do
-          TestDataBuilder.new
+          td
             .create_pacticipant("Ignore")
             .create_label("ios")
             .create_pacticipant("Foo")

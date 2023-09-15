@@ -11,7 +11,6 @@ require "spec/support/simplecov"
 require "support/logging"
 require "support/database"
 require "rack/test"
-require "pact_broker/api"
 require "rspec/its"
 require "rspec/pact/matchers"
 require "sucker_punch/testing/inline"
@@ -50,19 +49,10 @@ RSpec.configure do | config |
 
   config.include FixtureHelpers
   config.include_context "test data builder"
+  config.include_context "app"
   config.example_status_persistence_file_path = "./spec/examples.txt"
   config.filter_run_excluding skip: true
   config.include PactBroker::RackHelpers
-
-  def app
-    require "pact_broker/application_context"
-    require "rack/pact_broker/application_context"
-    application_context = PactBroker::ApplicationContext.default_application_context
-    builder = Rack::Builder.new
-    builder.use(Rack::PactBroker::ApplicationContext, application_context)
-    builder.run(PactBroker.build_api(application_context))
-    builder.to_app
-  end
 end
 
 if ENV["DEBUG"] == "true"

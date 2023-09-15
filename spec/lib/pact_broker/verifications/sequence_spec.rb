@@ -58,7 +58,7 @@ module PactBroker
           context "when there is no row in the verification_sequence_number table and there are existing verifications" do
             before do
               Sequence.select_all.delete
-              TestDataBuilder.new.create_pact_with_hierarchy("A", "1", "B")
+              td.create_pact_with_hierarchy("A", "1", "B")
                 .create_verification(provider_version: "2")
             end
 

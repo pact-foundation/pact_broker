@@ -8,7 +8,7 @@ module PactBroker
 
       describe LatestPactDecorator do
 
-        let(:pact_domain) { TestDataBuilder.new.create_pact_with_hierarchy("Consumer", "1.2.3", "Provider").and_return(:pact) }
+        let(:pact_domain) { td.create_pact_with_hierarchy("Consumer", "1.2.3", "Provider").and_return(:pact) }
         let(:pact) { RepresentablePact.new(pact_domain) }
         let(:base_url) { "http://example.org" }
 

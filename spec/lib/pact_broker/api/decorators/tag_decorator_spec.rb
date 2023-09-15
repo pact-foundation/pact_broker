@@ -12,7 +12,7 @@ module PactBroker
       describe TagDecorator do
 
         let(:tag) do
-          TestDataBuilder.new
+          td
             .create_consumer("Consumer")
             .create_version("1.2.3")
             .create_tag("prod")

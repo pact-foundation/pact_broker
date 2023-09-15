@@ -5,7 +5,7 @@ module PactBroker
     module Decorators
       describe RelationshipsCsvDecorator do
 
-        let(:pact) { TestDataBuilder.new.create_pact_with_hierarchy("My Consumer", "1.0", "My Provider").and_return(:pact) }
+        let(:pact) { td.create_pact_with_hierarchy("My Consumer", "1.0", "My Provider").and_return(:pact) }
         let(:pacts) { [pact]}
 
         subject { RelationshipsCsvDecorator.new(pacts) }

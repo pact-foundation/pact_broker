@@ -1,13 +1,12 @@
-require "pact_broker/api/decorators/embedded_label_decorator"
+require "pact_broker/api/decorators/label_decorator"
 
 module PactBroker
   module Api
     module Decorators
-
       describe LabelDecorator do
 
         let(:label) do
-          TestDataBuilder.new
+          td
             .create_consumer("Consumer")
             .create_label("ios")
             .and_return(:label)

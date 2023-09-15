@@ -7,7 +7,6 @@ RSpec.describe "Get triggered webhooks for verification" do
       .create_webhook_execution
   end
 
-  let(:td) { TestDataBuilder.new }
   let(:path) { PactBroker::Api::PactBrokerUrls.verification_triggered_webhooks_url(td.verification) }
   let(:json_response_body) { JSON.parse(subject.body) }
 
