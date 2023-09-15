@@ -109,7 +109,7 @@ module PactBroker
       describe "#create" do
         context "when a previous version exists" do
           let!(:existing_version) do
-            TestDataBuilder.new.create_version_with_hierarchy(pacticipant_name, version_number).and_return(:version)
+            td.create_version_with_hierarchy(pacticipant_name, version_number).and_return(:version)
           end
 
           subject { Repository.new.create pacticipant_id: existing_version.pacticipant_id, number: "1.2.4" }
@@ -124,7 +124,7 @@ module PactBroker
         end
 
         context "when the same version already exists" do
-          let!(:existing_version) { TestDataBuilder.new.create_version_with_hierarchy(pacticipant_name, version_number).and_return(:version) }
+          let!(:existing_version) { td.create_version_with_hierarchy(pacticipant_name, version_number).and_return(:version) }
 
           subject { Repository.new.create pacticipant_id: existing_version.pacticipant_id, number: version_number }
 

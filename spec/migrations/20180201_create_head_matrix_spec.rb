@@ -1,6 +1,4 @@
 describe "latest tagged matrix", migration: true do
-  let(:td) { TestDataBuilder.new }
-
   before do
     PactBroker::TestDatabase.migrate
   end

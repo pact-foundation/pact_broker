@@ -15,7 +15,7 @@ module PactBroker
           describe "GET" do
 
             before do
-              TestDataBuilder.new
+              td
                 .create_consumer("Test App")
                 .create_provider("Test API")
                 .create_consumer_version
@@ -23,7 +23,7 @@ module PactBroker
                 .create_webhook
                 .create_verification
 
-              TestDataBuilder.new
+              td
                 .create_consumer("Example App")
                 .create_provider("Example API")
                 .create_consumer_version

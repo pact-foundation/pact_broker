@@ -9,7 +9,7 @@ module PactBroker
 
         describe "GET" do
           before do
-            TestDataBuilder.new
+            td
               .create_pact_with_hierarchy("Foo", "1", "Bar")
               .create_consumer_version_tag("main")
           end

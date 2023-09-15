@@ -7,7 +7,7 @@ module PactBroker
       describe LabelDecorator do
 
         let(:label) do
-          TestDataBuilder.new
+          td
             .create_consumer("Consumer")
             .create_label("ios")
             .and_return(:label)

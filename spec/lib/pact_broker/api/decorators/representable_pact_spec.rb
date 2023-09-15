@@ -3,7 +3,7 @@ require "pact_broker/api/decorators/representable_pact"
 
 module PactBroker::Api::Decorators
   describe RepresentablePact do
-    let(:pact) { TestDataBuilder.new.create_pact_with_hierarchy("Consumer", "1.2.3", "Provider").and_return(:pact) }
+    let(:pact) { td.create_pact_with_hierarchy("Consumer", "1.2.3", "Provider").and_return(:pact) }
 
     subject { RepresentablePact.new(pact) }
 

@@ -3,8 +3,6 @@ require "pact_broker/pacts/repository"
 module PactBroker
   module Pacts
     describe Repository do
-      let(:td) { TestDataBuilder.new }
-
       describe "#find_for_verification" do
         def find_by_consumer_version_number(consumer_version_number)
           subject.find{ |pact| pact.consumer_version_number == consumer_version_number }

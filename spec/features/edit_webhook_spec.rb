@@ -1,9 +1,6 @@
 require "support/test_data_builder"
 
 describe "Creating a webhook" do
-
-  let(:td) { TestDataBuilder.new }
-
   before do
     td.create_pact_with_hierarchy("Some Consumer", "1", "Some Provider")
       .create_webhook

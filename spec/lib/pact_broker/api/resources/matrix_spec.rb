@@ -11,7 +11,6 @@ module PactBroker
           allow(PactBroker::Matrix::ParseQuery).to receive(:call).and_return([selectors, options])
         end
 
-        let(:td) { TestDataBuilder.new }
         let(:path) { "/matrix" }
         let(:json_response_body) { JSON.parse(subject.body, symbolize_names: true) }
         let(:params) { {q: [{pacticipant: "Foo", version: "1"}, {pacticipant: "Bar", version: "2"}]} }

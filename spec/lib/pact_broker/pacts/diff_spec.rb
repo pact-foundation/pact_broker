@@ -29,7 +29,7 @@ module PactBroker
         end
 
         before do
-          TestDataBuilder.new
+          td
             .create_consumer("Consumer")
             .create_provider("Provider")
             .create_consumer_version("1")

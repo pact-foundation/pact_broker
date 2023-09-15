@@ -86,7 +86,7 @@ module PactBroker
 
       describe "#save" do
         let!(:verification) do
-          TestDataBuilder.new
+          td
             .create_pact_with_hierarchy("A", "1", "B")
             .create_verification(test_results: {"some" => "thing"})
             .and_return(:verification)
@@ -99,7 +99,7 @@ module PactBroker
 
       describe "#consumer" do
         let!(:consumer) do
-          TestDataBuilder.new
+          td
             .create_consumer
             .create_provider
             .create_consumer_version
@@ -115,7 +115,7 @@ module PactBroker
 
       describe "#provider" do
         let!(:provider) do
-          TestDataBuilder.new
+          td
             .create_consumer
             .create_provider
             .create_consumer_version

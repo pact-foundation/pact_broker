@@ -3,8 +3,6 @@ require "pact_broker/tags/repository"
 module PactBroker
   module Tags
     describe Repository do
-      let(:td) { TestDataBuilder.new }
-
       describe ".create" do
         before do
           td.create_pacticipant("foo")
@@ -52,7 +50,7 @@ module PactBroker
         let(:find_tag) { subject.find options }
 
         let!(:test_data_builder) do
-          TestDataBuilder.new
+          td
             .create_pacticipant("wrong_pacticipant")
             .create_version(version_number)
             .create_tag(tag_name) #Tag with wrong pacticipant
@@ -100,7 +98,7 @@ module PactBroker
 
       describe "delete_by_version_id" do
         let!(:version) do
-          TestDataBuilder.new
+          td
             .create_consumer
             .create_provider
             .create_consumer_version("4.5.6")
