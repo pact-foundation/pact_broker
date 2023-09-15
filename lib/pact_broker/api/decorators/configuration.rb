@@ -26,7 +26,7 @@ module PactBroker
         def validation_error_decorator_class_for(errors_class, accept_header)
           if accept_header&.include?("application/problem+json")
             if errors_class == Dry::Validation::MessageSet
-              PactBroker::Api::Decorators::DryValidationErrorsProblemJSONDecorator
+              PactBroker::Api::Decorators::DryValidationErrorsProblemJsonDecorator
             else
               PactBroker::Api::Decorators::ValidationErrorsProblemJSONDecorator
             end

@@ -4,9 +4,8 @@ require "pact_broker/api/contracts/base_contract"
 module PactBroker
   module Api
     module Decorators
-      describe DryValidationErrorsProblemJSONDecorator do
+      describe DryValidationErrorsProblemJsonDecorator do
         describe "#to_json" do
-
           class TestContract < PactBroker::Api::Contracts::BaseContract
             json do
               optional(:foo).maybe(:hash) do
@@ -17,9 +16,9 @@ module PactBroker
 
           let(:decorator_options) { { user_options: { base_url: "http://example.org" } } }
 
-          subject { DryValidationErrorsProblemJSONDecorator.new(validation_errors).to_hash(**decorator_options) }
+          subject { DryValidationErrorsProblemJsonDecorator.new(validation_errors).to_hash(**decorator_options) }
 
-          context "with a hash of errors" do
+          context "with a MessageSet of errors" do
             let(:validation_errors) do
               TestContract.new.call({ foo: { bar: 1 }}).errors
             end
@@ -35,7 +34,7 @@ module PactBroker
                   {
                     "type" => "http://example.org/problems/invalid-body-property-value",
                     "pointer" => "/foo/bar",
-                    "title" => "Validation error",
+                    "title" => "Invalid body parameter",
                     "detail" => "must be a string",
                     "status" => 400
                   }
@@ -43,7 +42,27 @@ module PactBroker
               }
             end
 
-            it { is_expected.to match_pact(expected_hash, allow_unexpected_keys: false)}
+            it { is_expected.to match_pact(expected_hash, allow_unexpected_keys: false) }
+          end
+
+          context "when the top level details are customised via user_options" do
+            let(:decorator_options) { { user_options: { title: "title", type: "type", detail: "detail", status: 409, instance: "/foo" } } }
+
+            let(:expected_hash) do
+              {
+                "title" => "title",
+                "type" => "type",
+                "status" => 409,
+                "instance" => "/foo",
+                "detail" => "detail"
+              }
+            end
+
+            let(:validation_errors) do
+              TestContract.new.call({ foo: { bar: 1 }}).errors
+            end
+
+            it { is_expected.to match_pact(expected_hash, allow_unexpected_keys: true) }
           end
         end
       end
