@@ -28,8 +28,6 @@ module OpenapiFirst
       end
     end
 
-    private
-
     def self.endpoint_id(operation, status)
       "#{operation.path}##{operation.method} #{status}"
     end

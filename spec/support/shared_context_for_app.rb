@@ -9,7 +9,7 @@ if OAS_COVERAGE_CHECK_ENABLED
   endpoints_to_be_called = OpenapiFirst::PactBrokerCoverage.build_endpoints_list(OpenapiFirst.load("pact_broker_oas.yaml"))
 
   RSpec.configure do | config |
-    config.after(:all) do
+    config.after(:suite) do
       if endpoints_to_be_called.any?
         raise "Missing coverage of #{endpoints_to_be_called.join("\n")}"
       end
