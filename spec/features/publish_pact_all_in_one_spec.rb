@@ -1,4 +1,4 @@
-RSpec.describe "publishing a pact using the all in one endpoint" do
+RSpec.describe "publishing a pact using the all in one endpoint", validate_oas: true do
   let(:request_body_hash) do
     {
       :pacticipantName => "Foo",
@@ -37,7 +37,9 @@ RSpec.describe "publishing a pact using the all in one endpoint" do
       request_body_hash.delete(:pacticipantName)
     end
 
-    it { is_expected.to be_a_json_error_response("missing") }
+    it "returns a validation error response", skip_oas_request_validation: true do
+      expect(subject).to be_a_json_error_response("missing")
+    end
   end
 
   context "with a contract that contains a non utf-8 char" do
