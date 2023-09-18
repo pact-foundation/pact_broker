@@ -33,5 +33,6 @@ services:
       - ./public:/home/public
       - ./script/docker-container/test.sh:/usr/local/bin/test
       - ./docs:/home/docs
+      - ./pact_broker_oas.yaml:/home/pact_broker_oas.yaml
     entrypoint: dockerize
     command: --wait tcp://mysql:3306 -timeout 60s test
