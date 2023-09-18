@@ -608,7 +608,7 @@ module PactBroker
             .create_consumer_version("1.2.2")
             .create_provider("Provider")
             .create_pact
-            .create_consumer_version("1.2.4")
+            .create_consumer_version("1.2.4", branch: "dev")
             .create_consumer_version_tag("prod")
             .create_pact
             .revise_pact
@@ -629,7 +629,8 @@ module PactBroker
           expect(subject.provider.name).to eq "Provider"
           expect(subject.consumer_version_number).to eq "1.2.4"
           expect(subject.consumer_version.number).to eq "1.2.4"
-          expect(subject.consumer_version.tags.first.name).to eq "prod"
+          expect(subject.consumer_version_branch_names.first).to eq "dev"
+          expect(subject.consumer_version_tag_names.first).to eq "prod"
           expect(subject.json_content).to_not be_nil
         end
 
