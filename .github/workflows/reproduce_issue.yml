@@ -16,5 +16,5 @@ jobs:
   run:
     runs-on: "ubuntu-latest"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: docker compose -f docker-compose-issue-repro.yml up --abort-on-container-exit --exit-code-from repro-issue
