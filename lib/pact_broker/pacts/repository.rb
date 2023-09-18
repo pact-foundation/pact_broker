@@ -252,23 +252,24 @@ module PactBroker
             .reverse_order(:consumer_version_order, :revision_number)
             .limit(1)
 
+        # Must use .all to trigger the eager loading
         if consumer_version_number && !pact_version_sha
           pact_publication_by_consumer_version
-            .first&.to_domain_with_content
+            .all.first&.to_domain_with_content
         elsif pact_version_sha && !consumer_version_number
           latest_pact_publication_by_sha
-            .first&.to_domain_with_content
+            .all.first&.to_domain_with_content
         elsif consumer_version_number && pact_version_sha
-          pact_publication = pact_publication_by_consumer_version.first
+          pact_publication = pact_publication_by_consumer_version.all.first
           if pact_publication && pact_publication.pact_version.sha == pact_version_sha
             pact_publication.to_domain_with_content
           else
-            latest_pact_publication_by_sha.first&.to_domain_with_content
+            latest_pact_publication_by_sha.all.first&.to_domain_with_content
           end
         else
           pact_publication_by_consumer_version
             .reverse_order(:consumer_version_order, :revision_number)
-            .first&.to_domain_with_content
+            .all.first&.to_domain_with_content
         end
       end
       # rubocop: enable Metrics/CyclomaticComplexity, Metrics/MethodLength
