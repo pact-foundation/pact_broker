@@ -1,0 +1,215 @@
+openapi: 3.0.0
+info:
+  version: "2"
+  title: Pact Broker API
+  description: The API for the Pact Broker application
+paths:
+  /contracts/publish:
+    post:
+      description: "Publish consumer contracts with branch, tags and build URL"
+      requestBody:
+        required: true
+        description: The consumer contracts, branch, tags and build URL
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                pacticipantName:
+                  type: string
+                  minLength: 1
+                pacticipantVersionNumber:
+                  type: string
+                  minLength: 1
+                tags:
+                  type: array
+                  nullable: true
+                  items:
+                      type: string
+                branch:
+                  type: string
+                  nullable: true
+                buildUrl:
+                  type: string
+                  nullable: true
+                contracts:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/ConsumerContractToPublish'
+              required:
+              - pacticipantName
+              - pacticipantVersionNumber
+              - contracts
+      responses:
+        "200":
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                type: object
+                required:
+                  - notices
+                properties:
+                  notices:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/notice'
+        "400":
+          description: Validation errror
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemJson'
+            application/hal+json:
+              schema:
+                type: object
+                properties:
+                  notices:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Notice'
+
+        "409":
+          description: Conflict
+          content:
+            # application/problem+json:
+            #   schema:
+            #     $ref: '#/components/schemas/ProblemJson'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublishConsumerContractConflictResponse'
+components:
+  parameters:
+    PageSize:
+      name: page_size
+      in: query
+      description: The number of results to return per page
+      schema:
+        type: number
+    PageNumber:
+      name: page_number
+      in: query
+      description: The number of the page to return
+      schema:
+        type: number
+
+  schemas:
+    Notice:
+      type: object
+      required:
+        - type
+        - text
+      properties:
+        type:
+          type: string
+          enum:
+            - info
+            - debug
+            - warning
+            - prompt
+            - success
+            - error
+        text:
+          type: string
+
+    EmbeddedLink:
+      type: object
+      required:
+        - href
+        - title
+      properties:
+        href:
+          type: string
+        title:
+          type: string
+        name:
+          type: string
+        templated:
+          type: boolean
+
+    ConsumerContractToPublish:
+      type: object
+      properties:
+        consumerName:
+          type: string
+          minLength: 1
+        providerName:
+          type: string
+          minLength: 1
+        content:
+          type: string
+          minLength: 1
+        contentType:
+          enum:
+          - application/json
+        specification:
+          enum:
+          - pact
+        onConflict:
+          default: overwrite
+          enum:
+          - overwrite
+          - merge
+      required:
+      - consumerName
+      - providerName
+      - content
+      - contentType
+      - specification
+
+    PublishConsumerContractConflictResponse:
+      description: The custom response when there is a 409 Conflict
+      type: object
+      properties:
+        notices:
+          type: array
+          items:
+            $ref: '#/components/schemas/Notice'
+      required:
+        - notices
+
+    ProblemJson:
+      description: Problem response as per https://www.rfc-editor.org/rfc/rfc9457.html
+      type: object
+      properties:
+        code:
+          type: string
+        type:
+          type: string
+        title:
+          type: string
+        detail:
+          type: string
+        instance:
+          type: string
+        status:
+          type: integer
+        errors:
+          type: array
+          description: an array of error details to accompany a problem details response
+          items:
+            type: object
+            description: an error object to provide explicit details on a problem towards
+              an API consumer
+            properties:
+              detail:
+                type: string
+                description: a granular description on the specific error related to a body
+                  property, query parameter, path parameters, and/or header
+              pointer:
+                type: string
+                description: a JSON Pointer to a specific request body property that is
+                  the source of error
+              parameter:
+                type: string
+                description: the name of the query or path parameter that is the source
+                  of error
+              header:
+                type: string
+                description: the name of the header that is the source of error
+            required:
+            - detail
+      required:
+      - type
+      - title
+      - status
