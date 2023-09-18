@@ -26,7 +26,15 @@ task :set_simplecov_command_to_spec_slow do
   ENV["SIMPLECOV_COMMAND_NAME"] = "spec:slow"
 end
 
-task "spec:quick" => ["set_simplecov_command_to_spec_quick"]
-task "spec:slow" => ["set_simplecov_command_to_spec_slow"]
+task :enable_oas_coverage_check do
+  ENV["OAS_COVERAGE_CHECK_ENABLED"] = "true"
+end
+
+task :disable_oas_coverage_check do
+  ENV["OAS_COVERAGE_CHECK_ENABLED"] = nil
+end
+
+task "spec:quick" => ["set_simplecov_command_to_spec_quick", "enable_oas_coverage_check"]
+task "spec:slow" => ["set_simplecov_command_to_spec_slow", "disable_oas_coverage_check"]
 task :spec => ["spec:quick", "spec:slow"]
 
