@@ -110,4 +110,5 @@ requests_which_are_exected_to_have_no_policy_record:
   - webhooks GET
   - consumer_webhooks GET
   - provider_webhooks GET
+  - pacticipant_branches GET
   - pacticipant_webhooks GET

@@ -1,7 +1,22 @@
+require "pact_broker/repositories/scopes"
 module PactBroker
   module Versions
     class BranchRepository
       include PactBroker::Services
+      include PactBroker::Repositories::Scopes
+
+      # @param [PactBroker::Domain::Pacticipant] pacticipant
+      # @param [Hash] filter_options with key :query_string
+      # @param [Hash] pagination_options with keys :page_size and :page_number
+      # @param [Array] eager_load_associations the associations to eager load
+      def find_all_branches_for_pacticipant(pacticipant, filter_options = {}, pagination_options = {}, eager_load_associations = [])
+        query = scope_for(Branch).where(pacticipant_id: pacticipant.id).select_all_qualified
+        query = query.filter(:name, filter_options[:query_string]) if filter_options[:query_string]
+        query
+          .order(Sequel.desc(:created_at), Sequel.desc(:id))
+          .eager(*eager_load_associations)
+          .all_with_pagination_options(pagination_options)
+      end
 
       # @param [String] pacticipant_name
       # @param [String] branch_name
