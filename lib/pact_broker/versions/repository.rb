@@ -57,6 +57,9 @@ module PactBroker
           .single_record
       end
 
+      # The eager loaded relations are hardcoded here to support the PactBroker::Api::Decorators::VersionDecorator
+      # Newer "find all" implementations for other models pass the relations to eager load in
+      # from the decorator via the resource.
       def find_all_pacticipant_versions_in_reverse_order name, pagination_options = {}
         pacticipant = pacticipant_repository.find_by_name!(name)
         query = PactBroker::Domain::Version
