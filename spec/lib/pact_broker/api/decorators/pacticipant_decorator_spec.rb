@@ -43,6 +43,7 @@ module PactBroker
             pacticipant.updated_at = updated_at
             allow_any_instance_of(PacticipantDecorator).to receive(:templated_tag_url_for_pacticipant).and_return("version_tag_url")
             allow_any_instance_of(PacticipantDecorator).to receive(:templated_version_url_for_pacticipant).and_return("version_url")
+            allow_any_instance_of(PacticipantDecorator).to receive(:pacticipant_branches_url).and_return("pacticipant_branches_url")
           end
 
           subject { JSON.parse PacticipantDecorator.new(pacticipant).to_json(user_options: { base_url: base_url }), symbolize_names: true }
@@ -65,6 +66,11 @@ module PactBroker
           it "includes a relation for a version" do
             expect_any_instance_of(PacticipantDecorator).to receive(:templated_version_url_for_pacticipant).with("Name", base_url)
             expect(subject[:_links][:'pb:version'][:href]).to eq "version_url"
+          end
+
+          it "includes a relation for the branches" do
+            expect_any_instance_of(PacticipantDecorator).to receive(:pacticipant_branches_url).with(pacticipant, base_url)
+            expect(subject[:_links][:'pb:branches'][:href]).to eq "pacticipant_branches_url"
           end
 
           context "when there is a latest_version" do
