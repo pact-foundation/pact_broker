@@ -23,6 +23,12 @@ module PactBroker
         end
 
         include Timestamps
+
+        # When this decorator is embedded in the PacticipantBranchesDecorator,
+        # we need to eager load the pacticipants for generating the URL
+        def self.eager_load_associations
+          super + [:pacticipant]
+        end
       end
     end
   end

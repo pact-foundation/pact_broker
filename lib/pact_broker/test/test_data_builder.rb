@@ -614,6 +614,10 @@ module PactBroker
           tag = PactBroker::Domain::Tag.create(name: tag_name, version: version)
           set_created_at_if_set(params[:created_at], :tags, { name: tag.name, version_id: version.id })
         end
+        if params[:branch]
+          set_created_at_if_set params[:created_at], :branches, { name: params[:branch], pacticipant_id: pacticipant.id }
+          set_created_at_if_set params[:created_at], :branch_versions, { branch_name: params[:branch], pacticipant_id: pacticipant.id, version_id: version.id }
+        end
         version
       end
 
@@ -650,7 +654,7 @@ module PactBroker
         if date_to_set
           Sequel::Model.db[table_name].where(selector).update(date_column_name => date_to_set)
           if Sequel::Model.db.schema(table_name).any?{ |col| col.first == :updated_at }
-            Sequel::Model.db[table_name].where(selector.keys.first => selector.values.first).update(updated_at: date_to_set)
+            Sequel::Model.db[table_name].where(selector).update(updated_at: date_to_set)
           end
         end
       end

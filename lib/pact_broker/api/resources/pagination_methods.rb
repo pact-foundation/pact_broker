@@ -12,6 +12,10 @@ module PactBroker
             {}
           end
         end
+
+        def default_pagination_options
+          { page_number: 1, page_size: 100 }
+        end
       end
     end
   end
