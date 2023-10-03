@@ -11,7 +11,7 @@ module PactBroker
       class << self
         extend Forwardable
         delegate [:find_branch_version, :find_or_create_branch_version, :delete_branch_version] => :branch_version_repository
-        delegate [:find_branch, :delete_branch] => :branch_repository
+        delegate [:find_branch, :delete_branch, :find_all_branches_for_pacticipant] => :branch_repository
       end
     end
   end

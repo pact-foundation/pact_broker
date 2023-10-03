@@ -42,6 +42,9 @@
         "pb:versions": {
           "href": "https://pact-broker/pacticipants/foo/versions"
         },
+        "pb:branches": {
+          "href": "https://pact-broker/pacticipants/foo/branches"
+        },
         "pb:version": {
           "title": "Get, create or delete a pacticipant version",
           "href": "https://pact-broker/pacticipants/foo/versions/{version}",

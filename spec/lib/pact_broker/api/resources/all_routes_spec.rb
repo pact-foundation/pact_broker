@@ -1,5 +1,5 @@
 # The purpose of this spec is to ensure that every new resource either has a policy_record, or it does not need a policy_record
-# (because the all the context can be implied from the route).
+# (because the all the context can be implied from the route, which will most likely contain a :pacticipant, or a :consumer, and/or a :provider).
 # This test will fail when a new resource is added that does not either have a policy_record which returns an object,
 # or has not been explicitly ignored in the spec/support/all_routes_spec_support.yml file.
 

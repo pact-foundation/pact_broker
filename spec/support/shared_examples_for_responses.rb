@@ -5,10 +5,6 @@ shared_examples_for "a JSON 404 response" do
   end
 end
 
-shared_examples_for "a 200 JSON response" do
-
-end
-
 shared_examples_for "a paginated response" do
   let(:response_body_hash) { JSON.parse(subject.body, symbolize_names: true) }
 
@@ -16,6 +12,19 @@ shared_examples_for "a paginated response" do
     expect(response_body_hash[:_links]).to have_key(:next)
   end
 
+  it "includes the page details" do
+    expect(response_body_hash).to include(
+      page: {
+        number: instance_of(Integer),
+        size: instance_of(Integer),
+        totalElements: instance_of(Integer),
+        totalPages: instance_of(Integer),
+      }
+    )
+  end
+end
+
+shared_examples_for "a page" do
   it "includes the page details" do
     expect(response_body_hash).to include(
       page: {

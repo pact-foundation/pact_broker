@@ -1,0 +1,32 @@
+{
+  "_embedded": {
+    "branches": [
+      {
+        "name": "main",
+        "createdAt": "2020-01-01T00:00:00+00:00",
+        "_links": {
+          "self": {
+            "title": "Branch",
+            "href": "http://example.org/pacticipants/Foo/branches/main"
+          },
+          "pb:latest-version": {
+            "title": "Latest version for branch",
+            "href": "http://example.org/pacticipants/Foo/branches/main/versions?pageSize=1"
+          }
+        }
+      }
+    ]
+  },
+  "_links": {
+    "self": {
+      "title": "Foo branches",
+      "href": "http://example.org/pacticipants/Foo/branches"
+    },
+    "pb:branches": [
+      {
+        "name": "main",
+        "href": "http://example.org/pacticipants/Foo/branches/main"
+      }
+    ]
+  }
+}

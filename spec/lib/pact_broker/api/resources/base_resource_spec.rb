@@ -160,7 +160,8 @@ module PactBroker
                   resource_url: "http://example.org/path",
                   env: env,
                   resource_title: nil,
-                  query_string: "foo=bar"
+                  query_string: "foo=bar",
+                  request_url: "http://example.org/path?foo=bar"
                 }
               )
             end
@@ -175,7 +176,8 @@ module PactBroker
                   env: env,
                   resource_title: "foo",
                   something: "else",
-                  query_string: "foo=bar"
+                  query_string: "foo=bar",
+                  request_url: "http://example.org/path?foo=bar"
                 }
               )
             end

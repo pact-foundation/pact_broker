@@ -95,6 +95,7 @@ module PactBroker
         add ["pacticipants", :pacticipant_name, "latest-version", :tag, "can-i-deploy", "to", :to, "badge"], Api::Resources::CanIDeployPacticipantVersionByTagToTagBadge, { resource_name: "can_i_deploy_latest_tagged_version_to_tag_badge" }
         add ["pacticipants", :pacticipant_name, "latest-version"], Api::Resources::LatestVersion, {resource_name: "latest_pacticipant_version"}
         add ["pacticipants", :pacticipant_name, "versions", :pacticipant_version_number, "tags", :tag_name], Api::Resources::Tag, {resource_name: "pacticipant_version_tag"}
+        add ["pacticipants", :pacticipant_name, "branches"], Api::Resources::PacticipantBranches, {resource_name: "pacticipant_branches"}
         add ["pacticipants", :pacticipant_name, "branches", :branch_name], Api::Resources::Branch, { resource_name: "branch" }
         add ["pacticipants", :pacticipant_name, "branches", :branch_name, "versions", :version_number], Api::Resources::BranchVersion, { resource_name: "branch_version" }
         add ["pacticipants", :pacticipant_name, "branches", :branch_name, "latest-version", "can-i-deploy", "to-environment", :environment_name], Api::Resources::CanIDeployPacticipantVersionByBranchToEnvironment, { resource_name: "can_i_deploy_latest_branch_version_to_environment" }

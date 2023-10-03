@@ -39,6 +39,10 @@ module PactBroker
           versions_url(options[:base_url], represented)
         end
 
+        link :'pb:branches' do | options |
+          pacticipant_branches_url(represented, options[:base_url])
+        end
+
         link :'pb:version' do | options |
           {
             title: "Get, create or delete a pacticipant version",
