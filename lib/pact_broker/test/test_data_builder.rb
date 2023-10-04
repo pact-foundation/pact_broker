@@ -31,6 +31,8 @@ require "pact_broker/deployments/released_version_service"
 require "pact_broker/versions/branch_version_repository"
 require "pact_broker/integrations/repository"
 require "pact_broker/contracts/service"
+require "pact_broker/contracts/contract_to_publish"
+require "pact_broker/contracts/contracts_to_publish"
 
 require "ostruct"
 
