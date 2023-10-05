@@ -110,7 +110,6 @@
         },
         "version": {
           "number": "1",
-          "buildUrl": "http://ci/builds/1234",
           "_links": {
             "self": {
               "title": "Version",
