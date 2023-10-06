@@ -65,6 +65,7 @@ module PactBroker
         property :logs
         property :success?, as: :success
 
+        #TODO rename to pb:webhook in next major version
         link :webhook do | options |
           if options.fetch(:webhook).uuid
             {
@@ -73,6 +74,7 @@ module PactBroker
           end
         end
 
+        #TODO rename to pb:try-again in next major version
         link :'try-again' do | options |
           {
             title: "Execute the webhook again",
