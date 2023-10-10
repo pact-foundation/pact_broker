@@ -28,7 +28,7 @@ module PactBroker
             if errors_class == Dry::Validation::MessageSet
               PactBroker::Api::Decorators::DryValidationErrorsProblemJsonDecorator
             else
-              PactBroker::Api::Decorators::ValidationErrorsProblemJSONDecorator
+              PactBroker::Api::Decorators::ValidationErrorsProblemJsonDecorator
             end
           else
             if errors_class == Dry::Validation::MessageSet
