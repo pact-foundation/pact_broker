@@ -4,7 +4,7 @@ require "pact_broker/string_refinements"
 module PactBroker
   module Api
     module Decorators
-      class ValidationErrorsProblemJSONDecorator
+      class ValidationErrorsProblemJsonDecorator
         using PactBroker::StringRefinements
 
 
@@ -52,9 +52,8 @@ module PactBroker
         def append_error(list, message, path, base_url)
           error = {
             "type" => "#{base_url}/problems/invalid-body-property-value",
-            "title" => "Validation error",
-            "detail" => message,
-            "status" => 400
+            "title" => "Invalid body parameter",
+            "detail" => message
           }
           error["pointer"] = path.tr(".", "/") if path.present?
           list << error

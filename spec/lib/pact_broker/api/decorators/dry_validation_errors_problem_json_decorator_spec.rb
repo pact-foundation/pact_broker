@@ -1,4 +1,5 @@
 require "pact_broker/api/decorators/dry_validation_errors_problem_json_decorator"
+require "pact_broker/api/decorators/validation_errors_problem_json_decorator"
 require "pact_broker/api/contracts/base_contract"
 
 module PactBroker
@@ -35,14 +36,25 @@ module PactBroker
                     "type" => "http://example.org/problems/invalid-body-property-value",
                     "pointer" => "/foo/bar",
                     "title" => "Invalid body parameter",
-                    "detail" => "must be a string",
-                    "status" => 400
+                    "detail" => "must be a string"
                   }
                 ]
               }
             end
 
             it { is_expected.to match_pact(expected_hash, allow_unexpected_keys: false) }
+          end
+
+          context "it decorates the same way as the ValidationErrorsProblemJsonDecorator" do
+            let(:validation_errors) do
+              TestContract.new.call({ foo: { bar: 1 }}).errors
+            end
+
+            let(:decorated_hash) { ValidationErrorsProblemJsonDecorator.new(validation_errors.to_hash).to_hash(**decorator_options) }
+
+            it "decorates the dry validation errors the same way as we decorate a hash of errors" do
+              expect(subject).to eq decorated_hash
+            end
           end
 
           context "when the top level details are customised via user_options" do

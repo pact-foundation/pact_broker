@@ -20,7 +20,7 @@ module PactBroker
             let(:errors_class) { Hash }
             let(:accept_header) { "application/hal+json, application/problem+json" }
 
-            it { is_expected.to be PactBroker::Api::Decorators::ValidationErrorsProblemJSONDecorator }
+            it { is_expected.to be PactBroker::Api::Decorators::ValidationErrorsProblemJsonDecorator }
           end
 
           context "when given Dry::Validation::MessageSet and application/hal+json" do

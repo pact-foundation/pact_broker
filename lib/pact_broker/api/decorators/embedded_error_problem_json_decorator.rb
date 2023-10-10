@@ -12,7 +12,6 @@ module PactBroker
         property :text, as: :detail
         property :pointer, exec_context: :decorator
         property :parameter, exec_context: :decorator
-        property :status, getter: -> (user_options:, **) { user_options[:status] || 400 }
 
         # dry-validation doesn't support validating a top level array, so we wrap
         # the json patch operations array in a hash with the key :_ops to validate it.

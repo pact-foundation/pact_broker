@@ -3,11 +3,11 @@ require "pact_broker/api/decorators/validation_errors_problem_json_decorator"
 module PactBroker
   module Api
     module Decorators
-      describe ValidationErrorsProblemJSONDecorator do
+      describe ValidationErrorsProblemJsonDecorator do
         describe "#to_json" do
           let(:decorator_options) { { user_options: { base_url: "http://example.org" } } }
 
-          subject { ValidationErrorsProblemJSONDecorator.new(validation_errors).to_hash(**decorator_options) }
+          subject { ValidationErrorsProblemJsonDecorator.new(validation_errors).to_hash(**decorator_options) }
 
           context "with a hash of errors" do
             let(:validation_errors) do
@@ -27,9 +27,8 @@ module PactBroker
                   {
                     "type" => "http://example.org/problems/invalid-body-property-value",
                     "pointer" => "/contract/content",
-                    "title" => "Validation error",
-                    "detail" => "this is some error text",
-                    "status" => 400
+                    "title" => "Invalid body parameter",
+                    "detail" => "this is some error text"
                   }
                 ]
               }
@@ -56,9 +55,8 @@ module PactBroker
                   {
                     "type" => "http://example.org/problems/invalid-body-property-value",
                     "pointer" => "/contract/content",
-                    "title" => "Validation error",
-                    "detail" => "this is some error text",
-                    "status" => 400
+                    "title" => "Invalid body parameter",
+                    "detail" => "this is some error text"
                   }
                 ]
               }
@@ -85,9 +83,8 @@ module PactBroker
                   {
                     "type" => "http://example.org/problems/invalid-body-property-value",
                     "pointer" => "/contract/content/1",
-                    "title" => "Validation error",
-                    "detail" => "this is some error text",
-                    "status" => 400
+                    "title" => "Invalid body parameter",
+                    "detail" => "this is some error text"
                   }
                 ]
               }
@@ -110,15 +107,13 @@ module PactBroker
                 "errors" => [
                   {
                     "type" => "http://example.org/problems/invalid-body-property-value",
-                    "title" => "Validation error",
-                    "detail" => "error 1",
-                    "status" => 400
+                    "title" => "Invalid body parameter",
+                    "detail" => "error 1"
                   },
                   {
                     "type" => "http://example.org/problems/invalid-body-property-value",
-                    "title" => "Validation error",
-                    "detail" => "error 2",
-                    "status" => 400
+                    "title" => "Invalid body parameter",
+                    "detail" => "error 2"
                   }
                 ]
               }
@@ -142,9 +137,8 @@ module PactBroker
                 "errors" => [
                   {
                     "type" => "http://example.org/problems/invalid-body-property-value",
-                    "title" => "Validation error",
-                    "detail" => "error 1",
-                    "status" => 400
+                    "title" => "Invalid body parameter",
+                    "detail" => "error 1"
                   }
                 ]
               }
