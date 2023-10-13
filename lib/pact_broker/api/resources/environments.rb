@@ -60,7 +60,7 @@ module PactBroker
 
         def environments
           @environments ||= if request.query["name"]
-                              [environment_service.find_by_name(request.query["name"])]
+                              [environment_service.find_by_name(request.query["name"])].compact
                             else
                               environment_service.find_all
                             end
