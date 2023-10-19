@@ -5,7 +5,7 @@ module PactBroker
   module Api
     module Decorators
       class EmbeddedBranchVersionDecorator < BaseDecorator
-        property :branch_name, as: :name
+        property :branch_name, as: :name # TODO rename this to branchName in next major version
         property :latest?, as: :latest
 
         link :self do | options |
