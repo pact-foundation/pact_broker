@@ -13,11 +13,21 @@ module PactBroker
       include PactBroker::Logging
       using PactBroker::HashRefinements
 
+      # the main entry point
+      def create_triggered_webhooks_for_event pact, verification, event_name, event_context
+        webhooks = webhook_repository.find_webhooks_to_trigger(consumer: pact.consumer, provider: pact.provider, event_name: event_name)
+
+        if webhooks.any?
+          create_triggered_webhooks_for_webhooks(webhooks, pact, verification, event_name, event_context.merge(event_name: event_name))
+        else
+          []
+        end
+      end
+
       def next_uuid
         SecureRandom.uuid
       end
 
-      # TODO support currently deployed
       def test_execution webhook, event_context, execution_configuration
         merged_options = execution_configuration.with_failure_log_message("Webhook execution failed").to_hash
 
@@ -34,17 +44,6 @@ module PactBroker
         webhook_execution_result = triggered_webhook.execute(webhook_execution_configuration_hash)
         webhook_repository.create_execution(triggered_webhook, webhook_execution_result)
         webhook_execution_result
-      end
-
-      # the main entry point
-      def create_triggered_webhooks_for_event pact, verification, event_name, event_context
-        webhooks = webhook_repository.find_webhooks_to_trigger(consumer: pact.consumer, provider: pact.provider, event_name: event_name)
-
-        if webhooks.any?
-          create_triggered_webhooks_for_webhooks(webhooks, pact, verification, event_name, event_context.merge(event_name: event_name))
-        else
-          []
-        end
       end
 
       def schedule_webhooks(triggered_webhooks, options)
