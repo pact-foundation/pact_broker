@@ -1,4 +1,5 @@
 require "pact_broker/versions/repository"
+require "pact_broker/versions/branch_repository"
 
 module PactBroker
   module Versions
@@ -179,6 +180,32 @@ module PactBroker
             expect(foo.branches.collect(&:name)).to include "main"
             expect(td.find_pacticipant("Foo").branch_head_for("main")).to be nil
           end
+        end
+      end
+
+      describe "#delete_by_branch" do
+        before do
+          td.create_consumer("foo")
+            .create_consumer_version("1234", branch: "main")
+            .create_consumer_version("1234", branch: "foo") # 2nd branch
+            .create_consumer_version("555", branch: "main")
+            .create_consumer_version("777", branch: "blah")
+            .create_consumer("bar")
+            .create_consumer_version("1234", branch: "main")
+        end
+
+        let(:branch) { PactBroker::Versions::BranchRepository.new.find_branch(pacticipant_name: "foo", branch_name: "main") }
+
+        subject { Repository.new.delete_by_branch(branch) }
+
+        it "deletes versions that belong only to the branch that is being deleted" do
+          expect(td.find_version("foo", "555")).to_not be_nil
+          expect { subject }.to change { PactBroker::Domain::Version.count }.by(-1)
+          expect(td.find_version("foo", "555")).to be_nil
+        end
+
+        it "only deletes the branch_versions associated with the versions that were deleted" do
+          expect{ subject }.to change { PactBroker::Versions::BranchVersion.count }.by(-1)
         end
       end
 

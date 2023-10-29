@@ -38,6 +38,10 @@ module PactBroker
       def delete_branch(branch)
         branch.delete
       end
+
+      def delete_branch_and_associated_versions(branch)
+        branch.delete
+      end
     end
   end
 end

@@ -169,6 +169,22 @@ module PactBroker
         nil
       end
 
+      # @param [PactBroker::Versions::Branch] branch
+      def delete_by_branch(branch)
+        version_ids_for_branch = PactBroker::Versions::BranchVersion.select(:version_id).distinct.where(branch_id: branch.id)
+
+        # Do not delete versions that have other branches
+        ids_of_versions_only_on_this_branch = PactBroker::Versions::BranchVersion
+                                        .group_and_count(Sequel[:branch_versions][:version_id])
+                                        .join(version_ids_for_branch, { Sequel[:branch_versions][:version_id] => Sequel[:vb][:version_id] }, { table_alias: :vb})
+                                        .group(Sequel[:branch_versions][:version_id])
+                                        .having(count: 1)
+                                        .all
+                                        .collect(&:version_id)
+
+        Domain::Version.where(id: ids_of_versions_only_on_this_branch).delete
+      end
+
       def delete_orphan_versions consumer, provider
         version_ids_with_pact_publications = PactBroker::Pacts::PactPublication.where(consumer_id: [consumer.id, provider.id]).select(:consumer_version_id).collect{|r| r[:consumer_version_id]}
         version_ids_with_verifications = PactBroker::Domain::Verification.where(provider_id: [provider.id, consumer.id]).select(:provider_version_id).collect{|r| r[:provider_version_id]}
