@@ -88,6 +88,12 @@ module PactBroker
         self
       end
 
+      # Creates a consumer, consumer version, provider and pact with the specified JSON content
+      # Does NOT rely on previous state.
+      # @param [String] consumer_name
+      # @param [String] consumer_version_number
+      # @param [Strig] provider_name
+      # @param [String] json_content
       def create_pact_with_hierarchy consumer_name = "Consumer", consumer_version_number = "1.2.3", provider_name = "Provider", json_content = nil
         use_consumer(consumer_name)
         create_consumer(consumer_name) if !consumer
@@ -99,18 +105,39 @@ module PactBroker
         self
       end
 
+      # Creates a consumer, consumer version with tag, provider and pact
+      # Does NOT rely on previous state.
+      # @param [String] consumer_name
+      # @param [String] consumer_version_number
+      # @param [String] consumer_version_tag_name
+      # @param [Strig] provider_name
       def create_pact_with_consumer_version_tag consumer_name, consumer_version_number, consumer_version_tag_name, provider_name
         create_pact_with_hierarchy(consumer_name, consumer_version_number, provider_name)
         create_consumer_version_tag(consumer_version_tag_name)
         self
       end
 
+      # Creates a consumer, consumer version, provider, pact and verification
+      # Does NOT rely on previous state.
+      # @param [String] consumer_name
+      # @param [String] consumer_version
+      # @param [String] provider_name
+      # @param [String] provider_version
+      # @param [Boolean] success default true
       def create_pact_with_verification consumer_name = "Consumer", consumer_version = "1.0.#{model_counter}", provider_name = "Provider", provider_version = "1.0.#{model_counter}", success = true
         create_pact_with_hierarchy(consumer_name, consumer_version, provider_name)
         create_verification(number: model_counter, provider_version: provider_version, success: success)
         self
       end
 
+      # Creates a consumer, consumer version, provider, pact and verification
+      # Does NOT rely on previous state.
+      # @param [String] consumer_name
+      # @param [String] consumer_version
+      # @param [Array<String>] consumer_version_tags
+      # @param [String] provider_name
+      # @param [String] provider_version
+      # @param [Array<String>] provider_version_tags
       def create_pact_with_verification_and_tags consumer_name = "Consumer", consumer_version = "1.0.#{model_counter}", consumer_version_tags = [], provider_name = "Provider", provider_version = "1.0.#{model_counter}", provider_version_tags = []
         create_pact_with_hierarchy(consumer_name, consumer_version, provider_name)
         consumer_version_tags.each do | tag |
@@ -120,6 +147,10 @@ module PactBroker
         self
       end
 
+      # Create a pacticipant and version
+      # Does NOT rely on previous state
+      # @param [String] pacticipant_name
+      # @param [String] pacticipant_version
       def create_version_with_hierarchy pacticipant_name, pacticipant_version
         pacticipant = pacticipant_service.create(:name => pacticipant_name)
         version = PactBroker::Domain::Version.create(:number => pacticipant_version, :pacticipant => pacticipant)
