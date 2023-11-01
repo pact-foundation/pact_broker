@@ -23,6 +23,7 @@ module PactBroker
         describe "to_json" do
           before do
             allow(decorator).to receive(:deployed_versions_for_version_and_environment_url).and_return("http://deployed-versions")
+            allow(decorator).to receive(:released_versions_for_version_and_environment_url).and_return("http://released-versions")
           end
 
           let(:version) do
@@ -111,6 +112,25 @@ module PactBroker
               title: "Record deployment to Test",
               href: "http://deployed-versions"
             )
+          end
+
+          it "includes a list of environments that this version can be released to" do
+            expect(decorator).to receive(:released_versions_for_version_and_environment_url).with(version, environments.first, base_url)
+            expect(subject[:_links][:'pb:record-release']).to be_instance_of(Array)
+            expect(subject[:_links][:'pb:record-release'].first).to eq(
+              name: "test",
+              title: "Record release to Test",
+              href: "http://released-versions"
+            )
+          end
+
+          context "when the environments option is not present" do
+            let(:options) { { user_options: { base_url: base_url } } }
+
+            it "does not include the pb:record-deployment or pb:record-release" do
+              expect(subject[:_links]).to_not have_key(:'pb:record-deployment')
+              expect(subject[:_links]).to_not have_key(:'pb:record-release')
+            end
           end
         end
       end

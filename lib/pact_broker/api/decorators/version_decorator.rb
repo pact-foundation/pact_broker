@@ -1,5 +1,6 @@
 require_relative "base_decorator"
 require_relative "embedded_tag_decorator"
+require_relative "embedded_branch_version_decorator"
 
 module PactBroker
   module Api
@@ -58,7 +59,7 @@ module PactBroker
         end
 
         links :'pb:record-deployment' do | context |
-          context.fetch(:environments, []).collect do | environment |
+          context[:environments]&.collect do | environment |
             {
               title: "Record deployment to #{environment.display_name}",
               name: environment.name,
@@ -68,7 +69,7 @@ module PactBroker
         end
 
         links :'pb:record-release' do | context |
-          context.fetch(:environments, []).collect do | environment |
+          context[:environments]&.collect do | environment |
             {
               title: "Record release to #{environment.display_name}",
               name: environment.name,
