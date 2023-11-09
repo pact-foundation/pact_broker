@@ -7,8 +7,8 @@ module PactBroker
         describe "GET" do
           let(:query) do
             {
-              "pageSize" => "10",
-              "pageNumber" => "1",
+              "size" => "10",
+              "page" => "1",
               "q" => "search"
             }
           end
@@ -44,8 +44,8 @@ module PactBroker
           context "with invalid pagination params" do
             let(:query) do
               {
-                "pageSize" => "0",
-                "pageNumber" => "0",
+                "size" => "0",
+                "page" => "0",
               }
             end
 

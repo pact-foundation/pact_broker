@@ -23,9 +23,9 @@ describe "Get pacticipants" do
     end
 
     context "with pagination options" do
-      subject { get(path, { "pageSize" => "2", "pageNumber" => "1" }) }
+      subject { get(path, { "size" => "2", "page" => "1" }) }
 
-      it "only returns the number of items specified in the pageSize" do
+      it "only returns the number of items specified in the page" do
         expect(response_body_hash[:_links][:"pacticipants"].size).to eq 2
       end
 

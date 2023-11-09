@@ -23,7 +23,7 @@ module PactBroker
           let(:errors) { {} }
 
           let(:path) { "/integrations" }
-          let(:params) { { "pageNumber" => "1", "pageSize" => "2" } }
+          let(:params) { { "page" => "1", "size" => "2" } }
 
           subject { get(path, params, rack_headers) }
 
