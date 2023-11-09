@@ -27,7 +27,9 @@ class HalRelationProxyApp
     "/PLACEHOLDER-ENVIRONMENT-CURRENTLY-DEPLOYED-16926ef3-590f-4e3f-838e-719717aa88c9" =>
       "/environments/16926ef3-590f-4e3f-838e-719717aa88c9/deployed-versions/currently-deployed",
     "/HAL-REL-PLACEHOLDER-PB-ENVIRONMENT-16926ef3-590f-4e3f-838e-719717aa88c9" =>
-      "/environments/16926ef3-590f-4e3f-838e-719717aa88c9"
+      "/environments/16926ef3-590f-4e3f-838e-719717aa88c9",
+    "/HAL-REL-PLACEHOLDER-PB-PACTICIPANT-BRANCH-Foo-main" =>
+      "/pacticipants/Foo/branches/main"
   }
 
   RESPONSE_BODY_REPLACEMENTS = {
