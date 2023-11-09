@@ -2,6 +2,7 @@ module PactBroker
   module Api
     module Resources
       module PaginationMethods
+        # rubocop: disable Metrics/CyclomaticComplexity
         def pagination_options
           if request.query["page"] || request.query["size"]
             {
