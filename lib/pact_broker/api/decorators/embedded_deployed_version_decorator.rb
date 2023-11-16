@@ -9,6 +9,7 @@ module PactBroker
       class EmbeddedDeployedVersionDecorator < BaseDecorator
         property :uuid
         property :currently_deployed, camelize: true
+        property :target, camelize: true # deprecated
         property :applicationInstance, getter: lambda { |_| target }
         property :undeployedAt, getter: lambda { |_|  undeployed_at ? FormatDateTime.call(undeployed_at) : nil }, writeable: false
 
