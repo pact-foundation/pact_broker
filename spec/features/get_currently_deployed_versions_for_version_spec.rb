@@ -21,7 +21,7 @@ RSpec.describe "Get currently deployed versions for version" do
   it "returns a list of deployed versions" do
     expect(response_body_hash[:_embedded][:deployedVersions]).to be_a(Array)
     expect(response_body_hash[:_embedded][:deployedVersions].size).to eq 1
-    expect(response_body_hash[:_links][:self][:title]).to eq "Deployed versions for Foo version 1"
+    expect(response_body_hash[:_links][:self][:title]).to eq "Deployed versions for Foo version 1 in environment Test"
     expect(response_body_hash[:_links][:self][:href]).to end_with(path)
   end
 end
