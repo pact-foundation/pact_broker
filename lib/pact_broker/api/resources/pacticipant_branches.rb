@@ -1,6 +1,8 @@
 require "pact_broker/api/resources/base_resource"
 require "pact_broker/api/resources/pagination_methods"
 require "pact_broker/api/resources/filter_methods"
+require "pact_broker/api/resources/after_reply"
+require "rack/utils"
 
 module PactBroker
   module Api
@@ -8,13 +10,14 @@ module PactBroker
       class PacticipantBranches < BaseResource
         include PaginationMethods
         include FilterMethods
+        include AfterReply
 
         def content_types_provided
           [["application/hal+json", :to_json]]
         end
 
         def allowed_methods
-          ["GET", "OPTIONS"]
+          ["GET", "DELETE", "OPTIONS"]
         end
 
         def resource_exists?
@@ -29,6 +32,15 @@ module PactBroker
           :'versions::branches'
         end
 
+        def delete_resource
+          after_reply do
+            branch_service.delete_branches_for_pacticipant(pacticipant, exclude: exclude)
+          end
+          # TODO decorate these
+          puts branch_service.branch_deletion_notices(pacticipant, exclude: exclude)
+          202
+        end
+
         private
 
         def branches
@@ -38,6 +50,10 @@ module PactBroker
                           default_pagination_options.merge(pagination_options),
                           eager_load_associations
                         )
+        end
+
+        def exclude
+          Rack::Utils.parse_nested_query(request.uri.query)["exclude"] || []
         end
 
         def eager_load_associations

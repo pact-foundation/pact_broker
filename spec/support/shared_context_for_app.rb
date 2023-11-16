@@ -43,6 +43,7 @@ RSpec.shared_context "app" do
       builder.use OpenapiFirst::PactBrokerCoverage, endpoints_to_be_called
     end
 
+    builder.use(PactBroker::Middleware::MockPuma)
     builder.use(Rack::PactBroker::ApplicationContext, application_context)
     builder.run(PactBroker.build_api(application_context))
     builder.to_app
