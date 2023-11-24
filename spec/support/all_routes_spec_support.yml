@@ -40,6 +40,7 @@ requests_which_are_exected_to_have_no_policy_record:
   - pacticipant_label PUT
   - pacticipant_label DELETE
   - latest_pacticipant_version GET
+  - latest_pacticipant_version_for_branch GET
   - latest_tagged_pacticipant_version GET
   - can_i_deploy_latest_tagged_version_to_tag GET
   - can_i_deploy_latest_tagged_version_to_tag_badge GET

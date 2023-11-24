@@ -21,7 +21,7 @@ module PactBroker
           {
             title: "Version",
             name: represented.number,
-            href: version_url(options.fetch(:base_url), represented)
+            href: options.fetch(:resource_url)
           }
         end
 

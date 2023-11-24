@@ -243,6 +243,10 @@ module PactBroker
         "#{branch_versions_url(branch_version.branch, base_url)}/#{url_encode(branch_version.version_number)}"
       end
 
+      def latest_version_for_branch_url(branch, base_url = "")
+        "#{branch_url(branch, base_url)}/latest-version"
+      end
+
       def templated_tag_url_for_pacticipant pacticipant_name, base_url = ""
         pacticipant_url_from_params({ pacticipant_name: pacticipant_name }, base_url) + "/versions/{version}/tags/{tag}"
       end
