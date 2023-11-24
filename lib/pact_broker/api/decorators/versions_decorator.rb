@@ -15,7 +15,7 @@ module PactBroker
             {
               title: "Version",
               name: represented.number,
-              href: version_url(options.fetch(:base_url), represented)
+              href: version_url(user_options.fetch(:base_url), represented)
             }
           end
         end
@@ -23,9 +23,8 @@ module PactBroker
         collection :entries, as: :versions, embedded: true, :extend => VersionInCollectionDecorator
 
         link :self do | user_options |
-          href = append_query_if_present(user_options[:resource_url], user_options[:query_string])
           {
-            href: href,
+            href: user_options.fetch(:request_url),
             title: user_options[:resource_title] || "All application versions of #{user_options[:pacticipant_name]}"
           }
         end
