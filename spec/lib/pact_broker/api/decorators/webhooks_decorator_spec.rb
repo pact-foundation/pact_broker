@@ -15,15 +15,19 @@ module PactBroker
         let(:base_url) { "http://example.org" }
         let(:resource_url) { "http://example.org/webhooks" }
 
-        let(:decorator_context) do
-          DecoratorContext.new(base_url, resource_url, {}, resource_title: "Title")
+        let(:user_options) do
+          {
+            base_url: base_url,
+            resource_url: resource_url,
+            resource_title: "Title"
+          }
         end
 
         let(:webhooks) { [webhook] }
 
         describe "to_json" do
 
-          let(:json) { WebhooksDecorator.new(webhooks).to_json(user_options: decorator_context) }
+          let(:json) { WebhooksDecorator.new(webhooks).to_json(user_options: user_options) }
 
           subject { JSON.parse(json, symbolize_names: true) }
 
