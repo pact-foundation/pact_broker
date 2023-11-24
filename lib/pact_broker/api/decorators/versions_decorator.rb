@@ -6,11 +6,9 @@ module PactBroker
   module Api
     module Decorators
       class VersionsDecorator < BaseDecorator
-
         class VersionInCollectionDecorator < PactBroker::Api::Decorators::VersionDecorator
-
-          # VersionDecorator has a dynamic self URL, depending which path the Version resource is mounted at
-          # Hardcode the URL of the Versions in the collection to the URL with the number.
+          # VersionDecorator has a dynamic self URL, depending which path the Version resource is mounted at.
+          # Hardcode the URL of the embedded Versions in this collection to use the canonical URL with the version number.
           link :self do | user_options |
             {
               title: "Version",

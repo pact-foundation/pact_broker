@@ -21,6 +21,7 @@ module PactBroker
           {
             title: "Version",
             name: represented.number,
+            # This decorator is used for multiple Version resources, so dynamically fetch the current resource URL
             href: options.fetch(:resource_url)
           }
         end
