@@ -12,6 +12,8 @@ module Rack
     class InvalidUriProtection
       include ::PactBroker::Messages
 
+      CONSECUTIVE_SLASH = /\/{2,}/
+
       def initialize app
         @app = app
       end
@@ -34,7 +36,9 @@ module Rack
 
       def valid_uri? env
         begin
-          parse(::Rack::Request.new(env).url)
+          uri = parse(::Rack::Request.new(env).url)
+          return nil if CONSECUTIVE_SLASH.match(uri.path)
+          uri
         rescue URI::InvalidURIError, ArgumentError
           nil
         end

@@ -27,6 +27,14 @@ module Rack
           expect(subject.status).to eq 200
         end
 
+        context "when the path contains missing path segments" do
+          let(:path) { "/foo//bar" }
+
+          it "returns a 404" do
+            expect(subject.status).to eq 404
+          end
+        end
+
         context "when the URI contains a new line because someone forgot to strip the result of `git rev-parse HEAD`, and I have totally never done this before myself" do
           let(:path) { "/foo%0A/bar" }
 
