@@ -21,12 +21,12 @@ module Rack
       def call env
         if (uri = valid_uri?(env))
           if (error_message = validate(uri))
-            [422, {"Content-Type" => "text/plain"}, [error_message]]
+            [422, headers, [body(env, error_message, "Unprocessable", "validation-errors", 422)]]
           else
             app.call(env)
           end
         else
-          [404, {}, []]
+          [404, headers, [body(env, "Invalid Path", "Not Found", "not-found", 404)]]
         end
       end
 
@@ -55,6 +55,18 @@ module Rack
         elsif decoded_path.include?("\t")
           message("errors.tab_in_url_path")
         end
+      end
+
+      def headers
+        {"Content-Type" => "application/problem+json"}
+      end
+
+      def body(env, detail, title, type, status)
+        env["pactbroker.application_context"]
+          .decorator_configuration
+          .class_for(:custom_error_problem_json_decorator)
+          .new(detail: detail, title: title, type: type, status: status)
+          .to_json(user_options: { base_url: env["pactbroker.base_url"] })
       end
     end
   end
