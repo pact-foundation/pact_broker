@@ -21,12 +21,12 @@ module Rack
       def call env
         if (uri = valid_uri?(env))
           if (error_message = validate(uri))
-            [422, headers, [body(env, error_message, "Unprocessable", "validation-errors", 422)]]
+            [422, headers, [body(env, error_message, "Unprocessable", "invalid-request-parameter-value", 422)]]
           else
             app.call(env)
           end
         else
-          [404, headers, [body(env, "Invalid Path", "Not Found", "not-found", 404)]]
+          [404, headers, [body(env, "Empty path component found", "Not Found", "not-found", 404)]]
         end
       end
 
