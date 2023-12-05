@@ -26,7 +26,7 @@ describe "Get versions" do
     end
 
     context "with pagination options" do
-      subject { get(path, { "pageSize" => "1", "pageNumber" => "1" }) }
+      subject { get(path, { "size" => "1", "page" => "1" }) }
 
       it "paginates the response" do
         expect(last_response_body[:_links][:"versions"].size).to eq 1

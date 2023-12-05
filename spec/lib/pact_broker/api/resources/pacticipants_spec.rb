@@ -7,8 +7,8 @@ module PactBroker
         describe "GET" do
           let(:query) do
             {
-              "pageSize" => "10",
-              "pageNumber" => "1",
+              "size" => "10",
+              "page" => "1",
               "q" => "search"
             }
           end
@@ -44,8 +44,8 @@ module PactBroker
           context "with invalid pagination params" do
             let(:query) do
               {
-                "pageSize" => "0",
-                "pageNumber" => "0",
+                "size" => "0",
+                "page" => "0",
               }
             end
 
@@ -123,7 +123,7 @@ module PactBroker
 
             it "creates a JSON representation of the new pacticipant" do
               expect(decorator_class).to receive(:new).with(created_model)
-              expect(decorator).to receive(:to_json).with(user_options: instance_of(Decorators::DecoratorContext))
+              expect(decorator).to receive(:to_json).with(user_options: instance_of(Hash))
               subject
             end
 

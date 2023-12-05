@@ -3,7 +3,7 @@
 module PactBroker
   module Api
     module Decorators
-      class RuntimeErrorProblemJSONDecorator
+      class RuntimeErrorProblemJsonDecorator
 
         # @param message [String]
         def initialize(message)

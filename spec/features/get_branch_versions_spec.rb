@@ -27,9 +27,9 @@ describe "Get a branch version" do
   end
 
   context "with pagination options" do
-    subject { get(path, { "pageSize" => "2", "pageNumber" => "1" }) }
+    subject { get(path, { "size" => "2", "page" => "1" }) }
 
-    it "only returns the number of items specified in the pageSize" do
+    it "only returns the number of items specified in the size" do
       expect(JSON.parse(subject.body).dig("_embedded", "versions").size).to eq 2
     end
 
