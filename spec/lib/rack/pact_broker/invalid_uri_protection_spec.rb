@@ -1,4 +1,6 @@
 require "rack/pact_broker/invalid_uri_protection"
+require "pact_broker/application_context"
+require "pact_broker/api/decorators/custom_error_problem_json_decorator"
 
 module Rack
   module PactBroker
@@ -7,7 +9,7 @@ module Rack
       let(:app) { InvalidUriProtection.new(target_app) }
       let(:path) { "/foo" }
 
-      subject { get(path) }
+      subject { get(path, {}, {"pactbroker.application_context" => ::PactBroker::ApplicationContext.default_application_context} ) }
 
       context "with a URI that the Ruby default URI library cannot parse" do
         let(:path) { "/badpath" }
