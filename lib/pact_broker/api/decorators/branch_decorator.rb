@@ -18,7 +18,7 @@ module PactBroker
         link "pb:latest-version" do | user_options |
           {
             title: "Latest version for branch",
-            href: branch_versions_url(represented, user_options.fetch(:base_url)) + "?size=1"
+            href: latest_version_for_branch_url(represented, user_options.fetch(:base_url))
           }
         end
 

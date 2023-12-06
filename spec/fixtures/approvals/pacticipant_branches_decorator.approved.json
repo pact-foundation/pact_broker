@@ -11,7 +11,7 @@
           },
           "pb:latest-version": {
             "title": "Latest version for branch",
-            "href": "http://example.org/pacticipants/Foo/branches/main/versions?size=1"
+            "href": "http://example.org/pacticipants/Foo/branches/main/latest-version"
           }
         }
       }
