@@ -17,6 +17,8 @@ module PactBroker
         def version
           if identifier_from_path[:tag]
             @version ||= version_service.find_by_pacticipant_name_and_latest_tag(identifier_from_path[:pacticipant_name], identifier_from_path[:tag])
+          elsif identifier_from_path[:branch_name]
+            @version ||= version_service.find_latest_by_pacticipant_name_and_branch_name(identifier_from_path[:pacticipant_name], identifier_from_path[:branch_name])
           else
             @version ||= version_service.find_latest_by_pacticpant_name(identifier_from_path)
           end

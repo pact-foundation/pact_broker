@@ -48,13 +48,13 @@ module PactBroker
           end
 
           let(:base_url) { "http://example.org" }
-          let(:options) { { user_options: { base_url: base_url, environments: environments } } }
+          let(:options) { { user_options: { base_url: base_url, resource_url: "resource_url", environments: environments } } }
           let(:decorator) { VersionDecorator.new(version) }
 
           subject { JSON.parse(decorator.to_json(options), symbolize_names: true) }
 
           it "includes a link to itself" do
-            expect(subject[:_links][:self][:href]).to eq "http://example.org/pacticipants/Consumer/versions/1.2.3"
+            expect(subject[:_links][:self][:href]).to eq "resource_url"
           end
 
           it "includes the version number in the link" do
@@ -125,7 +125,7 @@ module PactBroker
           end
 
           context "when the environments option is not present" do
-            let(:options) { { user_options: { base_url: base_url } } }
+            let(:options) { { user_options: { base_url: base_url, resource_url: "resource_url" } } }
 
             it "does not include the pb:record-deployment or pb:record-release" do
               expect(subject[:_links]).to_not have_key(:'pb:record-deployment')

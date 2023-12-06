@@ -5,21 +5,18 @@ module PactBroker
   module Api
     module Decorators
       describe VersionsDecorator do
+        before do
+          allow_any_instance_of(VersionsDecorator::VersionInCollectionDecorator).to receive(:version_url).and_return("version_url")
+        end
 
-        let(:options) { { resource_url: "http://versions", base_url: "http://example.org", pacticipant_name: "Consumer", query_string: query_string}}
-        let(:query_string) { nil }
+        let(:options) { { request_url: "http://versions?foo=bar", base_url: "http://example.org", pacticipant_name: "Consumer", resource_url: "http://versions" } }
         let(:versions) { [] }
+        let(:decorator) { VersionsDecorator.new(versions) }
+        let(:json) { decorator.to_json(user_options: options) }
 
-        subject { JSON.parse VersionsDecorator.new(versions).to_json(user_options: options), symbolize_names: true }
+        subject { JSON.parse(json, symbolize_names: true)  }
 
-        context "with no query string" do
-          its([:_links, :self, :href]) { is_expected.to eq "http://versions" }
-        end
-
-        context "with a query string" do
-          let(:query_string) { "foo=bar" }
-          its([:_links, :self, :href]) { is_expected.to eq "http://versions?foo=bar" }
-        end
+        its([:_links, :self, :href]) { is_expected.to eq "http://versions?foo=bar" }
 
         context "with no versions" do
           it "doesn't blow up" do
@@ -40,6 +37,10 @@ module PactBroker
           it "displays a list of versions" do
             expect(subject[:_embedded][:versions]).to be_instance_of(Array)
             expect(subject[:_embedded][:versions].size).to eq 1
+          end
+
+          it "has the version href with the version number" do
+            expect(subject[:_embedded][:versions].first[:_links][:self][:href]).to eq "version_url"
           end
         end
       end
