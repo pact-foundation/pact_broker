@@ -33,9 +33,9 @@ module PactBroker
             build_url: "http://build"
           )
         end
-        let(:decorator_context) { DecoratorContext.new(base_url, "", {}) }
+        let(:user_options) { { base_url: base_url } }
 
-        let(:json) { PactVersionDecorator.new(pact).to_json(user_options: decorator_context) }
+        let(:json) { PactVersionDecorator.new(pact).to_json(user_options: user_options) }
 
         subject { JSON.parse(json, symbolize_names: true) }
 

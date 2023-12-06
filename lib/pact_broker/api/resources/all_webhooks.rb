@@ -38,7 +38,7 @@ module PactBroker
         end
 
         def from_json
-          saved_webhook = webhook_service.create(next_uuid, webhook, consumer, provider)
+          saved_webhook = webhook_service.create(next_uuid, webhook, webhook_consumer, webhook_provider)
           response.body = decorator_class(:webhook_decorator).new(saved_webhook).to_json(**decorator_options)
         end
 
@@ -60,11 +60,11 @@ module PactBroker
           api_contract_class(:webhook_contract)
         end
 
-        def consumer
+        def webhook_consumer
           webhook.consumer&.name ? pacticipant_service.find_pacticipant_by_name(webhook.consumer.name) : nil
         end
 
-        def provider
+        def webhook_provider
           webhook.provider&.name ? pacticipant_service.find_pacticipant_by_name(webhook.provider.name) : nil
         end
 
