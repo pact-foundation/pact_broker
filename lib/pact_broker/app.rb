@@ -181,6 +181,7 @@ module PactBroker
       @app_builder.use PactBroker::Api::Middleware::HttpDebugLogs if configuration.http_debug_logging_enabled
       configure_basic_auth
       configure_rack_protection
+      @app_builder.use Rack::PactBroker::ApplicationContext, application_context
       @app_builder.use Rack::PactBroker::InvalidUriProtection
       @app_builder.use Rack::PactBroker::ResetThreadData
       @app_builder.use Rack::PactBroker::AddPactBrokerVersionHeader
@@ -191,7 +192,6 @@ module PactBroker
       @app_builder.use Rack::PactBroker::ConvertFileExtensionToAcceptHeader
       # Rack::PactBroker::SetBaseUrl needs to be before the Rack::PactBroker::HalBrowserRedirect
       @app_builder.use Rack::PactBroker::SetBaseUrl, configuration.base_urls
-      @app_builder.use Rack::PactBroker::ApplicationContext, application_context
 
       if configuration.use_hal_browser
         logger.info "Mounting HAL browser"
