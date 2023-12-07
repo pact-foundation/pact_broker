@@ -1,5 +1,10 @@
 require "pact_broker/api/decorators/pact_decorator"
 
+# Pactflow notes:
+# This decorator was added for Pactflow, but we needed to change it so much that there
+# is a separate class in pact_broker_fork/lib/pactflow/api/decorators/extended_pact_decorator.rb now
+# and this one isn't used.
+
 module PactBroker
   module Api
     module Decorators

@@ -287,7 +287,7 @@ module PactBroker
         "#{base_url}/webhooks"
       end
 
-      def webhook_url uuid, base_url
+      def webhook_url uuid, base_url = ""
         "#{base_url}/webhooks/#{uuid}"
       end
 
