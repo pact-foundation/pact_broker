@@ -207,7 +207,7 @@ module PactBroker
         def find_pacticipant name, role
           pacticipant_service.find_pacticipant_by_name(name).tap do | pacticipant |
             if pacticipant.nil?
-              set_json_error_message("No #{role} with name '#{name}' found", title: "Not found", type: "not_found", status: 404)
+              set_json_error_message("No #{role} with name '#{name}' found", title: "Not found", type: "not-found", status: 404)
             end
           end
         end
