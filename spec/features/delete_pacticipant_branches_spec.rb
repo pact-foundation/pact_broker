@@ -18,7 +18,12 @@ describe "Delete pacticipant branches" do
 
   its(:status) { is_expected.to eq 202 }
 
-  it "deletes all except the excluded branches for a pacticipant" do
+  it "returns a list of notices to be displayed to the user" do
+    expect(JSON.parse(subject.body)["notices"]).to be_instance_of(Array)
+    expect(JSON.parse(subject.body)["notices"]).to include(hash_including("text"))
+  end
+
+  it "after the request, it deletes all except the excluded branches for a pacticipant" do
     expect { subject }.to change {
       PactBroker::Versions::Branch
         .where(pacticipant_id: td.and_return(:pacticipant).id)

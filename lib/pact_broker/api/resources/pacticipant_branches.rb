@@ -32,12 +32,14 @@ module PactBroker
           :'versions::branches'
         end
 
+        # Allows bulk deletion of pacticipant branches, keeping the specified branches and the main branch.
+        # Deletes the branches asyncronously, after the response has been sent, for performance reasons.
         def delete_resource
           after_reply do
             branch_service.delete_branches_for_pacticipant(pacticipant, exclude: exclude)
           end
-          # TODO decorate these
-          puts branch_service.branch_deletion_notices(pacticipant, exclude: exclude)
+          notices = branch_service.branch_deletion_notices(pacticipant, exclude: exclude)
+          response.body = decorator_class(:notices_decorator).new(notices).to_json(**decorator_options)
           202
         end
 
