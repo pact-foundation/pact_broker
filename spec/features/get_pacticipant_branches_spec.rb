@@ -21,9 +21,9 @@ describe "Get pacticipant branches" do
   it_behaves_like "a page"
 
   context "with pagination options" do
-    subject { get(path, { "pageSize" => "2", "pageNumber" => "1" }) }
+    subject { get(path, { "size" => "2", "number" => "1" }) }
 
-    it "only returns the number of items specified in the pageSize" do
+    it "only returns the number of items specified in the size" do
       expect(response_body_hash[:_links][:"pb:branches"].size).to eq 2
     end
 

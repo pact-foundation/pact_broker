@@ -21,7 +21,7 @@ module PactBroker
         end
 
         def to_json
-          decorator_class(decorator_name).new(deployed_versions).to_json(**decorator_options(title: title))
+          decorator_class(decorator_name).new(deployed_versions).to_json(**decorator_options(title: title, expand: [:pacticipant, :version]))
         end
 
         def policy_name
