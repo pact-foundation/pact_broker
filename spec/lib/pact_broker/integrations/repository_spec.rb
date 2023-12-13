@@ -129,9 +129,9 @@ module PactBroker
         it "sets the contract_data_updated_at of the specified integrations" do
           subject
           integrations = Integration.order(:id).all
-          expect(integrations[0].contract_data_updated_at).to eq date_2
-          expect(integrations[1].contract_data_updated_at).to eq date_2
-          expect(integrations[2].contract_data_updated_at).to eq date_1
+          expect(integrations[0].contract_data_updated_at).to be_date_time(date_2)
+          expect(integrations[1].contract_data_updated_at).to be_date_time(date_2)
+          expect(integrations[2].contract_data_updated_at).to be_date_time(date_1)
         end
       end
     end
