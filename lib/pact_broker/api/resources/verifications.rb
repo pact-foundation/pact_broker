@@ -5,6 +5,8 @@ require "pact_broker/api/contracts/verification_contract"
 require "pact_broker/api/decorators/verification_decorator"
 require "pact_broker/api/resources/webhook_execution_methods"
 require "pact_broker/api/resources/metadata_resource_methods"
+require "pact_broker/api/resources/event_methods"
+require "pact_broker/integrations/event_listener"
 
 module PactBroker
   module Api
@@ -12,6 +14,7 @@ module PactBroker
       class Verifications < BaseResource
         include WebhookExecutionMethods
         include MetadataResourceMethods
+        include EventMethods
 
         def content_types_accepted
           [["application/json", :from_json]]
@@ -42,10 +45,12 @@ module PactBroker
         end
 
         def from_json
-          handle_webhook_events(build_url: verification_params["buildUrl"]) do
-            verified_pacts = pact_service.find_for_verification_publication(pact_params, event_context[:consumer_version_selectors])
-            verification = verification_service.create(next_verification_number, verification_params, verified_pacts, event_context)
-            response.body = decorator_for(verification).to_json(**decorator_options)
+          subscribe(PactBroker::Integrations::EventListener.new) do
+            handle_webhook_events(build_url: verification_params["buildUrl"]) do
+              verified_pacts = pact_service.find_for_verification_publication(pact_params, event_context[:consumer_version_selectors])
+              verification = verification_service.create(next_verification_number, verification_params, verified_pacts, event_context)
+              response.body = decorator_for(verification).to_json(**decorator_options)
+            end
           end
           true
         end

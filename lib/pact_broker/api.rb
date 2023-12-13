@@ -5,7 +5,6 @@ require "pact_broker/api/decorators"
 require "pact_broker/api/contracts"
 require "pact_broker/application_context"
 require "pact_broker/feature_toggle"
-require "pact_broker/initializers/subscriptions"
 
 module Webmachine
   class Request

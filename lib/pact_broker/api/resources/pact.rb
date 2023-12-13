@@ -9,14 +9,17 @@ require "pact_broker/api/contracts/put_pact_params_contract"
 require "pact_broker/webhooks/execution_configuration"
 require "pact_broker/api/resources/webhook_execution_methods"
 require "pact_broker/api/resources/pact_resource_methods"
+require "pact_broker/api/resources/event_methods"
+require "pact_broker/integrations/event_listener"
 
 module PactBroker
   module Api
     module Resources
       class Pact < BaseResource
+        include EventMethods
         include PacticipantResourceMethods
-        include WebhookExecutionMethods
         include PactResourceMethods
+        include WebhookExecutionMethods
         include PactBroker::Messages
 
         def content_types_provided
@@ -65,11 +68,13 @@ module PactBroker
         def from_json
           response_code = pact ? 200 : 201
 
-          handle_webhook_events do
-            if request.patch? && resource_exists?
-              @pact = pact_service.merge_pact(pact_params)
-            else
-              @pact = pact_service.create_or_update_pact(pact_params)
+          subscribe(PactBroker::Integrations::EventListener.new) do
+            handle_webhook_events do
+              if request.patch? && resource_exists?
+                @pact = pact_service.merge_pact(pact_params)
+              else
+                @pact = pact_service.create_or_update_pact(pact_params)
+              end
             end
           end
           response.body = to_json
