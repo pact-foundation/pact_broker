@@ -21,7 +21,8 @@ module PactBroker
           Integration.new(
             consumer_id: consumer_id,
             provider_id: provider_id,
-            created_at: Sequel.datetime_class.now
+            created_at: Sequel.datetime_class.now,
+            contract_data_updated_at: Sequel.datetime_class.now
           ).insert_ignore
         end
         nil
@@ -37,6 +38,16 @@ module PactBroker
       def set_contract_data_updated_at(consumer, provider)
         Integration
           .where({ consumer_id: consumer&.id, provider_id: provider.id }.compact )
+          .update(contract_data_updated_at: Sequel.datetime_class.now)
+      end
+
+
+      # Sets the contract_data_updated_at for the integrations as specified by an array of objects which each have a consumer and provider
+      # @param [Array<Object>] where each object has a consumer and a provider
+      def set_contract_data_updated_at_for_multiple_integrations(objects_with_consumer_and_provider)
+        consumer_and_provider_ids = objects_with_consumer_and_provider.collect{ | object | [object.consumer.id, object.provider.id] }.uniq
+        Integration
+          .where([:consumer_id, :provider_id] => consumer_and_provider_ids)
           .update(contract_data_updated_at: Sequel.datetime_class.now)
       end
     end
