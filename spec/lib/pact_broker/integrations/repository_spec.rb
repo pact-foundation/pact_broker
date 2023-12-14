@@ -22,10 +22,11 @@ module PactBroker
             td.create_verification(provider_version: "2")
           end
 
-          # No contract data date
+          # Nil contract data date
           td.create_consumer("Dog")
             .create_provider("Cat")
             .create_integration
+          Integration.order(:id).last.update(contract_data_updated_at: nil)
         end
 
         subject { Repository.new.find }
@@ -91,6 +92,46 @@ module PactBroker
             expect(integrations.first.contract_data_updated_at).to be_date_time(now)
             expect(integrations.last.contract_data_updated_at).to be_date_time(now)
           end
+        end
+      end
+
+      describe "#set_contract_data_updated_at_for_multiple_integrations" do
+        before do
+          Timecop.freeze(date_1) do
+            td.create_consumer("Foo1")
+              .create_provider("Bar1")
+              .create_integration
+              .create_consumer("Foo2")
+              .create_provider("Bar2")
+              .create_integration
+              .create_consumer("Foo3")
+              .create_provider("Bar3")
+              .create_integration
+          end
+        end
+
+        let(:date_1) { Time.new(2023, 1, 1).utc.to_datetime }
+        let(:date_2) { Time.new(2023, 1, 2).utc.to_datetime }
+
+        let(:objects_with_consumer_and_provider) do
+          [
+            OpenStruct.new(consumer: td.find_pacticipant("Foo1"), provider: td.find_pacticipant("Bar1")),
+            OpenStruct.new(consumer: td.find_pacticipant("Foo2"), provider: td.find_pacticipant("Bar2"))
+          ]
+        end
+
+        subject do
+          Timecop.freeze(date_2) do
+            Repository.new.set_contract_data_updated_at_for_multiple_integrations(objects_with_consumer_and_provider)
+          end
+        end
+
+        it "sets the contract_data_updated_at of the specified integrations" do
+          subject
+          integrations = Integration.order(:id).all
+          expect(integrations[0].contract_data_updated_at).to be_date_time(date_2)
+          expect(integrations[1].contract_data_updated_at).to be_date_time(date_2)
+          expect(integrations[2].contract_data_updated_at).to be_date_time(date_1)
         end
       end
     end

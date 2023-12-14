@@ -35,6 +35,7 @@ module PactBroker
         version, version_notices = create_version(parsed_contracts)
         tags = create_tags(parsed_contracts, version)
         pacts, pact_notices = create_pacts(parsed_contracts, base_url)
+        update_integrations(pacts)
         notices = version_notices + pact_notices
         ContractsPublicationResults.from_hash(
           pacticipant: version.pacticipant,
@@ -301,6 +302,10 @@ module PactBroker
 
       def url_for_triggered_webhook(triggered_webhook, base_url)
         PactBroker::Api::PactBrokerUrls.triggered_webhook_logs_url(triggered_webhook, base_url)
+      end
+
+      def update_integrations(pacts)
+        integration_service.handle_bulk_contract_data_published(pacts)
       end
 
       private :url_for_triggered_webhook
