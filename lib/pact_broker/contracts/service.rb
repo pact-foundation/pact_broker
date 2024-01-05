@@ -67,7 +67,7 @@ module PactBroker
 
       def add_pact_conflict_notice(notices, parsed_contracts, contract_to_publish, existing_json_content, new_json_content)
         message_params = {
-          consumer_name: contract_to_publish.provider_name,
+          consumer_name: contract_to_publish.consumer_name,
           consumer_version_number: parsed_contracts.pacticipant_version_number,
           provider_name: contract_to_publish.provider_name
         }
