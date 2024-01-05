@@ -1,3 +1,58 @@
+<a name="v2.108.0"></a>
+### v2.108.0 (2024-01-05)
+
+#### Features
+
+* bulk delete branches (#652)	 ([14ac33c8](/../../commit/14ac33c8))
+* add latest version for branch endpoint (#644)	 ([c216bec8](/../../commit/c216bec8))
+* add no-cache header	 ([9a637327](/../../commit/9a637327))
+* suppport `page` + `size` as pagination params (#642)	 ([c71089fe](/../../commit/c71089fe))
+* do not include pb:record-deployment or pb:record-release relations for versions embedded in resources	 ([2f43590c](/../../commit/2f43590c))
+* remove status from individual error in problem+error response	 ([a4b3ec58](/../../commit/a4b3ec58))
+* add version_id indexes to deployed_versions and released_versions	 ([00fc7d10](/../../commit/00fc7d10))
+* add endpoint to list branches for a pacticipant (#638)	 ([ff7e3a53](/../../commit/ff7e3a53))
+* stop running tests for ruby 2.7	 ([034aba3b](/../../commit/034aba3b))
+* update sinatra and rack-protection to ~> 3.0	 ([92ebbdd3](/../../commit/92ebbdd3))
+* add branch endpoint supporting GET and DELETE (#635)	 ([1bb6088d](/../../commit/1bb6088d))
+* optimise matrix by applying specified limit to pact publications before joining to verifications	 ([c61c324e](/../../commit/c61c324e))
+* optimise matrix query when selectors with pacticipant names only are used	 ([b98f5d1a](/../../commit/b98f5d1a))
+* include environment name in pact metadata	 ([e120c4e7](/../../commit/e120c4e7))
+* improve wording of 'no version exits' messaging in can-i-deploy response	 ([9529c679](/../../commit/9529c679))
+* improve performance of matrix when multiple selectors are specified (#631)	 ([58a28604](/../../commit/58a28604))
+* add pagination parameter validation for paginated endpoints. (#626)	 ([abb0a1c6](/../../commit/abb0a1c6))
+* add endpoint to list pacticipant versions by branch	 ([9b4e3f61](/../../commit/9b4e3f61))
+* add endpoint to return latest pact for consumer, provider and consumer branch	 ([f77086ef](/../../commit/f77086ef))
+* update required ruby version from 2.2 to 2.7	 ([f1b1e906](/../../commit/f1b1e906))
+* add pagination and filtering for integrations endpoint	 ([68d7cf30](/../../commit/68d7cf30))
+* add contract_data_updated_at to integrations table to speed up dashboard query (#617)	 ([e43c10f2](/../../commit/e43c10f2))
+* support setting feature toggles via individual environment variables (#609)	 ([be7d9d52](/../../commit/be7d9d52))
+
+* **metrics**
+  * hardcode matrix count to -1 as calculating it causes performance issues and it has no meaning	 ([62e121b8](/../../commit/62e121b8))
+
+* **matrix**
+  * optimise identification of the 'latest tag'	 ([824c516a](/../../commit/824c516a))
+
+#### Bug Fixes
+
+* **metrics**
+  * correct the query for pactRevisionsPerConsumerVersion	 ([f76b9935](/../../commit/f76b9935))
+
+* fix performance issues due to contention in the integrations table when publishing a large number of contracts (> 20) per request, in parallel (#654)	 ([321a2291](/../../commit/321a2291))
+* raise 404 on paths with missing path segments (#648)	 ([930b45cd](/../../commit/930b45cd))
+* do not error when no environment is found by name	 ([d1501618](/../../commit/d1501618))
+* ensure pact associations are eager loaded when finding a single pact	 ([c98abda6](/../../commit/c98abda6))
+* gracefully handle validating an array when a hash is expected	 ([b26ddb46](/../../commit/b26ddb46))
+* fix error occuring when can-i-deploy badge is requested and no version is found	 ([db7dee3a](/../../commit/db7dee3a))
+* fix bug in error handling for 'can-i-deploy branch to environment' badge	 ([c23beb6b](/../../commit/c23beb6b))
+* improve performance of network diagram (#614)	 ([ffd3ec4b](/../../commit/ffd3ec4b))
+* fix error raised when attempting to log warning when webhook_redact_sensitive_data is set to false	 ([9b66270e](/../../commit/9b66270e))
+* gracefully handle execution of webhooks that are deleted between execution attempts (#613)	 ([1127b41f](/../../commit/1127b41f))
+* add extra validation to ensure parsed content is a hash when publishing pacts	 ([913e0a52](/../../commit/913e0a52))
+
+* **matrix**
+  * return only most recent row missing verification when latestby=cp	 ([b7550e53](/../../commit/b7550e53))
+
 <a name="v2.107.1"></a>
 ### v2.107.1 (2023-05-02)
 
