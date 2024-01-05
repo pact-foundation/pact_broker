@@ -101,8 +101,8 @@ module PactBroker
       end
 
       def pact_revision_counts
-        query = "select revision_count as number_of_revisions, count(consumer_version_id) as consumer_version_count
-          from (select consumer_version_id, count(*) as revision_count from pact_publications group by consumer_version_id) foo
+        query = "select revision_count as number_of_revisions, count(*) as consumer_version_count
+          from (select count(*) as revision_count from pact_publications group by consumer_version_id, provider_id) foo
           group by revision_count
           order by 1"
         PactBroker::Pacts::PactPublication.db[query].all.each_with_object({}) { |row, hash| hash[row[:number_of_revisions]] = row[:consumer_version_count] }
