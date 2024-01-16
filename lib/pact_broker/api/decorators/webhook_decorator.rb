@@ -16,7 +16,7 @@ module PactBroker
           property :name
         end
 
-        property :uuid
+        property :uuid, writeable: false
 
         property :description, getter: lambda { |represented:, **| represented.display_description }
 
