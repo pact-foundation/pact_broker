@@ -22,6 +22,10 @@ module PactBroker
       extend PactBroker::Messages
       extend SquashPactsForVerification
 
+      def generate_sha(json_content)
+        PactBroker.configuration.sha_generator.call(json_content)
+      end
+
       def find_latest_pact params
         pact_repository.find_latest_pact(params[:consumer_name], params[:provider_name], params[:tag], params[:branch_name])
       end
@@ -154,10 +158,12 @@ module PactBroker
       end
 
       # Overwriting an existing pact with the same consumer/provider/consumer version number
+      # by creating a new revision (that is, a new PactPublication with an incremented revision number)
+      # Modifing pacts is strongly discouraged now, and support for it will be dropped in the next major version of the Pact Broker
       def create_pact_revision params, existing_pact
         logger.info("Updating existing pact publication", params.without(:json_content))
         logger.debug("Content #{params[:json_content]}")
-        pact_version_sha = generate_sha(params[:json_content])
+        pact_version_sha = params.fetch(:pact_version_sha)
         json_content = add_interaction_ids(params[:json_content])
         update_params = { pact_version_sha: pact_version_sha, json_content: json_content }
         updated_pact = pact_repository.update(existing_pact.id, update_params)
@@ -178,21 +184,20 @@ module PactBroker
 
       private :create_pact_revision
 
-      def disallowed_modification?(existing_pact, new_json_content)
-        !PactBroker.configuration.allow_dangerous_contract_modification && existing_pact && existing_pact.pact_version_sha != generate_sha(new_json_content)
+      def disallowed_modification?(existing_pact, new_pact_version_sha)
+        !PactBroker.configuration.allow_dangerous_contract_modification && existing_pact && existing_pact.pact_version_sha != new_pact_version_sha
       end
 
       # When no publication for the given consumer/provider/consumer version number exists
-      def create_pact params, version, provider
+      def create_pact(params, version, provider)
         logger.info("Creating new pact publication", params.without(:json_content))
         logger.debug("Content #{params[:json_content]}")
-        pact_version_sha = generate_sha(params[:json_content])
         json_content = add_interaction_ids(params[:json_content])
         pact = pact_repository.create(
           version_id: version.id,
           provider_id: provider.id,
           consumer_id: version.pacticipant_id,
-          pact_version_sha: pact_version_sha,
+          pact_version_sha: params.fetch(:pact_version_sha),
           json_content: json_content,
           version: version
         )
@@ -211,12 +216,6 @@ module PactBroker
       end
 
       private :create_pact
-
-      def generate_sha(json_content)
-        PactBroker.configuration.sha_generator.call(json_content)
-      end
-
-      private :generate_sha
 
       def add_interaction_ids(json_content)
         Content.from_json(json_content).with_ids.to_json
