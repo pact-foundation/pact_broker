@@ -2,7 +2,7 @@ require "pact_broker/ui/view_models/index_item"
 
 module PactBroker
   module UI
-    module ViewDomain
+    module ViewModels
       class IndexItems
 
         attr_reader :pagination_record_count

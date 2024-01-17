@@ -5,7 +5,7 @@ require "pact_broker/logging"
 module PactBroker
   module Api
     module Contracts
-      class PactsForVerificationJSONQuerySchema < BaseContract
+      class PactsForVerificationJsonQuerySchema < BaseContract
         json do
           optional(:providerVersionBranch).maybe(:string)
           optional(:providerVersionTags).maybe(:array?)

@@ -2,7 +2,7 @@ require "pact_broker/ui/view_models/matrix_deployed_version"
 
 module PactBroker
   module UI
-    module ViewDomain
+    module ViewModels
       describe MatrixDeployedVersion do
         before do
           allow(subject).to receive(:deployed_version_url).and_return("http://deployed_version")
