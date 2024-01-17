@@ -2,6 +2,7 @@
 # to stop performance issues from slowing down responses when there is
 # too much data.
 # See https://docs.pact.io/pact_broker/administration/maintenance
+require "rake/tasklib"
 
 module PactBroker
   module DB
