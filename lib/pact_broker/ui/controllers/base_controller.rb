@@ -3,20 +3,6 @@ require "haml"
 require "pact_broker/services"
 require "pact_broker/string_refinements"
 
-class PactBrokerPadrinoLogger < SemanticLogger::Logger
-  include Padrino::Logger::Extensions
-
-  # Padrino expects level to return an integer, not a symbol
-  def level
-    Padrino::Logger::Levels[SemanticLogger.default_level]
-  end
-end
-
-Padrino.logger = PactBrokerPadrinoLogger.new("Padrino")
-# Log a test message to ensure that the logger works properly, as it only
-# seems to be used in production.
-Padrino.logger.info("Padrino has been configured with SemanticLogger")
-
 module PactBroker
   module UI
     module Controllers
