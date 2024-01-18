@@ -54,8 +54,3 @@ RSpec.configure do | config |
   config.filter_run_excluding skip: true
   config.include PactBroker::RackHelpers
 end
-
-if ENV["DEBUG"] == "true"
-  SemanticLogger.default_level = :info
-  SemanticLogger.add_appender(io: $stdout)
-end
