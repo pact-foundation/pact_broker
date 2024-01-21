@@ -19,7 +19,7 @@ module PactBroker
         def process_post
           if content_type_json?
             keep_selectors = (params[:keep] || []).collect do | hash |
-              PactBroker::Matrix::UnresolvedSelector.new(hash)
+              PactBroker::DB::Clean::Selector.new(hash)
             end
 
             result = PactBroker::DB::Clean.call(Sequel::Model.db, { keep: keep_selectors })

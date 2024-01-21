@@ -1,3 +1,5 @@
+require "rake/tasklib"
+
 module PactBroker
   module DB
     class CleanTask < ::Rake::TaskLib

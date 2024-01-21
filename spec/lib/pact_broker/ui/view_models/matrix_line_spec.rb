@@ -3,7 +3,7 @@ require "pact_broker/ui/view_models/matrix_line"
 
 module PactBroker
   module UI
-    module ViewDomain
+    module ViewModels
       describe MatrixLine do
         let(:line) { instance_spy(PactBroker::Matrix::MatrixRow) }
 

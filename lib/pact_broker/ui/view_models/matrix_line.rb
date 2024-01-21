@@ -11,7 +11,7 @@ require "forwardable"
 
 module PactBroker
   module UI
-    module ViewDomain
+    module ViewModels
       class MatrixLine
         include PactBroker::Api::PactBrokerUrls
         include PactBroker::Messages

@@ -1,4 +1,4 @@
-require "pact_broker/ui/controllers/base_controller"
+require "pact_broker/ui/controllers/base"
 require "pact_broker/ui/view_models/matrix_lines"
 require "pact_broker/matrix/unresolved_selector"
 require "pact_broker/matrix/parse_query"
@@ -20,7 +20,7 @@ module PactBroker
           selectors = [ PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: params[:pacticipant_name], latest: true, tag: params[:tag]) ]
           options = { latestby: "cvp", limit: 100, tag: params[:to] }
           result = matrix_service.find(selectors, options)
-          lines = PactBroker::UI::ViewDomain::MatrixLines.new(result, base_url: base_url)
+          lines = PactBroker::UI::ViewModels::MatrixLines.new(result, base_url: base_url)
           locals = {
             lines: lines,
             selectors: create_selector_objects(selectors),

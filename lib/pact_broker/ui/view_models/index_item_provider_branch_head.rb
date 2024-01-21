@@ -4,7 +4,7 @@ require "pact_broker/date_helper"
 
 module PactBroker
   module UI
-    module ViewDomain
+    module ViewModels
       class IndexItemProviderBranchHead
 
         include PactBroker::Api::PactBrokerUrls

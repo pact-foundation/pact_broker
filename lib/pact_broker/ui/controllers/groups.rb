@@ -1,4 +1,4 @@
-require "pact_broker/ui/controllers/base_controller"
+require "pact_broker/ui/controllers/base"
 require "pact_broker/ui/view_models/index_items"
 require "haml"
 

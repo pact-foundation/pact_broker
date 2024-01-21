@@ -3,7 +3,7 @@ require "pact_broker/index/page"
 
 module PactBroker
   module UI
-    module ViewDomain
+    module ViewModels
       describe IndexItems do
 
         let(:relationship_model_4) { double("PactBroker::Domain::IndexItem", consumer_name: "A", provider_name: "X", consumer_version_order: 1) }

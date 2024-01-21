@@ -68,9 +68,9 @@ module PactBroker
 
         def schema
           if request.get?
-            PactBroker::Api::Contracts::PactsForVerificationQueryStringSchema
+            api_contract_class(:pacts_for_verification_query_string_schema)
           elsif request.post?
-            PactBroker::Api::Contracts::PactsForVerificationJSONQuerySchema
+            api_contract_class(:pacts_for_verification_json_query_schema)
           end
         end
 

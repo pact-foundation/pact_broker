@@ -9,7 +9,7 @@ require "forwardable"
 
 module PactBroker
   module UI
-    module ViewDomain
+    module ViewModels
       class IndexItem
         extend Forwardable
 
