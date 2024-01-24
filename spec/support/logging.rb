@@ -11,7 +11,7 @@ end
 
 # Print out the request and response when DEBUG=true
 RSpec.configure do | config |
-  config.after(:each) do | example |
+  config.after(:each) do
     if ENV["DEBUG"] == "true" && defined?(last_response)
       last_request.env["rack.input"]&.rewind
       puts "------------------------------------------------------------"
