@@ -20,7 +20,7 @@ module PactBroker
         )
       end
 
-      def self.from_request request, path_info
+      def self.from_request(request, path_info)
         json_content = request.body.to_s
         parsed_content = begin
           parsed = JSON.parse(json_content, PACT_PARSING_OPTIONS)

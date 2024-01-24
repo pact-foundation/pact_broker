@@ -65,12 +65,14 @@ describe "migrate to pact versions (migrate 22-31)", migration: true do
   it "allows a new pact to be inserted with no duplicate ID error" do
     subject
 
+    json_content = load_fixture("a_consumer-a_provider.json")
     PactBroker::Pacts::Service.create_or_update_pact(
       {
         consumer_name: consumer[:name],
         provider_name: provider[:name],
         consumer_version_number: "1.2.3",
-        json_content: load_fixture("a_consumer-a_provider.json")
+        json_content: json_content,
+        pact_version_sha: PactBroker::Pacts::GenerateSha.call(json_content)
       }
     )
   end

@@ -31,7 +31,8 @@ module PactBroker
             consumer_name: "Foo",
             provider_name: "Bar",
             consumer_version_number: "1",
-            json_content: json_content
+            json_content: json_content,
+            pact_version_sha: PactBroker::Pacts::GenerateSha.call(json_content)
           }
         end
         let(:content) { double("content") }
@@ -48,12 +49,6 @@ module PactBroker
         subject { Service.create_or_update_pact(params) }
 
         context "when no pact exists with the same params" do
-          it "creates the sha before adding the interaction ids" do
-            expect(PactBroker::Pacts::GenerateSha).to receive(:call).ordered
-            expect(content).to receive(:with_ids).ordered
-            subject
-          end
-
           it "saves the pact interactions/messages with ids added to them" do
             expect(pact_repository).to receive(:create).with hash_including(json_content: json_content_with_ids)
             subject
@@ -134,12 +129,6 @@ module PactBroker
           let(:pact_version_sha) { "1" }
 
           let(:expected_event_context) { { consumer_version_tags: ["dev"] } }
-
-          it "creates the sha before adding the interaction ids" do
-            expect(PactBroker::Pacts::GenerateSha).to receive(:call).ordered
-            expect(content).to receive(:with_ids).ordered
-            subject
-          end
 
           it "saves the pact interactions/messages with ids added to them" do
             expect(pact_repository).to receive(:update).with(anything, hash_including(json_content: json_content_with_ids))
