@@ -1,3 +1,16 @@
+<a name="v2.109.0"></a>
+### v2.109.0 (2024-02-01)
+
+#### Features
+
+* use SemanticLogger for Padrino (#662)	 ([5d9d7002](/../../commit/5d9d7002))
+* improve performance of publication for very large pacts by calculating the content SHA only once per request	 ([a947e409](/../../commit/a947e409))
+
+#### Bug Fixes
+
+* pass in environment to environment policy when getting an individual environment	 ([5c386a43](/../../commit/5c386a43))
+* Dockerfile to reduce vulnerabilities (#650)	 ([9aaa3484](/../../commit/9aaa3484))
+
 <a name="v2.108.0"></a>
 ### v2.108.0 (2024-01-05)
 
