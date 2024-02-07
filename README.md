@@ -2,7 +2,6 @@
 [![Gem Version](https://badge.fury.io/rb/pact_broker.svg)](http://badge.fury.io/rb/pact_broker)
  ![Build status](https://github.com/pact-foundation/pact_broker/workflows/Test/badge.svg)
  [![Join the chat at https://pact-foundation.slack.com/](https://img.shields.io/badge/chat-on%20slack-blue.svg?logo=slack)](https://slack.pact.io)
- [![security](https://hakiri.io/github/pact-foundation/pact_broker/master.svg)](https://hakiri.io/github/pact-foundation/pact_broker/master)
 
 The Pact Broker is an application for sharing of consumer driven contracts and verification results. It is optimised for use with "pacts" (contracts created by the [Pact][pact-docs] framework), but can be used for any type of contract that can be serialized to JSON.
 
