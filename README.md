@@ -151,7 +151,7 @@ You can use the [Pact Broker Docker image][docker] or [Terraform on AWS][terrafo
 
 * Are you sure you don't just want to use the [Pact Broker Docker image][docker]? No Docker at your company yet? Ah well, keep reading.
 * Create a PostgreSQL database.
-  * To ensure you're on a supported version of the database that you choose, check the [travis.yml][travisyml] file to see which versions we're currently running our tests against.
+  * To ensure you're on a supported version of the database that you choose, check the [.github/workflows/test.yml](.github/workflows/test.yml) file to see which versions we're currently running our tests against.
   * MySQL was supported for the native Ruby application until around 2021, but the official `pactfoundation/pact-broker` Docker image does not support it. New features will not be optimised for MySQL, and some new features may not even be supported on it (eg. the database clean feature).
 * You'll find a sample database creation script in the [example/config.ru](https://github.com/pact-foundation/pact_broker/blob/master/example/config.ru).
 * Install ruby 2.7 and the latest version of bundler (if you've come this far, I'm assuming you know how to do both of these. Did I mention there was a [Docker][docker] image?)
