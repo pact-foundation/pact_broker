@@ -1,3 +1,5 @@
+require "pact_broker/db/clean/selector"
+
 module PactBroker
   module Pacts
     describe PactPublicationCleanSelectorDatasetModule do

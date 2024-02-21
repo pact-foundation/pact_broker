@@ -1,4 +1,5 @@
 require "pact_broker/pacts/pact_params"
+require "webmachine/request"
 
 module PactBroker
   module Pacts
@@ -45,7 +46,7 @@ module PactBroker
       describe "from_request" do
 
         context "from a PUT request" do
-          let(:request) { Webmachine::Request.new("PUT", "/", headers, body)}
+          let(:request) { ::Webmachine::Request.new("PUT", "/", headers, body)}
 
           subject { PactParams.from_request(request, path_info) }
 
