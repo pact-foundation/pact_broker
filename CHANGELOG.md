@@ -1,3 +1,11 @@
+<a name="v2.109.1"></a>
+### v2.109.1 (2024-02-21)
+
+#### Bug Fixes
+
+* improve performance for 'pacts for verification' queries	 ([299a6abe](/../../commit/299a6abe))
+* correct spelling in message when pact is modified	 ([ae62ae7a](/../../commit/ae62ae7a))
+
 <a name="v2.109.0"></a>
 ### v2.109.0 (2024-02-01)
 
