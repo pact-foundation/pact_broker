@@ -7,6 +7,7 @@ require "pact_broker/pacts/selector"
 require "pact_broker/pacts/selectors"
 require "pact_broker/feature_toggle"
 require "pact_broker/repositories/scopes"
+require "pact_broker/matrix/unresolved_selector"
 
 module PactBroker
   module Pacts
