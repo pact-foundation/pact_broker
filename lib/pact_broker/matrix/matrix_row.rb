@@ -55,7 +55,6 @@ module PactBroker
         Sequel[:v][:verification_id],
         Sequel[:v][:provider_version_id],
         Sequel[:v][:provider_version_created_at]
-
       ]
 
       # Must be kept in sync with PactBroker::Matrix::EveryRow
