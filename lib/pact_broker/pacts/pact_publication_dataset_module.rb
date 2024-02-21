@@ -57,6 +57,7 @@ module PactBroker
         end
       end
 
+      # TODO use the branch heads here
       def latest_by_consumer_branch
         branch_versions_join = {
           Sequel[:pact_publications][:consumer_version_id] => Sequel[:branch_versions][:version_id]
