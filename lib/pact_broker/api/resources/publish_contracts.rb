@@ -53,7 +53,7 @@ module PactBroker
         private
 
         def parsed_contracts
-          @parsed_contracts ||= decorator_class(:publish_contracts_decorator).new(PactBroker::Contracts::ContractsToPublish.new).from_hash(params)
+          @parsed_contracts ||= decorator_class(:publish_contracts_decorator).new(PactBroker::Contracts::ContractsToPublish.new).from_hash(params, { user_options: { sha_generator: PactBroker.configuration.sha_generator } } )
         end
 
         def params

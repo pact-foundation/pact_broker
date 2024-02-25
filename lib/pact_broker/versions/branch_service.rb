@@ -2,6 +2,7 @@ require "forwardable"
 require "pact_broker/logging"
 require "pact_broker/repositories"
 require "pact_broker/messages"
+require "pact_broker/contracts/notice"
 
 module PactBroker
   module Versions

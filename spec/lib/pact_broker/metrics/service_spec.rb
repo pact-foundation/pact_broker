@@ -121,7 +121,7 @@ module PactBroker
 
         describe "pactRevisionsPerPactPublication" do
           before do
-            td.create_pact_with_hierarchy
+            td.create_pact_with_hierarchy("Foo", "1", "Bar")
               .comment("this consumer version will have 3 revisions")
               .revise_pact
               .revise_pact
@@ -129,12 +129,15 @@ module PactBroker
               .create_pact
               .comment("this consumer version will have 1 revision")
               .revise_pact
+              .create_pact_with_hierarchy("Foo", "1", "Bar2", td.random_json_content("Foo", "Bar2"))
+              .create_pact_with_hierarchy("Foo", "2", "Bar",  td.random_json_content("Foo", "Bar"))
           end
 
           let(:distribution) { subject[:pactRevisionsPerConsumerVersion][:distribution] }
 
           it "returns a distribution of pact revisions per consumer version" do
-            expect(distribution).to eq(2 => 1, 3 => 1)
+            # numberOfRevisions => countOfPactsWithThisNumberOfRevisions
+            expect(distribution).to eq({ 1 => 2, 2 => 1, 3 => 1 })
           end
         end
       end

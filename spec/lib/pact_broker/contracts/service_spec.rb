@@ -18,10 +18,11 @@ module PactBroker
         let(:branch) { "main" }
         let(:contracts) { [contract_1] }
         let(:contract_1) do
-          ContractToPublish.from_hash(
+          ContractToPublish.new(
             consumer_name: "Foo",
             provider_name: "Bar",
             decoded_content: decoded_contract,
+            pact_version_sha: PactBroker::Pacts::GenerateSha.call(decoded_contract),
             specification: "pact",
             on_conflict: on_conflict
           )
@@ -149,17 +150,19 @@ module PactBroker
         let(:branch) { "main" }
         let(:contracts) { [contract_1] }
         let(:contract_1) do
-          ContractToPublish.from_hash(
+          ContractToPublish.new(
             consumer_name: "Foo",
             provider_name: "Bar",
             decoded_content: decoded_contract,
             specification: "pact",
-            on_conflict: on_conflict
+            on_conflict: on_conflict,
+            pact_version_sha: new_pact_version_sha
           )
         end
 
         let(:contract_hash) { { consumer: { name: "Foo" }, provider: { name: "Bar" }, interactions: [{a: "b"}] } }
         let(:decoded_contract) { contract_hash.to_json }
+        let(:new_pact_version_sha) { PactBroker::Pacts::GenerateSha.call(decoded_contract) }
 
         subject { Service.conflict_notices(contracts_to_publish, base_url: "base_url") }
 

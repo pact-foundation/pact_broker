@@ -40,7 +40,7 @@ module PactBroker
 
             context "when pagination parameters are present" do
               it "passes through pagination parameters to the search" do
-                expect(PactBroker::Index::Service).to receive(:find_index_items).with(hash_including(page_number: 2, page_size: 40))
+                expect(PactBroker::Index::Service).to receive(:find_index_items).with(hash_including(page_number: 2, page_size: 40)).and_call_original
                 get "/", { page: "2", pageSize: "40" }
               end
             end
@@ -48,14 +48,14 @@ module PactBroker
             context "when pagination parameters are not present" do
               context "when tags=true" do
                 it "passes through default pagination parameters to the search with page_size=30" do
-                  expect(PactBroker::Index::Service).to receive(:find_index_items).with(hash_including(page_number: 1, page_size: 30))
+                  expect(PactBroker::Index::Service).to receive(:find_index_items).with(hash_including(page_number: 1, page_size: 30)).and_call_original
                   get "/", { tags: "true" }
                 end
               end
 
               context "when not tags=true" do
                 it "passes through default pagination parameters to the search with page_size=100" do
-                  expect(PactBroker::Index::Service).to receive(:find_index_items).with(hash_including(page_number: 1, page_size: 100))
+                  expect(PactBroker::Index::Service).to receive(:find_index_items).with(hash_including(page_number: 1, page_size: 100)).and_call_original
                   get "/"
                 end
               end

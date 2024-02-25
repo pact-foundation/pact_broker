@@ -256,7 +256,13 @@ module PactBroker
       def publish_pact(consumer_name:, provider_name:, consumer_version_number: , tags: nil, branch: nil, build_url: nil, json_content: nil)
         json_content = json_content || random_json_content(consumer_name, provider_name)
         contracts = [
-          PactBroker::Contracts::ContractToPublish.from_hash(consumer_name: consumer_name, provider_name: provider_name, decoded_content: json_content, content_type: "application/json", specification: "pact")
+          PactBroker::Contracts::ContractToPublish.from_hash(
+            consumer_name: consumer_name,
+            provider_name: provider_name,
+            decoded_content: json_content,
+            content_type: "application/json",
+            specification: "pact",
+            pact_version_sha: PactBroker::Pacts::GenerateSha.call(json_content))
         ]
         contracts_to_publish = PactBroker::Contracts::ContractsToPublish.from_hash(
           pacticipant_name: consumer_name,

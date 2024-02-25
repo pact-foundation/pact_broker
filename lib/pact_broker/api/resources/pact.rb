@@ -71,9 +71,9 @@ module PactBroker
           subscribe(PactBroker::Integrations::EventListener.new) do
             handle_webhook_events do
               if request.patch? && resource_exists?
-                @pact = pact_service.merge_pact(pact_params)
+                @pact = pact_service.merge_pact(pact_params.merge(pact_version_sha: pact_version_sha))
               else
-                @pact = pact_service.create_or_update_pact(pact_params)
+                @pact = pact_service.create_or_update_pact(pact_params.merge(pact_version_sha: pact_version_sha))
               end
             end
           end
@@ -114,7 +114,7 @@ module PactBroker
         end
 
         def disallowed_modification?
-          if request.really_put? && pact_service.disallowed_modification?(pact, pact_params.json_content)
+          if request.really_put? && pact_service.disallowed_modification?(pact, pact_version_sha)
             message_params = { consumer_name: pact_params.consumer_name, consumer_version_number: pact_params.consumer_version_number, provider_name: pact_params.provider_name }
             set_json_error_message(message("errors.validation.pact_content_modification_not_allowed", message_params))
             true
@@ -125,6 +125,10 @@ module PactBroker
 
         def schema
           api_contract_class(:put_pact_params_contract)
+        end
+
+        def pact_version_sha
+          @pact_version_sha ||= pact_service.generate_sha(pact_params.json_content)
         end
       end
     end
