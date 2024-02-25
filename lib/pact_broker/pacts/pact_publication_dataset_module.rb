@@ -57,6 +57,13 @@ module PactBroker
         end
       end
 
+      # Returns the latest pact for each branch, returning a pact for every branch, even if
+      # the most recent version of that branch does not have a pact.
+      # This is different from for_all_branch_heads, which will find the branch head versions,
+      # and return the pacts associated with those versions.
+      # This method should not be used for 'pacts for verification', because it will return
+      # a pact for branches where that integration should no longer exist.
+      # @return [Dataset<PactBroker::Pacts::PactPublication>]
       def latest_by_consumer_branch
         branch_versions_join = {
           Sequel[:pact_publications][:consumer_version_id] => Sequel[:branch_versions][:version_id]

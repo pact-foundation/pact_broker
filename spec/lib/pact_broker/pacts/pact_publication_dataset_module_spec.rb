@@ -131,6 +131,71 @@ module PactBroker
         end
       end
 
+      describe "latest_for_all_consumer_branches" do
+        before do
+          td.create_consumer("Foo")
+            .create_provider("Bar")
+            .create_consumer_version("1", branch: "main")
+            .create_pact
+            .create_consumer_version("2", branch: "main")
+            .create_pact
+            .revise_pact
+            .create_consumer_version("3", branch: "feat-x")
+            .create_pact
+            .create_consumer("Foo2")
+            .create_provider("Bar2")
+            .create_consumer_version("10", branch: "main")
+            .create_pact
+            .create_consumer_version("11", branch: "main")
+            .create_pact
+        end
+
+        subject { PactPublication.latest_for_all_consumer_branches }
+
+        it "returns the pacts for all the branch heads" do
+          all = subject.all_allowing_lazy_load.sort_by{ |pact_publication| pact_publication.consumer_version.order }
+          expect(all.size).to eq 3
+          expect(all.first.consumer.name).to eq "Foo"
+          expect(all.first.provider.name).to eq "Bar"
+          expect(all.first.consumer_version.number).to eq "2"
+          expect(all.first.revision_number).to eq 2
+
+          expect(all.last.consumer.name).to eq "Foo2"
+          expect(all.last.provider.name).to eq "Bar2"
+          expect(all.last.consumer_version.number).to eq "11"
+        end
+
+        it "does not return extra columns" do
+          expect(subject.first.values.keys.sort).to eq (PactPublication.columns + [:branch_name]).sort
+        end
+
+        context "when there is no pact for the branch head" do
+          before do
+            td.create_consumer_version("12", branch: "main")
+          end
+
+          it "does not return a pact" do
+            all = subject.all_allowing_lazy_load
+            expect(all.size).to eq 2
+          end
+        end
+
+        context "when columns are already selected" do
+          subject { PactPublication.select(Sequel[:pact_publications][:id]).latest_for_consumer_branch("main") }
+
+          it "does not override them" do
+            expect(subject.all.first.values.keys).to eq [:id]
+          end
+        end
+
+        context "when chained" do
+          it "works" do
+            all = PactPublication.for_provider(td.find_pacticipant("Bar")).latest_for_consumer_branch("main").all_allowing_lazy_load
+            expect(all.collect(&:provider_name).uniq).to eq ["Bar"]
+          end
+        end
+      end
+
       describe "latest_by_consumer_tag" do
         before do
           td.create_consumer("Foo")
