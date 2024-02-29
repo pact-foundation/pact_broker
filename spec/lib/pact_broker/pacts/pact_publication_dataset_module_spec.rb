@@ -131,7 +131,7 @@ module PactBroker
         end
       end
 
-      describe "latest_for_all_consumer_branches" do
+      describe "for_all_branch_heads" do
         before do
           td.create_consumer("Foo")
             .create_provider("Bar")
@@ -150,7 +150,7 @@ module PactBroker
             .create_pact
         end
 
-        subject { PactPublication.latest_for_all_consumer_branches }
+        subject { PactPublication.for_all_branch_heads }
 
         it "returns the pacts for all the branch heads" do
           all = subject.all_allowing_lazy_load.sort_by{ |pact_publication| pact_publication.consumer_version.order }
