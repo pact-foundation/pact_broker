@@ -57,7 +57,13 @@ module PactBroker
         end
       end
 
-      # TODO use the branch heads here
+      # Returns the latest pact for each branch, returning a pact for every branch, even if
+      # the most recent version of that branch does not have a pact.
+      # This is different from for_all_branch_heads, which will find the branch head versions,
+      # and return the pacts associated with those versions.
+      # This method should not be used for 'pacts for verification', because it will return
+      # a pact for branches where that integration should no longer exist.
+      # @return [Dataset<PactBroker::Pacts::PactPublication>]
       def latest_by_consumer_branch
         branch_versions_join = {
           Sequel[:pact_publications][:consumer_version_id] => Sequel[:branch_versions][:version_id]
@@ -112,10 +118,12 @@ module PactBroker
           .limit(1)
       end
 
-      # Return the pacts (if they exist) for the branch heads.
+      # Return the pacts (if they exist) for the branch heads of the given branch names
       # This uses the new logic of finding the branch head and returning any associated pacts,
       # rather than the old logic of returning the pact for the latest version
       # on the branch that had a pact.
+      # @param [String] branch_name
+      # @return [Sequel::Dataset<PactBroker::Pacts::PactPublication>]
       def for_branch_heads(branch_name)
         branch_head_join = {
           Sequel[:pact_publications][:consumer_version_id] => Sequel[:branch_heads][:version_id],
@@ -130,6 +138,23 @@ module PactBroker
           .join(:branch_heads, branch_head_join) do
             name_like(Sequel[:branch_heads][:branch_name], branch_name)
           end
+          .remove_overridden_revisions_from_complete_query
+      end
+
+      # Return the pacts (if they exist) for all the branch heads.
+      # @return [Sequel::Dataset<PactBroker::Pacts::PactPublication>]
+      def latest_for_all_consumer_branches
+        branch_head_join = {
+          Sequel[:pact_publications][:consumer_version_id] => Sequel[:branch_heads][:version_id],
+        }
+
+        base_query = self
+        if no_columns_selected?
+          base_query = base_query.select_all_qualified.select_append(Sequel[:branch_heads][:branch_name].as(:branch_name))
+        end
+
+        base_query
+          .join(:branch_heads, branch_head_join)
           .remove_overridden_revisions_from_complete_query
       end
 

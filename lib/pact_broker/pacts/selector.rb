@@ -31,6 +31,8 @@ module PactBroker
       def type
         if latest_for_main_branch?
           :latest_for_main_branch
+        elsif latest_for_each_branch?
+          :latest_for_each_branch
         elsif latest_for_branch?
           :latest_for_branch
         elsif matching_branch?
@@ -265,10 +267,14 @@ module PactBroker
       # Not sure if the fallback_tag logic is needed
       def latest_for_branch? potential_branch = nil
         if potential_branch
-          !!(latest && branch == potential_branch)
+          latest == true && branch == potential_branch
         else
-          !!(latest && !!branch)
+          latest == true && branch.is_a?(String)
         end
+      end
+
+      def latest_for_each_branch?
+        latest == true && branch == true
       end
 
       def all_for_tag_and_consumer?
