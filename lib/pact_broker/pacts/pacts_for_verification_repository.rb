@@ -230,7 +230,7 @@ module PactBroker
         wip_start_date = options.fetch(:include_wip_pacts_since)
 
         potential_wip_by_consumer_branch = PactPublication.for_provider(provider).created_after(wip_start_date).for_all_branch_heads
-        potential_wip_by_consumer_tag = PactPublication.for_provider(provider).created_after(wip_start_date).latest_by_consumer_tag
+        potential_wip_by_consumer_tag = PactPublication.for_provider(provider).created_after(wip_start_date).for_all_tag_heads
 
         log_debug_for_wip do
           log_pact_publications_from_query("Potential WIP pacts for provider branch #{provider_version_branch} created after #{wip_start_date} by consumer branch", potential_wip_by_consumer_branch)
