@@ -118,6 +118,23 @@ module PactBroker
           .limit(1)
       end
 
+      # Returns the pacts (if they exist) for all the branch heads.
+      # If the version for the branch head does not have a pact, then no pact is returned,
+      # (unlike latest_by_consumer_branch)
+      # This is much more performant than latest_by_consumer_branch and should be used
+      # for the 'pacts for verification' response
+      # @return [Dataset<PactBroker::Pacts::PactPublication>]
+      def for_all_branch_heads
+        base_query = self
+        base_query = base_query.join(:branch_heads, { Sequel[:bh][:version_id] => Sequel[:pact_publications][:consumer_version_id] }, { table_alias: :bh })
+
+        if no_columns_selected?
+          base_query = base_query.select_all_qualified.select_append(Sequel[:bh][:branch_name].as(:branch_name))
+        end
+
+        base_query.remove_overridden_revisions
+      end
+
       # Return the pacts (if they exist) for the branch heads of the given branch names
       # This uses the new logic of finding the branch head and returning any associated pacts,
       # rather than the old logic of returning the pact for the latest version
@@ -138,23 +155,6 @@ module PactBroker
           .join(:branch_heads, branch_head_join) do
             name_like(Sequel[:branch_heads][:branch_name], branch_name)
           end
-          .remove_overridden_revisions_from_complete_query
-      end
-
-      # Return the pacts (if they exist) for all the branch heads.
-      # @return [Sequel::Dataset<PactBroker::Pacts::PactPublication>]
-      def latest_for_all_consumer_branches
-        branch_head_join = {
-          Sequel[:pact_publications][:consumer_version_id] => Sequel[:branch_heads][:version_id],
-        }
-
-        base_query = self
-        if no_columns_selected?
-          base_query = base_query.select_all_qualified.select_append(Sequel[:branch_heads][:branch_name].as(:branch_name))
-        end
-
-        base_query
-          .join(:branch_heads, branch_head_join)
           .remove_overridden_revisions_from_complete_query
       end
 

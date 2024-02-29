@@ -15,7 +15,7 @@ module PactBroker
 
         # Do the "latest" logic last so that the provider/consumer criteria get included in the "latest" query before the join, rather than after
         query = query.latest_for_main_branches if selector.latest_for_main_branch?
-        query = query.latest_for_all_consumer_branches if selector.latest_for_each_branch?
+        query = query.for_all_branch_heads if selector.latest_for_each_branch?
         query = query.latest_for_consumer_branch(selector.branch) if selector.latest_for_branch?
         query = query.for_latest_consumer_versions_with_tag(selector.tag) if selector.latest_for_tag?
         query = query.overall_latest if selector.overall_latest?
