@@ -244,6 +244,53 @@ module PactBroker
         end
       end
 
+      describe "for_all_tag_heads" do
+        before do
+          td.create_consumer("Foo")
+            .create_provider("Bar")
+            .create_consumer_version("1", tag_names: ["main"])
+            .create_pact
+            .create_consumer_version("2", tag_names: ["feat/x"])
+            .create_pact
+            .create_consumer_version("3", tag_names: ["main"], comment: "latest")
+            .create_pact
+            .create_consumer_version("4", tag_names: ["feat/x"], comment: "latest")
+            .create_pact
+            .create_consumer("FooZ")
+            .create_consumer_version("6", tag_names: ["main"], comment: "Different consumer")
+            .create_pact
+            .create_consumer_version("7", comment: "No branch")
+            .create_pact
+            .create_consumer_version("8", tag_names: ["main"], comment: "No pact")
+        end
+
+        subject { PactPublication.for_all_tag_heads.all_allowing_lazy_load }
+
+        let(:foo) { PactBroker::Domain::Pacticipant.where(name: "Foo").single_record }
+        let(:bar) { PactBroker::Domain::Pacticipant.where(name: "Bar").single_record }
+        let(:foo_z) { PactBroker::Domain::Pacticipant.where(name: "FooZ").single_record }
+
+        it "returns the pacts belonging to the latest tagged version for each tag" do
+          expect(subject.size).to eq 2
+          subject.collect(&:values)
+
+          expect(subject.find { |pp| pp.consumer_id == foo.id && pp[:tag_name] == "main" }.consumer_version.number).to eq "3"
+          expect(subject.find { |pp| pp.consumer_id == foo.id && pp[:tag_name] == "feat/x" }.consumer_version.number).to eq "4"
+        end
+
+        it "does not return extra columns" do
+          expect(subject.first.values.keys.sort).to eq (PactPublication.columns + [:tag_name]).sort
+        end
+
+        context "when columns are already selected" do
+          subject { PactPublication.select(Sequel[:pact_publications][:id]).latest_by_consumer_tag }
+
+          it "does not override them" do
+            expect(subject.all.first.values.keys).to eq [:id]
+          end
+        end
+      end
+
       describe "overall_latest" do
         before do
           td.create_consumer("Foo")

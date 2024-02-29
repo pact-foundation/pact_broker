@@ -64,7 +64,7 @@ module PactBroker
           provider_tags_names,
           wip_start_date,
           explicitly_specified_verifiable_pacts,
-          :latest_by_consumer_tag
+          :for_all_tag_heads
         )
 
         wip_by_consumer_branches = find_wip_pact_versions_for_provider_by_provider_tags(
@@ -72,7 +72,7 @@ module PactBroker
           provider_tags_names,
           wip_start_date,
           explicitly_specified_verifiable_pacts,
-          :latest_by_consumer_branch
+          :for_all_branch_heads
         )
 
         deduplicate_verifiable_pacts(wip_by_consumer_tags + wip_by_consumer_branches).sort
