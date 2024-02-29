@@ -199,7 +199,10 @@ module PactBroker
       # The latest pact publication for each tag
       # This uses the old logic of "the latest pact for a version that has a tag" (which always returns a pact)
       # rather than "the pact for the latest version with a tag"
-      # Need to see about updating this.
+      #
+      # For 'pacts for verification' this has been replaced by for_all_tag_heads
+      # This should only be used for the UI
+      # @return [Sequel::Dataset<PactBroker::Pacts::PactPublication>]
       def latest_by_consumer_tag
         tags_join = {
           Sequel[:pact_publications][:consumer_version_id] => Sequel[:tags][:version_id],
@@ -228,6 +231,7 @@ module PactBroker
       # This uses the old logic of "the latest pact for a version that has a tag" (which always returns a pact)
       # rather than "the pact for the latest version with a tag"
       # Need to see about updating this.
+      # @return [Sequel::Dataset<PactBroker::Pacts::PactPublication>]
       def latest_for_consumer_tag(tag_name)
         tags_join = {
           Sequel[:pact_publications][:consumer_version_id] => Sequel[:tags][:version_id],
@@ -262,6 +266,30 @@ module PactBroker
                       .select_group(:pacticipant_id, :name)
                       .select_append{ max(version_order).as(:latest_version_order) }
                       .where(name: tag_name)
+
+        head_tags_join = {
+          Sequel[:pact_publications][:consumer_id] => Sequel[:head_tags][:pacticipant_id],
+          Sequel[:pact_publications][:consumer_version_order] => Sequel[:head_tags][:latest_version_order]
+        }
+
+        base_query = self
+        if no_columns_selected?
+          base_query = base_query.select_all_qualified.select_append(Sequel[:head_tags][:name].as(:tag_name))
+        end
+
+        base_query
+          .join(head_tags, head_tags_join, { table_alias: :head_tags })
+         .remove_overridden_revisions_from_complete_query
+      end
+
+      # The pacts for the latest versions for each tag.
+      # Will not return a pact if the pact is no longer published for a particular tag
+      # NEW LOGIC
+      # @return [Sequel::Dataset<PactBroker::Pacts::PactPublication>]
+      def for_all_tag_heads
+        head_tags = PactBroker::Domain::Tag
+                      .select_group(:pacticipant_id, :name)
+                      .select_append{ max(version_order).as(:latest_version_order) }
 
         head_tags_join = {
           Sequel[:pact_publications][:consumer_id] => Sequel[:head_tags][:pacticipant_id],
