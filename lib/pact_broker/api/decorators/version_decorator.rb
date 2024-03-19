@@ -17,6 +17,20 @@ module PactBroker
 
         include Timestamps
 
+        # Returns the list of associations that must be eager loaded to efficiently render a version
+        # when this decorator is used in a collection (eg. VersionsDecorator)
+        # The associations that need to be eager loaded for the VersionDecorator
+        # are hand coded
+        # @return <Array>
+        def self.eager_load_associations
+          [
+            :pacticipant,
+            :pact_publications,
+            { branch_versions: [:version, :branch_head, { branch: :pacticipant }] },
+            { tags: :head_tag }
+          ]
+        end
+
         link :self do | options |
           {
             title: "Version",

@@ -26,12 +26,8 @@ module PactBroker
         version_repository.find_latest_by_pacticipant_name_and_branch_name(pacticipant_name, branch_name)
       end
 
-      def self.find_all_pacticipant_versions_in_reverse_order(name, pagination_options = {})
-        version_repository.find_all_pacticipant_versions_in_reverse_order(name, pagination_options)
-      end
-
-      def self.find_pacticipant_versions_in_reverse_order(pacticipant_name, options, pagination_options = {})
-        version_repository.find_pacticipant_versions_in_reverse_order(pacticipant_name, options, pagination_options)
+      def self.find_pacticipant_versions_in_reverse_order(pacticipant_name, options, pagination_options = {}, eager_load_associations = [])
+        version_repository.find_pacticipant_versions_in_reverse_order(pacticipant_name, options, pagination_options, eager_load_associations)
       end
 
       def self.create_or_overwrite(pacticipant_name, version_number, version)

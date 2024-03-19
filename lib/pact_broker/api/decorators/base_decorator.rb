@@ -34,7 +34,16 @@ module PactBroker
           end
         end
 
-        # Returns the names of the model associations to eager load for use with this decorator
+        # Returns the names of the model associations to eager load for use with this decorator.
+        # The default implementation attempts to do an "auto detect" of the associations.
+        # For single item decorators, it attempts to identify the attributes that are themselves models.
+        # For collection decorators, it delegates to the eager_load_associations
+        # method of the single item decorator used to decorate the collection.
+        #
+        # The "auto detect" logic can only go so far. It cannot identify when a child object needs its own
+        # child object(s) to render the attribute.
+        # This method should be overridden when the "auto detect" logic cannot identify the correct associations
+        # to load. eg VersionDecorator
         # @return [Array<Symbol>]
         def self.eager_load_associations
           if is_collection_resource?
