@@ -27,7 +27,7 @@ module PactBroker
       end
 
       def self.find_pacticipant_versions_in_reverse_order(pacticipant_name, options, pagination_options = {}, eager_load_associations = [])
-        version_repository.find_pacticipant_versions_in_reverse_order(pacticipant_name, options, pagination_options, eager_load_associations = [])
+        version_repository.find_pacticipant_versions_in_reverse_order(pacticipant_name, options, pagination_options, eager_load_associations)
       end
 
       def self.create_or_overwrite(pacticipant_name, version_number, version)
