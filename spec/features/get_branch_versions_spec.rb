@@ -1,4 +1,4 @@
-describe "Get a branch version" do
+describe "Get versions for branch" do
   before do
     td.create_consumer("Foo")
       .create_consumer_version("1", branch: "main")

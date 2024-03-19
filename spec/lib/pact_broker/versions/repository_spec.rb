@@ -24,31 +24,6 @@ module PactBroker
         end
       end
 
-      describe "#find_all_pacticipant_versions_in_reverse_order" do
-        before do
-          td
-            .create_consumer("Foo")
-            .create_consumer_version("1.2.3")
-            .create_consumer_version("4.5.6")
-            .create_consumer("Bar")
-            .create_consumer_version("8.9.0")
-        end
-
-        subject { Repository.new.find_all_pacticipant_versions_in_reverse_order "Foo" }
-
-        it "returns all the application versions for the given consumer" do
-          expect(subject.collect(&:number)).to eq ["4.5.6", "1.2.3"]
-        end
-
-        context "with pagination options" do
-          subject { Repository.new.find_all_pacticipant_versions_in_reverse_order "Foo", page_number: 1, page_size: 1 }
-
-          it "paginates the query" do
-            expect(subject.collect(&:number)).to eq ["4.5.6"]
-          end
-        end
-      end
-
       describe "#find_pacticipant_versions_in_reverse_order" do
         before do
           td
