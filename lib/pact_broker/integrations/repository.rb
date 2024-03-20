@@ -29,6 +29,11 @@ module PactBroker
       end
 
       # Ensure an Integration exists for each consumer/provider pair.
+      # Using SELECT ... INSERT IGNORE rather than just INSERT IGNORE so that we do not
+      # need to lock the table at all when the integrations already exist, which will
+      # be the most common use case. New integrations get created incredibly rarely.
+      # The INSERT IGNORE is used rather than just INSERT to handle race conditions
+      # when requests come in parallel.
       # @param [Array<Object>] where each object has a consumer and a provider
       def create_for_pacts(objects_with_consumer_and_provider)
         published_integrations = objects_with_consumer_and_provider.collect{ |i| { consumer_id: i.consumer.id, provider_id: i.provider.id } }
