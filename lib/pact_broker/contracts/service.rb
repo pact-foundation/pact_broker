@@ -35,7 +35,7 @@ module PactBroker
         version, version_notices = create_version(parsed_contracts)
         tags = create_tags(parsed_contracts, version)
         pacts, pact_notices = create_pacts(parsed_contracts, base_url)
-        update_integrations(pacts)
+        create_or_update_integrations(pacts)
         notices = version_notices + pact_notices
         ContractsPublicationResults.from_hash(
           pacticipant: version.pacticipant,
@@ -304,7 +304,11 @@ module PactBroker
         PactBroker::Api::PactBrokerUrls.triggered_webhook_logs_url(triggered_webhook, base_url)
       end
 
-      def update_integrations(pacts)
+      # Creating/updating the integrations all at once at the end of the transaction instead
+      # of one by one, as each pact is created, reduces the amount of time that
+      # a lock is held on the integrations table, therefore reducing contention
+      # and potential for deadlocks when there are many pacts being published at once.
+      def create_or_update_integrations(pacts)
         integration_service.handle_bulk_contract_data_published(pacts)
       end
 

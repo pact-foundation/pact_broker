@@ -28,6 +28,15 @@ module PactBroker
         nil
       end
 
+      # Ensure an Integration exists for each consumer/provider pair.
+      # @param [Array<Object>] where each object has a consumer and a provider
+      def create_for_pacts(objects_with_consumer_and_provider)
+        published_integrations = objects_with_consumer_and_provider.collect{ |i| { consumer_id: i.consumer.id, provider_id: i.provider.id } }
+        existing_integrations = Sequel::Model.db[:integrations].select(:consumer_id, :provider_id).where(Sequel.|(*published_integrations) ).all
+        new_integrations = (published_integrations - existing_integrations).collect{ |i| i.merge(created_at: Sequel.datetime_class.now, contract_data_updated_at: Sequel.datetime_class.now) }
+        Integration.dataset.insert_ignore.multi_insert(new_integrations)
+      end
+
       def delete(consumer_id, provider_id)
         Integration.where(consumer_id: consumer_id, provider_id: provider_id).delete
       end

@@ -73,12 +73,6 @@ module PactBroker
           expect(PactVersion.order(:id).last.messages_count).to eq 0
         end
 
-        it "creates an integration" do
-          expect { subject }.to change {
-            PactBroker::Integrations::Integration.where(consumer_id: consumer.id, provider_id: provider.id).count
-          }.from(0).to(1)
-        end
-
         context "when a pact already exists with exactly the same content" do
           let(:another_version) { Versions::Repository.new.create number: "2.0.0", pacticipant_id: consumer.id }
 
