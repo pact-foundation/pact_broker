@@ -38,6 +38,46 @@ module PactBroker
         end
       end
 
+      describe "#create_for_pacts" do
+        before do
+          Timecop.freeze(Date.today - 5) do
+            td.create_consumer("A")
+              .create_provider("B")
+              .create_integration
+              .create_pacticipant("C")
+              .create_pacticipant("D")
+          end
+        end
+
+        let(:objects_with_consumer_and_provider) do
+          [
+            double("i1", consumer: td.find_pacticipant("A"), provider: td.find_pacticipant("B")),
+            double("i2", consumer: td.find_pacticipant("C"), provider: td.find_pacticipant("D"))
+          ]
+        end
+
+        subject { Repository.new.create_for_pacts(objects_with_consumer_and_provider) }
+
+        it "inserts any missing integrations" do
+          now = Time.utc(2024)
+          Timecop.freeze(now) do
+            subject
+          end
+
+          integrations = Integration.eager(:consumer, :provider).order(:id).all
+          expect(integrations).to contain_exactly(
+            have_attributes(consumer_name: "A", provider_name: "B"),
+            have_attributes(consumer_name: "C", provider_name: "D")
+          )
+          expect(integrations.last.created_at).to be_date_time(now)
+          expect(integrations.last.contract_data_updated_at).to be_date_time(now)
+        end
+
+        it "does not change the created_at or contract_data_updated_at of the existing integrations" do
+          expect { subject }.to_not change { Integration.order(:id).select(:created_at, :contract_data_updated_at).first.created_at }
+        end
+      end
+
       describe "#set_contract_data_updated_at" do
         before do
           # A -> B
