@@ -62,15 +62,31 @@ module PactBroker
       # Because it's not a critical field (eg. it won't change any can-i-deploy results), the easiest way to reduce this contention
       # is to just not update it if the row is locked, because if it is locked, the value of contract_data_updated_at is already
       # going to be a date from a few seconds ago, which is perfectly fine for the purposes for which we are using the value.
+      #
+      # Notes on SKIP LOCKED:
+      # SKIP LOCKED is only supported by Postgres.
+      # When executing SELECT ... FOR UPDATE SKIP LOCKED, the SELECT will run immediately, not waiting for any other transactions,
+      # and only return rows that are not already locked by another transaction.
+      # The FOR UPDATE is required to make it work this way - SKIP LOCKED on its own does not work.
+      #
       # @param [Array<Object>] where each object MAY have a consumer and does have a provider (for Pactflow provider contract published there is no consumer)
       def set_contract_data_updated_at_for_multiple_integrations(objects_with_consumer_and_provider)
         consumer_and_provider_ids = objects_with_consumer_and_provider.collect{ | object | { consumer_id: object.consumer&.id, provider_id: object.provider.id }.compact }.uniq
-        integration_ids_to_update = Integration
-                                      .select(:id)
-                                      .where(Sequel.|(*consumer_and_provider_ids))
-                                      .for_update_skip_locked_if_supported
+
+        # MySQL doesn't support an UPDATE with a subquery. FFS. Really need to do a major version release and delete the support code.
+        criteria =  if Integration.dataset.supports_skip_locked?
+                      integration_ids_to_update = Integration
+                                                  .select(:id)
+                                                  .where(Sequel.|(*consumer_and_provider_ids))
+                                                  .for_update
+                                                  .skip_locked
+                      { id: integration_ids_to_update }
+                    else
+                      Sequel.|(*consumer_and_provider_ids)
+                    end
+
         Integration
-          .where(id: integration_ids_to_update)
+          .where(criteria)
           .update(contract_data_updated_at: Sequel.datetime_class.now)
       end
     end

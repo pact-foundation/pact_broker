@@ -101,18 +101,6 @@ module PactBroker
     def order_append_ignore_case column_name = :name
       order_append(Sequel.function(:lower, column_name))
     end
-
-    # Executes a SELECT query FOR UPDATE, with SKIP LOCKED if supported (postgres only).
-    # With FOR UPDATE SKIP LOCKED, the SELECT will run immediately, not waiting for any other transactions,
-    # and only return rows that are not already locked by another transaction.
-    # The FOR UPDATE is required to make it work this way - SKIP LOCKED on its own does not work.
-    def for_update_skip_locked_if_supported
-      if supports_skip_locked?
-        for_update.skip_locked
-      else
-        self
-      end
-    end
   end
 end
 
