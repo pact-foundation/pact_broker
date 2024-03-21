@@ -7,7 +7,14 @@ require "pact_broker/verifications/latest_verification_for_consumer_and_provider
 
 module PactBroker
   module Integrations
-    class Integration < Sequel::Model(Sequel::Model.db[:integrations].select(:id, :consumer_id, :provider_id, :contract_data_updated_at))
+    # The columns are explicitly specified for the Integration object so that the consumer_name and provider_name columns aren't included
+    # in the model.
+    # Those columns exist in the integrations table because the integrations table used to be an integrations view based on the
+    # pact_publications table, and those columns existed in the view.
+    # When the view was migrated to be a table (in db/migrations/20211102_create_table_temp_integrations.rb and the following migrations)
+    # the columns had to be maintained for backwards compatiblity.
+    # They are not used by the current code, however.
+    class Integration < Sequel::Model(Sequel::Model.db[:integrations].select(:id, :consumer_id, :provider_id, :created_at, :contract_data_updated_at))
       set_primary_key :id
       plugin :insert_ignore, identifying_columns: [:consumer_id, :provider_id]
       associate(:many_to_one, :consumer, :class => "PactBroker::Domain::Pacticipant", :key => :consumer_id, :primary_key => :id)

@@ -43,7 +43,6 @@ module PactBroker
       include PactBroker::Services
       using PactBroker::StringRefinements
 
-
       attr_reader :pacticipant
       attr_reader :consumer
       attr_reader :provider
@@ -192,8 +191,11 @@ module PactBroker
         self
       end
 
+      # Create an Integration object for the current consumer and provider
+      # @return [PactBroker::Test::TestDataBuilder]
       def create_integration
-        PactBroker::Integrations::Repository.new.create_for_pact(consumer.id, provider.id)
+        @integration = PactBroker::Integrations::Repository.new.create_for_pact(consumer.id, provider.id)
+        set_created_at_if_set(@now, :integrations, { consumer_id: consumer.id, provider_id: provider.id })
         self
       end
 
@@ -280,7 +282,9 @@ module PactBroker
         self
       end
 
-      def create_pact params = {}
+      # Creates a pact (and integration if one does not already exist) from the given params
+      # @return [PactBroker::Test::TestDataBuilder]
+      def create_pact(params = {})
         params.delete(:comment)
         json_content = params[:json_content] || default_json_content
         pact_version_sha = params[:pact_version_sha] || generate_pact_version_sha(json_content)
@@ -293,6 +297,7 @@ module PactBroker
           json_content: prepare_json_content(json_content),
           version: @consumer_version
         )
+        integration_service.handle_bulk_contract_data_published([@pact])
         pact_versions_count_after = PactBroker::Pacts::PactVersion.count
         set_created_at_if_set(params[:created_at], :pact_publications, id: @pact.id)
         set_created_at_if_set(params[:created_at], :pact_versions, sha: @pact.pact_version_sha) if pact_versions_count_after > pact_versions_count_before
