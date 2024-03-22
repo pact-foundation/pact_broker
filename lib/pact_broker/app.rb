@@ -105,15 +105,7 @@ module PactBroker
       lock = Sequel::PostgresAdvisoryLock.new(configuration.database_connection, :migrate, :pg_advisory_lock)
       if configuration.auto_migrate_db
         lock.with_lock do
-          migration_options = { allow_missing_migration_files: configuration.allow_missing_migration_files }
-
-          if PactBroker::DB.is_current?(configuration.database_connection, migration_options)
-            logger.info "Skipping database migrations as the latest migration has already been applied"
-          else
-            logger.info "Migrating database schema"
-            PactBroker::DB.run_migrations configuration.database_connection, migration_options
-            logger.info "Database schema version is now #{PactBroker::DB.version(configuration.database_connection)}"
-          end
+          ensure_all_database_migrations_are_applied
         end
       else
         logger.info "Skipping database schema migrations as database auto migrate is disabled"
@@ -121,8 +113,7 @@ module PactBroker
 
       if configuration.auto_migrate_db_data
         lock.with_lock do
-          logger.info "Migrating data"
-          PactBroker::DB.run_data_migrations configuration.database_connection
+          run_data_migrations
         end
       else
         logger.info "Skipping data migrations"
@@ -130,6 +121,23 @@ module PactBroker
 
       require "pact_broker/webhooks/service"
       PactBroker::Webhooks::Service.fail_retrying_triggered_webhooks
+    end
+
+    def ensure_all_database_migrations_are_applied
+      migration_options = { allow_missing_migration_files: configuration.allow_missing_migration_files }
+
+      if PactBroker::DB.is_current?(configuration.database_connection, migration_options)
+        logger.info "Skipping database migrations as the latest migration has already been applied"
+      else
+        logger.info "Migrating database schema"
+        PactBroker::DB.run_migrations(configuration.database_connection, migration_options)
+        logger.info "Database schema version is now #{PactBroker::DB.version(configuration.database_connection)}"
+      end
+    end
+
+    def run_data_migrations
+      logger.info "Migrating data"
+      PactBroker::DB.run_data_migrations(configuration.database_connection)
     end
 
     def load_configuration_from_database
