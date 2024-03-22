@@ -27,6 +27,7 @@ require "pact_broker/config/basic_auth_configuration"
 require "pact_broker/api/authorization/resource_access_policy"
 require "pact_broker/api/middleware/http_debug_logs"
 require "pact_broker/application_context"
+require "sequel/postgres_advisory_lock"
 
 module PactBroker
 
