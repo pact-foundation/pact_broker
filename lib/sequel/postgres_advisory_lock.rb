@@ -15,6 +15,19 @@ require "pact_broker/logging"
 # pg_try_advisory_lock is similar to pg_advisory_lock, except the function will not wait for the lock to become available.
 # It will either obtain the lock immediately and return true, or return false if the lock cannot be acquired immediately.
 
+# There are race conditions with the in-memory lock registry that may cause problems when running multiple threads.
+# To handle this, the code catches and ignores the error Sequel::Postgres::PgAdvisoryLock::LockAlreadyRegistered
+
+# To test the register_advisory_lock method
+#
+# threads = []
+# 4.times {
+#  threads << Thread.new { Sequel::PostgresAdvisoryLock.new(connection, :clean) }
+# }
+# threads.each(&:join)
+#
+# Should see the output "lock already registered"
+#
 module Sequel
   class PostgresAdvisoryLock
     include PactBroker::Logging
@@ -58,7 +71,7 @@ module Sequel
         logger.debug("Registering postgres lock of type #{@type} with name #{@name}")
         begin
           @database_connection.register_advisory_lock(@name, @type)
-        rescue Sequel::Error => e
+        rescue Sequel::Postgres::PgAdvisoryLock::LockAlreadyRegistered => e
           logger.info(e.message)
         end
       end
