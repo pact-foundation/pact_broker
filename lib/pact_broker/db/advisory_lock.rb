@@ -9,23 +9,8 @@ require "pact_broker/logging"
 # This is a wrapper around the actual implementation code in the Sequel extension from https://github.com/yuryroot/sequel-pg_advisory_lock
 # which was copied into this codebase and modified for usage in this codebase.
 #
-# Docs on lock types from From https://www.postgresql.org/docs/9.1/functions-admin.html
+# See https://www.postgresql.org/docs/16/functions-admin.html#FUNCTIONS-ADVISORY-LOCKS for docs on lock types
 #
-# pg_advisory_lock locks an application-defined resource.
-# If another session already holds a lock on the same resource identifier, this function will wait until the
-# resource becomes available.
-# The lock is exclusive.
-# Multiple lock requests stack, so that if the same resource is locked three times it must then be unlocked three
-# times to be released for other sessions' use.
-
-# pg_advisory_lock_shared works the same as pg_advisory_lock, except the lock can be shared with other sessions
-# requesting shared locks. Only would-be exclusive lockers are locked out.
-
-# pg_try_advisory_lock is similar to pg_advisory_lock, except the function will not wait for the lock to become available.
-# It will either obtain the lock immediately and return true, or return false if the lock cannot be acquired immediately.
-
-# There are race conditions with the in-memory lock registry that may cause problems when running multiple threads.
-# To handle this, the code catches and ignores the error Sequel::Postgres::PgAdvisoryLock::LockAlreadyRegistered
 
 module PactBroker
   module DB
