@@ -87,9 +87,9 @@ module PactBroker
       # There will be 3 messages saying "Clean was not performed" and output from one thread showing the clean is being done.
       def with_lock
         if use_lock
-          require "sequel/postgres_advisory_lock"
+          require "pact_broker/db/advisory_lock"
 
-          lock = Sequel::PostgresAdvisoryLock.new(database_connection, :clean, :pg_try_advisory_lock)
+          lock = PactBroker::DB::AdvisoryLock.new(database_connection, :clean, :pg_try_advisory_lock)
           results = lock.with_lock do
             yield
           end

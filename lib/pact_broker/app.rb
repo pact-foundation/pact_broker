@@ -27,7 +27,7 @@ require "pact_broker/config/basic_auth_configuration"
 require "pact_broker/api/authorization/resource_access_policy"
 require "pact_broker/api/middleware/http_debug_logs"
 require "pact_broker/application_context"
-require "sequel/postgres_advisory_lock"
+require "pact_broker/db/advisory_lock"
 
 module PactBroker
 
@@ -102,7 +102,7 @@ module PactBroker
 
     def prepare_database
       logger.info "Database schema version is #{PactBroker::DB.version(configuration.database_connection)}"
-      lock = Sequel::PostgresAdvisoryLock.new(configuration.database_connection, :migrate, :pg_advisory_lock)
+      lock = PactBroker::DB::AdvisoryLock.new(configuration.database_connection, :migrate, :pg_advisory_lock)
       if configuration.auto_migrate_db
         lock.with_lock do
           ensure_all_database_migrations_are_applied
