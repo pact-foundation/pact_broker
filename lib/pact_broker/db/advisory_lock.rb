@@ -49,7 +49,6 @@ module PactBroker
         @database_connection.adapter_scheme.to_s =~ /postgres/
       end
 
-
       def register_advisory_lock
         @database_connection.extension :pg_advisory_lock
         @database_connection.register_advisory_lock(@name, @type)
