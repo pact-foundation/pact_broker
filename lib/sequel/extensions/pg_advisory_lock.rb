@@ -78,7 +78,7 @@ module Sequel
         end
 
         key = advisory_lock_key_for(name)
-        name_for_key = registered_advisory_locks.keys.find { |name| registered_advisory_locks[name].fetch(:key) == key }
+        name_for_key = registered_advisory_locks.keys.find { |n| registered_advisory_locks[n].fetch(:key) == key }
         if name_for_key && name_for_key != name
           raise Error, "Lock key #{key} is already taken"
         end

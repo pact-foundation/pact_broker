@@ -97,6 +97,7 @@ module PactBroker
           if !lock.lock_obtained?
             output("Clean was not performed as a clean is already in progress. Exiting.")
           end
+          results
         else
           yield
         end
