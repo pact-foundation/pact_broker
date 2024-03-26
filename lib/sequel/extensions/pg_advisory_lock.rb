@@ -1,10 +1,12 @@
-# Copied with thanks from https://github.com/yuryroot/sequel-pg_advisory_lock
-# The reason this is copy/pasted is that I wanted to customise the error raised
-# when the lock was already registered, and it didn't seem worth going through a
-# full PR process and getting the gem republished.
+# Copied with thanks from https://github.com/yuryroot/sequel-pg_advisory_lock/blob/d7509aa/lib/sequel/extensions/pg_advisory_lock.rb
+# The reason this is copy/pasted and modified is that I wanted to allow exact duplicate
+# locks to be registered because different threads running the same code
+# should not cause a Sequel::Error to be raised.
+# Also, I wanted it to use Concurrent::Hash for multi-threaded environments.
 
 require 'sequel'
 require 'zlib'
+require 'concurrent/hash'
 
 module Sequel
   module Postgres
@@ -28,7 +30,7 @@ module Sequel
       class LockAlreadyRegistered < Sequel::Error; end
 
       def registered_advisory_locks
-        @registered_advisory_locks ||= {}
+        @registered_advisory_locks ||= Concurrent::Hash.new
       end
 
       def with_advisory_lock(name, id = nil, &block)
@@ -65,15 +67,18 @@ module Sequel
         end
       end
 
+      # Beth: not sure what extra value this registration provides
+      # It's just turning the name into a number, and making sure the name/number is unique.
       def register_advisory_lock(name, lock_function = DEFAULT_LOCK_FUNCTION)
         name = name.to_sym
 
-        if registered_advisory_locks.key?(name)
-          raise LockAlreadyRegistered, "Lock with name :#{name} is already registered"
+        if registered_advisory_locks.key?(name) && registered_advisory_locks[name][:lock_function] != lock_function
+          raise LockAlreadyRegistered, "Lock with name :#{name} is already registered with a different lock function (#{registered_advisory_locks[name][:lock_function]})"
         end
 
         key = advisory_lock_key_for(name)
-        if registered_advisory_locks.values.any? { |opts| opts.fetch(:key) == key }
+        name_for_key = registered_advisory_locks.keys.find { |name| registered_advisory_locks[name].fetch(:key) == key }
+        if name_for_key && name_for_key != name
           raise Error, "Lock key #{key} is already taken"
         end
 
@@ -88,7 +93,6 @@ module Sequel
       def advisory_lock_key_for(lock_name)
         Zlib.crc32(lock_name.to_s) % 2 ** 31
       end
-
     end
   end
 
