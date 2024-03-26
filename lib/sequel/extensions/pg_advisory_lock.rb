@@ -4,9 +4,9 @@
 # should not cause a Sequel::Error to be raised.
 # Also, I wanted it to use Concurrent::Hash for multi-threaded environments.
 
-require 'sequel'
-require 'zlib'
-require 'concurrent/hash'
+require "sequel"
+require "zlib"
+require "concurrent/hash"
 
 module Sequel
   module Postgres
@@ -33,7 +33,7 @@ module Sequel
         @registered_advisory_locks ||= Concurrent::Hash.new
       end
 
-      def with_advisory_lock(name, id = nil, &block)
+      def with_advisory_lock(name, id = nil)
         options = registered_advisory_locks.fetch(name.to_sym)
 
         lock_key = options.fetch(:key)
