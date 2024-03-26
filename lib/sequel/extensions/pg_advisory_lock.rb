@@ -67,8 +67,9 @@ module Sequel
         end
       end
 
-      # Beth: not sure what extra value this registration provides
-      # It's just turning the name into a number, and making sure the name/number is unique.
+      # Beth: not sure how much extra value this registration provides.
+      # It turns the name into a number, and makes sure the name/number is unique,
+      # and that you don't try and use a different lock function with the same name.
       def register_advisory_lock(name, lock_function = DEFAULT_LOCK_FUNCTION)
         name = name.to_sym
 
