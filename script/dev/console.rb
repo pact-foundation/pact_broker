@@ -3,7 +3,7 @@ require "bundler/setup"
 Bundler.require
 
 require "sequel"
-require "logger"
+require "semantic_logger"
 require "fileutils"
 require "pact_broker/initializers/database_connection"
 
@@ -24,13 +24,14 @@ if database_connection_string.start_with?("sqlite")
   FileUtils.mkdir_p(File.absolute_path(File.dirname(URI(database_connection_string).path)))
 end
 
-logger = Logger.new($stdout)
-logger.level = Logger::DEBUG
+SemanticLogger.default_level = :info
+SemanticLogger.add_appender(io: $stdout)
+logger = SemanticLogger["console"]
 
 database_opts = {
   logger: logger,
   encoding: "utf8",
-  sql_log_level: "debug"
+  sql_log_level: "trace"
 }
 
 puts "Connecting to #{database_connection_string}"
