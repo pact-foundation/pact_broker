@@ -2,14 +2,14 @@ require "pact_broker/dataset"
 
 module PactBroker
   module Webhooks
-    class Execution < Sequel::Model(
-      Sequel::Model.db[:webhook_executions].select(
-        Sequel[:webhook_executions][:id],
-        :triggered_webhook_id,
-        :success,
-        :logs,
-        Sequel[:webhook_executions][:created_at])
-      )
+    class Execution < Sequel::Model(:webhook_executions)
+      # Ignore the columns that were used before the TriggeredWebhook class existed.
+      # It used to go Webhook -> Execution, and now it goes Webhook -> TriggeredWebhook -> Execution
+      # If we ever release a major version where we drop unused columns, those columns could be deleted.
+      EXECUTION_COLUMNS = Sequel::Model.db.schema(:webhook_executions).collect(&:first) - [:webhook_id, :pact_publication_id, :consumer_id, :provider_id]
+
+      set_dataset(Sequel::Model.db[:webhook_executions].select(*EXECUTION_COLUMNS.collect{ | column | Sequel.qualify(:webhook_executions, column) }))
+
       set_primary_key :id
       plugin :timestamps
 

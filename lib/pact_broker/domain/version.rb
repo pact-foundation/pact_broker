@@ -4,9 +4,12 @@ require "pact_broker/versions/eager_loaders"
 
 module PactBroker
   module Domain
-    VERSION_COLUMNS = [:id, :number, :repository_ref, :pacticipant_id, :order, :created_at, :updated_at, :build_url]
+    class Version < Sequel::Model
 
-    class Version < Sequel::Model(Sequel::Model.db[:versions].select(*VERSION_COLUMNS.collect{ | column | Sequel.qualify(:versions, column) }))
+      # do not include the branch column
+      VERSION_COLUMNS = Sequel::Model.db.schema(:versions).collect(&:first) - [:branch]
+      set_dataset(Sequel::Model.db[:versions].select(*VERSION_COLUMNS.collect{ | column | Sequel.qualify(:versions, column) }))
+
       set_primary_key :id
 
       plugin :timestamps, update_on_create: true
