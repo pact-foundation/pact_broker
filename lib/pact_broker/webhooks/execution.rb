@@ -8,7 +8,7 @@ module PactBroker
       # If we ever release a major version where we drop unused columns, those columns could be deleted.
       EXECUTION_COLUMNS = Sequel::Model.db.schema(:webhook_executions).collect(&:first) - [:webhook_id, :pact_publication_id, :consumer_id, :provider_id]
 
-      set_dataset(Sequel::Model.db[:webhook_executions].select(*EXECUTION_COLUMNS.collect{ | column | Sequel.qualify(:webhook_executions, column) }))
+      set_dataset(Sequel::Model.db[:webhook_executions].select(*EXECUTION_COLUMNS))
 
       set_primary_key :id
       plugin :timestamps

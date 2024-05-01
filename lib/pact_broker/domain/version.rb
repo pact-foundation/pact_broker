@@ -5,9 +5,7 @@ require "pact_broker/versions/eager_loaders"
 module PactBroker
   module Domain
     class Version < Sequel::Model
-
-      # do not include the branch column
-      VERSION_COLUMNS = Sequel::Model.db.schema(:versions).collect(&:first) - [:branch]
+      VERSION_COLUMNS = Sequel::Model.db.schema(:versions).collect(&:first) - [:branch] # do not include the branch column, as we now have a branches table
       set_dataset(Sequel::Model.db[:versions].select(*VERSION_COLUMNS.collect{ | column | Sequel.qualify(:versions, column) }))
 
       set_primary_key :id

@@ -15,8 +15,8 @@ module PactBroker
     # the columns had to be maintained for backwards compatiblity.
     # They are not used by the current code, however.
     class Integration < Sequel::Model
-      INTEGRATIONS_COLUMNS = Sequel::Model.db.schema(:integrations).collect(&:first) - [:consumer_name, :provider_name]
-      set_dataset(Sequel::Model.db[:integrations].select(*INTEGRATIONS_COLUMNS.collect{ | column | Sequel.qualify(:integrations, column) }))
+      INTEGRATION_COLUMNS = Sequel::Model.db.schema(:integrations).collect(&:first) - [:consumer_name, :provider_name]
+      set_dataset(Sequel::Model.db[:integrations].select(*INTEGRATION_COLUMNS))
 
       set_primary_key :id
       plugin :insert_ignore, identifying_columns: [:consumer_id, :provider_id]
