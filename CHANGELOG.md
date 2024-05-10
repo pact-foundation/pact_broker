@@ -1,3 +1,20 @@
+<a name="v2.110.0"></a>
+### v2.110.0 (2024-04-02)
+
+#### Features
+
+* reduce contention when updating the contract_data_updated_at field for integrations (#671)	 ([ff72d03c](/../../commit/ff72d03c))
+* support consumer version selector for all branches (#667)	 ([34334ca8](/../../commit/34334ca8))
+
+* **clean**
+  * use postgres advisory locks to ensure only one process can run a clean at a time (#672)	 ([637c25fa](/../../commit/637c25fa))
+
+#### Bug Fixes
+
+* use for_all_tag_heads instead of latest_by_consumer_tag when fetching wip by branch	 ([14148a34](/../../commit/14148a34))
+* optimise WIP pacts by using branch/tag heads (#668)	 ([871209e1](/../../commit/871209e1))
+* improve performance of WIP pacts by using branch heads instead of calculating latest pact for branch	 ([f9705583](/../../commit/f9705583))
+
 <a name="v2.109.1"></a>
 ### v2.109.1 (2024-02-21)
 
