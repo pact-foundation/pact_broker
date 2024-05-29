@@ -1,0 +1,24 @@
+{
+  "executions": [
+    {
+      "success": true,
+      "logs": "foo",
+      "createdAt": "2024-01-01T00:00:00+00:00"
+    }
+  ],
+  "_embedded": {
+    "triggeredWebhook": {
+      "uuid": "1234"
+    }
+  },
+  "_links": {
+    "self": {
+      "title": "Triggered webhook logs",
+      "href": null
+    },
+    "pb:webhook": {
+      "href": "http://example.org/webhooks/1234",
+      "title": "Webhook"
+    }
+  }
+}
