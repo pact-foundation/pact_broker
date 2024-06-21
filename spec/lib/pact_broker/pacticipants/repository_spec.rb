@@ -216,8 +216,8 @@ module PactBroker
 
         before do
           td
-            .create_consumer(consumer_name)
-            .create_consumer(provider_name)
+            .create_consumer(consumer_name, { display_name: "Pretty Consumer" })
+            .create_consumer(provider_name, { display_name: "Fancy Provider" })
         end
 
         context "when there is a consumer/provider name which matches the search term" do
@@ -241,6 +241,14 @@ module PactBroker
           it "searches case insentively" do
             searched_dataset =  Repository.new.search_by_name "TEST"
             expect(searched_dataset.collect(&:name)).to include(*[consumer_name, provider_name])
+          end
+
+          it "searches by display_name" do
+            searched_dataset =  Repository.new.search_by_name "Pretty"
+            expect(searched_dataset.collect(&:name)).to eq([consumer_name])
+
+            searched_dataset =  Repository.new.search_by_name "Fancy"
+            expect(searched_dataset.collect(&:name)).to eq([provider_name])
           end
         end
 
