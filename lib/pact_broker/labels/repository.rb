@@ -3,6 +3,11 @@ require "pact_broker/domain/label"
 module PactBroker
   module Labels
     class Repository
+
+      def get_all_unique_labels
+        PactBroker::Domain::Label.distinct.select(:name).all
+      end
+
       def create args
         Domain::Label.new(name: args.fetch(:name), pacticipant: args.fetch(:pacticipant)).save
       end
