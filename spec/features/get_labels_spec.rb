@@ -12,6 +12,14 @@ describe "Get labels" do
 
   let(:path) { "/labels" }
   let(:response_body_hash) { JSON.parse(subject.body, symbolize_names: true) }
+  let(:expected_response_body) do
+    {
+      labels: [
+        { name: "ios" },
+        { name: "consumer" }
+      ]
+    }
+  end
 
   subject { get path; last_response  }
 
@@ -21,7 +29,7 @@ describe "Get labels" do
     end
 
     it "returns the labels in the body" do
-      expect(response_body_hash[:_embedded][:labels][:names]).to contain_exactly("consumer", "ios")
+      expect(response_body_hash[:_embedded]).to include expected_response_body
     end
   end
 end
