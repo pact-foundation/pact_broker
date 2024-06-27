@@ -9,8 +9,8 @@ module PactBroker
 
       extend PactBroker::Repositories
 
-      def get_all_unique_labels
-        label_repository.get_all_unique_labels.map { | label | label.name }
+      def get_all_unique_labels pagination_options = {}
+        label_repository.get_all_unique_labels(pagination_options)
       end
 
       def create args

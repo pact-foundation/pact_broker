@@ -1,34 +1,15 @@
+require_relative "base_decorator"
+require_relative "pagination_links"
+require_relative "single_label_decorator"
+require "pact_broker/domain/label"
+
 module PactBroker
   module Api
     module Decorators
       class LabelsDecorator < BaseDecorator
-        attr_reader :labels
-
-        def initialize(labels)
-          @labels = labels
-        end
+        collection :entries, :as => :labels, :class => PactBroker::Domain::Label, :extend => PactBroker::Api::Decorators::SingleLabelDecorator, embedded: true
 
         include PaginationLinks
-
-        def to_hash(opts)
-          {
-            "_embedded": {
-              labels: {
-                names: labels
-              }
-            },
-            _links: {
-              self: {
-                title: "Labels",
-                href: opts.fetch(:resource_url)
-              }
-            }
-          }
-        end
-
-        def to_json(opts)
-          to_hash(opts).to_json
-        end
       end
     end
   end
