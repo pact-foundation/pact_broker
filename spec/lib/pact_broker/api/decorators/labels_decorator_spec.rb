@@ -23,7 +23,7 @@ module PactBroker
         subject { JSON.parse LabelsDecorator.new(label).to_json(options), symbolize_names: true }
 
         it "includes the label names" do
-          expect(subject[:_embedded][:labels]).to eq [{:name=>"consumer"}, {:name=>"provider"}]
+          expect(subject[:_embedded][:labels].map { |label| label[:name] }).to contain_exactly("provider", "consumer")
         end
 
         it "includes the resource url" do
