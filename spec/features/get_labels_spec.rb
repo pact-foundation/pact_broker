@@ -21,7 +21,7 @@ describe "Get labels" do
     end
 
     it "returns the labels in the body" do
-      expect(response_body_hash[:_embedded][:labels].collect(&:name)).to contain_exactly("ios", "consumer")
+      expect(response_body_hash[:_embedded][:labels].map { |label| label[:name] }).to contain_exactly("ios", "consumer")
     end
   end
 end
