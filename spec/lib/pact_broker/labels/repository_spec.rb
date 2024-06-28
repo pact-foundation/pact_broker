@@ -4,6 +4,41 @@ module PactBroker
   module Labels
     describe Repository do
 
+      describe ".get_all_unique_labels" do
+        before do
+          td.create_pacticipant("bar")
+            .create_label("ios")
+            .create_pacticipant("foo")
+            .create_label("android")
+            .create_pacticipant("wiffle")
+            .create_label("ios")
+        end
+
+        let(:labels_repository) { Repository.new }
+
+        context "when there are no pagination options" do
+          subject { labels_repository.get_all_unique_labels }
+
+          it "returns all the unique labels" do
+            expect(subject.collect(&:name)).to contain_exactly("ios", "android")
+          end
+        end
+
+        context "when there are pagination options" do
+          let(:pagination_options) do
+            {
+              :page_number => 1,
+              :page_size => 1
+            }
+          end
+          subject { labels_repository.get_all_unique_labels pagination_options }
+
+          it "returns paginated unique labels" do
+            expect(subject.collect(&:name)).to contain_exactly("ios")
+          end
+        end
+      end
+
       describe ".find" do
 
         let(:pacticipant_name) { "foo" }

@@ -21,7 +21,11 @@ module PactBroker
         end
 
         def to_json
-          decorator_class(:labels_decorator).new(labels).to_json(**decorator_options)
+          decorator_class(:labels_decorator).new(labels).to_json(
+            **decorator_options(
+              hide_label_decorator_links: true,
+            )
+          )
         end
 
         def labels
