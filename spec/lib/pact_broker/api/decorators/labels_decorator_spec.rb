@@ -27,7 +27,7 @@ module PactBroker
         end
 
         it "includes the resource url" do
-          expect(subject[:_links][:self][:href]).to eq 'http://example.org/labels'
+          expect(subject[:_links][:self][:href]).to eq "http://example.org/labels"
         end
 
         it "labels field doest not include any links" do
