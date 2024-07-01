@@ -5,7 +5,7 @@ module PactBroker
     describe Service do
       let(:pacticipant_name) { "foo" }
       let(:label_name) { "ios" }
-      let(:options) { {pacticipant_name: pacticipant_name, label_name: label_name } }
+      let(:options) { { pacticipant_name: pacticipant_name, label_name: label_name } }
       let(:pagination_options) { { page_number: 1, page_size: 1 } }
 
       describe ".get_all_unique_labels" do
