@@ -11,6 +11,7 @@ module PactBroker
 
         include Timestamps
 
+        # This method is overridden to conditionally render the links based on the user_options
         def to_hash(options)
           hash = super
 
