@@ -85,6 +85,9 @@ module PactBroker
         add ["pacticipants", :pacticipant_name], Api::Resources::Pacticipant, {resource_name: "pacticipant"}
         add ["pacticipants", :pacticipant_name, "labels", :label_name], Api::Resources::Label, {resource_name: "pacticipant_label"}
 
+        # Labels
+        add ["labels"], Api::Resources::Labels, {resource_name: "labels"}
+
         # Versions
         add ["pacticipants", :pacticipant_name, "versions"], Api::Resources::Versions, {resource_name: "pacticipant_versions"}
         add ["pacticipants", :pacticipant_name, "branches", :branch_name, "versions"], Api::Resources::BranchVersions, {resource_name: "pacticipant_branch_versions"}

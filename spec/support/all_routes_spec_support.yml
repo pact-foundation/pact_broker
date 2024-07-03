@@ -9,6 +9,7 @@ requests_which_are_exected_to_have_no_policy_record_or_pacticipant:
   - environment DELETE
   - integrations GET
   - integrations DELETE
+  - labels GET
   - matrix GET
   - metrics GET
   - pacticipants GET
