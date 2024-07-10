@@ -72,6 +72,35 @@ describe "Update a pacticipant" do
       it "returns a json body with the updated pacticipant" do
         expect(subject.headers["Content-Type"]).to eq "application/hal+json;charset=utf-8"
       end
+
+      context "when request body contains embedded labels" do
+        context "when labels has values" do
+          let(:request_body) { { "displayName": "Updated Consumer Name", "_embedded": { "labels": [{ "name": "ios" }, { "name": "consumer" }] } } }
+
+          it "returns a 200 response" do
+            expect(subject.status).to be 200
+          end
+
+          it "should not create the labels for the pacticipant" do 
+            expect(response_body_hash[:_embedded][:labels]).to be_empty
+          end
+
+          it "only updates pacticipant attribute ignoring the labels" do
+            expect(response_body_hash[:displayName]).to eq "Updated Consumer Name"
+            expect{ subject }.to change {
+              PactBroker::Domain::Label.where(name: "ios").count
+            }.by(0)
+          end
+        end
+
+        context "when labels is empty" do
+          let(:request_body) {{"displayName": "Updated Consumer Name", "_embedded": { "labels": []}}}
+
+          it "returns a 200 OK" do 
+            expect(subject.status).to be 200
+          end
+        end 
+      end 
     end
 
     context "with application/merge-patch+json" do
