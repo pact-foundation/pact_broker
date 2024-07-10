@@ -12,12 +12,15 @@ module PactBroker
         end
 
         describe "from_json" do
-          let(:pacticipant) { OpenStruct.new }
+          let(:pacticipant) { OpenStruct.new(labels: [OpenStruct.new(name: "existing_label")]) }
           let(:decorator) { PacticipantDecorator.new(pacticipant) }
           let(:hash) do
             {
               name: "Foo",
-              mainBranch: "main"
+              mainBranch: "main",
+              labels: [
+                {name: "new_label"}
+              ]
             }
           end
 
@@ -25,6 +28,10 @@ module PactBroker
 
           its(:name) { is_expected.to eq "Foo" }
           its(:main_branch) { is_expected.to eq "main" }
+
+          it "does not modify the labels collection" do
+            expect(subject.labels.map(&:name)).to contain_exactly("existing_label")
+          end
         end
 
         describe "to_json" do
