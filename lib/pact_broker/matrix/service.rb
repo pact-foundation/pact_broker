@@ -28,7 +28,7 @@ module PactBroker
           pacticipant = pacticipant_service.find_pacticipant_by_name(pacticipant_name)
           raise PactBroker::Error.new("No pacticipant found with name '#{pacticipant_name}'") unless pacticipant
         else
-          pacticipant_name = pacticipant
+          pacticipant_name = pacticipant.name
         end
          
         # then we find the latest version from the main branch if not passed in
