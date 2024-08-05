@@ -165,9 +165,14 @@ module PactBroker
 
       def create_pacticipant pacticipant_name, params = {}
         params.delete(:comment)
+        version_to_create = params.delete(:version)
         repository_url = "https://github.com/#{params[:repository_namespace] || "example-organization"}/#{params[:repository_name] || pacticipant_name}"
         merged_params = { name: pacticipant_name, repository_url: repository_url }.merge(params)
         @pacticipant = PactBroker::Domain::Pacticipant.create(merged_params)
+        version = create_pacticipant_version(version_to_create, @pacticipant)
+        main_branch = params[:main_branch]
+        branch_version = PactBroker::Versions::BranchVersionRepository.new.add_branch(version, main_branch) if main_branch
+
         self
       end
 
@@ -639,8 +644,6 @@ module PactBroker
          }.to_json
       end
 
-      private
-
       def create_pacticipant_version(version_number, pacticipant, params = {})
         params.delete(:comment)
         tag_names = [params.delete(:tag_names), params.delete(:tag_name)].flatten.compact
@@ -664,6 +667,8 @@ module PactBroker
         end
         version
       end
+
+      private
 
       def create_deployed_version(uuid: , currently_deployed: , version:, environment_name: , target: nil, created_at: nil)
         env = find_environment(environment_name)

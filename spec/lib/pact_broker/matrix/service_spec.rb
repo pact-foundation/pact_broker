@@ -4,6 +4,47 @@ require "pact_broker/matrix/unresolved_selector"
 module PactBroker
   module Matrix
     describe Service do
+      describe "can-i-merge" do
+        before do
+          td.create_consumer("A", main_branch: "main_branch", version: "1")
+            .create_provider("B", main_branch: "main_branch", version: "1")
+            .create_pact_with_hierarchy("A", "1", "B")
+            .create_verification(provider_version: "1", number: 1, success: false, branch: "main_branch")
+            .create_verification(provider_version: "1", number: 2, success: true, branch: "main_branch")
+            .create_verification(provider_version: "2", number: 3, success: true, branch: "dev")
+        end
+        
+        let(:pacticipant_name_param) { "B" }
+        
+        subject { Service.can_i_merge(pacticipant_name: pacticipant_name_param) }
+  
+        context "for pacticipant that has verification on it's main branch" do
+          let(:pacticipant_name_param) { "B" }
+          let(:options) {
+            {
+              latest: true,
+              main_branch: true,
+              latestby: "cvp"
+            }
+          }
+          
+          let(:unresolved_selectors) {
+            [
+              PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: "B", pacticipant_version_number: "1")
+            ]
+          }
+    
+          it "returns true because the mergeble status is true" do
+            expect(subject).to be_truthy
+          end
+    
+          it "calls the can_i_deploy method" do
+            expect(Service).to receive(:can_i_deploy).with(unresolved_selectors, options).and_call_original
+            subject
+          end
+        end
+      end
+
       describe "validate_selectors" do
         before do
           allow(PactBroker::Deployments::EnvironmentService).to receive(:find_by_name).and_return(environment)
