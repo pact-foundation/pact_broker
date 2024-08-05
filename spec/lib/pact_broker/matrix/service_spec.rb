@@ -19,7 +19,6 @@ module PactBroker
         subject { Service.can_i_merge(pacticipant_name: pacticipant_name_param) }
   
         context "for pacticipant that has verification on it's main branch" do
-          let(:pacticipant_name_param) { "B" }
           let(:options) {
             {
               latest: true,
