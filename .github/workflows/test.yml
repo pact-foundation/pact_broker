@@ -35,6 +35,7 @@ jobs:
         postgres_docker_image_tag: ["15", "14", "9.6"]
     steps:
       - uses: actions/checkout@v4
+      - run: docker-compose --version
       - run: script/test/run-rake-on-docker-compose-postgres.sh
         env:
           POSTGRES_DOCKER_IMAGE_TAG: ${{ matrix.postgres_docker_image_tag }}
@@ -43,6 +44,7 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - uses: actions/checkout@v4
+      - run: docker-compose --version
       - run: script/test/run-rake-on-docker-compose-mysql.sh
   rubocop:
     if: "!contains(github.event.head_commit.message, '[ci-skip]')"
