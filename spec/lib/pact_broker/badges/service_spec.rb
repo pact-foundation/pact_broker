@@ -29,6 +29,21 @@ module PactBroker
         allow(Service).to receive(:logger).and_return(logger)
       end
 
+      describe "can_i_merge_badge_url" do
+        let(:version_number) { "abcd1234" }
+        let(:deployable) { true }
+  
+        subject { Service.can_i_merge_badge_url(version_number: version_number, deployable: deployable) }
+        context "when deployable is true" do
+          it { is_expected.to eq URI("https://img.shields.io/badge/can--i--merge-abcd1234-brightgreen.svg") }
+        end
+  
+        context "when deployable is false" do
+          let(:deployable) { false }
+          it { is_expected.to eq URI("https://img.shields.io/badge/can--i--merge-abcd1234-red.svg") }
+        end
+      end
+
       describe "can_i_deploy_badge_url" do
         subject { Service.can_i_deploy_badge_url("main", "prod", nil, true) }
 
