@@ -1,5 +1,5 @@
-require 'pact_broker/api/resources/base_resource'
-require 'pact_broker/api/resources/badge_methods'
+require "pact_broker/api/resources/base_resource"
+require "pact_broker/api/resources/badge_methods"
 
 module PactBroker
   module Api
