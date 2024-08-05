@@ -35,6 +35,9 @@ jobs:
         postgres_docker_image_tag: ["15", "14", "9.6"]
     steps:
       - uses: actions/checkout@v4
+      - run: |
+curl -L "https://github.com/docker/compose/releases/download/v2.29.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+chmod +x /usr/local/bin/docker-compose
       - run: docker-compose --version
       - run: script/test/run-rake-on-docker-compose-postgres.sh
         env:
@@ -44,6 +47,9 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - uses: actions/checkout@v4
+      - run: |
+curl -L "https://github.com/docker/compose/releases/download/v2.29.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+chmod +x /usr/local/bin/docker-compose
       - run: docker-compose --version
       - run: script/test/run-rake-on-docker-compose-mysql.sh
   rubocop:
