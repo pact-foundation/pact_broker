@@ -72,7 +72,6 @@ Lint/EachWithObjectArgument:
 Lint/ElseLayout:
   Description: 'Check for odd code arrangement in an else block.'
   Enabled: true
-  EnforcedStyleAlignWith: variable
 
 Lint/EmptyEnsure:
   Description: 'Checks for empty ensure block.'
