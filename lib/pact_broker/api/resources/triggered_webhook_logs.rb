@@ -7,7 +7,7 @@ module PactBroker
       class TriggeredWebhookLogs < BaseResource
 
         def content_types_provided
-          [["text/plain", :to_text]]
+          [["text/plain", :to_text], ["application/hal+json", :to_json]]
         end
 
         def allowed_methods
@@ -25,6 +25,10 @@ module PactBroker
           else
             "Webhook has not executed yet. Please retry in a few seconds."
           end
+        end
+
+        def to_json
+          decorator_class(:triggered_webhook_logs_decorator).new(triggered_webhook).to_json(**decorator_options)
         end
 
         def policy_name
