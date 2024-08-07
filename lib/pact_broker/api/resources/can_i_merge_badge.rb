@@ -8,7 +8,7 @@ module PactBroker
         include BadgeMethods # This module contains all necessary webmachine methods for badge implementation
 
         def badge_url 
-          if pacticipant.nil?
+          if pacticipant.nil? # pacticipant method is defined in BaseResource
             # if the pacticipant is nil, we return an error badge url
             badge_service.error_badge_url("pacticipant", "not found")
           elsif version.nil?
@@ -16,10 +16,7 @@ module PactBroker
             badge_service.error_badge_url("main branch version", "not found")
           else
             # we call badge_service to build the badge url
-            badge_service.can_i_merge_badge_url(
-              version_number: version.number,
-              deployable: results
-            )
+            badge_service.can_i_merge_badge_url(deployable: results)
           end
         end
         

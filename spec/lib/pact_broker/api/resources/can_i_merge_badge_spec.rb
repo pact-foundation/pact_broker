@@ -33,7 +33,7 @@ module PactBroker
           end
 
           it "return the badge URL" do
-            expect(badge_service). to receive(:can_i_merge_badge_url).with(version_number: "1", deployable: true)
+            expect(badge_service). to receive(:can_i_merge_badge_url).with(deployable: true)
             expect(subject.headers["Location"]).to eq "http://badge_url"
           end
         end

@@ -40,16 +40,20 @@ module PactBroker
         build_shield_io_uri(title, status, color)
       end
 
-      def can_i_merge_badge_url(version_number: nil, deployable: nil)
+      def can_i_merge_badge_url(deployable: nil)
         title = "can-i-merge"
-        status = deployable ? "yes" : "no"
-        if deployable.nil?
-          color = "lightgrey"
-          status = "unknown"
+        
+        # rubocop:disable Layout/EndAlignment
+        color, status = case deployable
+        when nil
+          [ "lightgrey", "unknown" ]
+        when true
+          [ "brightgreen", "success" ]
         else
-          color = deployable ? "brightgreen" : "red"
-          status = version_number
+          [ "red", "failed" ]
         end
+        # rubocop:enable Layout/EndAlignment
+
         # left text is "can-i-merge", right text is the version number
         build_shield_io_uri(title, status, color)
       end

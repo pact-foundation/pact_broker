@@ -33,14 +33,15 @@ module PactBroker
         let(:version_number) { "abcd1234" }
         let(:deployable) { true }
   
-        subject { Service.can_i_merge_badge_url(version_number: version_number, deployable: deployable) }
+        subject { Service.can_i_merge_badge_url(deployable: deployable) }
+        
         context "when deployable is true" do
-          it { is_expected.to eq URI("https://img.shields.io/badge/can--i--merge-abcd1234-brightgreen.svg") }
+          it { is_expected.to eq URI("https://img.shields.io/badge/can--i--merge-success-brightgreen.svg") }
         end
   
         context "when deployable is false" do
           let(:deployable) { false }
-          it { is_expected.to eq URI("https://img.shields.io/badge/can--i--merge-abcd1234-red.svg") }
+          it { is_expected.to eq URI("https://img.shields.io/badge/can--i--merge-failed-red.svg") }
         end
       end
 
