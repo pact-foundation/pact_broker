@@ -1,3 +1,16 @@
+<a name="v2.111.0"></a>
+### v2.111.0 (2024-07-26)
+
+#### Features
+
+* add new label api (#703)	 ([ff3f84e2](/../../commit/ff3f84e2))
+* search pacticipants by display_name	 ([c5945801](/../../commit/c5945801))
+
+#### Bug Fixes
+
+* **docs**
+  * Update OAS with correct ref to Notice schema	 ([6729b7f8](/../../commit/6729b7f8))
+
 <a name="v2.110.0"></a>
 ### v2.110.0 (2024-04-02)
 
