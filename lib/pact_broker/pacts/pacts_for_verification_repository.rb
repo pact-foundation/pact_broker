@@ -7,6 +7,7 @@ require "pact_broker/pacts/selector"
 require "pact_broker/pacts/selectors"
 require "pact_broker/feature_toggle"
 require "pact_broker/repositories/scopes"
+require "pact_broker/matrix/unresolved_selector"
 
 module PactBroker
   module Pacts
@@ -63,7 +64,7 @@ module PactBroker
           provider_tags_names,
           wip_start_date,
           explicitly_specified_verifiable_pacts,
-          :latest_by_consumer_tag
+          :for_all_tag_heads
         )
 
         wip_by_consumer_branches = find_wip_pact_versions_for_provider_by_provider_tags(
@@ -71,7 +72,7 @@ module PactBroker
           provider_tags_names,
           wip_start_date,
           explicitly_specified_verifiable_pacts,
-          :latest_by_consumer_branch
+          :for_all_branch_heads
         )
 
         deduplicate_verifiable_pacts(wip_by_consumer_tags + wip_by_consumer_branches).sort
@@ -228,8 +229,8 @@ module PactBroker
         provider = pacticipant_repository.find_by_name(provider_name)
         wip_start_date = options.fetch(:include_wip_pacts_since)
 
-        potential_wip_by_consumer_branch = PactPublication.for_provider(provider).created_after(wip_start_date).latest_by_consumer_branch
-        potential_wip_by_consumer_tag = PactPublication.for_provider(provider).created_after(wip_start_date).latest_by_consumer_tag
+        potential_wip_by_consumer_branch = PactPublication.for_provider(provider).created_after(wip_start_date).for_all_branch_heads
+        potential_wip_by_consumer_tag = PactPublication.for_provider(provider).created_after(wip_start_date).for_all_tag_heads
 
         log_debug_for_wip do
           log_pact_publications_from_query("Potential WIP pacts for provider branch #{provider_version_branch} created after #{wip_start_date} by consumer branch", potential_wip_by_consumer_branch)

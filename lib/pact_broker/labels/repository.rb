@@ -3,6 +3,11 @@ require "pact_broker/domain/label"
 module PactBroker
   module Labels
     class Repository
+
+      def get_all_unique_labels pagination_options = {}
+        PactBroker::Domain::Label.distinct.select(:name).all_with_pagination_options(pagination_options)
+      end
+
       def create args
         Domain::Label.new(name: args.fetch(:name), pacticipant: args.fetch(:pacticipant)).save
       end

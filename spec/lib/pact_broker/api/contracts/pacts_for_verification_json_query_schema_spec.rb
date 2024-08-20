@@ -523,6 +523,36 @@ module PactBroker
 
           it { is_expected.to_not have_key(:consumerVersionSelectors) }
         end
+
+        context "when branch is true, and latest is true" do
+          let(:params) do
+            {
+              consumerVersionSelectors: [ { branch: true, latest: true }]
+            }
+          end
+
+          it { is_expected.to_not have_key(:consumerVersionSelectors) }
+        end
+
+        context "when branch is true, and latest is false" do
+          let(:params) do
+            {
+              consumerVersionSelectors: [ { branch: true, latest: false }]
+            }
+          end
+
+          its([:consumerVersionSelectors, 0]) { is_expected.to match("cannot specify") }
+        end
+
+        context "when branch is false" do
+          let(:params) do
+            {
+              consumerVersionSelectors: [ { branch: false }]
+            }
+          end
+
+          its([:consumerVersionSelectors, 0]) { is_expected.to match("branch must be a string or branch must be equal to true") }
+        end
       end
     end
   end

@@ -40,7 +40,7 @@
         },
         {
           "level": "warning",
-          "message": "Pact with changed content published over existing content for Foo version 1 and provider Bar. This is not recommended in normal cicumstances and may indicate that you have not configured your Pact pipeline correctly. For more information see https://docs.pact.io/go/versioning",
+          "message": "Pact with changed content published over existing content for Foo version 1 and provider Bar. This is not recommended in normal circumstances and may indicate that you have not configured your Pact pipeline correctly. For more information see https://docs.pact.io/go/versioning",
           "deprecationWarning": "Replaced by notices"
         },
         {
@@ -71,7 +71,7 @@
         },
         {
           "type": "warning",
-          "text": "Pact with changed content published over existing content for Foo version 1 and provider Bar. This is not recommended in normal cicumstances and may indicate that you have not configured your Pact pipeline correctly. For more information see https://docs.pact.io/go/versioning"
+          "text": "Pact with changed content published over existing content for Foo version 1 and provider Bar. This is not recommended in normal circumstances and may indicate that you have not configured your Pact pipeline correctly. For more information see https://docs.pact.io/go/versioning"
         },
         {
           "type": "debug",

@@ -92,6 +92,70 @@ module PactBroker
           expect{ subject }.to_not change { PactBroker::Domain::Version.count }
         end
       end
+
+      describe "count_branches_to_delete" do
+        before do
+          td.create_consumer("foo")
+            .create_consumer_version("1", branch: "main")
+            .create_consumer_version("3", branch: "not-main")
+            .create_consumer_version("4", branch: "foo")
+            .create_consumer_version("5", branch: "bar")
+            .create_consumer_version("6", branch: "not-bar")
+            .create_consumer("bar")
+            .create_consumer_version("1", branch: "main")
+        end
+
+        let(:pacticipant) { td.find_pacticipant("foo") }
+
+        subject { BranchRepository.new.count_branches_to_delete(pacticipant, exclude: ["foo"]) }
+
+        it "returns a count of the number of branches that will be deleted" do
+          expect(subject).to eq 3
+        end
+      end
+
+      describe "delete_branches_for_pacticipant" do
+        before do
+          td.create_consumer("foo")
+            .create_consumer_version("1", branch: "main")
+            .create_consumer_version("3", branch: "not-main")
+            .create_consumer_version("4", branch: "foo")
+            .create_consumer_version("5", branch: "bar")
+            .create_consumer_version("6", branch: "not-bar")
+            .create_consumer("bar")
+            .create_consumer_version("1", branch: "main")
+        end
+
+        let(:pacticipant) { td.find_pacticipant("foo") }
+
+        subject { BranchRepository.new.delete_branches_for_pacticipant(pacticipant, exclude: ["foo"]) }
+
+        it "deletes all the branches except for the excluded ones and the main branch" do
+          subject
+          expect(Branch.where(pacticipant: pacticipant).collect(&:name)).to contain_exactly("foo", "main")
+        end
+      end
+
+      describe "remaining_branches_after_future_deletion" do
+        before do
+          td.create_consumer("foo")
+            .create_consumer_version("1", branch: "main")
+            .create_consumer_version("3", branch: "not-main")
+            .create_consumer_version("4", branch: "foo")
+            .create_consumer_version("5", branch: "bar")
+            .create_consumer_version("6", branch: "not-bar")
+            .create_consumer("bar")
+            .create_consumer_version("1", branch: "main")
+        end
+
+        let(:pacticipant) { td.find_pacticipant("foo") }
+
+        subject { BranchRepository.new.remaining_branches_after_future_deletion(pacticipant, exclude: ["foo"]) }
+
+        it "returns the branches that will not be deleted" do
+          expect(subject).to contain_exactly(have_attributes(name: "main"), have_attributes(name: "foo"))
+        end
+      end
     end
   end
 end

@@ -1,6 +1,10 @@
 require "webmachine/adapters/rack_mapped"
 require "pact_broker/string_refinements"
 
+# Code to describe the routes in a Webmachine API, including
+# path, resource class, allowed methods, schemas, policy class.
+# Used in tests and in the pact_broker:routes task
+
 module Webmachine
   class DescribeRoutes
     using PactBroker::StringRefinements
@@ -12,17 +16,10 @@ module Webmachine
         :resource_name,
         :resource_class_location,
         :allowed_methods,
-        :policy_class,
+        :policy_names,
+        :policy_classes, # only used by pactflow
         :schemas,
         keyword_init: true) do
-
-      def [](key)
-        if respond_to?(key)
-          send(key)
-        else
-          nil
-        end
-      end
 
       def path_include?(component)
         path.include?(component)
@@ -47,7 +44,7 @@ module Webmachine
         }.merge(path_params)
 
         rack_req = ::Rack::Request.new({ "REQUEST_METHOD" => "GET", "rack.input" => StringIO.new("") }.merge(env) )
-        dummy_request = Webmachine::Adapters::Rack::RackRequest.new(
+        request = Webmachine::Adapters::Rack::RackRequest.new(
           rack_req.env["REQUEST_METHOD"],
           path,
           Webmachine::Headers.from_cgi({"HTTP_HOST" => "example.org"}.merge(env)),
@@ -56,13 +53,13 @@ module Webmachine
           {},
           rack_req.env
         )
-        dummy_request.path_info = path_info
-        resource_class.new(dummy_request, Webmachine::Response.new)
+        request.path_info = path_info
+        resource_class.new(request, Webmachine::Response.new)
       end
     end
 
     def self.call(webmachine_applications, search_term: nil)
-      path_mappings = webmachine_applications.flat_map { | webmachine_application | paths_to_resource_class_mappings(webmachine_application) }
+      path_mappings = webmachine_applications.flat_map { | webmachine_application | build_routes(webmachine_application) }
 
       if search_term
         path_mappings = path_mappings.select{ |(route, _)| route[:path].include?(search_term) }
@@ -71,8 +68,10 @@ module Webmachine
       path_mappings.sort_by{ | mapping | mapping[:path] }
     end
 
-    def self.paths_to_resource_class_mappings(webmachine_application)
-      webmachine_application.routes.collect do | webmachine_route |
+    # Build a Route object to describe every Webmachine route defined in the app.routes block
+    # @return [Array<Webmachine::DescribeRoutes::Route>]
+    def self.build_routes(webmachine_application)
+      webmachine_routes_to_describe(webmachine_application).collect do | webmachine_route |
         resource_path_absolute = Pathname.new(source_location_for(webmachine_route.resource))
         Route.new({
           path: "/" + webmachine_route.path_spec.collect{ |part| part.is_a?(Symbol) ? ":#{part}" : part  }.join("/"),
@@ -80,19 +79,23 @@ module Webmachine
           resource_class: webmachine_route.resource,
           resource_name: webmachine_route.instance_variable_get(:@bindings)[:resource_name],
           resource_class_location: resource_path_absolute.relative_path_from(Pathname.pwd).to_s
-        }.merge(info_from_resource_instance(webmachine_route, webmachine_application.application_context)))
-      end.reject{ | route | route.resource_class == Webmachine::Trace::TraceResource }
+        }.merge(properties_for_webmachine_route(webmachine_route, webmachine_application.application_context)))
+      end
     end
 
-    def self.info_from_resource_instance(webmachine_route, application_context)
+    def self.webmachine_routes_to_describe(webmachine_application)
+      webmachine_application.routes.reject{ | route | route.resource == Webmachine::Trace::TraceResource }.collect
+    end
+
+    def self.properties_for_webmachine_route(webmachine_route, application_context)
       with_no_logging do
         path_info = { application_context: application_context, pacticipant_name: "foo", pacticipant_version_number: "1", resource_name: "foo" }
         path_info.default = "1"
-        dummy_request = dummy_request(http_method: "GET", path_info: path_info)
+        request = build_request(http_method: "GET", path_info: path_info)
 
-        dummy_resource = webmachine_route.resource.new(dummy_request, Webmachine::Response.new)
-        if dummy_resource
-          info_from_dummy_resource(dummy_resource, webmachine_route, path_info)
+        resource = webmachine_route.resource.new(request, Webmachine::Response.new)
+        if resource
+          properties_for_resource(resource.allowed_methods - ["OPTIONS"], webmachine_route, application_context)
         else
           {}
         end
@@ -102,29 +105,38 @@ module Webmachine
       {}
     end
 
-    def self.info_from_dummy_resource(dummy_resource, webmachine_route, path_info)
-      {
-        allowed_methods: dummy_resource.allowed_methods,
-        schemas: dummy_resource.respond_to?(:schema, true) && dummy_resource.send(:schema) ? schemas(dummy_resource.allowed_methods, webmachine_route.resource, path_info) : nil
-      }.compact
-    end
+    # Return the properties of the resource that can only be determined by instantiating the resource
+    # @return [Hash]
+    def self.properties_for_resource(allowed_methods, webmachine_route, application_context)
+      schemas = []
+      policy_names = []
+      allowed_methods.each do | http_method |
+        resource = build_resource(webmachine_route, http_method, application_context)
+        if (schema_class = resource.respond_to?(:schema, true) && resource.send(:schema))
+          schemas << { http_method: http_method, class: schema_class, location: source_location_for(schema_class)}
+        end
 
-    # This is not entirely accurate, because some GET requests have schemas too, but we can't tell that statically at the moment
-    def self.schemas(allowed_methods, resource, path_info)
-      (allowed_methods - ["GET", "OPTIONS", "DELETE"]).collect do | http_method |
-        resource.new(dummy_request(http_method: http_method, path_info: path_info), Webmachine::Response.new).send(:schema)
-      end.uniq.collect do | schema_class |
-        {
-          class: schema_class,
-          location: source_location_for(schema_class)
-        }
+        policy_names << resource.policy_name
       end
+
+      {
+        allowed_methods: allowed_methods,
+        schemas: schemas,
+        policy_names: policy_names.uniq
+      }
     end
 
-    def self.dummy_request(http_method: "GET", path_info: )
-      dummy_request = Webmachine::Adapters::Rack::RackRequest.new(http_method, "/", Webmachine::Headers["host" => "example.org"], nil, {}, {}, { "REQUEST_METHOD" => http_method })
-      dummy_request.path_info = path_info
-      dummy_request
+    def self.build_resource(webmachine_route, http_method, application_context)
+      path_info = { application_context: application_context, pacticipant_name: "foo", pacticipant_version_number: "1", resource_name: "foo" }
+      path_info.default = "1"
+      request = build_request(http_method: http_method, path_info: path_info)
+      webmachine_route.resource.new(request, Webmachine::Response.new)
+    end
+
+    def self.build_request(http_method: "GET", path_info: )
+      request = Webmachine::Adapters::Rack::RackRequest.new(http_method, "/", Webmachine::Headers["host" => "example.org"], nil, {}, {}, { "REQUEST_METHOD" => http_method })
+      request.path_info = path_info
+      request
     end
 
     def self.source_location_for(clazz)

@@ -46,12 +46,14 @@ task :'pact_broker:routes', [:search_term] do | _t, args |
       puts "#{route.path}"
       puts "      allowed_methods: #{route.allowed_methods.join(", ")}"
       puts "      class: #{route.resource_class}"
-      puts "            location: #{route.resource_class_location}"
-      if route[:schemas]
+      puts "      location: #{route.resource_class_location}"
+      puts "      policy_name:   #{route.policy_names.collect(&:to_s).join(", ")}"
+      if route.schemas.any?
         puts "      schemas:"
-        route[:schemas].each do | schema |
-          puts "            class: #{schema[:class]}"
-          puts "                   location: #{schema[:location]}"
+        route.schemas.each do | schema |
+          puts "            - method: #{schema[:http_method]}"
+          puts "              class: #{schema[:class]}"
+          puts "              location: #{schema[:location]}"
 
         end
       end

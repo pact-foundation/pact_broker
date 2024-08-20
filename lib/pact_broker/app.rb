@@ -1,8 +1,3 @@
-# Must be defined before loading Padrino
-PADRINO_LOGGER ||= {
-  ENV.fetch("RACK_ENV", "production").to_sym =>  { log_level: :error, stream: :stdout, format_datetime: "%Y-%m-%dT%H:%M:%S.000%:z" }
-}
-
 require "pact_broker/configuration"
 require "pact_broker/db"
 require "pact_broker/initializers/database_connection"
@@ -21,6 +16,7 @@ require "rack/pact_broker/ui_authentication"
 require "rack/pact_broker/configurable_make_it_later"
 require "rack/pact_broker/no_auth"
 require "rack/pact_broker/reset_thread_data"
+require "rack/pact_broker/add_cache_header"
 require "rack/pact_broker/add_vary_header"
 require "rack/pact_broker/use_when"
 require "rack/pact_broker/application_context"
@@ -31,6 +27,7 @@ require "pact_broker/config/basic_auth_configuration"
 require "pact_broker/api/authorization/resource_access_policy"
 require "pact_broker/api/middleware/http_debug_logs"
 require "pact_broker/application_context"
+require "pact_broker/db/advisory_lock"
 
 module PactBroker
 
@@ -105,28 +102,42 @@ module PactBroker
 
     def prepare_database
       logger.info "Database schema version is #{PactBroker::DB.version(configuration.database_connection)}"
+      lock = PactBroker::DB::AdvisoryLock.new(configuration.database_connection, :migrate, :pg_advisory_lock)
       if configuration.auto_migrate_db
-        migration_options = { allow_missing_migration_files: configuration.allow_missing_migration_files }
-        if PactBroker::DB.is_current?(configuration.database_connection, migration_options)
-          logger.info "Skipping database migrations as the latest migration has already been applied"
-        else
-          logger.info "Migrating database schema"
-          PactBroker::DB.run_migrations configuration.database_connection, migration_options
-          logger.info "Database schema version is now #{PactBroker::DB.version(configuration.database_connection)}"
+        lock.with_lock do
+          ensure_all_database_migrations_are_applied
         end
       else
         logger.info "Skipping database schema migrations as database auto migrate is disabled"
       end
 
       if configuration.auto_migrate_db_data
-        logger.info "Migrating data"
-        PactBroker::DB.run_data_migrations configuration.database_connection
+        lock.with_lock do
+          run_data_migrations
+        end
       else
         logger.info "Skipping data migrations"
       end
 
       require "pact_broker/webhooks/service"
       PactBroker::Webhooks::Service.fail_retrying_triggered_webhooks
+    end
+
+    def ensure_all_database_migrations_are_applied
+      migration_options = { allow_missing_migration_files: configuration.allow_missing_migration_files }
+
+      if PactBroker::DB.is_current?(configuration.database_connection, migration_options)
+        logger.info "Skipping database migrations as the latest migration has already been applied"
+      else
+        logger.info "Migrating database schema"
+        PactBroker::DB.run_migrations(configuration.database_connection, migration_options)
+        logger.info "Database schema version is now #{PactBroker::DB.version(configuration.database_connection)}"
+      end
+    end
+
+    def run_data_migrations
+      logger.info "Migrating data"
+      PactBroker::DB.run_data_migrations(configuration.database_connection)
     end
 
     def load_configuration_from_database
@@ -180,16 +191,17 @@ module PactBroker
       @app_builder.use PactBroker::Api::Middleware::HttpDebugLogs if configuration.http_debug_logging_enabled
       configure_basic_auth
       configure_rack_protection
+      @app_builder.use Rack::PactBroker::ApplicationContext, application_context
       @app_builder.use Rack::PactBroker::InvalidUriProtection
       @app_builder.use Rack::PactBroker::ResetThreadData
       @app_builder.use Rack::PactBroker::AddPactBrokerVersionHeader
       @app_builder.use Rack::PactBroker::AddVaryHeader
       @app_builder.use Rack::Static, :urls => ["/stylesheets", "/css", "/fonts", "/js", "/javascripts", "/images"], :root => PactBroker.project_root.join("public")
       @app_builder.use Rack::Static, :urls => ["/favicon.ico"], :root => PactBroker.project_root.join("public/images"), header_rules: [[:all, {"Content-Type" => "image/x-icon"}]]
+      @app_builder.use Rack::PactBroker::AddCacheHeader
       @app_builder.use Rack::PactBroker::ConvertFileExtensionToAcceptHeader
       # Rack::PactBroker::SetBaseUrl needs to be before the Rack::PactBroker::HalBrowserRedirect
       @app_builder.use Rack::PactBroker::SetBaseUrl, configuration.base_urls
-      @app_builder.use Rack::PactBroker::ApplicationContext, application_context
 
       if configuration.use_hal_browser
         logger.info "Mounting HAL browser"

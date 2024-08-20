@@ -1,5 +1,6 @@
 require_relative "base_decorator"
 require_relative "embedded_tag_decorator"
+require_relative "embedded_branch_version_decorator"
 
 module PactBroker
   module Api
@@ -16,11 +17,26 @@ module PactBroker
 
         include Timestamps
 
+        # Returns the list of associations that must be eager loaded to efficiently render a version
+        # when this decorator is used in a collection (eg. VersionsDecorator)
+        # The associations that need to be eager loaded for the VersionDecorator
+        # are hand coded
+        # @return <Array>
+        def self.eager_load_associations
+          [
+            :pacticipant,
+            :pact_publications,
+            { branch_versions: [:version, :branch_head, { branch: :pacticipant }] },
+            { tags: :head_tag }
+          ]
+        end
+
         link :self do | options |
           {
             title: "Version",
             name: represented.number,
-            href: version_url(options.fetch(:base_url), represented)
+            # This decorator is used for multiple Version resources, so dynamically fetch the current resource URL
+            href: options.fetch(:resource_url)
           }
         end
 
@@ -58,7 +74,7 @@ module PactBroker
         end
 
         links :'pb:record-deployment' do | context |
-          context.fetch(:environments, []).collect do | environment |
+          context[:environments]&.collect do | environment |
             {
               title: "Record deployment to #{environment.display_name}",
               name: environment.name,
@@ -68,7 +84,7 @@ module PactBroker
         end
 
         links :'pb:record-release' do | context |
-          context.fetch(:environments, []).collect do | environment |
+          context[:environments]&.collect do | environment |
             {
               title: "Record release to #{environment.display_name}",
               name: environment.name,

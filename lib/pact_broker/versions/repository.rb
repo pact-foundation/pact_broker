@@ -57,29 +57,11 @@ module PactBroker
           .single_record
       end
 
-      # The eager loaded relations are hardcoded here to support the PactBroker::Api::Decorators::VersionDecorator
-      # Newer "find all" implementations for other models pass the relations to eager load in
-      # from the decorator via the resource.
-      def find_all_pacticipant_versions_in_reverse_order name, pagination_options = {}
-        pacticipant = pacticipant_repository.find_by_name!(name)
-        query = PactBroker::Domain::Version
-                  .where(pacticipant: pacticipant)
-                  .eager(:pacticipant)
-                  .eager(branch_versions: [:version, :branch_head, { branch: :pacticipant }])
-                  .eager(tags: :head_tag)
-                  .eager(:pact_publications)
-                  .reverse_order(:order)
-        query.all_with_pagination_options(pagination_options)
-      end
-
-      def find_pacticipant_versions_in_reverse_order(pacticipant_name, options = {}, pagination_options = {})
+      def find_pacticipant_versions_in_reverse_order(pacticipant_name, options = {}, pagination_options = {}, eager_load_associations = [])
         pacticipant = pacticipant_repository.find_by_name!(pacticipant_name)
         query = PactBroker::Domain::Version
                   .where(pacticipant: pacticipant)
-                  .eager(:pacticipant)
-                  .eager(branch_versions: [:version, :branch_head, { branch: :pacticipant }])
-                  .eager(tags: :head_tag)
-                  .eager(:pact_publications)
+                  .eager(*eager_load_associations)
                   .reverse_order(:order)
 
         if options[:branch_name]

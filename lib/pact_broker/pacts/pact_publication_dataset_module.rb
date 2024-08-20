@@ -57,6 +57,13 @@ module PactBroker
         end
       end
 
+      # Returns the latest pact for each branch, returning a pact for every branch, even if
+      # the most recent version of that branch does not have a pact.
+      # This is different from for_all_branch_heads, which will find the branch head versions,
+      # and return the pacts associated with those versions.
+      # This method should not be used for 'pacts for verification', because it will return
+      # a pact for branches where that integration should no longer exist.
+      # @return [Dataset<PactBroker::Pacts::PactPublication>]
       def latest_by_consumer_branch
         branch_versions_join = {
           Sequel[:pact_publications][:consumer_version_id] => Sequel[:branch_versions][:version_id]
@@ -111,10 +118,29 @@ module PactBroker
           .limit(1)
       end
 
-      # Return the pacts (if they exist) for the branch heads.
+      # Returns the pacts (if they exist) for all the branch heads.
+      # If the version for the branch head does not have a pact, then no pact is returned,
+      # (unlike latest_by_consumer_branch)
+      # This is much more performant than latest_by_consumer_branch and should be used
+      # for the 'pacts for verification' response
+      # @return [Dataset<PactBroker::Pacts::PactPublication>]
+      def for_all_branch_heads
+        base_query = self
+        base_query = base_query.join(:branch_heads, { Sequel[:bh][:version_id] => Sequel[:pact_publications][:consumer_version_id] }, { table_alias: :bh })
+
+        if no_columns_selected?
+          base_query = base_query.select_all_qualified.select_append(Sequel[:bh][:branch_name].as(:branch_name))
+        end
+
+        base_query.remove_overridden_revisions
+      end
+
+      # Return the pacts (if they exist) for the branch heads of the given branch names
       # This uses the new logic of finding the branch head and returning any associated pacts,
       # rather than the old logic of returning the pact for the latest version
       # on the branch that had a pact.
+      # @param [String] branch_name
+      # @return [Sequel::Dataset<PactBroker::Pacts::PactPublication>]
       def for_branch_heads(branch_name)
         branch_head_join = {
           Sequel[:pact_publications][:consumer_version_id] => Sequel[:branch_heads][:version_id],
@@ -173,7 +199,10 @@ module PactBroker
       # The latest pact publication for each tag
       # This uses the old logic of "the latest pact for a version that has a tag" (which always returns a pact)
       # rather than "the pact for the latest version with a tag"
-      # Need to see about updating this.
+      #
+      # For 'pacts for verification' this has been replaced by for_all_tag_heads
+      # This should only be used for the UI
+      # @return [Sequel::Dataset<PactBroker::Pacts::PactPublication>]
       def latest_by_consumer_tag
         tags_join = {
           Sequel[:pact_publications][:consumer_version_id] => Sequel[:tags][:version_id],
@@ -202,6 +231,7 @@ module PactBroker
       # This uses the old logic of "the latest pact for a version that has a tag" (which always returns a pact)
       # rather than "the pact for the latest version with a tag"
       # Need to see about updating this.
+      # @return [Sequel::Dataset<PactBroker::Pacts::PactPublication>]
       def latest_for_consumer_tag(tag_name)
         tags_join = {
           Sequel[:pact_publications][:consumer_version_id] => Sequel[:tags][:version_id],
@@ -236,6 +266,30 @@ module PactBroker
                       .select_group(:pacticipant_id, :name)
                       .select_append{ max(version_order).as(:latest_version_order) }
                       .where(name: tag_name)
+
+        head_tags_join = {
+          Sequel[:pact_publications][:consumer_id] => Sequel[:head_tags][:pacticipant_id],
+          Sequel[:pact_publications][:consumer_version_order] => Sequel[:head_tags][:latest_version_order]
+        }
+
+        base_query = self
+        if no_columns_selected?
+          base_query = base_query.select_all_qualified.select_append(Sequel[:head_tags][:name].as(:tag_name))
+        end
+
+        base_query
+          .join(head_tags, head_tags_join, { table_alias: :head_tags })
+         .remove_overridden_revisions_from_complete_query
+      end
+
+      # The pacts for the latest versions for each tag.
+      # Will not return a pact if the pact is no longer published for a particular tag
+      # NEW LOGIC
+      # @return [Sequel::Dataset<PactBroker::Pacts::PactPublication>]
+      def for_all_tag_heads
+        head_tags = PactBroker::Domain::Tag
+                      .select_group(:pacticipant_id, :name)
+                      .select_append{ max(version_order).as(:latest_version_order) }
 
         head_tags_join = {
           Sequel[:pact_publications][:consumer_id] => Sequel[:head_tags][:pacticipant_id],

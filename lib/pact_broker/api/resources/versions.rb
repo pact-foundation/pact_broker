@@ -31,7 +31,7 @@ module PactBroker
         end
 
         def versions
-          @versions ||= version_service.find_all_pacticipant_versions_in_reverse_order(pacticipant_name, pagination_options)
+          @versions ||= version_service.find_pacticipant_versions_in_reverse_order(pacticipant_name, {}, pagination_options, decorator_class(:versions_decorator).eager_load_associations)
         end
 
         def policy_name

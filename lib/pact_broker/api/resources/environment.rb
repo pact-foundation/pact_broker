@@ -42,6 +42,10 @@ module PactBroker
           :'deployments::environment'
         end
 
+        def policy_record
+          environment
+        end
+
         def to_json
           decorator_class(:environment_decorator).new(environment).to_json(**decorator_options)
         end

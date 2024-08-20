@@ -53,7 +53,7 @@ paths:
                   notices:
                     type: array
                     items:
-                      $ref: '#/components/schemas/notice'
+                      $ref: '#/components/schemas/Notice'
         "400":
           description: Validation errror
           content:

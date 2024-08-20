@@ -24,7 +24,7 @@ module PactBroker
         end
 
         context "with pagination" do
-          subject { get(path, { pageNumber: 1, pageSize: 1 }) }
+          subject { get(path, { page: 1, size: 1 }) }
 
           it "only returns the items for the page" do
             expect(response_body_hash["items"].size).to eq 1
@@ -32,7 +32,7 @@ module PactBroker
         end
 
         context "with invalid pagination" do
-          subject { get(path, { pageNumber: -1, pageSize: -1 }) }
+          subject { get(path, { page: -1, size: -1 }) }
 
           it_behaves_like "an invalid pagination params response"
         end

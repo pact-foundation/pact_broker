@@ -43,7 +43,6 @@ module PactBroker
       include PactBroker::Services
       using PactBroker::StringRefinements
 
-
       attr_reader :pacticipant
       attr_reader :consumer
       attr_reader :provider
@@ -88,6 +87,12 @@ module PactBroker
         self
       end
 
+      # Creates a consumer, consumer version, provider and pact with the specified JSON content
+      # Does NOT rely on previous state.
+      # @param [String] consumer_name
+      # @param [String] consumer_version_number
+      # @param [Strig] provider_name
+      # @param [String] json_content
       def create_pact_with_hierarchy consumer_name = "Consumer", consumer_version_number = "1.2.3", provider_name = "Provider", json_content = nil
         use_consumer(consumer_name)
         create_consumer(consumer_name) if !consumer
@@ -99,18 +104,39 @@ module PactBroker
         self
       end
 
+      # Creates a consumer, consumer version with tag, provider and pact
+      # Does NOT rely on previous state.
+      # @param [String] consumer_name
+      # @param [String] consumer_version_number
+      # @param [String] consumer_version_tag_name
+      # @param [Strig] provider_name
       def create_pact_with_consumer_version_tag consumer_name, consumer_version_number, consumer_version_tag_name, provider_name
         create_pact_with_hierarchy(consumer_name, consumer_version_number, provider_name)
         create_consumer_version_tag(consumer_version_tag_name)
         self
       end
 
+      # Creates a consumer, consumer version, provider, pact and verification
+      # Does NOT rely on previous state.
+      # @param [String] consumer_name
+      # @param [String] consumer_version
+      # @param [String] provider_name
+      # @param [String] provider_version
+      # @param [Boolean] success default true
       def create_pact_with_verification consumer_name = "Consumer", consumer_version = "1.0.#{model_counter}", provider_name = "Provider", provider_version = "1.0.#{model_counter}", success = true
         create_pact_with_hierarchy(consumer_name, consumer_version, provider_name)
         create_verification(number: model_counter, provider_version: provider_version, success: success)
         self
       end
 
+      # Creates a consumer, consumer version, provider, pact and verification
+      # Does NOT rely on previous state.
+      # @param [String] consumer_name
+      # @param [String] consumer_version
+      # @param [Array<String>] consumer_version_tags
+      # @param [String] provider_name
+      # @param [String] provider_version
+      # @param [Array<String>] provider_version_tags
       def create_pact_with_verification_and_tags consumer_name = "Consumer", consumer_version = "1.0.#{model_counter}", consumer_version_tags = [], provider_name = "Provider", provider_version = "1.0.#{model_counter}", provider_version_tags = []
         create_pact_with_hierarchy(consumer_name, consumer_version, provider_name)
         consumer_version_tags.each do | tag |
@@ -120,6 +146,10 @@ module PactBroker
         self
       end
 
+      # Create a pacticipant and version
+      # Does NOT rely on previous state
+      # @param [String] pacticipant_name
+      # @param [String] pacticipant_version
       def create_version_with_hierarchy pacticipant_name, pacticipant_version
         pacticipant = pacticipant_service.create(:name => pacticipant_name)
         version = PactBroker::Domain::Version.create(:number => pacticipant_version, :pacticipant => pacticipant)
@@ -135,9 +165,16 @@ module PactBroker
 
       def create_pacticipant pacticipant_name, params = {}
         params.delete(:comment)
+        version_to_create = params.delete(:version)
+
         repository_url = "https://github.com/#{params[:repository_namespace] || "example-organization"}/#{params[:repository_name] || pacticipant_name}"
         merged_params = { name: pacticipant_name, repository_url: repository_url }.merge(params)
         @pacticipant = PactBroker::Domain::Pacticipant.create(merged_params)
+
+        version = create_pacticipant_version(version_to_create, @pacticipant) if version_to_create
+        main_branch = params[:main_branch]
+        PactBroker::Versions::BranchVersionRepository.new.add_branch(version, main_branch) if version && main_branch
+
         self
       end
 
@@ -161,8 +198,11 @@ module PactBroker
         self
       end
 
+      # Create an Integration object for the current consumer and provider
+      # @return [PactBroker::Test::TestDataBuilder]
       def create_integration
-        PactBroker::Integrations::Repository.new.create_for_pact(consumer.id, provider.id)
+        @integration = PactBroker::Integrations::Repository.new.create_for_pact(consumer.id, provider.id)
+        set_created_at_if_set(@now, :integrations, { consumer_id: consumer.id, provider_id: provider.id })
         self
       end
 
@@ -225,7 +265,13 @@ module PactBroker
       def publish_pact(consumer_name:, provider_name:, consumer_version_number: , tags: nil, branch: nil, build_url: nil, json_content: nil)
         json_content = json_content || random_json_content(consumer_name, provider_name)
         contracts = [
-          PactBroker::Contracts::ContractToPublish.from_hash(consumer_name: consumer_name, provider_name: provider_name, decoded_content: json_content, content_type: "application/json", specification: "pact")
+          PactBroker::Contracts::ContractToPublish.from_hash(
+            consumer_name: consumer_name,
+            provider_name: provider_name,
+            decoded_content: json_content,
+            content_type: "application/json",
+            specification: "pact",
+            pact_version_sha: PactBroker::Pacts::GenerateSha.call(json_content))
         ]
         contracts_to_publish = PactBroker::Contracts::ContractsToPublish.from_hash(
           pacticipant_name: consumer_name,
@@ -243,7 +289,9 @@ module PactBroker
         self
       end
 
-      def create_pact params = {}
+      # Creates a pact (and integration if one does not already exist) from the given params
+      # @return [PactBroker::Test::TestDataBuilder]
+      def create_pact(params = {})
         params.delete(:comment)
         json_content = params[:json_content] || default_json_content
         pact_version_sha = params[:pact_version_sha] || generate_pact_version_sha(json_content)
@@ -256,6 +304,7 @@ module PactBroker
           json_content: prepare_json_content(json_content),
           version: @consumer_version
         )
+        integration_service.handle_bulk_contract_data_published([@pact])
         pact_versions_count_after = PactBroker::Pacts::PactVersion.count
         set_created_at_if_set(params[:created_at], :pact_publications, id: @pact.id)
         set_created_at_if_set(params[:created_at], :pact_versions, sha: @pact.pact_version_sha) if pact_versions_count_after > pact_versions_count_before
@@ -597,8 +646,6 @@ module PactBroker
          }.to_json
       end
 
-      private
-
       def create_pacticipant_version(version_number, pacticipant, params = {})
         params.delete(:comment)
         tag_names = [params.delete(:tag_names), params.delete(:tag_name)].flatten.compact
@@ -622,6 +669,8 @@ module PactBroker
         end
         version
       end
+
+      private
 
       def create_deployed_version(uuid: , currently_deployed: , version:, environment_name: , target: nil, created_at: nil)
         env = find_environment(environment_name)

@@ -116,6 +116,12 @@ module PactBroker
               title: "Get, create or delete a tag for a pacticipant version",
               templated: true
             },
+            "pb:pacticipant-branch" =>
+            {
+              href: base_url + "/pacticipants/{pacticipant}/branches/{branch}",
+              title: "Get or delete a pacticipant branch",
+              templated: true
+            },
             "pb:pacticipant-branch-version" =>
             {
               href: base_url + "/pacticipants/{pacticipant}/branches/{branch}/versions/{version}",

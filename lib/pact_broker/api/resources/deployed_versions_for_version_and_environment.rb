@@ -78,7 +78,7 @@ module PactBroker
         end
 
         def title
-          "Deployed versions for #{pacticipant_name} version #{pacticipant_version_number}"
+          "Deployed versions for #{pacticipant_name} version #{pacticipant_version_number} in environment #{environment.display_name}"
         end
       end
     end

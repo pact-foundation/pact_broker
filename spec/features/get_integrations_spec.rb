@@ -23,7 +23,7 @@ describe "Get integrations" do
   end
 
   context "with pagination options" do
-    let(:query) { { "pageSize" => "2", "pageNumber" => "1" } }
+    let(:query) { { "size" => "2", "page" => "1" } }
 
     it_behaves_like "a paginated response"
   end

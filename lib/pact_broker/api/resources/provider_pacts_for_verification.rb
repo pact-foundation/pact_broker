@@ -15,6 +15,10 @@ module PactBroker
           [["application/hal+json", :to_json]]
         end
 
+        # TODO drop support for GET in next major version.
+        # GET was only used by the very first Ruby Pact clients that supported the 'pacts for verification'
+        # feature, until it became clear that the parameters for the request were going to get nested and complex,
+        # at which point the POST was added.
         def allowed_methods
           ["GET", "POST", "OPTIONS"]
         end
@@ -32,6 +36,7 @@ module PactBroker
           end
         end
 
+        # For this endoint, the POST is a "read" action (used for Pactflow)
         def read_methods
           super + %w{POST}
         end

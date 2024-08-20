@@ -40,7 +40,7 @@ module PactBroker::Api
 
           it "generates a JSON body" do
             expect(Decorators::WebhooksDecorator).to receive(:new).with(webhooks)
-            expect(decorator).to receive(:to_json).with(user_options: instance_of(Decorators::DecoratorContext))
+            expect(decorator).to receive(:to_json).with(user_options: instance_of(Hash))
             subject
           end
 

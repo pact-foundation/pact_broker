@@ -22,6 +22,32 @@ module PactBroker
         QueryResultsWithDeploymentStatusSummary.new(query_results, DeploymentStatusSummary.new(query_results))
       end
 
+      def can_i_merge(pacticipant_name: nil, pacticipant: nil, latest_main_branch_version: nil)
+        # first we find the pacticipant by name (or use the one passed in) if pacticipant is nil
+        if pacticipant.nil?
+          pacticipant = pacticipant_service.find_pacticipant_by_name(pacticipant_name)
+          raise PactBroker::Error.new("No pacticipant found with name '#{pacticipant_name}'") unless pacticipant
+        else
+          pacticipant_name = pacticipant.name
+        end
+         
+        # then we find the latest version from the main branch if not passed in
+        if latest_main_branch_version.nil?
+          latest_main_branch_version = version_service.find_latest_version_from_main_branch(pacticipant)
+          raise PactBroker::Error.new("No main branch version found for pacticipant '#{pacticipant_name}'") unless latest_main_branch_version
+        end
+
+        selectors = PactBroker::Matrix::UnresolvedSelector.from_hash(
+          pacticipant_name: pacticipant_name, 
+          pacticipant_version_number: latest_main_branch_version.number
+        )
+         
+        options = { main_branch: true, latest: true, latestby: "cvp" }
+        query_results = can_i_deploy([selectors], options)
+   
+        query_results.deployable?
+      end
+
       def find selectors, options = {}
         logger.info "Querying matrix", selectors: selectors, options: options
         matrix_repository.find(selectors, options)

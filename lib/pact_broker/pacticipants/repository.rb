@@ -102,7 +102,16 @@ module PactBroker
 
       def search_by_name(pacticipant_name)
         terms = pacticipant_name.split.map { |v| v.gsub("_", "\\_") }
-        string_match_query = Sequel.|( *terms.map { |term| Sequel.ilike(Sequel[:pacticipants][:name], "%#{term}%") })
+        columns = [:name, :display_name]
+        string_match_query = Sequel.|(
+          *terms.map do |term|
+            Sequel.|(
+              *columns.map do |column|
+                Sequel.ilike(Sequel[:pacticipants][column], "%#{term}%")
+              end
+            )
+          end
+        )
         scope_for(PactBroker::Domain::Pacticipant).where(string_match_query)
       end
 

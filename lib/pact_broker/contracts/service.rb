@@ -35,6 +35,7 @@ module PactBroker
         version, version_notices = create_version(parsed_contracts)
         tags = create_tags(parsed_contracts, version)
         pacts, pact_notices = create_pacts(parsed_contracts, base_url)
+        create_or_update_integrations(pacts)
         notices = version_notices + pact_notices
         ContractsPublicationResults.from_hash(
           pacticipant: version.pacticipant,
@@ -56,7 +57,7 @@ module PactBroker
         parsed_contracts.contracts.collect do | contract_to_publish |
           pact_params = create_pact_params(parsed_contracts, contract_to_publish)
           existing_pact = pact_service.find_pact(pact_params)
-          if existing_pact && pact_service.disallowed_modification?(existing_pact, contract_to_publish.decoded_content)
+          if existing_pact && pact_service.disallowed_modification?(existing_pact, contract_to_publish.pact_version_sha)
             add_pact_conflict_notice(notices, parsed_contracts, contract_to_publish, existing_pact.json_content, contract_to_publish.decoded_content)
           end
         end
@@ -66,7 +67,7 @@ module PactBroker
 
       def add_pact_conflict_notice(notices, parsed_contracts, contract_to_publish, existing_json_content, new_json_content)
         message_params = {
-          consumer_name: contract_to_publish.provider_name,
+          consumer_name: contract_to_publish.consumer_name,
           consumer_version_number: parsed_contracts.pacticipant_version_number,
           provider_name: contract_to_publish.provider_name
         }
@@ -133,7 +134,7 @@ module PactBroker
           pact_params = create_pact_params(parsed_contracts, contract_to_publish)
           existing_pact = pact_service.find_pact(pact_params)
           listener = TriggeredWebhooksCreatedListener.new
-          created_pact = create_or_merge_pact(contract_to_publish.merge?, existing_pact, pact_params, listener)
+          created_pact = create_or_merge_pact(contract_to_publish.merge?, existing_pact, pact_params.merge(pact_version_sha: contract_to_publish.pact_version_sha), listener)
           notices.concat(notices_for_pact(parsed_contracts, contract_to_publish, existing_pact, created_pact, listener, base_url))
           created_pact
         end
@@ -301,6 +302,14 @@ module PactBroker
 
       def url_for_triggered_webhook(triggered_webhook, base_url)
         PactBroker::Api::PactBrokerUrls.triggered_webhook_logs_url(triggered_webhook, base_url)
+      end
+
+      # Creating/updating the integrations all at once at the end of the transaction instead
+      # of one by one, as each pact is created, reduces the amount of time that
+      # a lock is held on the integrations table, therefore reducing contention
+      # and potential for deadlocks when there are many pacts being published at once.
+      def create_or_update_integrations(pacts)
+        integration_service.handle_bulk_contract_data_published(pacts)
       end
 
       private :url_for_triggered_webhook

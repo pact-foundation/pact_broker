@@ -3,6 +3,8 @@ require "pact_broker/doc/controllers/app"
 RSpec.describe "the HAL docs for the index" do
 
   let(:app) do
+    require "pact_broker/api"
+
     Rack::Builder.new do
       map "/docs" do
         run PactBroker::Doc::Controllers::App

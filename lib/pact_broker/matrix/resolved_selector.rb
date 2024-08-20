@@ -11,7 +11,6 @@ require "pact_broker/hash_refinements"
 module PactBroker
   module Matrix
     class ResolvedSelector < Hash
-
       using PactBroker::HashRefinements
 
       # A version ID of -1 will not match any rows, which is what we want to ensure that

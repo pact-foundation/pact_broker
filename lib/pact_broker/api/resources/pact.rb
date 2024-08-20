@@ -9,14 +9,17 @@ require "pact_broker/api/contracts/put_pact_params_contract"
 require "pact_broker/webhooks/execution_configuration"
 require "pact_broker/api/resources/webhook_execution_methods"
 require "pact_broker/api/resources/pact_resource_methods"
+require "pact_broker/api/resources/event_methods"
+require "pact_broker/integrations/event_listener"
 
 module PactBroker
   module Api
     module Resources
       class Pact < BaseResource
+        include EventMethods
         include PacticipantResourceMethods
-        include WebhookExecutionMethods
         include PactResourceMethods
+        include WebhookExecutionMethods
         include PactBroker::Messages
 
         def content_types_provided
@@ -65,11 +68,13 @@ module PactBroker
         def from_json
           response_code = pact ? 200 : 201
 
-          handle_webhook_events do
-            if request.patch? && resource_exists?
-              @pact = pact_service.merge_pact(pact_params)
-            else
-              @pact = pact_service.create_or_update_pact(pact_params)
+          subscribe(PactBroker::Integrations::EventListener.new) do
+            handle_webhook_events do
+              if request.patch? && resource_exists?
+                @pact = pact_service.merge_pact(pact_params.merge(pact_version_sha: pact_version_sha))
+              else
+                @pact = pact_service.create_or_update_pact(pact_params.merge(pact_version_sha: pact_version_sha))
+              end
             end
           end
           response.body = to_json
@@ -109,7 +114,7 @@ module PactBroker
         end
 
         def disallowed_modification?
-          if request.really_put? && pact_service.disallowed_modification?(pact, pact_params.json_content)
+          if request.really_put? && pact_service.disallowed_modification?(pact, pact_version_sha)
             message_params = { consumer_name: pact_params.consumer_name, consumer_version_number: pact_params.consumer_version_number, provider_name: pact_params.provider_name }
             set_json_error_message(message("errors.validation.pact_content_modification_not_allowed", message_params))
             true
@@ -120,6 +125,10 @@ module PactBroker
 
         def schema
           api_contract_class(:put_pact_params_contract)
+        end
+
+        def pact_version_sha
+          @pact_version_sha ||= pact_service.generate_sha(pact_params.json_content)
         end
       end
     end

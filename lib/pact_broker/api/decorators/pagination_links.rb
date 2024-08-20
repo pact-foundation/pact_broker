@@ -24,7 +24,7 @@ module PactBroker
               represented.respond_to?(:page_count) &&
               represented.current_page < represented.page_count
             {
-              href: context[:resource_url] + "?pageSize=#{represented.page_size}&pageNumber=#{represented.current_page + 1}",
+              href: context[:resource_url] + "?size=#{represented.page_size}&page=#{represented.current_page + 1}",
               title: "Next page"
             }
 
@@ -34,7 +34,7 @@ module PactBroker
         link :previous do | context |
           if represented.respond_to?(:first_page?) && !represented.first_page?
             {
-              href: context[:resource_url] + "?pageSize=#{represented.page_size}&pageNumber=#{represented.current_page - 1}",
+              href: context[:resource_url] + "?size=#{represented.page_size}&page=#{represented.current_page - 1}",
               title: "Previous page"
             }
           end

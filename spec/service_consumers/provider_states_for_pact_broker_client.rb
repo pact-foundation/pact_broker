@@ -338,4 +338,16 @@ Pact.provider_states_for "Pact Broker Client" do
         .create_deployed_version_for_consumer_version(uuid: "ff3adecf-cfc5-4653-a4e3-f1861092f8e0")
     end
   end
+
+  provider_state "the pb:pacticipant-branch relation exists in the index resource" do
+    no_op
+  end
+
+  provider_state "a branch named main exists for pacticipant Foo" do
+    set_up do
+      TestDataBuilder.new
+        .create_consumer("Foo")
+        .create_consumer_version("1", branch: "main")
+    end
+  end
 end

@@ -45,8 +45,8 @@ shared_examples_for "an invalid pagination params response" do
   end
 
   it "includes the parameter validation errors" do
-    expect(response_body_hash[:errors].has_key?(:pageNumber)).to be_truthy
-    expect(response_body_hash[:errors].has_key?(:pageSize)).to be_truthy
+    expect(response_body_hash[:errors].has_key?(:page)).to be_truthy
+    expect(response_body_hash[:errors].has_key?(:size)).to be_truthy
   end
 end
 

@@ -1,4 +1,6 @@
 require "pact_broker/api/resources/error_response_generator"
+require "pact_broker/application_context"
+require "pact_broker/api/decorators/runtime_error_problem_json_decorator"
 
 module PactBroker
   module Api
@@ -13,7 +15,7 @@ module PactBroker
           let(:error_reference) { "bYWfnyWPlf" }
 
           let(:headers_and_body) { ErrorResponseGenerator.call(error, error_reference, rack_env) }
-          let(:rack_env) { { "pactbroker.base_url" => "http://example.org" } }
+          let(:rack_env) { { "pactbroker.base_url" => "http://example.org", "pactbroker.application_context" => PactBroker::ApplicationContext.default_application_context } }
           let(:headers) { headers_and_body.first }
 
           subject { JSON.parse(headers_and_body.last) }
@@ -35,7 +37,7 @@ module PactBroker
           end
 
           context "when the Accept header includes application/problem+json" do
-            let(:rack_env) { { "HTTP_ACCEPT" => "application/hal+json, application/problem+json", "pactbroker.base_url" => "http://example.org" } }
+            let(:rack_env) { { "HTTP_ACCEPT" => "application/hal+json, application/problem+json", "pactbroker.base_url" => "http://example.org", "pactbroker.application_context" => PactBroker::ApplicationContext.default_application_context } }
 
             it "returns headers" do
               expect(headers).to eq("Content-Type" => "application/problem+json;charset=utf-8")

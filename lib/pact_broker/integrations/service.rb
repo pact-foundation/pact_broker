@@ -21,7 +21,16 @@ module PactBroker
       # @param [PactBroker::Domain::Pacticipant] consumer or nil
       # @param [PactBroker::Domain::Pacticipant] provider
       def self.handle_contract_data_published(consumer, provider)
+        integration_repository.create_for_pact(consumer.id, provider.id)
         integration_repository.set_contract_data_updated_at(consumer, provider)
+      end
+
+
+      # Callback to invoke when a batch of contract data is published (eg. the publish contracts endpoint)
+      # @param [Array<Object>] where each object has a consumer and a provider
+      def self.handle_bulk_contract_data_published(objects_with_consumer_and_provider)
+        integration_repository.create_for_pacts(objects_with_consumer_and_provider)
+        integration_repository.set_contract_data_updated_at_for_multiple_integrations(objects_with_consumer_and_provider)
       end
 
       def self.delete(consumer_name, provider_name)

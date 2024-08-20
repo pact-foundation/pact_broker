@@ -23,7 +23,7 @@ module PactBroker
           let(:errors) { {} }
 
           let(:path) { "/integrations" }
-          let(:params) { { "pageNumber" => "1", "pageSize" => "2" } }
+          let(:params) { { "page" => "1", "size" => "2" } }
 
           subject { get(path, params, rack_headers) }
 
@@ -41,7 +41,7 @@ module PactBroker
 
           it "renders the integrations" do
             expect(decorator_class).to receive(:new).with(integrations)
-            expect(decorator).to receive(:to_json).with(user_options: instance_of(Decorators::DecoratorContext))
+            expect(decorator).to receive(:to_json).with(user_options: instance_of(Hash))
             expect(subject.body).to eq json
           end
 

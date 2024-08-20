@@ -50,7 +50,7 @@ Gem::Specification.new do |gem|
   gem.license       = "MIT"
 
   gem.add_runtime_dependency "json", "~> 2.3"
-  gem.add_runtime_dependency "psych", "~> 4.0" # TODO identify breaking changes and see if we can use 5
+  gem.add_runtime_dependency "psych", "~> 5.0"
   gem.add_runtime_dependency "roar", "~> 1.1"
   gem.add_runtime_dependency "dry-validation", "~> 1.8"
   gem.add_runtime_dependency "reform", "~> 2.6"
@@ -64,7 +64,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency "padrino-core", ">= 0.14.3", "~> 0.14"
   gem.add_runtime_dependency "sinatra", "~> 3.0"
   gem.add_runtime_dependency "haml", "~>5.0"
-  gem.add_runtime_dependency "sucker_punch", "~>2.0"
+  gem.add_runtime_dependency "sucker_punch", "~>3.0"
   gem.add_runtime_dependency "rack-protection", "~> 3.0"
   gem.add_runtime_dependency "table_print", "~> 1.5"
   gem.add_runtime_dependency "semantic_logger", "~> 4.11"

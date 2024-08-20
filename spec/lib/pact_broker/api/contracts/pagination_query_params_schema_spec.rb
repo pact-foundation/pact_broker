@@ -19,25 +19,51 @@ module PactBroker
         context "with values that are not numeric" do
           let(:params) do
             {
-              "pageNumber" => "a",
-              "pageSize" => "3.2"
+              "page" => "a",
+              "size" => "3.2"
             }
           end
 
-          its([:pageNumber]) { is_expected.to contain_exactly(match("integer"))}
-          its([:pageSize]) { is_expected.to contain_exactly(match("integer"))}
+          its([:page]) { is_expected.to contain_exactly(match("integer"))}
+          its([:size]) { is_expected.to contain_exactly(match("integer"))}
         end
 
         context "with values that are 0" do
           let(:params) do
             {
-              "pageNumber" => "-0",
-              "pageSize" => "-0"
+              "page" => "-0",
+              "size" => "-0"
             }
           end
 
-          its([:pageNumber]) { is_expected.to contain_exactly(match(/greater.*1/))}
-          its([:pageSize]) { is_expected.to contain_exactly(match(/greater.*1/))}
+          its([:page]) { is_expected.to contain_exactly(match(/greater.*1/))}
+          its([:size]) { is_expected.to contain_exactly(match(/greater.*1/))}
+        end
+
+        context "legacy format" do
+          context "with values that are not numeric" do
+            let(:params) do
+              {
+                "pageNumber" => "a",
+                "pageSize" => "3.2"
+              }
+            end
+
+            its([:pageNumber]) { is_expected.to contain_exactly(match("integer"))}
+            its([:pageSize]) { is_expected.to contain_exactly(match("integer"))}
+          end
+
+          context "with values that are 0" do
+            let(:params) do
+              {
+                "pageNumber" => "-0",
+                "pageSize" => "-0"
+              }
+            end
+
+            its([:pageNumber]) { is_expected.to contain_exactly(match(/greater.*1/))}
+            its([:pageSize]) { is_expected.to contain_exactly(match(/greater.*1/))}
+          end
         end
       end
     end

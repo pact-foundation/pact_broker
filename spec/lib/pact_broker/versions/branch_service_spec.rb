@@ -91,6 +91,28 @@ module PactBroker
           end
         end
       end
+
+      describe "#branch_deletion_notices" do
+        let(:pacticipant) { instance_double(PactBroker::Domain::Pacticipant, name: "some-service") }
+        let(:exclude) { ["foo", "bar" ] }
+        let(:branch_repository) { instance_double(PactBroker::Versions::BranchRepository, count_branches_to_delete: 3, remaining_branches_after_future_deletion: remaining_branches) }
+        let(:remaining_branches) do
+          [
+            instance_double(PactBroker::Versions::Branch, name: "foo", created_at: DateTime.now - 10),
+            instance_double(PactBroker::Versions::Branch, name: "bar", created_at: DateTime.now - 20)
+          ]
+        end
+
+        before do
+          allow(BranchService).to receive(:branch_repository).and_return(branch_repository)
+        end
+
+        subject { BranchService.branch_deletion_notices(pacticipant, exclude: exclude) }
+
+        it "returns a list of notices" do
+          expect(subject).to contain_exactly(have_attributes(text: "Scheduled deletion of 3 branches for pacticipant some-service. Remaining branches are: bar, foo"))
+        end
+      end
     end
   end
 end

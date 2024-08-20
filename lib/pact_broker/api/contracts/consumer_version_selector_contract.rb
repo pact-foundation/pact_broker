@@ -13,7 +13,7 @@ module PactBroker
         json do
           optional(:mainBranch).filled(included_in?: [true])
           optional(:tag).filled(:str?)
-          optional(:branch).filled(:str?)
+          optional(:branch).filled { str? | eql?(true) }
           optional(:matchingBranch).filled(included_in?: [true])
           optional(:latest).filled(included_in?: [true, false])
           optional(:fallbackTag).filled(:str?)

@@ -6,13 +6,23 @@ module PactBroker
   module Api
     module Decorators
       class VersionsDecorator < BaseDecorator
+        class VersionInCollectionDecorator < PactBroker::Api::Decorators::VersionDecorator
+          # VersionDecorator has a dynamic self URL, depending which path the Version resource is mounted at.
+          # Hardcode the URL of the embedded Versions in this collection to use the canonical URL with the version number.
+          link :self do | user_options |
+            {
+              title: "Version",
+              name: represented.number,
+              href: version_url(user_options.fetch(:base_url), represented)
+            }
+          end
+        end
 
-        collection :entries, as: :versions, embedded: true, :extend => PactBroker::Api::Decorators::VersionDecorator
+        collection :entries, as: :versions, embedded: true, :extend => VersionInCollectionDecorator
 
         link :self do | user_options |
-          href = append_query_if_present(user_options[:resource_url], user_options[:query_string])
           {
-            href: href,
+            href: user_options.fetch(:request_url),
             title: user_options[:resource_title] || "All application versions of #{user_options[:pacticipant_name]}"
           }
         end

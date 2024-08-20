@@ -33,8 +33,8 @@ module PactBroker
         scope
       end
 
-      def create params
-        integration_repository.create_for_pact(params.fetch(:consumer_id), params.fetch(:provider_id))
+      # @return [PactBroker::Domain::Pact]
+      def create(params)
         pact_version = find_or_create_pact_version(
           params.fetch(:consumer_id),
           params.fetch(:provider_id),
