@@ -16,6 +16,10 @@ module PactBroker
           ["GET", "OPTIONS"]
         end
 
+        def malformed_request?
+          super || request.get? && validation_errors_for_schema?(schema, request.query)
+        end
+
         def policy_name
           :'labels::labels'
         end
@@ -27,6 +31,15 @@ module PactBroker
             )
           )
         end
+
+        private
+
+        def schema
+          if request.get?
+            PactBroker::Api::Contracts::PaginationQueryParamsSchema
+          end
+        end
+
 
         def labels
           label_service.get_all_unique_labels(pagination_options)
