@@ -248,8 +248,8 @@ The number of seconds after which an SQL query will be aborted. Only supported f
 
 **Environment variable name:** `PACT_BROKER_DATABASE_STATEMENT_TIMEOUT`<br/>
 **YAML configuration key name:** `database_statement_timeout`<br/>
-**Default:** `15`<br/>
-**Allowed values:** A positive integer or float.<br/>
+**Default:** `15000`<br/>
+**Allowed values:** A positive integer in milliseconds<br/>
 **More information:** https://www.postgresql.org/docs/9.3/runtime-config-client.html<br/>
 
 ### metrics_sql_statement_timeout
