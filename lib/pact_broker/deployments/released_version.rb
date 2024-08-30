@@ -87,6 +87,7 @@ end
 #  released_versions_uuid_index                      | UNIQUE btree (uuid)
 #  released_versions_version_id_environment_id_index | UNIQUE btree (version_id, environment_id)
 #  released_version_support_ended_at_index           | btree (support_ended_at)
+#  released_versions_version_id_ndx                  | btree (version_id)
 # Foreign key constraints:
 #  released_versions_environment_id_fkey | (environment_id) REFERENCES environments(id)
 #  released_versions_version_id_fkey     | (version_id) REFERENCES versions(id)

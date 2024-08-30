@@ -22,6 +22,7 @@ end
 # Indexes:
 #  pact_version_provider_tag_successful_verifications_pkey    | PRIMARY KEY btree (id)
 #  pact_version_provider_tag_verifications_pv_pvtn_wip_unique | UNIQUE btree (pact_version_id, provider_version_tag_name, wip)
+#  pact_ver_prov_tag_success_verif_verif_id_ndx               | btree (verification_id)
 # Foreign key constraints:
 #  pact_version_provider_tag_successful_verifications_pv_id_fk | (pact_version_id) REFERENCES pact_versions(id) ON DELETE CASCADE
 #  pact_version_provider_tag_successful_verifications_v_id_fk  | (verification_id) REFERENCES verifications(id) ON DELETE SET NULL

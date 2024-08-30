@@ -23,9 +23,10 @@ end
 #  verification_id     | integer                     | NOT NULL
 #  created_at          | timestamp without time zone |
 # Indexes:
-#  latest_v_id_for_pv_and_pv_pv_id_pv_id_unq | UNIQUE btree (pact_version_id, provider_version_id)
-#  latest_v_id_for_pv_and_pv_v_id_unq        | UNIQUE btree (verification_id)
-#  latest_v_id_for_pv_and_pv_pv_id_v_id      | btree (pact_version_id, verification_id)
+#  latest_v_id_for_pv_and_pv_pv_id_pv_id_unq                 | UNIQUE btree (pact_version_id, provider_version_id)
+#  latest_v_id_for_pv_and_pv_v_id_unq                        | UNIQUE btree (verification_id)
+#  latest_v_id_for_pv_and_pv_pv_id_v_id                      | btree (pact_version_id, verification_id)
+#  latest_verif_id_for_pact_ver_and_prov_ver_prov_ver_id_ndx | btree (provider_version_id)
 # Foreign key constraints:
 #  latest_v_id_for_pv_and_pv_consumer_id_fk         | (consumer_id) REFERENCES pacticipants(id) ON DELETE CASCADE
 #  latest_v_id_for_pv_and_pv_pact_version_id_fk     | (pact_version_id) REFERENCES pact_versions(id) ON DELETE CASCADE

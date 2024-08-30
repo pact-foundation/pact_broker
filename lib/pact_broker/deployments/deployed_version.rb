@@ -129,8 +129,9 @@ end
 #  target_for_index | text                        | NOT NULL DEFAULT ''::text
 #  auto_created     | boolean                     | DEFAULT false
 # Indexes:
-#  deployed_versions_pkey       | PRIMARY KEY btree (id)
-#  deployed_versions_uuid_index | UNIQUE btree (uuid)
+#  deployed_versions_pkey           | PRIMARY KEY btree (id)
+#  deployed_versions_uuid_index     | UNIQUE btree (uuid)
+#  deployed_versions_version_id_ndx | btree (version_id)
 # Foreign key constraints:
 #  deployed_versions_environment_id_fkey | (environment_id) REFERENCES environments(id)
 #  deployed_versions_version_id_fkey     | (version_id) REFERENCES versions(id)

@@ -266,6 +266,7 @@ end
 #  verifications_pact_version_id_id_index      | btree (pact_version_id, id)
 #  verifications_provider_id_consumer_id_index | btree (provider_id, consumer_id)
 #  verifications_provider_id_index             | btree (provider_id)
+#  verifications_provider_version_id_index     | btree (provider_version_id)
 # Foreign key constraints:
 #  fk_verifications_versions          | (provider_version_id) REFERENCES versions(id)
 #  verifications_consumer_id_fkey     | (consumer_id) REFERENCES pacticipants(id)
