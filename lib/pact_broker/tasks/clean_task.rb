@@ -105,7 +105,7 @@ module PactBroker
 
       def output(string, payload = {})
         prefix = dry_run ? "[DRY RUN] " : ""
-        logger ? logger.info("#{prefix}#{string}") : puts("#{prefix}#{string} #{payload.to_json}")
+        logger ? logger.info("#{prefix}#{string}", payload) : puts("#{prefix}#{string} #{payload.to_json}")
       end
 
       def add_defaults_to_keep_selectors
