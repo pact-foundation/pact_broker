@@ -355,6 +355,10 @@ groups:
         description: The URL of the shields.io server used to generate the README badges.
         default_value: https://img.shields.io
         more_info: https://shields.io
+      badge_default_cache_setting:
+        description: Cache Control header value for the badge, this  sets the Cache-Control header for the badge image, for more information on header formats see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control
+        default_value: "max-age=30"
+
       badge_provider_mode:
         description: |-
           The method by which the badges are generated. When set to `redirect`, a request to the Pact Broker for a badge will be sent a redirect response

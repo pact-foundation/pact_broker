@@ -32,7 +32,7 @@ module PactBroker
         end
 
         def moved_temporarily?
-          response.headers["Cache-Control"] = "no-cache"
+          set_cache_control("no-cache")
           begin
             badge_url
           rescue StandardError => e
@@ -44,6 +44,10 @@ module PactBroker
 
         def badge_url
           raise NotImplementedError
+        end
+
+        def set_cache_control(cache_control_str)
+          response.headers["Cache-Control"] = cache_control_str
         end
 
         private

@@ -76,6 +76,7 @@ module PactBroker
         badge_provider_mode: :redirect,
         enable_public_badge_access: false,
         shields_io_base_url: "https://img.shields.io",
+        badge_default_cache_setting: "max-age=30",
         use_case_sensitive_resource_names: true,
         pact_content_diff_timeout: 15
       )

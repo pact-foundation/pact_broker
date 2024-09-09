@@ -15,12 +15,18 @@ module PactBroker
             # when there is no main branch version, we return an error badge url
             badge_service.error_badge_url("main branch version", "not found")
           else
+            # when badge is available, set cache based on configuration
+            set_cache_control(default_cache_for_succesful_badge)
             # we call badge_service to build the badge url
             badge_service.can_i_merge_badge_url(deployable: results)
           end
         end
         
         private
+
+        def default_cache_for_succesful_badge
+          PactBroker.configuration.badge_default_cache_setting
+        end
 
         def results
           # can_i_merge returns true or false if the main branch version is compatible with all the integrations
