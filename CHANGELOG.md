@@ -1,3 +1,15 @@
+<a name="v2.112.0"></a>
+### v2.112.0 (2024-09-09)
+
+#### Features
+
+* implemented setting cache for can-i-merge badges based on default configuration	 ([e2bce55e](/../../commit/e2bce55e))
+* add application/hal+json content type for webhook logs (#679)	 ([e84de4f4](/../../commit/e84de4f4))
+
+#### Bug Fixes
+
+* make clean_task.rb print the payload correctly	 ([10fd69e2](/../../commit/10fd69e2))
+
 <a name="v2.111.0"></a>
 ### v2.111.0 (2024-07-26)
 
