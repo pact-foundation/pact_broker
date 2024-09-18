@@ -4,6 +4,8 @@ module PactBroker
   module DB
     module DataMigrations
       class SetInteractionsCounts
+        # This was never included in PactBroker::DB::MigrateData::MIGRATIONS
+
         def self.call(connection)
           self_join = {
             Sequel[:pact_publications][:consumer_id] => Sequel[:pp2][:consumer_id],

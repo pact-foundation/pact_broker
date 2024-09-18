@@ -13,23 +13,35 @@ end
 module PactBroker
   module DB
     class MigrateData
+      include PactBroker::Logging
+
+      MIGRATIONS = [
+          DataMigrations::SetPacticipantIdsForVerifications,
+          DataMigrations::SetConsumerIdsForPactPublications,
+          DataMigrations::SetLatestVersionSequenceValue,
+          DataMigrations::SetWebhooksEnabled,
+          DataMigrations::DeleteDeprecatedWebhookExecutions,
+          DataMigrations::SetCreatedAtForLatestPactPublications,
+          DataMigrations::SetCreatedAtForLatestVerifications,
+          DataMigrations::SetExtraColumnsForTags,
+          DataMigrations::SetPacticipantDisplayName,
+          DataMigrations::SetWebhookUuid,
+          DataMigrations::SetConsumerVersionOrderForPactPublications,
+          DataMigrations::CreateBranches,
+          DataMigrations::MigrateIntegrations,
+          DataMigrations::MigratePactVersionProviderTagSuccessfulVerifications,
+          DataMigrations::SetContractDataUpdatedAtForIntegrations
+      ].freeze
+
+      def self.registered_migrations
+        MIGRATIONS
+      end
+
       def self.call database_connection, _options = {}
-        DataMigrations::SetPacticipantIdsForVerifications.call(database_connection)
-        DataMigrations::SetConsumerIdsForPactPublications.call(database_connection)
-        DataMigrations::SetLatestVersionSequenceValue.call(database_connection)
-        DataMigrations::SetWebhooksEnabled.call(database_connection)
-        DataMigrations::DeleteDeprecatedWebhookExecutions.call(database_connection)
-        DataMigrations::SetCreatedAtForLatestPactPublications.call(database_connection)
-        DataMigrations::SetCreatedAtForLatestVerifications.call(database_connection)
-        DataMigrations::SetExtraColumnsForTags.call(database_connection)
-        DataMigrations::SetPacticipantDisplayName.call(database_connection)
-        DataMigrations::SetWebhookUuid.call(database_connection)
-        DataMigrations::SetConsumerVersionOrderForPactPublications.call(database_connection)
-        DataMigrations::SetExtraColumnsForTags.call(database_connection)
-        DataMigrations::CreateBranches.call(database_connection)
-        DataMigrations::MigrateIntegrations.call(database_connection)
-        DataMigrations::MigratePactVersionProviderTagSuccessfulVerifications.call(database_connection)
-        DataMigrations::SetContractDataUpdatedAtForIntegrations.call(database_connection)
+        registered_migrations.each do | migration |
+          logger.debug "Running data migration #{migration.to_s.split("::").last.gsub(/([a-z\d])([A-Z])/, '\1 \2').split.join("-")}"
+          migration.call(database_connection)
+        end
       end
     end
   end
