@@ -3,6 +3,7 @@
 # locks to be registered because different threads running the same code
 # should not cause a Sequel::Error to be raised.
 # Also, I wanted it to use Concurrent::Hash for multi-threaded environments.
+# Made minor change in begin ensure block in with_advisory_lock method.
 
 require "sequel"
 require "zlib"
@@ -57,10 +58,9 @@ module Sequel
           synchronize do
             if get(Sequel.function(lock_function, *function_params))
               begin
-                result = yield
+                yield
               ensure
                 get(Sequel.function(UNLOCK_FUNCTION, *function_params))
-                result
               end
             end
           end
