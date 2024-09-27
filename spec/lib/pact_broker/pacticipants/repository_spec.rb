@@ -110,6 +110,18 @@ module PactBroker
             expect(subject.collect(&:name)).to eq ["Wiffle"]
           end
         end
+
+        context "when scope applied" do
+          it "returns the pacticipants if scope allows" do 
+            allow_any_instance_of(Repository).to receive(:scope_for).and_return(PactBroker::Domain::Pacticipant) # default, with no scope applied
+            expect(subject.collect(&:name)).to include(*["Bar", "Foo"])
+          end
+
+          it "returns blank array if scope does not allow" do
+            allow_any_instance_of(Repository).to receive(:scope_for).and_return([])
+            expect(subject).to eq []
+          end
+        end
       end
 
       describe "#find_by_name" do
