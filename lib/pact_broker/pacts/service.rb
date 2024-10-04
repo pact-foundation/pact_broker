@@ -95,6 +95,10 @@ module PactBroker
         pact_repository.find_latest_pacts_for_provider provider_name, options[:tag]
       end
 
+      def find_latest_pacts_for_provider_for_branch provider_name, options = {}
+        pact_repository.find_latest_pacts_for_provider provider_name, options[:branch]
+      end
+
       def find_pact_versions_for_provider provider_name, options = {}
         pact_repository.find_pact_versions_for_provider provider_name, options[:tag]
       end
