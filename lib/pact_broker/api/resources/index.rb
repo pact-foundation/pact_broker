@@ -73,10 +73,22 @@ module PactBroker
               title: "Latest pacts for provider with the specified tag",
               templated: true
             },
+            "pb:latest-provider-pacts-with-branch" =>
+            {
+              href: base_url + "/pacts/provider/{provider}/latest/branch/{branch}",
+              title: "Latest pacts for provider with the specified branch",
+              templated: true
+            },
             "pb:provider-pacts-with-tag" =>
             {
               href: base_url + "/pacts/provider/{provider}/tag/{tag}",
               title: "All pact versions for the provider with the specified consumer version tag",
+              templated: true
+            },
+            "pb:provider-pacts-with-branch" =>
+            {
+              href: base_url + "/pacts/provider/{provider}/branch/{branch}",
+              title: "All pact versions for the provider with the specified consumer version branch",
               templated: true
             },
             "pb:provider-pacts" =>
