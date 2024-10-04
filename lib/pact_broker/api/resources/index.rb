@@ -49,6 +49,18 @@ module PactBroker
               title: "All versions of a pact for a given consumer, provider and consumer version tag",
               templated: false
             },
+            "pb:latest-branch-pact-version" =>
+            {
+              href: base_url + "/pacts/provider/{provider}/consumer/{consumer}/branch/{branch}/latest",
+              title: "Latest version of a pact for a given consumer, provider and consumer version branch",
+              templated: false
+            },
+            "pb:branch-pact-versions" =>
+            {
+              href: base_url + "/pacts/provider/{provider}/consumer/{consumer}/branch/{branch}",
+              title: "All versions of a pact for a given consumer, provider and consumer version branch",
+              templated: false
+            },
             "pb:pacticipants" =>
             {
               href: base_url + "/pacticipants",
