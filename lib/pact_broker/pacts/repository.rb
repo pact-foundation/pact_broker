@@ -168,6 +168,19 @@ module PactBroker
         query.all.collect(&:to_domain).sort
       end
 
+      def find_pact_versions_for_provider_and_consumer provider_name, consumer_name, branch_name = nil
+        query = scope_for(PactPublication)
+          .eager_for_domain_with_content
+          .select_all_qualified
+          .for_consumer_name(consumer_name)
+          .for_provider_name(provider_name)
+          .remove_overridden_revisions
+        if branch_name
+          query = query.old_latest_for_consumer_branch(branch_name)
+        end
+        query.latest_by_consumer_version_order.all.collect(&:to_domain_with_content)
+      end
+  
       # Returns latest pact version for the consumer_version_number
       def find_by_consumer_version consumer_name, consumer_version_number
         scope_for(PactPublication)
