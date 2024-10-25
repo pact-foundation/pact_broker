@@ -129,7 +129,13 @@ module PactBroker
       end
 
       def last_action_date
-        return_or_raise_if_not_set(:last_action_date)
+        date = return_or_raise_if_not_set(:last_action_date)
+
+        if date.class == String
+          DateTime.parse(date)
+        else
+          date
+        end
       end
 
       def has_verification?
