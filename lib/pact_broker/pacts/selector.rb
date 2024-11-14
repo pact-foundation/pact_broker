@@ -155,6 +155,10 @@ module PactBroker
         new(latest: true, branch: branch)
       end
 
+      def self.latest_for_main_branch
+        new(latest: true, main_branch: true)
+      end
+
       def self.latest_for_tag_with_fallback(tag, fallback_tag)
         new(latest: true, tag: tag, fallback_tag: fallback_tag)
       end

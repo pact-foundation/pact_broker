@@ -93,6 +93,10 @@ module PactBroker
       get_service(:branch_service)
     end
 
+    def provider_state_service
+      get_service(:provider_state_service)
+    end
+
     # rubocop: disable Metrics/MethodLength
     def register_default_services
       register_service(:index_service) do
@@ -193,6 +197,11 @@ module PactBroker
       register_service(:branch_service) do
         require "pact_broker/versions/branch_service"
         PactBroker::Versions::BranchService
+      end
+
+      register_service(:provider_state_service) do
+        require "pact_broker/pacts/provider_state_service"
+        PactBroker::Pacts::ProviderStateService
       end
     end
     # rubocop: enable Metrics/MethodLength
