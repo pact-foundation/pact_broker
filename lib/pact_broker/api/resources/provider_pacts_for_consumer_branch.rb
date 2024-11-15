@@ -30,11 +30,15 @@ module PactBroker
         private
 
         def pacts
-          pact_service.find_pact_versions_for_provider provider_name, branch: identifier_from_path[:branch]
+          pact_service.find_pacts_for_provider_by_consumer_branch(
+          provider_name, 
+          branch_name: identifier_from_path[:branch_name], 
+          main_branch: identifier_from_path[:branch_name] ? false : true
+          )
         end
 
         def resource_title
-          suffix = identifier_from_path[:branch] ? " with consumer version branch '#{identifier_from_path[:branch]}'" : ""
+          suffix = identifier_from_path[:branch_name] ? " with consumer version branch '#{identifier_from_path[:branch_name]}'" : ""
           "All pact versions for the provider #{identifier_from_path[:provider_name]}#{suffix}"
         end
       end

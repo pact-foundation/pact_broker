@@ -5,7 +5,7 @@ module PactBroker
     module Resources
       describe LatestProviderPactsForBranch do
         before do
-          allow(PactBroker::Pacts::Service).to receive(:find_latest_pacts_for_provider_for_branch).and_return(pacts)
+          allow(PactBroker::Pacts::Service).to receive(:find_latest_pacts_for_provider_by_consumer_branch).and_return(pacts)
           allow(PactBroker::Api::Decorators::ProviderPactsDecorator).to receive(:new).and_return(decorator)
           allow_any_instance_of(LatestProviderPactsForBranch).to receive(:resource_exists?).and_return(provider)
         end
@@ -19,7 +19,7 @@ module PactBroker
 
         context "with a branch" do
           it "finds the pacts with a branch" do
-            expect(PactBroker::Pacts::Service).to receive(:find_latest_pacts_for_provider_for_branch).with("Bar", branch: "prod")
+            expect(PactBroker::Pacts::Service).to receive(:find_latest_pacts_for_provider_by_consumer_branch).with("Bar", branch_name: "prod", main_branch: false)
             subject
           end
 
