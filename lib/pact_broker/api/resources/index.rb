@@ -87,7 +87,7 @@ module PactBroker
             },
             "pb:latest-provider-pacts-with-branch" =>
             {
-              href: base_url + "/pacts/provider/{provider}/latest/branch/{branch}",
+              href: base_url + "/pacts/provider/{provider}/branch/{branch}/latest",
               title: "Latest pacts for provider with the specified branch",
               templated: true
             },

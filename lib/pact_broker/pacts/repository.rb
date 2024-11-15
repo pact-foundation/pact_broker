@@ -153,7 +153,7 @@ module PactBroker
 
       def find_pacts_by_consumer_branch(provider_name, options = {})
         consumer_name = options[:consumer]
-        latest = options.fetch(:latest, true)
+        latest = options.fetch(:latest, false)
         branch = options[:branch_name]
         main_branch = options.fetch(:main_branch, false)
         

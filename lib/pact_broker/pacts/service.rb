@@ -101,13 +101,17 @@ module PactBroker
       end
 
       def find_pacts_for_provider_by_consumer_branch provider_name, options = {}
-        options[:latest] = false
         pact_repository.find_pacts_by_consumer_branch provider_name, options
       end
 
       def find_pacts_for_provider_and_consumer_by_consumer_branch provider_name, consumer, options = {}
-        options[:latest] = false
         options[:consumer] = consumer
+        pact_repository.find_pacts_by_consumer_branch provider_name, options
+      end
+
+      def find_latest_pacts_for_provider_and_consumer_by_consumer_branch provider_name, consumer, options = {}
+        options[:consumer] = consumer
+        options[:latest] = true
         pact_repository.find_pacts_by_consumer_branch provider_name, options
       end
 

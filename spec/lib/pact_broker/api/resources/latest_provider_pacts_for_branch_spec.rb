@@ -12,7 +12,7 @@ module PactBroker
 
         let(:provider) { double("provider") }
         let(:pacts) { double("pacts") }
-        let(:path) { "/pacts/provider/Bar/latest/branch/prod" }
+        let(:path) { "/pacts/provider/Bar/branch/prod/latest" }
         let(:decorator) { instance_double("PactBroker::Api::Decorators::ProviderPactsDecorator") }
 
         subject { get path; last_response }
