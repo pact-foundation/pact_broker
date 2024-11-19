@@ -32,7 +32,7 @@ group :test do
   gem "approvals", ">=0.0.24", "<1.0.0"
   gem "tzinfo", "~>2.0"
   gem "faraday-retry", "~>2.0"
-  gem "openapi_first", "~>0.20"
+  gem "openapi_first", "~>2.1.1"
 end
 
 group :pg, optional: true do
