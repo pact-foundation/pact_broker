@@ -5,7 +5,10 @@ require "pact_broker/hash_refinements"
 
 module PactBroker
   module Pacts
+    ProviderState = Struct.new(:name, :params)
     class Content
+
+
       include GenerateInteractionSha
       using PactBroker::HashRefinements
 
@@ -33,9 +36,21 @@ module PactBroker
         Content.from_hash(SortContent.call(pact_hash))
       end
 
+      def provider_states
+        messages_or_interaction_or_empty_array.flat_map do | interaction |
+          if interaction["providerState"].is_a?(String)
+            [ProviderState.new(interaction["providerState"])]
+          elsif interaction["providerStates"].is_a?(Array)
+            interaction["providerStates"].collect do | provider_state |
+              ProviderState.new(provider_state["name"], provider_state["params"])
+            end
+          end
+        end.compact
+      end
+
       def interactions_missing_test_results
-        return [] unless messages_or_interactions
-        messages_or_interactions.reject do | interaction |
+        return [] unless messages_and_or_interactions
+        messages_and_or_interactions.reject do | interaction |
           interaction["tests"]&.any?
         end
       end
@@ -116,12 +131,14 @@ module PactBroker
         pact_hash.is_a?(Hash) && pact_hash["interactions"].is_a?(Array) ? pact_hash["interactions"] : nil
       end
 
-      def messages_or_interactions
-        messages || interactions
+      def messages_and_or_interactions
+        if messages || interactions
+          (messages || []) + (interactions || [])
+        end
       end
 
       def messages_or_interaction_or_empty_array
-        messages_or_interactions || []
+        messages_and_or_interactions || []
       end
 
       def pact_specification_version
