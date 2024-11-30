@@ -179,6 +179,48 @@ module PactBroker
         end
       end
 
+
+      describe "provider_states" do
+        let(:pact_content_1) do
+          {
+            interactions: [
+              {
+                providerState: "state 1"
+              },
+              {
+                providerStates: [ { name: "state 2" }, { name: "state 3", params: { foo: "bar" } } ]
+              },
+              {}
+            ],
+            messages: [
+              {
+                providerStates: [ { name: "state 4" } ]
+              }
+            ]
+          }
+        end
+
+        let(:content) { Content.from_json(pact_content_1.to_json) }
+        let(:expected_provider_states) do
+          [
+            ProviderState.new("state 4"),
+            ProviderState.new("state 1"),
+            ProviderState.new("state 2"),
+            ProviderState.new("state 3", { "foo" => "bar" })
+          ]
+        end
+
+        subject { content.provider_states }
+
+        it { is_expected.to eq expected_provider_states }
+
+        context "with a contract with no interactions or messages" do
+          let(:pact_content_1) do
+            its(:size) { is_expected.to eq 0 }
+          end
+        end
+      end
+
       describe "#pact_specification_version" do
         subject { Content.from_hash(json) }
         context "with pactSpecification.version" do
