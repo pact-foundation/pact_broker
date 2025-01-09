@@ -3,7 +3,7 @@ version: "3"
 
 services:
   postgres:
-    image: postgres
+    image: postgres@sha256:888402a8cd6075c5dc83a31f58287f13306c318eaad016661ed12e076f3e6341
     healthcheck:
       test: psql postgres --command "select 1" -U postgres
     # ports:
@@ -50,7 +50,7 @@ services:
       - ./docs:/home/docs
 
   mysql:
-    image: mysql:5.7.28
+    image: mysql:5.7.28@sha256:b38555e593300df225daea22aeb104eed79fc80d2f064fde1e16e1804d00d0fc
     #image: arm64v8/mysql # for m1 macs
     command: --default-authentication-plugin=mysql_native_password
     environment:

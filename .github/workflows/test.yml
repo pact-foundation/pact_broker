@@ -42,7 +42,7 @@ jobs:
     env:
       OAS_COVERAGE_CHECK_ENABLED: "true"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby_version }}
@@ -57,7 +57,7 @@ jobs:
       matrix:
         postgres_docker_image_tag: ["15", "14", "9.6"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - run: script/test/run-rake-on-docker-compose-postgres.sh
         env:
           POSTGRES_DOCKER_IMAGE_TAG: ${{ matrix.postgres_docker_image_tag }}
@@ -65,13 +65,13 @@ jobs:
   mysql:
     runs-on: "ubuntu-latest"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - run: script/test/run-rake-on-docker-compose-mysql.sh
 
   rubocop:
     runs-on: "ubuntu-latest"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
@@ -80,7 +80,7 @@ jobs:
   pact-verify:
     runs-on: "ubuntu-latest"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
@@ -92,7 +92,7 @@ jobs:
   bundle-audit:
     runs-on: "ubuntu-latest"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
