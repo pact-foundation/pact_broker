@@ -1,4 +1,4 @@
-FROM ruby:3.2.4-alpine3.18
+FROM ruby:3.2.4-alpine3.18@sha256:d048a1acdba980fecea26b1064c786d3d379d98948f942f05d2e5dc269b5016b
 
 WORKDIR /home
 
