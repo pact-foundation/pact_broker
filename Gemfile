@@ -3,7 +3,7 @@ source "https://rubygems.org"
 gemspec
 
 
-gem "rake", "~>12.3.3"
+gem "rake", "~>13.2.0"
 gem "sqlite3", ">=2.0.0"
 gem "conventional-changelog", "~>1.3"
 gem "bump", "~> 0.5"
