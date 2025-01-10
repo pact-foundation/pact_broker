@@ -1,0 +1,5 @@
+---
+ignore:
+  # Ignore Sinatra CVE
+  # See comment in https://github.com/pact-foundation/pact_broker/pull/746
+  - CVE-2024-21510
