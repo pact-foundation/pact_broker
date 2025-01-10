@@ -23,7 +23,7 @@ group :test do
   gem "pact", "~>1.14"
   gem "rspec-pact-matchers", "~>0.1"
   gem "bundler-audit", "~>0.4"
-  gem "fakefs", "~>0.4"
+  gem "fakefs", "~>2.0"
   gem "webmock", "~>3.9"
   gem "rspec", "~>3.0"
   gem "rspec-its", "~>1.2"
