@@ -12,9 +12,28 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
+  complete:
+    name: Test completion check
+    if: always()
+
+    permissions:
+      contents: none
+
+    runs-on: ubuntu-latest
+    needs:
+      - sqlite
+      - postgres
+      - mysql
+      - rubocop
+      - pact-verify
+      - bundle-audit
+
   sqlite:
-    if: "!contains(github.event.head_commit.message, '[ci-skip]')"
     runs-on: "ubuntu-latest"
     strategy:
       fail-fast: false
@@ -30,8 +49,8 @@ jobs:
       - run: "bundle install"
       - name: Tests
         run: "bundle exec rake ci"
+
   postgres:
-    if: "!contains(github.event.head_commit.message, '[ci-skip]')"
     runs-on: "ubuntu-latest"
     strategy:
       fail-fast: false
@@ -42,14 +61,14 @@ jobs:
       - run: script/test/run-rake-on-docker-compose-postgres.sh
         env:
           POSTGRES_DOCKER_IMAGE_TAG: ${{ matrix.postgres_docker_image_tag }}
+
   mysql:
-    if: "!contains(github.event.head_commit.message, '[ci-skip]')"
     runs-on: "ubuntu-latest"
     steps:
       - uses: actions/checkout@v4
       - run: script/test/run-rake-on-docker-compose-mysql.sh
+
   rubocop:
-    if: "!contains(github.event.head_commit.message, '[ci-skip]')"
     runs-on: "ubuntu-latest"
     steps:
       - uses: actions/checkout@v4
@@ -57,8 +76,8 @@ jobs:
         with:
           bundler-cache: true
       - run: "bundle exec rubocop"
+
   pact-verify:
-    if: "!contains(github.event.head_commit.message, '[ci-skip]')"
     runs-on: "ubuntu-latest"
     steps:
       - uses: actions/checkout@v4
@@ -69,8 +88,8 @@ jobs:
         run: "GIT_SHA=${GITHUB_SHA} GIT_BRANCH=${GITHUB_REF##*/} bundle exec rake pact:verify"
         env:
           PACTFLOW_PACT_FOUNDATION_TOKEN: ${{ secrets.PACTFLOW_PACT_FOUNDATION_TOKEN }}
+
   bundle-audit:
-    if: "!contains(github.event.head_commit.message, '[ci-skip]')"
     runs-on: "ubuntu-latest"
     steps:
       - uses: actions/checkout@v4
