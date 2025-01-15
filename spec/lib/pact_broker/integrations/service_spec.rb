@@ -2,6 +2,31 @@ require "pact_broker/integrations/service"
 
 module PactBroker
   module Integrations
+    describe "#find_for_provider" do
+      before do
+        td.create_pact_with_hierarchy("Foo", "1", "Bar")
+          .create_pact_with_hierarchy("Foo", "2", "Bar")
+          .create_pact_with_hierarchy("Foo", "3", "Waffle")
+          .create_pact_with_hierarchy("Foo", "4", "Dog")
+      end
+
+      let(:provider) { PactBroker::Domain::Pacticipant.find_by_name("Bar").single_record }
+
+      subject { Service.find_for_provider(provider) }
+
+      it "returns the integrations for the provider" do
+        expect(subject.size).to eq 1
+      end
+
+      it "has the correct consumer names" do
+        expect(subject.collect(&:consumer_name)).to eq ["Foo"] 
+      end
+
+      it "has the correct provider names" do
+        expect(subject.collect(&:provider_name)).to eq ["Bar"]
+      end
+    end
+
     describe Service do
       describe "#delete" do
         subject { Service.delete("Foo", "Bar") }
