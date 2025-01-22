@@ -7,8 +7,9 @@ gem "rake", "~>12.3.3"
 gem "sqlite3", ">=2.0.0"
 gem "conventional-changelog", "~>1.3"
 gem "bump", "~> 0.5"
-gem "padrino-core", ">= 0.14.3", "~> 0.14", require: false
-gem "sinatra", "~> 3.0", require: false
+gem "padrino-core", ">= 0.16.0.pre3", require: false
+gem 'rackup', '~> 2.2'
+# gem "sinatra", "~> 3.0", require: false
 
 group :development do
   gem "pry-byebug"
@@ -34,7 +35,7 @@ group :test do
   gem "approvals", ">=0.0.24", "<1.0.0"
   gem "tzinfo", "~>2.0"
   gem "faraday-retry", "~>2.0"
-  gem "openapi_first", "~>0.20"
+  gem "openapi_first", "~>2.2"
 end
 
 group :pg, optional: true do

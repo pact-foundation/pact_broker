@@ -1,21 +1,22 @@
-OAS_COVERAGE_CHECK_ENABLED = ENV["OAS_COVERAGE_CHECK_ENABLED"] == "true"
-
-# fairly crappy OAS coverage check
-if OAS_COVERAGE_CHECK_ENABLED
-  require "openapi_first"
-  require "openapi_first/coverage"
-  require "support/openapi_first/pact_broker_coverage"
-
-  endpoints_to_be_called = OpenapiFirst::PactBrokerCoverage.build_endpoints_list(OpenapiFirst.load("pact_broker_oas.yaml"))
-
-  RSpec.configure do | config |
-    config.after(:suite) do
-      if endpoints_to_be_called.any?
-        raise "Missing coverage of #{endpoints_to_be_called.join("\n")}"
-      end
-    end
-  end
-end
+# Coverage has been removed from the openapi_first gem
+# OAS_COVERAGE_CHECK_ENABLED = ENV["OAS_COVERAGE_CHECK_ENABLED"] == "true"
+#
+# # fairly crappy OAS coverage check
+# if OAS_COVERAGE_CHECK_ENABLED
+#   require "openapi_first"
+#   require "openapi_first/coverage"
+#   require "support/openapi_first/pact_broker_coverage"
+#
+#   endpoints_to_be_called = OpenapiFirst::PactBrokerCoverage.build_endpoints_list(OpenapiFirst.load("pact_broker_oas.yaml"))
+#
+#   RSpec.configure do | config |
+#     config.after(:suite) do
+#       if endpoints_to_be_called.any?
+#         raise "Missing coverage of #{endpoints_to_be_called.join("\n")}"
+#       end
+#     end
+#   end
+# end
 
 
 RSpec.shared_context "app" do
@@ -39,9 +40,9 @@ RSpec.shared_context "app" do
       builder.use OpenapiFirst::ResponseValidation, spec: "pact_broker_oas.yaml", raise_error: true
     end
 
-    if OAS_COVERAGE_CHECK_ENABLED
-      builder.use OpenapiFirst::PactBrokerCoverage, endpoints_to_be_called
-    end
+    # if OAS_COVERAGE_CHECK_ENABLED
+    #   builder.use OpenapiFirst::PactBrokerCoverage, endpoints_to_be_called
+    # end
 
     builder.use(PactBroker::Middleware::MockPuma)
     builder.use(Rack::PactBroker::ApplicationContext, application_context)
