@@ -1,13 +1,13 @@
 # Taken from https://github.com/webmachine/webmachine-ruby/blob/master/lib/webmachine/adapters/rack.rb
 
-require 'webmachine/adapter'
-require 'rack'
-require 'webmachine/constants'
-require 'webmachine/headers'
-require 'webmachine/request'
-require 'webmachine/response'
-require 'webmachine/version'
-require 'webmachine/chunked_body'
+require "webmachine/adapter"
+require "rack"
+require "webmachine/constants"
+require "webmachine/headers"
+require "webmachine/request"
+require "webmachine/response"
+require "webmachine/version"
+require "webmachine/chunked_body"
 
 module Webmachine
   module Adapters
@@ -15,7 +15,7 @@ module Webmachine
       # Used to override default Rack server options (useful in testing)
       DEFAULT_OPTIONS = {}
 
-      REQUEST_URI = 'REQUEST_URI'.freeze
+      REQUEST_URI = "REQUEST_URI".freeze
       VERSION_STRING = "#{Webmachine::SERVER_STRING} Rack/#{::Rack::RELEASE}".freeze
       NEWLINE = "\n".freeze
 
@@ -56,7 +56,7 @@ module Webmachine
                         Webmachine::ChunkedBody.new(Array(response.body.call))
                       elsif response.body.respond_to?(:each)
                         # This might be an IOEncoder with a Content-Length, which shouldn't be chunked.
-                        if response.headers[TRANSFER_ENCODING] == 'chunked'
+                        if response.headers[TRANSFER_ENCODING] == "chunked"
                           Webmachine::ChunkedBody.new(response.body)
                         else
                           response.body
@@ -72,11 +72,11 @@ module Webmachine
 
       protected
 
-      def routing_tokens(rack_req)
+      def routing_tokens(_rack_req)
         nil # no-op for default, un-mapped rack adapter
       end
 
-      def base_uri(rack_req)
+      def base_uri(_rack_req)
         nil # no-op for default, un-mapped rack adapter
       end
 
@@ -102,7 +102,7 @@ module Webmachine
       end
 
       class RackResponse
-        ONE_FIVE = '1.5'.freeze
+        ONE_FIVE = "1.5".freeze
 
         def initialize(body, status, headers)
           @body = body
@@ -189,7 +189,7 @@ module Webmachine
 
       def routing_tokens(rack_req)
         routing_match = rack_req.path_info.match(Webmachine::Request::ROUTING_PATH_MATCH)
-        routing_path = routing_match ? routing_match[1] : ''
+        routing_path = routing_match ? routing_match[1] : ""
         routing_path.split(SLASH)
       end
 
