@@ -95,6 +95,8 @@ module Webmachine
       class RackRequest < Webmachine::Request
         attr_reader :env
 
+        # Yeah, Rubocop, piss off!
+        # rubocop:disable ParameterLists
         def initialize(method, uri, headers, body, routing_tokens, base_uri, env)
           super(method, uri, headers, body, routing_tokens, base_uri)
           @env = env
