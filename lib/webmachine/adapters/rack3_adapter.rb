@@ -178,6 +178,7 @@ module Webmachine
               yield chunk
             }
           elsif @request.body.respond_to?(:to_ary)
+            @value = @request.body.to_ary
             @value.each { |chunk| yield chunk }
           else
             yield @request.body
