@@ -25,7 +25,7 @@ module PactBroker
         its(:provider_name) { should eq "Provider Name"}
         its(:latest_pact_url) { should eq "/pacts/provider/Provider%20Name/consumer/Consumer%20Name/latest" }
         its(:pact_url) { should eq "/pacts/provider/Provider%20Name/consumer/Consumer%20Name/version/1.2.3" }
-        its(:pact_matrix_url) { should eq "/matrix?q[][pacticipant]=Consumer+Name&q[][version]=1.2.3&q[][pacticipant]=Provider+Name&latestby=cvpv" }
+        its(:pact_matrix_url) { should eq "/matrix?q%5B%5D%5Bpacticipant%5D=Consumer+Name&q%5B%5D%5Bversion%5D=1.2.3&q%5B%5D%5Bpacticipant%5D=Provider+Name&latestby=cvpv" }
         its(:consumer_group_url) { should eq "/pacticipants/Consumer%20Name" }
         its(:provider_group_url) { should eq "/pacticipants/Provider%20Name" }
 

@@ -26,7 +26,7 @@ module Webmachine
         end
 
         pact_api.configure do |config|
-          config.adapter = :RackMapped
+          config.adapter = :Rack3Mapped
         end
 
         pact_api.adapter

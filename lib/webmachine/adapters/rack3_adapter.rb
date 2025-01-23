@@ -151,9 +151,13 @@ module Webmachine
         def to_s
           if @value
             @value.join
-          else
-            @request.body.rewind
+          elsif @request.body.respond_to?(:to_ary)
+            @request.body.to_ary.join
+          elsif @request.body.respond_to?(:read)
+            @request.body.rewind if @request.body.respond_to?(:rewind)
             @request.body.read
+          else
+            @request.body&.to_s || ""
           end
         end
 
@@ -165,12 +169,16 @@ module Webmachine
         def each
           if @value
             @value.each { |chunk| yield chunk }
-          else
+          elsif @request.body.respond_to?(:each)
             @value = []
             @request.body.each { |chunk|
               @value << chunk
               yield chunk
             }
+          elsif @request.body.respond_to?(:to_ary)
+            @value.each { |chunk| yield chunk }
+          else
+            yield @request.body
           end
         end
       end # class RequestBody
