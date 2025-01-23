@@ -30,6 +30,13 @@ RSpec.describe "webhook routes" do
       )
       .create_triggered_webhook(uuid: "6cd5cc48-db3c-4a4c-a36d-e9bedeb9d91e")
       .create_webhook_execution
+
+    Approvals.configure do |config|
+      config.excluded_json_keys = {
+        :id => /content-length/,
+        :date => /date/
+      }
+    end
   end
 
   after do

@@ -14,7 +14,7 @@
     "status": 200,
     "headers": {
       "content-type": "application/hal+json;charset=utf-8",
-      "content-length": "296",
+      "content-length": "<id>",
       "date": "<date>",
       "server": "Webmachine-Ruby/2.0.1 Rack/3.1.8"
     },

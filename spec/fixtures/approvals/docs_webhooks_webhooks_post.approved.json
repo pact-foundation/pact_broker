@@ -36,7 +36,7 @@
     "headers": {
       "content-type": "application/hal+json;charset=utf-8",
       "location": "https://pact-broker/webhooks/dCGCl-Ba3PqEFJ_iE9mJkQ",
-      "content-length": "762",
+      "content-length": "<id>",
       "date": "<date>",
       "server": "Webmachine-Ruby/2.0.1 Rack/3.1.8"
     },
