@@ -15,7 +15,7 @@
     "headers": {
       "content-type": "application/hal+json;charset=utf-8",
       "content-length": "496",
-      "date": "Wed, 01 Sep 2021 00:07:21 GMT",
+      "date": "<date>",
       "server": "Webmachine-Ruby/2.0.1 Rack/3.1.8"
     },
     "body": {

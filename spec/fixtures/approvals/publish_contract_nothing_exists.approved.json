@@ -31,7 +31,7 @@
     "headers": {
       "content-type": "application/hal+json;charset=utf-8",
       "content-length": "2941",
-      "date": "Thu, 23 Jan 2025 01:18:39 GMT",
+      "date": "<date>",
       "server": "Webmachine-Ruby/2.0.1 Rack/3.1.8"
     },
     "body": {

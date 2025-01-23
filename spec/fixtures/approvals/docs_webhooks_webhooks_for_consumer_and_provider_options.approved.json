@@ -15,7 +15,7 @@
     "headers": {
       "access-control-allow-methods": "POST, GET, OPTIONS",
       "content-length": "0",
-      "date": "Wed, 01 Sep 2021 00:07:21 GMT",
+      "date": "<date>",
       "server": "Webmachine-Ruby/2.0.1 Rack/3.1.8"
     },
     "body": ""

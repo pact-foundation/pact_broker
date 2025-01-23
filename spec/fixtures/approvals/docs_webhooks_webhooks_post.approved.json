@@ -37,7 +37,7 @@
       "content-type": "application/hal+json;charset=utf-8",
       "location": "https://pact-broker/webhooks/dCGCl-Ba3PqEFJ_iE9mJkQ",
       "content-length": "762",
-      "date": "Wed, 01 Sep 2021 00:07:21 GMT",
+      "date": "<date>",
       "server": "Webmachine-Ruby/2.0.1 Rack/3.1.8"
     },
     "body": {

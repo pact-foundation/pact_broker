@@ -34,10 +34,10 @@ RSpec.shared_context "app" do
       # To stop the middleware raising that as an error,
       # add the metadata `skip_oas_request_validation: true` to the individual spec.
       unless example.metadata[:skip_oas_request_validation]
-        builder.use OpenapiFirst::RequestValidation, spec: "pact_broker_oas.yaml", raise_error: true
+        builder.use OpenapiFirst::Middlewares::RequestValidation, spec: "pact_broker_oas.yaml", raise_error: true
       end
 
-      builder.use OpenapiFirst::ResponseValidation, spec: "pact_broker_oas.yaml", raise_error: true
+      builder.use OpenapiFirst::Middlewares::ResponseValidation, spec: "pact_broker_oas.yaml", raise_error: true
     end
 
     # if OAS_COVERAGE_CHECK_ENABLED
