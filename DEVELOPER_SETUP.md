@@ -124,7 +124,9 @@ psql postgres://postgres:postgres@postgres/postgres
 
 ## Running the regression tests
 
-The regression tests record a series of API requests/responses using a real exported database (not included in the git repository because of the size) and store the expectations in files using the Approvals gem. They allow you to make sure that the changes you have made have not made any (unexpected) changes to the interface.
+The regression tests record a series of API requests/responses using a real exported database (not included in the 
+git repository because of the size) and store the expectations in files using the Approvals gem. They allow you to 
+make sure that the changes you have made have not made any (unexpected) changes to the interface.
 
 The tests and files are stored in the [regression](regression) directory.
 

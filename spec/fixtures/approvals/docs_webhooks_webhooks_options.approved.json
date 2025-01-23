@@ -13,7 +13,10 @@
   "response": {
     "status": 200,
     "headers": {
-      "Access-Control-Allow-Methods": "GET, POST, OPTIONS"
+      "access-control-allow-methods": "GET, POST, OPTIONS",
+      "content-length": "0",
+      "date": "Wed, 01 Sep 2021 00:07:21 GMT",
+      "server": "Webmachine-Ruby/2.0.1 Rack/3.1.8"
     },
     "body": ""
   }

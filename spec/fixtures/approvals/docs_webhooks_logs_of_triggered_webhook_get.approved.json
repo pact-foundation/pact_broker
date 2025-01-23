@@ -13,8 +13,11 @@
   "response": {
     "status": 200,
     "headers": {
-      "Content-Type": "text/plain;charset=utf-8",
-      "Vary": "Accept"
+      "content-type": "text/plain;charset=utf-8",
+      "vary": "Accept",
+      "content-length": "4",
+      "date": "Wed, 01 Sep 2021 00:07:21 GMT",
+      "server": "Webmachine-Ruby/2.0.1 Rack/3.1.8"
     },
     "body": "logs"
   }

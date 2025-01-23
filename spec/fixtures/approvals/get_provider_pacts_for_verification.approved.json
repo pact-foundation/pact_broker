@@ -21,7 +21,10 @@
   "response": {
     "status": 200,
     "headers": {
-      "Content-Type": "application/hal+json;charset=utf-8"
+      "content-type": "application/hal+json;charset=utf-8",
+      "content-length": "840",
+      "date": "Thu, 23 Jan 2025 01:18:37 GMT",
+      "server": "Webmachine-Ruby/2.0.1 Rack/3.1.8"
     },
     "body": {
       "_embedded": {
@@ -38,7 +41,7 @@
             },
             "_links": {
               "self": {
-                "href": "http://example.org/pacts/provider/Provider/consumer/Consumer%202/pact-version/0f22f551a422b027066db7635cad8bd8a59ac869/metadata/c1tdW3RdPXByb2Qmc1tdW2xdPXRydWUmc1tdW2N2XT0y",
+                "href": "http://example.org/pacts/provider/Provider/consumer/Consumer%202/pact-version/0f22f551a422b027066db7635cad8bd8a59ac869/metadata/cyU1QiU1RCU1QnQlNUQ9cHJvZCZzJTVCJTVEJTVCbCU1RD10cnVlJnMlNUIlNUQlNUJjdiU1RD0y",
                 "name": "Pact between Consumer 2 (4.5.6) and Provider"
               }
             }
