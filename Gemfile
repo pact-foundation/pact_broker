@@ -3,7 +3,7 @@ source "https://rubygems.org"
 gemspec
 
 
-gem "rake", "~>12.3.3"
+gem "rake", "~>13.0"
 gem "sqlite3", ">=2.0.0"
 gem "conventional-changelog", "~>1.3"
 gem "bump", "~> 0.5"
@@ -12,8 +12,8 @@ gem "sinatra", "~> 3.0", require: false
 
 group :development do
   gem "pry-byebug"
-  gem "rubocop", "~>1.1"
-  gem "rubocop-performance", "~> 1.11"
+  gem "rubocop", "~>1.7"
+  gem "rubocop-performance", "~> 1.23"
   gem "sequel-annotate", "~>1.3"
   gem "yard", "~> 0.9"
 end
