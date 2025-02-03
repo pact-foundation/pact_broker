@@ -3,7 +3,7 @@ source "https://rubygems.org"
 gemspec
 
 
-gem "rake", "~>12.3.3"
+gem "rake", "~>13.0"
 gem "sqlite3", ">=2.0.0"
 gem "conventional-changelog", "~>1.3"
 gem "bump", "~> 0.5"
@@ -12,8 +12,8 @@ gem "rackup", "~> 2.2"
 
 group :development do
   gem "pry-byebug"
-  gem "rubocop", "~>1.1"
-  gem "rubocop-performance", "~> 1.11"
+  gem "rubocop", "~>1.7"
+  gem "rubocop-performance", "~> 1.23"
   gem "sequel-annotate", "~>1.3"
   gem "yard", "~> 0.9"
 end
@@ -23,7 +23,6 @@ group :test do
   gem "pact", "~>1.14"
   gem "rspec-pact-matchers", "~>0.1"
   gem "bundler-audit", "~>0.4"
-  gem "fakefs", "~>0.4"
   gem "webmock", "~>3.9"
   gem "rspec", "~>3.0"
   gem "rspec-its", "~>1.2"
