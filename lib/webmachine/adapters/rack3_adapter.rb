@@ -45,29 +45,22 @@ module Webmachine
 
         response.headers[SERVER] = VERSION_STRING
 
-        rack_status = response.code
-        rack_headers = response.headers.flattened(NEWLINE)
         rack_body = case response.body
-                    when String # Strings are enumerable in ruby 1.8
-                      [response.body]
-                    else
-                      if (io_body = IO.try_convert(response.body))
-                        io_body
-                      elsif response.body.respond_to?(:call)
-                        Webmachine::ChunkedBody.new(Array(response.body.call))
-                      elsif response.body.respond_to?(:each)
-                        # This might be an IOEncoder with a Content-Length, which shouldn't be chunked.
-                        if response.headers[TRANSFER_ENCODING] == "chunked"
-                          Webmachine::ChunkedBody.new(response.body)
-                        else
-                          response.body
-                        end
-                      else
-                        [response.body.to_s]
-                      end
-                    end
+          when String # Strings are enumerable in ruby 1.8
+            [response.body]
+          else
+            if (io_body = IO.try_convert(response.body))
+              io_body
+            elsif response.body.respond_to?(:call)
+              response.body
+            elsif response.body.respond_to?(:each)
+              response.body
+            else
+              [response.body.to_s]
+            end
+        end
 
-        rack_res = RackResponse.new(rack_body, rack_status, rack_headers)
+        rack_res = ::Rack::Response.new(rack_body, response.code, response.headers)
         rack_res.finish
       end
 
@@ -101,32 +94,6 @@ module Webmachine
         def initialize(method, uri, headers, body, routing_tokens, base_uri, env)
           super(method, uri, headers, body, routing_tokens, base_uri)
           @env = env
-        end
-      end
-
-      class RackResponse
-        ONE_FIVE = "1.5".freeze
-
-        def initialize(body, status, headers)
-          @body = body
-          @status = status
-          @headers = headers
-        end
-
-        def finish
-          @headers[CONTENT_TYPE] ||= TEXT_HTML if rack_release_enforcing_content_type
-          @headers.delete(CONTENT_TYPE) if response_without_body
-          [@status, @headers, @body]
-        end
-
-        protected
-
-        def response_without_body
-          ::Rack::Utils::STATUS_WITH_NO_ENTITY_BODY.include? @status
-        end
-
-        def rack_release_enforcing_content_type
-          ::Rack.release < ONE_FIVE
         end
       end
 
