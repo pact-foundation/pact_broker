@@ -16,7 +16,8 @@ module Webmachine
       DEFAULT_OPTIONS = {}
 
       REQUEST_URI = "REQUEST_URI".freeze
-      VERSION_STRING = "#{Webmachine::SERVER_STRING} Rack/#{::Rack::RELEASE}".freeze
+      RACK_VERSION = ::Rack::RELEASE.match(/^(\d+\.\d+)/)[1]
+      VERSION_STRING = "#{Webmachine::SERVER_STRING} Rack/#{RACK_VERSION}".freeze
       NEWLINE = "\n".freeze
 
       # Start the Rack adapter
