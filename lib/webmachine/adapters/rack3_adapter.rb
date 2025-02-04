@@ -45,7 +45,8 @@ module Webmachine
 
         response.headers[SERVER] = VERSION_STRING
 
-        rack_body = case response.body
+        rack_body =
+        case response.body
           when String # Strings are enumerable in ruby 1.8
             [response.body]
           else
