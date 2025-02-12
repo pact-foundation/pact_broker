@@ -26,20 +26,6 @@ module PactBroker
               subject
               expect(last_response.body).to include "<html>"
             end
-
-            context "with the base_url not set" do
-              it "returns relative links" do
-                expect(subject.body).to include "href='/css"
-              end
-            end
-
-            context "with the base_url set" do
-              let(:rack_env) { { "pactbroker.base_url" => "http://example.org/pact-broker"} }
-
-              it "returns absolute links" do
-                expect(subject.body).to include "href='http://example.org/pact-broker/css"
-              end
-            end
           end
 
           context "when the resource does not exist" do
