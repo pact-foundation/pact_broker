@@ -11,3 +11,21 @@ Use a `POST` request to the `pb:publish-verification-results` link (`$['_links']
     }
 
 Multiple verification results may be published for the same pact resource. The most recently published one will be considered to reflect the current status of verification.
+
+Optionally the body can contain details about the Pact implementation which performed the verification, and test results, which support arbitrary json
+
+    {
+      "providerApplicationVersion": "1",
+      "success": true,
+      "buildUrl": "http://build-url",
+      "testResults": [],
+      "verifiedBy": {
+        "implementation": "Pact-Rust",
+        "version": "1.0.0",
+        "clientLanguage": {
+          "testFramework": "TEST",
+          "name": "TESTER",
+          "version": "1.2.3"
+        }
+      }
+    }
