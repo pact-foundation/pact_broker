@@ -44,6 +44,11 @@ module PactBroker
         add ["pacts", "provider", :provider_name, "consumer", :consumer_name, "version", :consumer_version_number, "diff", "version", :comparison_consumer_version], Api::Resources::PactContentDiff, {resource_name: "pact_version_diff_by_consumer_version"}
         add ["pacts", "provider", :provider_name, "consumer", :consumer_name, "pact-version", :pact_version_sha, "diff", "pact-version", :comparison_pact_version_sha], Api::Resources::PactContentDiff, {resource_name: "pact_version_diff_by_pact_version_sha"}
 
+        # Provider states
+
+        add ["pacts", "provider", :provider_name, "provider-states"], Api::Resources::ProviderStates, { resource_name: "provider_states" }
+
+
         # Verifications
         add ["pacts", "provider", :provider_name, "consumer", :consumer_name, "pact-version", :pact_version_sha, "verification-results"], Api::Resources::Verifications, {resource_name: "verification_results"}
         add ["pacts", "provider", :provider_name, "consumer", :consumer_name, "pact-version", :pact_version_sha, "metadata", :metadata, "verification-results"], Api::Resources::Verifications, {resource_name: "verification_results"}

@@ -27,6 +27,10 @@ module PactBroker
         Selectors.new([Selector.latest_for_branch(branch)])
       end
 
+      def self.create_for_latest_from_main_branch
+        Selectors.new([Selector.latest_for_main_branch])
+      end
+
       def self.create_for_overall_latest
         Selectors.new([Selector.overall_latest])
       end
