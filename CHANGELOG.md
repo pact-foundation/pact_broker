@@ -1,3 +1,15 @@
+<a name="v2.113.0"></a>
+### v2.113.0 (2025-02-13)
+
+#### Features
+
+* aggregated provider state endpoint (#734)	 ([108d11a7](/../../commit/108d11a7))
+* add more logging to data migrations	 ([9482d44d](/../../commit/9482d44d))
+
+#### Bug Fixes
+
+* make sure last_action_date always returns a DateTime object	 ([d60c264e](/../../commit/d60c264e))
+
 <a name="v2.112.0"></a>
 ### v2.112.0 (2024-09-09)
 
