@@ -2,7 +2,7 @@ version: "3"
 
 services:
   postgres:
-    image: postgres@sha256:888402a8cd6075c5dc83a31f58287f13306c318eaad016661ed12e076f3e6341
+    image: postgres@sha256:3267c505060a0052e5aa6e5175a7b41ab6b04da2f8c4540fc6e98a37210aa2d3
     healthcheck:
       test: psql postgres --command "select 1" -U postgres
     environment:
@@ -11,7 +11,7 @@ services:
       POSTGRES_DB: postgres
 
   pact-broker:
-    image: pactfoundation/pact-broker:2.94.0.0@sha256:dbdb641c0906ff583a66e5c36aba9f17b8fa9019c12329eacd7e688c6e7871df
+    image: pactfoundation/pact-broker:2.107.0.1@sha256:1179559c456f7c6fbb5872933207c8fde17051059f751c85c7f435d8033b401d
     ports:
       - "9292:9292"
     # depends_on:
