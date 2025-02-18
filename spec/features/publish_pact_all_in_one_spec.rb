@@ -37,7 +37,7 @@ RSpec.describe "publishing a pact using the all in one endpoint", validate_oas: 
       request_body_hash.delete(:pacticipantName)
     end
 
-    it "returns a validation error response", skip_oas_request_validation: true do
+    it "returns a validation error response" do
       expect(subject).to be_a_json_error_response("missing")
     end
   end
