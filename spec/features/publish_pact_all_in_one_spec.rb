@@ -46,6 +46,14 @@ RSpec.describe "publishing a pact using the all in one endpoint", validate_oas: 
     let(:contract) { "{\"key\": \"ABCDEFG\x8FDEF\" }" }
 
     its(:status) { is_expected.to eq 400 }
+    its(:media_type) { is_expected.to eq "application/hal+json" }
+
+    context "when client accepts application/problem+json" do
+      let(:rack_headers) { { "CONTENT_TYPE" => "application/json", "HTTP_ACCEPT" => "application/problem+json" } }
+
+      its(:status) { is_expected.to eq 400 }
+      its(:media_type) { is_expected.to eq "application/problem+json" }
+    end
   end
 
   context "with a conflicting pact" do
