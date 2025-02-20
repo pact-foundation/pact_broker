@@ -22,7 +22,10 @@ module PactBroker
             execution_date: DateTime.now,
             provider_version_tags: provider_version_tags,
             verified_by_implementation: "Ruby",
-            verified_by_version: "1234")
+            verified_by_version: "1234",
+            verified_by_client_implementation: "go test",
+            verified_by_client_version: "2.2.0",
+            verified_by_client_test_framework: "pact-go")
         end
 
         let(:pact) do

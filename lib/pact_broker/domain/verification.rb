@@ -259,6 +259,9 @@ end
 #  pact_pending                     | boolean                     |
 #  verified_by_implementation       | text                        |
 #  verified_by_version              | text                        |
+#  verified_by_client_implementation| text                        |
+#  verified_by_client_version       | text                        |
+#  verified_by_client_test_framework| text                        |
 # Indexes:
 #  verifications_pkey                          | PRIMARY KEY btree (id)
 #  verifications_pact_version_id_number_index  | UNIQUE btree (pact_version_id, number)

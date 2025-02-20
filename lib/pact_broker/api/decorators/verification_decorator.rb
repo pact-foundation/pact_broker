@@ -18,6 +18,9 @@ module PactBroker
         nested :verifiedBy do
           property :verified_by_implementation, as: :implementation
           property :verified_by_version, as: :version
+          property :verified_by_client_implementation, as: :client_implementation
+          property :verified_by_client_test_framework, as: :client_test_framework
+          property :verified_by_client_version, as: :client_version
         end
 
         link :self do | options |
