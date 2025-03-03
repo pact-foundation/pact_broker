@@ -7,8 +7,8 @@ gem "rake", "~>13.0"
 gem "sqlite3", ">=2.0.0"
 gem "conventional-changelog", "~>1.3"
 gem "bump", "~> 0.5"
-gem "padrino-core", ">= 0.14.3", "~> 0.14", require: false
-gem "sinatra", "~> 3.0", require: false
+gem "padrino-core", ">= 0.16.0.pre3", require: false
+gem "rackup", "~> 2.2"
 
 group :development do
   gem "pry-byebug"

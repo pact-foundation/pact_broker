@@ -1,5 +1,5 @@
 require "webmachine"
-require "webmachine/adapters/rack_mapped"
+require "webmachine/adapters/rack3_adapter"
 require "rack/test"
 
 module Webmachine
@@ -26,7 +26,7 @@ module Webmachine
         end
 
         pact_api.configure do |config|
-          config.adapter = :RackMapped
+          config.adapter = :Rack3Mapped
         end
 
         pact_api.adapter

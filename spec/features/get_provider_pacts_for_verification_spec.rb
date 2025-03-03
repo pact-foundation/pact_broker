@@ -7,6 +7,14 @@ describe "Get provider pacts for verification" do
     }
   end
 
+  before do
+    Approvals.configure do |config|
+      config.excluded_json_keys = {
+        :date => /date/
+      }
+    end
+  end
+
   subject { get(path, query) }
 
   context "when the provider exists" do

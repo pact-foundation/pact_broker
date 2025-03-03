@@ -13,7 +13,10 @@
   "response": {
     "status": 200,
     "headers": {
-      "Content-Type": "application/hal+json;charset=utf-8"
+      "content-type": "application/hal+json;charset=utf-8",
+      "content-length": "<id>",
+      "date": "<date>",
+      "server": "Webmachine-Ruby/2.0.1 Rack/3.1"
     },
     "body": {
       "uuid": "d2181b32-8b03-4daf-8cc0-d9168b2f6fac",
@@ -29,7 +32,7 @@
         "method": "POST",
         "url": "https://example.org/webhook",
         "headers": {
-          "Content-Type": "application/json"
+          "content-type": "application/json"
         },
         "body": {
           "pactUrl": "${pactbroker.pactUrl}"

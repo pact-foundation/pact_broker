@@ -29,7 +29,10 @@
   "response": {
     "status": 200,
     "headers": {
-      "Content-Type": "application/hal+json;charset=utf-8"
+      "content-type": "application/hal+json;charset=utf-8",
+      "content-length": "3192",
+      "date": "<date>",
+      "server": "Webmachine-Ruby/2.0.1 Rack/3.1"
     },
     "body": {
       "logs": [

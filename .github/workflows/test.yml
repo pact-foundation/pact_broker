@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - chore/rack3
   pull_request:
     branches:
       - master

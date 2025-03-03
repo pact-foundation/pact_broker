@@ -6,7 +6,7 @@ module PactBroker
     module Decorators
       describe WebhookDecorator do
         let(:description) { "Trigger build" }
-        let(:headers) { { :'Content-Type' => "application/json" } }
+        let(:headers) { { :'content-type' => "application/json" } }
         let(:request) do
           {
             method: "POST",
@@ -139,7 +139,7 @@ module PactBroker
           context "when the headers contain sensitve information" do
             let(:headers) { { "Authorization" => "foo" } }
             it "redacts them" do
-              expect(parsed_json[:request][:headers][:'Authorization']).to eq "**********"
+              expect(parsed_json[:request][:headers][:'authorization']).to eq "**********"
             end
           end
 
@@ -168,7 +168,7 @@ module PactBroker
           end
 
           it "parses the request headers" do
-            expect(parsed_object.request.headers).to eq "Content-Type" => "application/json"
+            expect(parsed_object.request.headers).to eq "content-type" => "application/json"
           end
 
           it "parses the request body" do

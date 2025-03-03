@@ -161,7 +161,7 @@ module PactBroker
         end
 
         context "another example without the padding" do
-          let(:encoded_metadata) { "c1tdW2xdPXRydWUmc1tdW2" }
+          let(:encoded_metadata) { "c1tdW2xdPXRydWUmc1td" }
 
           it "can still handle it" do
             expect(PactBrokerUrls.decode_pact_metadata(encoded_metadata)).to eq({ "s" => [{ "l" => "true" }, nil] })
@@ -199,7 +199,7 @@ module PactBroker
       describe "matrix_for_pacticipant_version_url" do
         subject { PactBrokerUrls.matrix_for_pacticipant_version_url(version, base_url) }
 
-        it { is_expected.to eq "http://example.org/matrix?q[][pacticipant]=Foo%2FFoo&q[][version]=2%2F4&latestby=cvpv" }
+        it { is_expected.to eq "http://example.org/matrix?q%5B%5D%5Bpacticipant%5D=Foo%2FFoo&q%5B%5D%5Bversion%5D=2%2F4&latestby=cvpv" }
       end
 
       describe "matrix_badge_url" do

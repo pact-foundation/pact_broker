@@ -13,7 +13,10 @@
   "response": {
     "status": 200,
     "headers": {
-      "Access-Control-Allow-Methods": "GET, PUT, DELETE, OPTIONS"
+      "access-control-allow-methods": "GET, PUT, DELETE, OPTIONS",
+      "content-length": "<id>",
+      "date": "<date>",
+      "server": "Webmachine-Ruby/2.0.1 Rack/3.1"
     },
     "body": ""
   }

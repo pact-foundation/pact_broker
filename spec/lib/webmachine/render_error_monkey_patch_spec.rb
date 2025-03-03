@@ -1,10 +1,10 @@
 require "webmachine/render_error_monkey_patch"
-require "webmachine/adapters/rack"
+require "webmachine/adapters/rack3_adapter"
 
 module Webmachine
   describe ".render_error" do
     let(:request) do
-      r = Webmachine::Adapters::Rack::RackRequest.new("GET", "http://example.org/foo", request_headers, "", "", nil, rack_env)
+      r = Webmachine::Adapters::Rack3::RackRequest.new("GET", "http://example.org/foo", request_headers, "", "", nil, rack_env)
       r.path_info = { application_context: PactBroker::ApplicationContext.default_application_context }
       r
     end

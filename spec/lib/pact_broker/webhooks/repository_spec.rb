@@ -50,7 +50,7 @@ module PactBroker
 
         it "saves the webhook headers as JSON" do
           subject
-          expect(JSON.parse(created_webhook_record[:headers])).to eq headers
+          expect(JSON.parse(created_webhook_record[:headers])).to eq headers.transform_keys { |k| k.downcase }
         end
 
         it "saves the webhook events" do
@@ -202,7 +202,7 @@ module PactBroker
           end
 
           it "returns a webhook with the headers set" do
-            expect(subject.request.headers).to eq headers
+            expect(subject.request.headers).to eq headers.transform_keys { |k| k.downcase }
           end
 
           it "returns a webhook with the username set" do
@@ -301,7 +301,7 @@ module PactBroker
           expect(subject.request.method).to eq "GET"
           expect(subject.request.url).to eq "http://example.com"
           expect(subject.request.body).to eq "foo"
-          expect(subject.request.headers).to eq "Content-Type" => "text/plain"
+          expect(subject.request.headers).to eq "content-type" => "text/plain"
           expect(subject.request.username).to eq nil
           expect(subject.request.password).to eq nil
           expect(subject.events.first.name).to eq "something_else"

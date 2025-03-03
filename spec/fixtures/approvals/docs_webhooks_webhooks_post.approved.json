@@ -34,8 +34,11 @@
   "response": {
     "status": 201,
     "headers": {
-      "Content-Type": "application/hal+json;charset=utf-8",
-      "Location": "https://pact-broker/webhooks/dCGCl-Ba3PqEFJ_iE9mJkQ"
+      "content-type": "application/hal+json;charset=utf-8",
+      "location": "https://pact-broker/webhooks/dCGCl-Ba3PqEFJ_iE9mJkQ",
+      "content-length": "<id>",
+      "date": "<date>",
+      "server": "Webmachine-Ruby/2.0.1 Rack/3.1"
     },
     "body": {
       "uuid": "dCGCl-Ba3PqEFJ_iE9mJkQ",
@@ -45,7 +48,7 @@
         "method": "POST",
         "url": "https://example.org/example",
         "headers": {
-          "Accept": "application/json"
+          "accept": "application/json"
         },
         "body": {
           "pactUrl": "${pactbroker.pactUrl}"

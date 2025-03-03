@@ -1,4 +1,4 @@
-require "webmachine/adapters/rack_mapped"
+require "webmachine/adapters/rack3_adapter"
 require "pact_broker/string_refinements"
 
 # Code to describe the routes in a Webmachine API, including
@@ -44,11 +44,11 @@ module Webmachine
         }.merge(path_params)
 
         rack_req = ::Rack::Request.new({ "REQUEST_METHOD" => "GET", "rack.input" => StringIO.new("") }.merge(env) )
-        request = Webmachine::Adapters::Rack::RackRequest.new(
+        request = Webmachine::Adapters::Rack3::RackRequest.new(
           rack_req.env["REQUEST_METHOD"],
           path,
           Webmachine::Headers.from_cgi({"HTTP_HOST" => "example.org"}.merge(env)),
-          Webmachine::Adapters::Rack::RequestBody.new(rack_req),
+          Webmachine::Adapters::Rack3::RequestBody.new(rack_req),
           {},
           {},
           rack_req.env
@@ -134,7 +134,7 @@ module Webmachine
     end
 
     def self.build_request(http_method: "GET", path_info: )
-      request = Webmachine::Adapters::Rack::RackRequest.new(http_method, "/", Webmachine::Headers["host" => "example.org"], nil, {}, {}, { "REQUEST_METHOD" => http_method })
+      request = Webmachine::Adapters::Rack3::RackRequest.new(http_method, "/", Webmachine::Headers["host" => "example.org"], nil, {}, {}, { "REQUEST_METHOD" => http_method })
       request.path_info = path_info
       request
     end

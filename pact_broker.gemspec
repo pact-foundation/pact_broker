@@ -56,14 +56,13 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency "reform", "~> 2.6"
   gem.add_runtime_dependency "sequel", "~> 5.28"
   gem.add_runtime_dependency "webmachine", ">= 2.0.0.beta", "< 3.0"
-  gem.add_runtime_dependency "webrick", "~> 1.8" # webmachine requires webrick, but doesn't declare it as a dependency :shrug:
   gem.add_runtime_dependency "semver2", "~> 3.4.2"
-  gem.add_runtime_dependency "rack", ">= 2.2.3", "~> 2.2" # TODO update to 3
+  gem.add_runtime_dependency "rack", "~> 3.1", ">= 3.1.10"
   gem.add_runtime_dependency "redcarpet", ">= 3.5.1", "~>3.5"
   gem.add_runtime_dependency "pact-support" , ">= 1.21.2", "~> 1.21"
   gem.add_runtime_dependency "haml", "~>5.0"
   gem.add_runtime_dependency "sucker_punch", "~>3.0"
-  gem.add_runtime_dependency "rack-protection", "~> 3.0"
+  gem.add_runtime_dependency "rack-protection", "~> 4.1"
   gem.add_runtime_dependency "table_print", "~> 1.5"
   gem.add_runtime_dependency "semantic_logger", "~> 4.11"
   gem.add_runtime_dependency "sanitize", "~> 6.0"

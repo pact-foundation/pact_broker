@@ -138,12 +138,12 @@ module PactBroker
 
         let(:expected_headers) do
           {
-            "Authorization" => "**********",
-            "X-authorization" => "**********",
-            "Token" => "**********",
-            "X-Auth-Token" => "**********",
-            "X-Authorization-Token" => "**********",
-            "OK" => "ok"
+            "authorization" => "**********",
+            "x-authorization" => "**********",
+            "token" => "**********",
+            "x-auth-token" => "**********",
+            "x-authorization-token" => "**********",
+            "ok" => "ok"
           }
         end
 
@@ -160,7 +160,7 @@ module PactBroker
 
           let(:expected_headers) do
             {
-              "Authorization" => "${pactbroker.secret}"
+              "authorization" => "${pactbroker.secret}"
             }
           end
 

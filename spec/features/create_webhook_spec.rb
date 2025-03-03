@@ -21,7 +21,7 @@ describe "Creating a webhook" do
         method: "POST",
         url: "https://example.org",
         headers: {
-          :"Content-Type" => "application/json"
+          :"content-type" => "application/json"
         },
         body: {
           a: "body"

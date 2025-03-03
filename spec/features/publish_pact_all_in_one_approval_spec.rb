@@ -1,4 +1,12 @@
 RSpec.describe "publishing a pact using the all in one endpoint" do
+  before do
+    Approvals.configure do |config|
+      config.excluded_json_keys = {
+        :date => /date/
+      }
+    end
+  end
+
   # TODO merge branches
   let(:request_body_hash) do
     {

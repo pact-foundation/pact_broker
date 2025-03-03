@@ -24,7 +24,8 @@ module PactBroker
         attributes.each do | (name, value) |
           instance_variable_set("@#{name}", value) if respond_to?(name)
         end
-        @headers = Rack::Utils::HeaderHash.new(attributes[:headers] || {})
+        @headers = Rack::Headers.new
+        @headers.merge!(attributes[:headers]) if attributes[:headers]
       end
 
       def build(template_params, user_agent: nil, disable_ssl_verification: false, cert_store: nil)
@@ -59,7 +60,7 @@ module PactBroker
       end
 
       def headers= headers
-        @headers = Rack::Utils::HeaderHash.new(headers)
+        @headers.replace(headers)
       end
 
       def uses_parameter?(parameter_name)
@@ -114,7 +115,7 @@ module PactBroker
       end
 
       def build_headers(template_params)
-        headers.each_with_object(Rack::Utils::HeaderHash.new) do | (key, value), new_headers |
+        headers.each_with_object(Rack::Headers.new) do | (key, value), new_headers |
           new_headers[key] = build_string(value, template_params)
         end
       end
