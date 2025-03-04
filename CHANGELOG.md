@@ -1,3 +1,11 @@
+<a name="v2.113.1"></a>
+### v2.113.1 (2025-02-20)
+
+#### Bug Fixes
+
+* Update openapi_first and use it's coverage thing (#783)	 ([b3da850b](/../../commit/b3da850b))
+* incorrect ProviderStates policy name. (#782)	 ([bddfd2d0](/../../commit/bddfd2d0))
+
 <a name="v2.113.0"></a>
 ### v2.113.0 (2025-02-13)
 
