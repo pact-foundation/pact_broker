@@ -35,7 +35,7 @@ module PactBroker
           it "return the badge URL" do
             expect(badge_service). to receive(:can_i_merge_badge_url).with(deployable: true)
             expect(subject.headers["Location"]).to eq "http://badge_url"
-            expect(subject.headers["Cache-Control"]).to eq "max-age=30"
+            expect(subject.headers["cache-control"]).to eq "max-age=30"
           end
         end
 
@@ -45,7 +45,7 @@ module PactBroker
           it "returns an error badge URL" do
             expect(badge_service).to receive(:error_badge_url).with("pacticipant", "not found")
             expect(subject.headers["Location"]).to eq "http://error_badge_url"
-            expect(subject.headers["Cache-Control"]).to eq "no-cache"  
+            expect(subject.headers["cache-control"]).to eq "no-cache"  
           end
         end
 

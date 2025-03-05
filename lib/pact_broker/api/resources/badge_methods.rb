@@ -47,7 +47,7 @@ module PactBroker
         end
 
         def set_cache_control(cache_control_str)
-          response.headers["Cache-Control"] = cache_control_str
+          response.headers["cache-control"] = cache_control_str
         end
 
         private

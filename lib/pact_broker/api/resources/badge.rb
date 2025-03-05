@@ -18,12 +18,12 @@ module PactBroker
         end
 
         def to_svg
-          response.headers["Cache-Control"] = "no-cache"
+          response.headers["cache-control"] = "no-cache"
           comment + badge_service.pact_verification_badge(pact, label, initials, pseudo_branch_verification_status, tags)
         end
 
         def moved_temporarily?
-          response.headers["Cache-Control"] = "no-cache"
+          response.headers["cache-control"] = "no-cache"
           badge_service.pact_verification_badge_url(pact, label, initials, pseudo_branch_verification_status, tags)
         end
 

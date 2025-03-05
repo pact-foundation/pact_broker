@@ -7,7 +7,7 @@ module Rack
 
       def call(env)
         status, headers, body = @app.call(env)
-        [status, { "Cache-Control" => "no-cache" }.merge(headers || {}), body]
+        [status, { "cache-control" => "no-cache" }.merge(headers || {}), body]
       end
     end
   end

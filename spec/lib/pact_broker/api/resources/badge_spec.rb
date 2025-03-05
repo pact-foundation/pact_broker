@@ -92,7 +92,7 @@ module PactBroker
             end
 
             it "does not allow caching" do
-              expect(subject.headers["Cache-Control"]).to eq "no-cache"
+              expect(subject.headers["cache-control"]).to eq "no-cache"
             end
 
             it "returns the badge" do
@@ -117,7 +117,7 @@ module PactBroker
             it "returns a 301 redirect to the badge URL" do
               expect(subject.status).to eq 307
               expect(subject.headers["Location"]).to eq "http://badge"
-              expect(subject.headers["Cache-Control"]).to eq "no-cache"
+              expect(subject.headers["cache-control"]).to eq "no-cache"
             end
           end
 
