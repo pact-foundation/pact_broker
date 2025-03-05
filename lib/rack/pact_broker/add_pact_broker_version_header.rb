@@ -4,7 +4,7 @@ module Rack
   module PactBroker
     class AddPactBrokerVersionHeader
 
-      X_PACT_BROKER_VERSION = "X-Pact-Broker-Version".freeze
+      X_PACT_BROKER_VERSION = "x-pact-broker-version".freeze
 
       def initialize app
         @app = app
