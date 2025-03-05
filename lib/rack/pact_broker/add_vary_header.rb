@@ -32,7 +32,7 @@ module Rack
 
       def call(env)
         status, headers, body = @app.call(env)
-        [status, { "Vary" => "Accept" }.merge(headers || {}), body]
+        [status, { "vary" => "Accept" }.merge(headers || {}), body]
       end
     end
   end
