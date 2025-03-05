@@ -26,9 +26,9 @@ module PactBroker
       end
     end
 
-    it "adds the X-Pact-Broker-Version header" do
+    it "adds the x-pact-broker-version header" do
       get "/"
-      expect(last_response.headers["X-Pact-Broker-Version"]).to match(/\d/)
+      expect(last_response.headers["x-pact-broker-version"]).to match(/\d/)
     end
 
     class TestMiddleware

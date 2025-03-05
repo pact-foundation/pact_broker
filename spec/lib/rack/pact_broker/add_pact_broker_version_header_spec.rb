@@ -8,7 +8,7 @@ module Rack
 
       it "adds the PactBroker version as a header" do
         get "/"
-        expect(last_response.headers["X-Pact-Broker-Version"]).to match(/\d/)
+        expect(last_response.headers["x-pact-broker-version"]).to match(/\d/)
       end
 
     end
