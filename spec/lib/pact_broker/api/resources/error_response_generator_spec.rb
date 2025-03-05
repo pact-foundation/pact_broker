@@ -21,7 +21,7 @@ module PactBroker
           subject { JSON.parse(headers_and_body.last) }
 
           it "returns headers" do
-            expect(headers).to eq("Content-Type" => "application/hal+json;charset=utf-8")
+            expect(headers).to eq("content-type" => "application/hal+json;charset=utf-8")
           end
 
           it "includes an error reference" do
@@ -40,7 +40,7 @@ module PactBroker
             let(:rack_env) { { "HTTP_ACCEPT" => "application/hal+json, application/problem+json", "pactbroker.base_url" => "http://example.org", "pactbroker.application_context" => PactBroker::ApplicationContext.default_application_context } }
 
             it "returns headers" do
-              expect(headers).to eq("Content-Type" => "application/problem+json;charset=utf-8")
+              expect(headers).to eq("content-type" => "application/problem+json;charset=utf-8")
             end
 
             it "returns a problem JSON body" do

@@ -21,7 +21,7 @@ module PactBroker
 
         def process_post
           webhook_execution_result = webhook_trigger_service.test_execution(webhook, webhook_execution_configuration.webhook_context, webhook_execution_configuration)
-          response.headers["Content-Type"] = "application/hal+json;charset=utf-8"
+          response.headers["content-type"] = "application/hal+json;charset=utf-8"
           response.body = post_response_body(webhook_execution_result)
           true
         end

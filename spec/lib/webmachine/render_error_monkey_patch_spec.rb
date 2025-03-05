@@ -19,7 +19,7 @@ module Webmachine
       expect(JSON.parse(subject.body)).to eq "error" => "The requested document was not found on this server."
     end
 
-    its(:headers) { is_expected.to include("Content-Type" => "application/json;charset=utf-8") }
+    its(:headers) { is_expected.to include("content-type" => "application/json;charset=utf-8") }
 
     context "when the Accept header contains text/html" do
       let(:request_headers) { Webmachine::Headers.from_cgi("HTTP_ACCEPT" => "text/html") }
@@ -42,7 +42,7 @@ module Webmachine
         }
       end
 
-      its(:headers) { is_expected.to include("Content-Type" => "application/problem+json;charset=utf-8") }
+      its(:headers) { is_expected.to include("content-type" => "application/problem+json;charset=utf-8") }
 
       it "returns a JSON body in problem json format" do
         expect(JSON.parse(subject.body)).to eq expected_body

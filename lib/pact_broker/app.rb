@@ -197,7 +197,7 @@ module PactBroker
       @app_builder.use Rack::PactBroker::AddPactBrokerVersionHeader
       @app_builder.use Rack::PactBroker::AddVaryHeader
       @app_builder.use Rack::Static, :urls => ["/stylesheets", "/css", "/fonts", "/js", "/javascripts", "/images"], :root => PactBroker.project_root.join("public")
-      @app_builder.use Rack::Static, :urls => ["/favicon.ico"], :root => PactBroker.project_root.join("public/images"), header_rules: [[:all, {"Content-Type" => "image/x-icon"}]]
+      @app_builder.use Rack::Static, :urls => ["/favicon.ico"], :root => PactBroker.project_root.join("public/images"), header_rules: [[:all, {"content-type" => "image/x-icon"}]]
       @app_builder.use Rack::PactBroker::AddCacheHeader
       @app_builder.use Rack::PactBroker::ConvertFileExtensionToAcceptHeader
       # Rack::PactBroker::SetBaseUrl needs to be before the Rack::PactBroker::HalBrowserRedirect

@@ -362,7 +362,7 @@ module PactBroker
                          params[:events] || [{ name: PactBroker::Webhooks::WebhookEvent::DEFAULT_EVENT_NAME }]
                        end
         events = event_params.collect{ |e| PactBroker::Webhooks::WebhookEvent.new(e) }
-        template_params = { method: "POST", url: "http://example.org", headers: {"Content-Type" => "application/json"}, username: params[:username], password: params[:password] }
+        template_params = { method: "POST", url: "http://example.org", headers: {"content-type" => "application/json"}, username: params[:username], password: params[:password] }
         request = PactBroker::Webhooks::WebhookRequestTemplate.new(template_params.merge(params))
         new_webhook = PactBroker::Domain::Webhook.new(
           request: request,
