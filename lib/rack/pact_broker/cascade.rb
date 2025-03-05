@@ -18,7 +18,7 @@ module Rack
   module PactBroker
     class Cascade
       # deprecated, no longer used
-      NotFound = [404, { CONTENT_TYPE => "text/plain" }, []]
+      NotFound = [404, { "content-type" => "text/plain" }, []]
 
       # An array of applications to try in order.
       attr_reader :apps
@@ -41,7 +41,7 @@ module Rack
       # cascading, try the next app.  If all responses require cascading,
       # return the response from the last app.
       def call(env)
-        return [404, { CONTENT_TYPE => "text/plain" }, []] if @apps.empty?
+        return [404, { "content-type" => "text/plain" }, []] if @apps.empty?
         result = nil
         last_body = nil
 

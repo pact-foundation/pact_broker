@@ -68,9 +68,9 @@ module PactBroker
 
         private_class_method def self.headers(env)
           if problem_json?(env)
-            { "Content-Type" => "application/problem+json;charset=utf-8" }
+            { "content-type" => "application/problem+json;charset=utf-8" }
           else
-            { "Content-Type" => "application/hal+json;charset=utf-8" }
+            { "content-type" => "application/hal+json;charset=utf-8" }
           end
         end
 

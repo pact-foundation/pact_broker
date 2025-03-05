@@ -29,7 +29,7 @@ describe "Code version #{CODE_VERSION} running against database version #{DATABA
 
   describe "tagging a consumer version" do
     let(:path) { "/pacticipants/Foo/versions/#{CONSUMER_VERSION}/tags/#{TAG}"}
-    subject { put path, nil, {"CONTENT_TYPE" => "application/json" }; last_response  }
+    subject { put path, nil, {"content-type" => "application/json" }; last_response  }
 
     it "returns a success status" do
       expect(subject.status.to_s).to match(/20\d/)
@@ -37,7 +37,7 @@ describe "Code version #{CODE_VERSION} running against database version #{DATABA
   end
 
   describe "publishing a pact" do
-    subject { put path, pact_content, {"CONTENT_TYPE" => "application/json" }; last_response  }
+    subject { put path, pact_content, {"content-type" => "application/json" }; last_response  }
 
     it "returns a success status" do
       expect(subject.status.to_s).to match(/20\d/)

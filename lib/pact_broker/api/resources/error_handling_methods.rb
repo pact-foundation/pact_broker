@@ -32,13 +32,13 @@ module PactBroker
         # @param [String] type
         # @param [Integer] status
         def set_json_error_message(detail, title: "Server error", type: "server-error", status: 500)
-          response.headers["Content-Type"] = error_response_content_type
+          response.headers["content-type"] = error_response_content_type
           response.body = error_response_body(detail, title, type, status)
         end
 
         # @param [Hash,Dry::Validation::MessageSet] errors
         def set_json_validation_error_messages(errors)
-          response.headers["Content-Type"] = error_response_content_type
+          response.headers["content-type"] = error_response_content_type
           response.body = validation_errors_response_body(errors)
         end
 

@@ -97,7 +97,7 @@ module PactBroker
               contracts: conflict_notices.select(&:error?).collect(&:text)
             }
           }.to_json
-          response.headers["Content-Type"] = "application/json;charset=utf-8"
+          response.headers["content-type"] = "application/json;charset=utf-8"
         end
 
         def conflict_notices

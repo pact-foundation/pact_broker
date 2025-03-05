@@ -20,7 +20,7 @@ module Rack
       private
 
       def body_is_json(env)
-        env["CONTENT_TYPE"]&.include?("json")
+        env["content-type"]&.include?("json")
       end
 
       def explicit_request_for_api(env)
@@ -32,7 +32,7 @@ module Rack
       end
 
       def body_is_api_content_type(env)
-        is_api_content_type((env["CONTENT_TYPE"]&.downcase) || "")
+        is_api_content_type((env["content-type"]&.downcase) || "")
       end
 
       def is_api_content_type(header)

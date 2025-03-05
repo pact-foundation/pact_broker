@@ -15,7 +15,7 @@ module PactBroker
             }
           end
           response.body = response_body.to_json
-          response.headers["Content-Type" => "application/hal+json;charset=utf-8"]
+          response.headers["content-type" => "application/hal+json;charset=utf-8"]
         end
       end
     end

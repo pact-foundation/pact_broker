@@ -58,7 +58,7 @@ module Rack
       end
 
       def headers
-        {"Content-Type" => "application/problem+json"}
+        {"content-type" => "application/problem+json"}
       end
 
       def body(env, detail, title, type, status)

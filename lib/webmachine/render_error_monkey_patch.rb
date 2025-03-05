@@ -36,7 +36,7 @@ module Webmachine
       message = options[:message] if options[:message]
 
       res.body = error_response_body(req, message, title, title.dasherize.gsub(/^\d+\-/, ""), code, req)
-      res.headers[CONTENT_TYPE] = error_response_content_type(req)
+      res.headers["content-type"] = error_response_content_type(req)
     end
     ensure_content_length(res)
     ensure_date_header(res)
