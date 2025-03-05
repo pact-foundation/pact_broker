@@ -55,7 +55,7 @@ module PactBroker
         private
 
         def set_headers
-          response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+          response.headers["cache-control"] = "no-cache, no-store, must-revalidate"
           response.headers["Pragma"] = "no-cache"
           response.headers["Expires"] = "0"
         end
