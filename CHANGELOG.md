@@ -1,3 +1,14 @@
+<a name="v2.113.2"></a>
+### v2.113.2 (2025-03-05)
+
+#### Bug Fixes
+
+* downcase Content-Type header	 ([6eebfbdf](/../../commit/6eebfbdf))
+* downcase X-Pact-Broker-Version header	 ([8dfb3ac2](/../../commit/8dfb3ac2))
+* downcase Cache-Control header	 ([6ceae489](/../../commit/6ceae489))
+* downcase Vary header	 ([a43416a3](/../../commit/a43416a3))
+* add webmachine monkey patch to exclude webrick default load	 ([ef674d37](/../../commit/ef674d37))
+
 <a name="v2.113.1"></a>
 ### v2.113.1 (2025-02-20)
 
