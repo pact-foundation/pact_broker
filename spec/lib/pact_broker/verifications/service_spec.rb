@@ -30,7 +30,12 @@ module PactBroker
             "testResults" => { "some" => "results" },
             "verifiedBy" => {
               "implementation" => "Ruby",
-              "version" => "1234"
+              "version" => "1234",
+              "clientLanguage" => {
+                "testFramework" => "go test",
+                "name" => "pact-go",
+                "version" => "2.2.0",
+              }
             }
           }
         end
@@ -61,6 +66,9 @@ module PactBroker
           expect(verification.tag_names).to eq ["dev"]
           expect(verification.verified_by_implementation).to eq "Ruby"
           expect(verification.verified_by_version).to eq "1234"
+          expect(verification.verified_by_client_implementation).to eq "pact-go"
+          expect(verification.verified_by_client_version).to eq "2.2.0"
+          expect(verification.verified_by_client_test_framework).to eq "go test"
         end
 
         it "sets the pact content for the verification" do

@@ -46,6 +46,9 @@ module PactBroker
         verification.number = next_verification_number
         verification.verified_by_implementation = params.dig("verifiedBy", "implementation")
         verification.verified_by_version = params.dig("verifiedBy", "version")
+        verification.verified_by_client_implementation = params.dig("verifiedBy", "clientLanguage", "name")
+        verification.verified_by_client_version = params.dig("verifiedBy", "clientLanguage", "version")
+        verification.verified_by_client_test_framework = params.dig("verifiedBy", "clientLanguage", "testFramework")
         verification.consumer_version_selector_hashes = event_context[:consumer_version_selectors]
         pact_version = pact_repository.find_pact_version(first_verified_pact.consumer, first_verified_pact.provider, first_verified_pact.pact_version_sha)
         verification = verification_repository.create(verification, provider_version_number, pact_version)
