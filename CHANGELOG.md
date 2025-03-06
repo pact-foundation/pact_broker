@@ -1,3 +1,10 @@
+<a name="v2.114.0"></a>
+### v2.114.0 (2025-03-06)
+
+#### Features
+
+* support extended verification results (#778)	 ([18f571c8](/../../commit/18f571c8))
+
 <a name="v2.113.2"></a>
 ### v2.113.2 (2025-03-05)
 
