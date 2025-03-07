@@ -19,8 +19,8 @@ module PactBroker
         context "when there are no pagination options" do
           subject { labels_repository.get_all_unique_labels }
 
-          it "returns all the unique labels" do
-            expect(subject.collect(&:name)).to contain_exactly("ios", "android")
+          it "returns all the unique ordered labels" do
+            expect(subject.collect(&:name)).to contain_exactly("android", "ios")
           end
         end
 
@@ -33,8 +33,8 @@ module PactBroker
           end
           subject { labels_repository.get_all_unique_labels pagination_options }
 
-          it "returns paginated unique labels" do
-            expect(subject.collect(&:name)).to contain_exactly("ios")
+          it "returns paginated unique ordered labels" do
+            expect(subject.collect(&:name)).to contain_exactly("android")
           end
         end
       end

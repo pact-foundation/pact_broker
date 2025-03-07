@@ -5,7 +5,7 @@ module PactBroker
     class Repository
 
       def get_all_unique_labels pagination_options = {}
-        PactBroker::Domain::Label.distinct.select(:name).all_with_pagination_options(pagination_options)
+        PactBroker::Domain::Label.distinct.select(:name).order(:name).all_with_pagination_options(pagination_options)
       end
 
       def create args
