@@ -37,12 +37,12 @@ RSpec.describe "listing the provider states without params" do
 
   let(:expected_hash) do
     {
-      "providerStates" => [ 
-        { "name" => "state 1" }, 
-        { "name" => "state 2" }, 
-        { "name" => "state 3" }, 
-        { "name" => "state 4" }, 
-        { "name" => "state 5" } 
+      "providerStates" => [
+        { "consumers" => ["Foo"], "name" => "state 1" },
+        { "consumers" => ["Foo"], "name" => "state 2" },
+        { "consumers" => ["Waffle"], "name" => "state 3" },
+        { "consumers" => ["Waffle"], "name" => "state 4" },
+        { "consumers" => ["Waffle"], "name" => "state 5" }
       ]
     }
   end
@@ -108,9 +108,10 @@ RSpec.describe "listing the provider states with params" do
 
   let(:expected_hash) do
     {
-      "providerStates" => [ 
-        { "name" => "product details", "params"=>{"product_id"=>"058925f7-1763-4dd9-a057-50ee265e33a0"}  }, 
-        { "name" => "product list" },
+      "providerStates" => [
+        { "consumers" => ["Foo", "Foo2", "Foo3", "Foo4", "Foo5"], "name" => "product details", "params" => { "product_id" => "058925f7-1763-4dd9-a057-50ee265e33a0" } },
+        { "consumers" => ["Waffle", "Waffle2"], "name" => "product list" },
+        { "consumers" => ["Foo6"], "name" => "some other product list" }
       ]
     }
   end
