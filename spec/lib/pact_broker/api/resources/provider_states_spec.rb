@@ -16,17 +16,28 @@ module PactBroker
         let(:json) { 
           { "providerStates":
           [
-            {"name":"an error occurs retrieving an alligator"},
-            {"name":"there is an alligator named Mary"},
-            {"name":"there is not an alligator named Mary"}
-          ]}.to_json 
+            {"name":"an error occurs retrieving an alligator", "consumers":["foo"]},
+            {"name":"there is an alligator named Mary", "consumers":["bar","foo"]},
+            {"name":"there is not an alligator named Mary", "consumers":["bar"]}
+          ]}.to_json
         }
 
         let(:provider_states) do
           [
-            PactBroker::Pacts::ProviderState.new(name: "there is an alligator named Mary", params: nil),
-            PactBroker::Pacts::ProviderState.new(name: "there is not an alligator named Mary", params: nil),
-            PactBroker::Pacts::ProviderState.new(name: "an error occurs retrieving an alligator", params: nil)
+            { "providerStates" =>
+              [
+                PactBroker::Pacts::ProviderState.new(name: "there is an alligator named Mary", params: nil),
+                PactBroker::Pacts::ProviderState.new(name: "there is not an alligator named Mary", params: nil),
+              ],
+              "consumer" => "bar"
+            },
+            { "providerStates" =>
+              [
+                PactBroker::Pacts::ProviderState.new(name: "there is an alligator named Mary", params: nil),
+                PactBroker::Pacts::ProviderState.new(name: "an error occurs retrieving an alligator", params: nil)
+              ],
+              "consumer" => "foo"
+            }
           ]
         end
 
