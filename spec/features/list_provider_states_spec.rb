@@ -51,7 +51,7 @@ RSpec.describe "listing the provider states without params" do
 
   let(:path) { "/pacts/provider/Bar/provider-states" }
 
-  subject { get(path, nil, rack_headers).tap { |it| puts it.body } }
+  subject { get(path, nil, rack_headers) }
 
   it { 
     is_expected.to be_a_hal_json_success_response
@@ -120,7 +120,7 @@ RSpec.describe "listing the provider states with params" do
 
   let(:path) { "/pacts/provider/Bar/provider-states" }
 
-  subject { get(path, nil, rack_headers).tap { |it| puts it.body } }
+  subject { get(path, nil, rack_headers) }
 
   it { 
     is_expected.to be_a_hal_json_success_response
