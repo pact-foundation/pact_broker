@@ -1,7 +1,7 @@
 #/bin/sh
 
 cleanup() {
-  docker compose -f docker-compose-ci-postgres.yml down
+	docker compose -f docker-compose-ci-postgres.yml down
 }
 
 trap cleanup EXIT

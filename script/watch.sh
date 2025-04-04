@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 relative_app_dir=${1:-$PWD}
 export APP_DIR=$(cd $relative_app_dir && pwd)

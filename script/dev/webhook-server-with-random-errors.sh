@@ -1,6 +1,7 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-ruby_script=$(cat << EOM
+ruby_script=$(
+	cat <<EOM
 require 'rack/utils'
 require 'rack'
 

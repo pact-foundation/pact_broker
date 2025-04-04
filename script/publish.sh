@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/usr/bin/env bash
 function finish {
-  rm -rf $tmpfile
+	rm -rf $tmpfile
 }
 trap finish EXIT
 
@@ -15,8 +15,8 @@ echo $consumer $provider
 
 body=$(cat script/foo-bar.json | sed "s/Foo/${consumer}/" | sed "s/Bar/${provider}/")
 tmpfile=$(mktemp)
-echo $body > $tmpfile
+echo $body >$tmpfile
 curl -v -XPOST \-H "Content-Type: application/json" \
--d@$tmpfile \
-http://127.0.0.1:9292/contracts/publish
+	-d@$tmpfile \
+	http://127.0.0.1:9292/contracts/publish
 echo ""
