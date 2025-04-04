@@ -17,6 +17,14 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
   cancel-in-progress: true
 
+env:
+  # Generic
+  FORCE_COLOR: "1"
+  CLICOLOR: "1"
+  # Python
+  PYTHONUNBUFFERED: "1"
+  STABLE_PYTHON_VERSION: "3.13"
+
 jobs:
   complete:
     name: Test completion check
@@ -33,6 +41,7 @@ jobs:
       - rubocop
       - pact-verify
       - bundle-audit
+      - pre-commit
 
     steps:
       - name: Failed
@@ -107,3 +116,36 @@ jobs:
           bundler-cache: true
       - name: Audit
         run: "bundle exec rake bundle:audit"
+
+  pre-commit:
+    name: Pre-commit
+
+    runs-on: ubuntu-latest
+
+    env:
+      PRE_COMMIT_HOME: ${{ github.workspace }}/.pre-commit
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Cache pre-commit
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        with:
+          path: |
+            ${{ env.PRE_COMMIT_HOME }}
+          key: |
+            ${{ runner.os }}-pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pre-commit-
+      - name: Set up uv
+        uses: astral-sh/setup-uv@22695119d769bdb6f7032ad67b9bca0ef8c4a174 # v5.4.0
+        with:
+          enable-cache: true
+          cache-suffix: pre-commit
+          cache-dependency-glob: ""
+
+      - name: Install pre-commit
+        run: uv tool install pre-commit
+
+      - name: Run pre-commit
+        run: pre-commit run --show-diff-on-failure --color=always --all-files
