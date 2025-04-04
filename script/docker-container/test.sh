@@ -1,3 +1,3 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 bundle exec rake ci

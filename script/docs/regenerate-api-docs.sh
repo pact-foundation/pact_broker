@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 rm spec/fixtures/approvals/docs_webhooks*
 bundle exec rspec spec/integration/webhooks_documentation_spec.rb
 script/test/approval-all.sh

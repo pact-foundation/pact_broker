@@ -1,7 +1,7 @@
 #/bin/sh
 
 cleanup() {
-  docker compose -f docker-compose-ci-mysql.yml down
+	docker compose -f docker-compose-ci-mysql.yml down
 }
 
 trap cleanup EXIT

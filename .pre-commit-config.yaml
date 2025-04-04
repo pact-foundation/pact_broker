@@ -1,0 +1,17 @@
+---
+default_install_hook_types:
+  - commit-msg
+  - post-checkout
+  - pre-commit
+  - pre-push
+  - prepare-commit-msg
+
+# Unless otherwise specified, all hooks below are run during pre-commit.
+default_stages:
+  - pre-commit
+
+repos:
+  - repo: https://github.com/scop/pre-commit-shfmt
+    rev: v3.9.0-1
+    hooks:
+      - id: shfmt

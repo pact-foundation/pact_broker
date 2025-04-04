@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 set -e
 bundle exec bump ${1:-minor} --no-commit
 bundle exec rake generate_changelog

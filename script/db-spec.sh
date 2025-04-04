@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 set -e
 cd db/test/backwards_compatibility
 rm -rf log
@@ -10,7 +10,7 @@ set +e
 bundle exec rake
 rake_exit_code=$?
 if [ $rake_exit_code -ne 0 ] && [ -n "$TRAVIS" ]; then
-  cat log/pact_broker.log
+	cat log/pact_broker.log
 fi
 
 exit $rake_exit_code
