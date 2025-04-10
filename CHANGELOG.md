@@ -1,3 +1,15 @@
+<a name="v2.115.0"></a>
+### v2.115.0 (2025-03-17)
+
+#### Features
+
+* group provider states by consumers	 ([e39860a9](/../../commit/e39860a9))
+
+#### Bug Fixes
+
+* dedupe non unique provider states #789	 ([3cf22169](/../../commit/3cf22169))
+* explicitly order labels by name	 ([d25746c1](/../../commit/d25746c1))
+
 <a name="v2.114.0"></a>
 ### v2.114.0 (2025-03-06)
 
