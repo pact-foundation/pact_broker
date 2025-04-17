@@ -136,7 +136,7 @@ module PactBroker
             end
           end
 
-          context "when the headers contain sensitve information" do
+          context "when the headers contain sensitive information" do
             let(:headers) { { "Authorization" => "foo" } }
             it "redacts them" do
               expect(parsed_json[:request][:headers][:'authorization']).to eq "**********"

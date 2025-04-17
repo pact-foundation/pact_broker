@@ -45,7 +45,7 @@ module PactBroker
     end
 
     def self.connect(db_credentials)
-      # Keep this conifiguration in sync with lib/pact_broker/app.rb#configure_database_connection
+      # Keep this configuration in sync with lib/pact_broker/app.rb#configure_database_connection
       Sequel.datetime_class = DateTime
       if ENV["DEBUG"] == "true"
         logger = PactBroker.logger

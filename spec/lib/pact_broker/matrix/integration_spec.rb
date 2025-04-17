@@ -315,7 +315,7 @@ module PactBroker
               .create_pact_with_verification("ServiceA", "1", "ServiceB", "100")
           end
 
-          context "when both application versions are specified explictly" do
+          context "when both application versions are specified explicitly" do
             let(:selectors) do
               [
                 UnresolvedSelector.new(pacticipant_name: "ServiceA", pacticipant_version_number: "1"),

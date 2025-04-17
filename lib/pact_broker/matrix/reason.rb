@@ -67,7 +67,7 @@ module PactBroker
     # (a row in the matrix with a blank provider version)
     class PactNotEverVerifiedByProvider < ErrorReasonWithTwoSelectors; end
 
-    # The pact for the required consumer verison
+    # The pact for the required consumer version
     # has been verified by the provider, but not by
     # the required provider version
     # (this row is not included in the matrix, and it's

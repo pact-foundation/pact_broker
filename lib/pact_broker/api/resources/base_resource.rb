@@ -68,7 +68,7 @@ module PactBroker
           end
         end
 
-        # Remove the non-path compontents in the path_info (eg. the application context, which is naughtily passed in via the path_info)
+        # Remove the non-path components in the path_info (eg. the application context, which is naughtily passed in via the path_info)
         def identifier_from_path
           @identifier_from_path ||= request.path_info.each_with_object({}) do | (key, value), hash|
             case value

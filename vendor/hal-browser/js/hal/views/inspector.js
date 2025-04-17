@@ -25,7 +25,7 @@ HAL.Views.Inspector = Backbone.View.extend({
   },
 
   renderDocumentation: function(e) {
-    var docView = new HAL.Views.Documenation({ vent: this.vent });
+    var docView = new HAL.Views.Documentation({ vent: this.vent });
 
     this.render();
     docView.render(e.url);
