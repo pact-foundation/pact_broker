@@ -44,6 +44,20 @@ module PactBroker
           .all
       end
 
+      def self.find_deployed_versions_for_version(version)
+        scope_for(DeployedVersion)
+          .where(version_id: version.id)
+          .eager(:environment)
+          .all
+      end
+
+      def self.find_deployed_versions_for_versions(versions_array)
+        scope_for(DeployedVersion)
+          .where(version_id: versions_array.map(&:id))
+          .eager(:environment)
+          .to_hash_groups(:version_id)
+      end
+
       # Policy applied at resource level to Version
       def self.find_currently_deployed_version_for_version_and_environment_and_target(version, environment, target)
         DeployedVersion

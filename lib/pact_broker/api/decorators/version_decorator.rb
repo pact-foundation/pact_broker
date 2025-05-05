@@ -73,6 +73,20 @@ module PactBroker
           end
         end
 
+        links :'pb:deployed-environments' do | context |
+          # I couldn't another way to check if call is from a collection or a single item 🤷‍♂️
+          # Also not sure why the heck .to_a?(Hash) doesn't work, I mean what...
+          deployed_versions = context[:deployed_versions].class.to_s == "Hash" ? context[:deployed_versions][represented.id] : context[:deployed_versions]
+          deployed_versions&.collect do | deployed_version |
+            {
+              title: "Version deployed to #{deployed_version.environment.display_name}",
+              name: deployed_version.environment.display_name,
+              href: deployed_version_url(deployed_version, context.fetch(:base_url)),
+              currently_deployed: deployed_version.currently_deployed
+            }
+          end
+        end
+
         links :'pb:record-deployment' do | context |
           context[:environments]&.collect do | environment |
             {
