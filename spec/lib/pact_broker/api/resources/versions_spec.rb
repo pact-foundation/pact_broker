@@ -3,20 +3,8 @@ require "pact_broker/api/resources/version"
 module PactBroker
   module Api
     module Resources
-      describe Version do
-        let(:path) { "/pacticipants/Foo/versions/1" }
-
-        context "with an empty body" do
-          subject { put(path, nil, "CONTENT_TYPE" => "application/json") }
-
-          its(:status) { is_expected.to eq 201 }
-        end
-
-        context "with invalid JSON" do
-          subject { put(path, { some: "yaml" }.to_yaml, "CONTENT_TYPE" => "application/json") }
-
-          its(:status) { is_expected.to eq 400 }
-        end
+      describe Versions do
+        let(:path) { "/pacticipants/Foo/versions/" }
 
         describe "GET" do
           let(:pacticipant) { td.create_consumer("Foo").and_return(:pacticipant) }
@@ -37,12 +25,12 @@ module PactBroker
             subject { get(path, nil, { "HTTP_ACCEPT" => "application/hal+json" }) }
 
             its(:status) { is_expected.to eq 404 }
-            its(:body) { expect(JSON.parse(subject.body, symbolize_names: true)[:error]).to include "The requested document was not found" }
+            its(:body) { expect(JSON.parse(subject.body, symbolize_names: true)[:error]).to match(/No pacticipant/) }
           end
 
           context "when the pacticipant and version exist" do
             before do
-              # Create a version on a pacticipant
+              # Create a version on a pacticipant and other data
               deployed_version
             end
             subject { get(path, nil, { "HTTP_ACCEPT" => "application/hal+json" }) }
@@ -55,12 +43,17 @@ module PactBroker
               it "contains the expected keys" do
                 expect(response_body_hash).to include(:_links, :_embedded)
                 expect(response_body_hash[:_links]).to include(:self, :"pb:pacticipant")
-                expect(response_body_hash[:_links][:self]).to include(:title, :name, :href)
-                expect(response_body_hash[:_links][:"pb:pacticipant"]).to include(:title, :name, :href)
-                expect(response_body_hash[:_links][:"pb:pacticipant"][:name]).to eq "Foo"
-                expect(response_body_hash[:_links][:"pb:deployed-environments"]).to be_a(Array)
-                expect(response_body_hash[:_links][:"pb:deployed-environments"].size).to eq 2
-                expect(response_body_hash[:_links][:"pb:deployed-environments"].first).to include(:title, :name, :href)
+                expect(response_body_hash[:_links][:self]).to include(:title, :href)
+                expect(response_body_hash[:_links][:"pb:pacticipant"]).to include(:title, :href)
+                expect(response_body_hash[:_links][:"pb:pacticipant"][:title]).to eq "Foo"
+                versions = response_body_hash[:_embedded][:versions]
+                expect(versions).to be_a(Array)
+                expect(versions.size).to eq 1
+                expect(versions.first).to include(:number, :_links)
+                expect(versions.first[:_links]).to include(:self, :"pb:deployed-environments")
+                expect(versions.first[:_links][:"pb:deployed-environments"]).to be_a(Array)
+                expect(versions.first[:_links][:"pb:deployed-environments"].size).to eq 2
+                expect(versions.first[:_links][:"pb:deployed-environments"].first).to include(:title, :name, :href)
               end
             end
           end

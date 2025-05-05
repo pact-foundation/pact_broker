@@ -670,14 +670,15 @@ module PactBroker
         version
       end
 
-      private
-
       def create_deployed_version(uuid: , currently_deployed: , version:, environment_name: , target: nil, created_at: nil)
         env = find_environment(environment_name)
         @deployed_version = PactBroker::Deployments::DeployedVersionService.find_or_create(uuid, version, env, target)
         PactBroker::Deployments::DeployedVersionService.record_version_undeployed(deployed_version) unless currently_deployed
         set_created_at_if_set(created_at, :deployed_versions, id: deployed_version.id)
+        self
       end
+
+      private
 
       def create_released_version(uuid: , currently_supported: true, version:, environment_name: , created_at: nil)
         env = find_environment(environment_name)
