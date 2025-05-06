@@ -414,6 +414,10 @@ module PactBroker
         end
       end
 
+      def tag_versions_url(tag, base_url = "")
+        "#{pacticipant_url(base_url, tag.pacticipant)}/tags/#{tag.name}/versions"
+      end
+
       private
 
       def representable_pact pact

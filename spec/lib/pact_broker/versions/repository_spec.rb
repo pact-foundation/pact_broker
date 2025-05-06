@@ -349,6 +349,31 @@ module PactBroker
           it { is_expected.to be_nil }
         end
       end
+
+      describe "#find_by_ids_in_reverse_order" do 
+        before do
+          td.create_consumer("Boo")
+            .create_version("1.0.0")
+            .create_tag("prod")
+            .create_version("1.0.3")
+            .create_tag("main")
+        end
+
+        let(:version_ids) { Domain::Version.all.collect(&:id) }
+        subject { Repository.new.find_by_ids_in_reverse_order(version_ids) }
+
+        it "returns all the application versions for given ids" do
+          expect(subject.collect(&:id).length).to eq 2
+        end
+
+        context "with pagination options" do
+          subject { Repository.new.find_by_ids_in_reverse_order version_ids, { page_number: 1, page_size: 1 } }
+
+          it "paginates the query" do
+            expect(subject.collect(&:id).length).to eq 1
+          end
+        end
+      end
     end
   end
 end

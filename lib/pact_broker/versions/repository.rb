@@ -174,6 +174,15 @@ module PactBroker
           latest_from_main_branch || find_by_pacticipant_name_and_latest_tag(pacticipant.name, pacticipant.main_branch)
         end
       end
+
+      def find_by_ids_in_reverse_order version_ids, pagination_options = {}, eager_load_associations =[]
+        query = PactBroker::Domain::Version
+                  .where(id: version_ids)
+                  .eager(*eager_load_associations)
+                  .reverse_order(:order)
+
+        query.all_with_pagination_options(pagination_options)
+      end
     end
   end
 end

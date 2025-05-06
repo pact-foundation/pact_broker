@@ -136,6 +136,23 @@ module PactBroker
           expect(subject).to eq ["dev", "master", "prod"]
         end
       end
+
+      describe ".find_all_by_pacticipant_name_and_tag" do 
+        before do
+          td.create_consumer("Boo")
+            .create_version("1.0.0")
+            .create_tag("prod")
+            .create_consumer("Bar")
+            .create_version("1.0.3")
+            .create_tag("main")
+        end
+
+        subject { Repository.new.find_all_by_pacticipant_name_and_tag("Boo", "prod") }
+
+        it "returns all the tags for that pacticipant" do
+          expect(subject.collect(&:name)).to eq ["prod"]
+        end
+      end
     end
   end
 end

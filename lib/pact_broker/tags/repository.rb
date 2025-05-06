@@ -1,8 +1,11 @@
 require "pact_broker/domain/tag"
+require "pact_broker/repositories"
 
 module PactBroker
   module Tags
     class Repository
+      include PactBroker::Repositories
+
       def create args
         params = {
           name: args.fetch(:name),
@@ -37,6 +40,14 @@ module PactBroker
         .distinct
         .collect{ |tag| tag[:name] }.sort
       end
+
+      def find_all_by_pacticipant_name_and_tag(pacticipant_name, tag_name)
+        pacticipant = pacticipant_repository.find_by_name(pacticipant_name)
+        return PactBroker::Domain::Tag.where(pacticipant_id: pacticipant.id, name: tag_name) if pacticipant
+
+        []
+      end
+
     end
   end
 end
