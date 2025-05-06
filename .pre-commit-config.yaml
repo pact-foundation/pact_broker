@@ -15,3 +15,8 @@ repos:
     rev: v3.9.0-1
     hooks:
       - id: shfmt
+
+  - repo: https://github.com/crate-ci/typos
+    rev: v1.31.1
+    hooks:
+      - id: typos
