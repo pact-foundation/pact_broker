@@ -27,11 +27,15 @@ module PactBroker
         end
 
         def to_json
-          decorator_class(:versions_decorator).new(versions).to_json(**decorator_options(identifier_from_path.merge(resource_title: resource_title)))
+          decorator_class(:versions_decorator).new(versions).to_json(**decorator_options(identifier_from_path.merge(resource_title: resource_title, deployed_versions: deployed_versions)))
         end
 
         def versions
           @versions ||= version_service.find_pacticipant_versions_in_reverse_order(pacticipant_name, { branch_name: identifier_from_path[:branch_name] }, pagination_options, decorator_class(:versions_decorator).eager_load_associations)
+        end
+
+        def deployed_versions
+          @deployed_versions ||= deployed_version_service.find_deployed_versions_for_versions(versions)
         end
 
         def policy_name
