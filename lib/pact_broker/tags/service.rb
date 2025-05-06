@@ -32,6 +32,10 @@ module PactBroker
       def find_all_tag_names_for_pacticipant pacticipant_name
         tag_repository.find_all_tag_names_for_pacticipant pacticipant_name
       end
+
+      def find_all_by_pacticipant_name_and_tag pacticipant_name:, tag_name:
+        tag_repository.find_all_by_pacticipant_name_and_tag pacticipant_name, tag_name
+      end
     end
   end
 end

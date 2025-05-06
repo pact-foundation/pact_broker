@@ -66,6 +66,11 @@ module PactBroker
           PactBroker.configuration.use_first_tag_as_branch &&
           ((now - version.created_at.to_datetime) * 24 * 60 * 60) <= PactBroker.configuration.use_first_tag_as_branch_time_limit
       end
+
+      def self.find_by_ids_in_reverse_order version_ids, pagination_options = {}, eager_load_associations = []
+        version_repository.find_by_ids_in_reverse_order version_ids, pagination_options, eager_load_associations
+      end
+
       private_class_method :use_tag_as_branch?
 
       def self.now
