@@ -4,6 +4,23 @@ describe "Get versions for Pacticipant Tag" do
       .create_version("1.2.3")
       .create_tag("prod")
       .and_return(:tag)
+    deployed_version
+  end
+  let(:version) { 
+    td.use_consumer("Boo")
+      .use_consumer_version("1.2.3")
+      .and_return(:consumer_version)
+  }
+  let(:test_environment) { td.create_environment("test").and_return(:environment) }
+  let(:prod_environment) { td.create_environment("prod").and_return(:environment) }
+  let(:deployed_version) do
+    td.use_consumer_version(version.number)
+      .create_deployed_version(
+        uuid: "1234", currently_deployed: true, version: version, environment_name: test_environment.name, 
+        created_at: DateTime.now - 2)
+      .create_deployed_version(
+        uuid: "5678", currently_deployed: true, version: version, environment_name: prod_environment.name,
+        created_at: DateTime.now - 1)
   end
   let(:tag) { PactBroker::Domain::Tag.first }
   let(:path) { PactBroker::Api::PactBrokerUrls.tag_versions_url(tag) }
@@ -14,7 +31,10 @@ describe "Get versions for Pacticipant Tag" do
   it { is_expected.to be_a_hal_json_success_response }
 
   it "returns the tags versions" do
-    expect(JSON.parse(subject.body).dig("_embedded", "versions").size).to eq 1
+    response = JSON.parse(subject.body)
+    expect(response.dig("_embedded", "versions").size).to eq 1
+    expect(response.dig("_embedded", "versions").first["number"]).to eq "1.2.3"
+    expect(response.dig("_embedded", "versions").first["_links"]["pb:deployed-environments"].size).to eq 2
   end
 
   context "when the pacticipant does not exist" do 
