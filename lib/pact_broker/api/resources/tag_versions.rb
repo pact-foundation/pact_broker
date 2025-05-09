@@ -29,10 +29,15 @@ module PactBroker
         end
 
         def to_json
-          decorator_class(:versions_decorator).new(tag_versions).to_json(**decorator_options)
+          decorator_class(:versions_decorator).new(tag_versions)
+            .to_json(**decorator_options(deployed_versions: deployed_versions))
         end
 
         private
+
+        def deployed_versions
+          @deployed_versions ||= deployed_version_service.find_deployed_versions_for_versions(tag_versions)
+        end
 
         def tag_versions
           @versions ||= version_service.find_by_ids_in_reverse_order(@tags.select_map(:version_id), pagination_options, decorator_class(:versions_decorator).eager_load_associations)

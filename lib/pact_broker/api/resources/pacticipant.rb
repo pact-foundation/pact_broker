@@ -71,7 +71,12 @@ module PactBroker
         end
 
         def to_json
-          decorator_class(:pacticipant_decorator).new(pacticipant).to_json(**decorator_options)
+          decorator_class(:pacticipant_decorator).new(pacticipant)
+            .to_json(**decorator_options(deployed_versions: deployed_versions))
+        end
+
+        def deployed_versions
+          @deployed_versions ||= deployed_version_service.find_all_deployed_versions_for_pacticipant(pacticipant)
         end
 
         def parsed_pacticipant(pacticipant)

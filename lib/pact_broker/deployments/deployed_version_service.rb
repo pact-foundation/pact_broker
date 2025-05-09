@@ -66,6 +66,13 @@ module PactBroker
           .single_record
       end
 
+      def self.find_all_deployed_versions_for_pacticipant(pacticipant)
+        scope_for(DeployedVersion)
+          .where(pacticipant_id: pacticipant.id)
+          .eager(:environment)
+          .all
+      end
+
       def self.find_currently_deployed_versions_for_environment(environment, pacticipant_name: nil, target: :unspecified)
         query = scope_for(DeployedVersion)
           .currently_deployed

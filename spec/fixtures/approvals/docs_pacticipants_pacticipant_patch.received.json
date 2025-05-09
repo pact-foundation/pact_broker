@@ -24,7 +24,7 @@
     "headers": {
       "content-type": "application/hal+json;charset=utf-8",
       "content-length": "2163",
-      "date": "<date>",
+      "date": "Wed, 01 Sep 2021 00:07:21 GMT",
       "server": "Webmachine-Ruby/2.0.1 Rack/3.1"
     },
     "body": {
@@ -46,9 +46,7 @@
             }
           }
         },
-        "labels": [
-
-        ]
+        "labels": []
       },
       "_links": {
         "self": {
@@ -60,12 +58,12 @@
         "pb:branches": {
           "href": "https://pact-broker/pacticipants/foo/branches"
         },
+        "pb:deployed-environments": [],
         "pb:version": {
           "title": "Get, create or delete a pacticipant version",
           "href": "https://pact-broker/pacticipants/foo/versions/{version}",
           "templated": true
         },
-        "pb:deployed-environments": [],
         "pb:version-tag": {
           "title": "Get, create or delete a tag for a version of foo",
           "href": "https://pact-broker/pacticipants/foo/versions/{version}/tags/{tag}",

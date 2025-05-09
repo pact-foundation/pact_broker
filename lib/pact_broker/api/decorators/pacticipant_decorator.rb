@@ -43,6 +43,17 @@ module PactBroker
           pacticipant_branches_url(represented, options[:base_url])
         end
 
+        links :'pb:deployed-environments' do | context |
+          context[:deployed_versions]&.collect do | deployed_version |
+            {
+              title: "Version deployed to #{deployed_version.environment.display_name}",
+              name: deployed_version.environment.display_name,
+              href: deployed_version_url(deployed_version, context.fetch(:base_url)),
+              currently_deployed: deployed_version.currently_deployed
+            }
+          end
+        end
+
         link :'pb:version' do | options |
           {
             title: "Get, create or delete a pacticipant version",

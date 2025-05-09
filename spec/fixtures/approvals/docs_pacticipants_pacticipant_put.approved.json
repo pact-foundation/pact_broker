@@ -23,7 +23,7 @@
     "status": 200,
     "headers": {
       "content-type": "application/hal+json;charset=utf-8",
-      "content-length": "2133",
+      "content-length": "2163",
       "date": "<date>",
       "server": "Webmachine-Ruby/2.0.1 Rack/3.1"
     },
@@ -65,6 +65,7 @@
           "href": "https://pact-broker/pacticipants/foo/versions/{version}",
           "templated": true
         },
+        "pb:deployed-environments": [],
         "pb:version-tag": {
           "title": "Get, create or delete a tag for a version of foo",
           "href": "https://pact-broker/pacticipants/foo/versions/{version}/tags/{tag}",
