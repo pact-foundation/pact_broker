@@ -1,39 +1,27 @@
 {
   "category": "Pacticipants",
   "name": "Pacticipant",
-  "comments": "PUT replaces the entire resource with the specified body, so missing properties will effectively be nulled. Embedded properties (eg. versions) will not be affected.",
-  "order": 3,
+  "order": 1,
   "request": {
-    "method": "PUT",
+    "method": "GET",
     "path_template": "/pacticipants/:pacticipant_name",
     "path": "/pacticipants/foo",
     "headers": {
-      "Content-Type": "application/json",
       "Accept": "application/hal+json"
-    },
-    "body": {
-      "displayName": "Foo",
-      "repositoryUrl": "https://github.com/example/foo",
-      "repositoryName": "foo",
-      "repositoryNamespace": "example",
-      "mainBranch": "main"
     }
   },
   "response": {
     "status": 200,
     "headers": {
       "content-type": "application/hal+json;charset=utf-8",
-      "content-length": "2163",
-      "date": "<date>",
+      "content-length": "2101",
+      "date": "Wed, 01 Sep 2021 00:07:21 GMT",
       "server": "Webmachine-Ruby/2.0.1 Rack/3.1"
     },
     "body": {
       "name": "foo",
       "displayName": "Foo",
-      "repositoryUrl": "https://github.com/example/foo",
-      "repositoryName": "foo",
-      "repositoryNamespace": "example",
-      "mainBranch": "main",
+      "repositoryUrl": "https://github.com/example-organization/foo",
       "createdAt": "2021-09-01T00:07:21+00:00",
       "_embedded": {
         "latestVersion": {
@@ -46,9 +34,7 @@
             }
           }
         },
-        "labels": [
-
-        ]
+        "labels": []
       },
       "_links": {
         "self": {
@@ -60,12 +46,12 @@
         "pb:branches": {
           "href": "https://pact-broker/pacticipants/foo/branches"
         },
+        "pb:deployed-environments": [],
         "pb:version": {
           "title": "Get, create or delete a pacticipant version",
           "href": "https://pact-broker/pacticipants/foo/versions/{version}",
           "templated": true
         },
-        "pb:deployed-envrionments": [],
         "pb:version-tag": {
           "title": "Get, create or delete a tag for a version of foo",
           "href": "https://pact-broker/pacticipants/foo/versions/{version}/tags/{tag}",
