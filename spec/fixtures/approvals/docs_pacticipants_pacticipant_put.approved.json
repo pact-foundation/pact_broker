@@ -65,7 +65,7 @@
           "href": "https://pact-broker/pacticipants/foo/versions/{version}",
           "templated": true
         },
-        "pb:deployed-envrionments": [],
+        "pb:deployed-environments": [],
         "pb:version-tag": {
           "title": "Get, create or delete a tag for a version of foo",
           "href": "https://pact-broker/pacticipants/foo/versions/{version}/tags/{tag}",
