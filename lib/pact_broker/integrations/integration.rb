@@ -91,7 +91,7 @@ module PactBroker
         def filter_by_pacticipant(query_string)
           matching_pacticipants = PactBroker::Domain::Pacticipant.filter(:name, query_string)
           pacticipants_join = Sequel.|({ Sequel[:integrations][:consumer_id] => Sequel[:p][:id] }, { Sequel[:integrations][:provider_id] => Sequel[:p][:id] })
-          join(matching_pacticipants, pacticipants_join, table_alias: :p)
+          join(matching_pacticipants, pacticipants_join, table_alias: :p).distinct
         end
 
         def including_pacticipant_id(pacticipant_id)
