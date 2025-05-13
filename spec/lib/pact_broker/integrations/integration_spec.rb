@@ -14,6 +14,15 @@ module PactBroker
             .create_consumer("Y")
             .create_provider("Z")
             .create_integration
+            .create_consumer("Bet")
+            .create_provider("Get")
+            .create_integration
+            .create_consumer("Pet")
+            .create_provider("Hat")
+            .create_integration
+            .use_consumer("Hat")
+            .use_provider("Bet")
+            .create_integration
         end
 
         subject { Integration.select_all_qualified.filter_by_pacticipant(query_string).all }
@@ -37,6 +46,18 @@ module PactBroker
             expect(subject).to contain_exactly(
               have_attributes(consumer_name: "Foo", provider_name: "Bar"),
               have_attributes(consumer_name: "Cat", provider_name: "Dog")
+            )
+          end
+        end
+
+        context "with a filter matching both consumer and provider of the same integration" do
+          let(:query_string) { "e" }
+
+          it "returns the matching integration" do
+            expect(subject).to contain_exactly(
+              have_attributes(consumer_name: "Bet", provider_name: "Get"),
+              have_attributes(consumer_name: "Pet", provider_name: "Hat"),
+              have_attributes(consumer_name: "Hat", provider_name: "Bet")
             )
           end
         end
