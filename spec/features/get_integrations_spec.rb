@@ -36,6 +36,18 @@ describe "Get integrations" do
     end
   end
 
+  context "with a query string that matches multiple pacticipants" do
+    let(:query) { { "q" => "o" } }
+
+    it "returns only the integrations with a consumer or provider name including the given string" do
+      expect(response_body_hash["_embedded"]["integrations"].length).to eq 2
+      expect(response_body_hash["_embedded"]["integrations"][0]["consumer"]["name"]).to eq "Dog"
+      expect(response_body_hash["_embedded"]["integrations"][0]["provider"]["name"]).to eq "Cat"
+      expect(response_body_hash["_embedded"]["integrations"][1]["consumer"]["name"]).to eq "Foo"
+      expect(response_body_hash["_embedded"]["integrations"][1]["provider"]["name"]).to eq "Bar"
+    end
+  end
+
   context "with a query string that matches both consumer and provider name of the same integration" do
     let(:query) { { "q" => "e" } }
 
