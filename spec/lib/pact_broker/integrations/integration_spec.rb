@@ -67,7 +67,7 @@ module PactBroker
 
           subject { Integration.select_all_qualified.filter_by_pacticipant(query_string) }
 
-          it "returns empty array" do
+          it "returns nil" do
             expect(subject).to eq nil
           end
         end
