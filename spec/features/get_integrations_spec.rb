@@ -41,10 +41,16 @@ describe "Get integrations" do
 
     it "returns only the integrations with a consumer or provider name including the given string" do
       expect(response_body_hash["_embedded"]["integrations"].length).to eq 2
-      expect(response_body_hash["_embedded"]["integrations"][0]["consumer"]["name"]).to eq "Dog"
-      expect(response_body_hash["_embedded"]["integrations"][0]["provider"]["name"]).to eq "Cat"
-      expect(response_body_hash["_embedded"]["integrations"][1]["consumer"]["name"]).to eq "Foo"
-      expect(response_body_hash["_embedded"]["integrations"][1]["provider"]["name"]).to eq "Bar"
+      expect(response_body_hash["_embedded"]["integrations"]).to contain_exactly(
+        hash_including(
+          "consumer" => hash_including("name" => "Foo"),
+          "provider" => hash_including("name" => "Bar")
+        ),
+        hash_including(
+          "consumer" => hash_including("name" => "Dog"),
+          "provider" => hash_including("name" => "Cat")
+        )
+      )
     end
   end
 
