@@ -36,6 +36,42 @@ describe "Get integrations" do
     end
   end
 
+  context "with a query string that matches multiple pacticipants" do
+    let(:query) { { "q" => "o" } }
+
+    it "returns only the integrations with a consumer or provider name including the given string" do
+      expect(response_body_hash["_embedded"]["integrations"].length).to eq 2
+      expect(response_body_hash["_embedded"]["integrations"]).to contain_exactly(
+        hash_including(
+          "consumer" => hash_including("name" => "Foo"),
+          "provider" => hash_including("name" => "Bar")
+        ),
+        hash_including(
+          "consumer" => hash_including("name" => "Dog"),
+          "provider" => hash_including("name" => "Cat")
+        )
+      )
+    end
+  end
+
+  context "with a query string that matches both consumer and provider name of the same integration" do
+    let(:query) { { "q" => "e" } }
+
+    it "returns only the integrations with a consumer or provider name including the given string" do
+      expect(response_body_hash["_embedded"]["integrations"].length).to eq 1
+      expect(response_body_hash["_embedded"]["integrations"][0]["consumer"]["name"]).to eq "Apple"
+      expect(response_body_hash["_embedded"]["integrations"][0]["provider"]["name"]).to eq "Pear"
+    end
+  end
+
+  context "with a query string that matches neither consumer nor provider name" do
+    let(:query) { { "q" => "x" } }
+
+    it "returns empty integrations array" do
+      expect(response_body_hash["_embedded"]["integrations"].length).to eq 0
+    end
+  end
+
   context "as a dot file" do
     subject { get path, query, {"HTTP_ACCEPT" => "text/vnd.graphviz" } }
 

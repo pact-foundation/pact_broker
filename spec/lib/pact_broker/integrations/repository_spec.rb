@@ -29,12 +29,37 @@ module PactBroker
           Integration.order(:id).last.update(contract_data_updated_at: nil)
         end
 
-        subject { Repository.new.find }
+        let(:options) do
+          {
+            :query_string => query_string
+          }
+        end
+        let(:query_string) { nil }
+
+        subject { Repository.new.find(options) }
 
         it "it orders by most recent event" do
           expect(subject[0]).to have_attributes(consumer_name: "Apple")
           expect(subject[1]).to have_attributes(consumer_name: "Foo")
           expect(subject[2]).to have_attributes(consumer_name: "Dog")
+        end
+
+        context "when method called with filter_options" do
+          context "when query_string is like pacticipant name" do
+            let(:query_string) { "oo" }
+
+            it "returns the matching integration" do
+              expect(subject).to contain_exactly(have_attributes(consumer_name: "Foo", provider_name: "Bar"))
+            end
+          end
+
+          context "when query_string is not matching pacticipant name" do
+            let(:query_string) { "x" }
+
+            it "returns empty array" do
+              expect(subject.length).to eq 0
+            end
+          end
         end
       end
 
