@@ -90,7 +90,8 @@ module PactBroker
 
         def filter_by_pacticipant(query_string)
           matching_pacticipant_ids = PactBroker::Domain::Pacticipant.filter(:name, query_string).select(:id).all.collect(&:id)
-          where(consumer_id: matching_pacticipant_ids).or(provider_id: matching_pacticipant_ids)
+          return nil if matching_pacticipant_ids.empty?
+          including_pacticipant_id(matching_pacticipant_ids)
         end
 
         def including_pacticipant_id(pacticipant_id)

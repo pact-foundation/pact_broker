@@ -10,6 +10,7 @@ module PactBroker
       def find(filter_options = {}, pagination_options = {}, eager_load_associations = [])
         query = scope_for(PactBroker::Integrations::Integration).select_all_qualified
         query = query.filter_by_pacticipant(filter_options[:query_string]) if filter_options[:query_string]
+        return [] if query.nil?
         query
           .eager(*eager_load_associations)
           .order(Sequel.desc(:contract_data_updated_at, nulls: :last))
