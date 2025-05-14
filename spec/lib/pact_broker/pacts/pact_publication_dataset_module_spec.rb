@@ -495,7 +495,7 @@ module PactBroker
               .create_verification(provider_version: "3", branch: "not-main", success: true)
           end
 
-          it "returns the pact publications that have been succesfully verified by the given provider id and branch" do
+          it "returns the pact publications that have been successfully verified by the given provider id and branch" do
             expect(subject.size).to eq 1
             expect(subject.first.consumer_version.number).to eq "2"
           end
