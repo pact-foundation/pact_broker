@@ -36,6 +36,13 @@ module PactBroker
             href: group_url(represented.consumer.name, options.fetch(:base_url))
           }
         end
+
+        link "pb:delete_integration" do | options |
+          {
+            title: "Delete the integration between #{represented.consumer.name} and #{represented.provider.name}",
+            href: integration_url(represented.consumer.name, represented.provider.name, options.fetch(:base_url))
+          }
+        end
       end
     end
   end

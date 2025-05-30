@@ -16,6 +16,7 @@ module PactBroker
             allow(integration_decorator).to receive(:dashboard_url_for_integration).and_return("/dashboard")
             allow(integration_decorator).to receive(:matrix_url).and_return("/matrix")
             allow(integration_decorator).to receive(:group_url).and_return("/group")
+            allow(integration_decorator).to receive(:integration_url).and_return("/integration")
           end
 
           let(:integration) do
@@ -48,6 +49,10 @@ module PactBroker
                 },
                 "pb:group" => {
                   "href" => "/group"
+                },
+                "pb:delete_integration" => {
+                  "title" => "Delete the integration between the consumer and the provider",
+                  "href" => "/integration"
                 }
               }
             }
@@ -82,6 +87,15 @@ module PactBroker
           it "generates the correct group url for the matrix" do
             expect(integration_decorator).to receive(:group_url).with(
               "the consumer",
+              "http://example.org"
+            )
+            subject
+          end
+
+          it "generates the correct delete url for the integration" do
+            expect(integration_decorator).to receive(:integration_url).with(
+              "the consumer",
+              "the provider",
               "http://example.org"
             )
             subject
