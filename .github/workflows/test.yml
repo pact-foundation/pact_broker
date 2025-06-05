@@ -140,8 +140,6 @@ jobs:
             ${{ env.PRE_COMMIT_HOME }}
           key: |
             ${{ runner.os }}-pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pre-commit-
       - name: Set up uv
         uses: astral-sh/setup-uv@22695119d769bdb6f7032ad67b9bca0ef8c4a174 # v5.4.0
         with:
