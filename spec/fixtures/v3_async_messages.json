@@ -1,0 +1,48 @@
+{
+    "consumer": {
+        "name": "Consumer"
+    },
+    "provider": {
+        "name": "Provider"
+    },
+    "messages": [
+        {
+            "description": "a message interaction",
+            "providerStates": [
+                {
+                    "name": "provider is at state one",
+                    "params": {}
+                },
+                {
+                    "name": "provider is at state two",
+                    "params": {}
+                }
+            ],
+            "contents": {
+                "some": "content"
+            },
+            "metadata": {
+                "meta": "data"
+            }
+        },
+        {
+            "description": "another message interaction",
+            "contents": {
+                "something": "other content"
+            },
+            "metadata": {
+                "where": "location"
+            }
+        }
+    ],
+    "metadata": {
+        "pactRust": {
+            "ffi": "0.4.21",
+            "mockserver": "1.2.8",
+            "models": "1.2.2"
+        },
+        "pactSpecification": {
+            "version": "3.0"
+        }
+    }
+}
