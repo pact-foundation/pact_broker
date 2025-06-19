@@ -195,7 +195,39 @@ module PactBroker
         end
 
         def consumer_contract
-          Pact::ConsumerContract.from_json(@json_content)
+          pact_object = JSON.parse(@json_content, quirks_mode: true)
+
+          if pact_object.key?("messages")
+            logger.warn "Detected a v3 Pact, converting 'messages' to 'interactions'."
+            pact_object["interactions"] = pact_object.delete("messages")
+          end
+
+          pact_object["interactions"]&.each do |interaction|
+            if !interaction["request"] || !interaction["response"]
+              logger.warn "Interaction '#{interaction['description']}' does not have a request or response, adding dummy request and response so that they can be parsed and appear on the UI."
+            end
+
+            # Add dummy request for async messages
+            interaction["request"] ||= {
+              method: "FAKE_ASYNC_METHOD",
+              path: interaction["description"]
+            }
+
+            # Add dummy response for async messages
+            unless interaction.key?("response")
+              interaction["response"] = {
+                status: "FAKE_ASYNC_METHOD",
+                body: {
+                  contents: interaction.delete("contents"),
+                  metadata: interaction.delete("metadata")
+                }
+              }
+            end
+          end
+
+          new_json_content = pact_object.to_json  
+
+          Pact::ConsumerContract.from_json(new_json_content)
         rescue => e
           logger.info "Could not parse the following content to a Pact due to #{e.class} #{e.message}, showing raw content instead: #{@json_content}"
           raise NotAPactError

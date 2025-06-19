@@ -1,0 +1,77 @@
+{
+    "consumer": {
+        "name": "Consumer"
+    },
+    "provider": {
+        "name": "Provider"
+    },
+    "interactions": [
+        {
+            "description": "a message interaction",
+            "providerStates": [
+                {
+                    "name": "provider is at state one",
+                    "params": {}
+                },
+                {
+                    "name": "provider is at state two",
+                    "params": {}
+                }
+            ],
+            "contents": {
+                "some": "content"
+            },
+            "metadata": {
+                "meta": "data"
+            }
+        },
+        {
+            "description": "a request for alligators",
+            "providerState": "alligators exist",
+            "request": {
+                "method": "get",
+                "path": "/alligators"
+            },
+            "response": {
+                "status": 200,
+                "body": {
+                    "alligators": [
+                        {
+                            "name": "Bob",
+                            "phoneNumber": {
+                                "json_class": "Pact::Term",
+                                "data": {
+                                    "generate": "12345678",
+                                    "matcher": {
+                                        "json_class": "Regexp",
+                                        "o": 0,
+                                        "s": "\\d+"
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "description": "another message interaction",
+            "contents": {
+                "something": "other content"
+            },
+            "metadata": {
+                "where": "location"
+            }
+        }
+    ],
+    "metadata": {
+        "pactRust": {
+            "ffi": "0.4.21",
+            "mockserver": "1.2.8",
+            "models": "1.2.2"
+        },
+        "pactSpecification": {
+            "version": "4.0"
+        }
+    }
+}
