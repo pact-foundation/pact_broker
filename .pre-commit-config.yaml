@@ -12,6 +12,6 @@ default_stages:
 
 repos:
   - repo: https://github.com/scop/pre-commit-shfmt
-    rev: v3.9.0-1
+    rev: v3.11.0-1
     hooks:
       - id: shfmt
