@@ -38,10 +38,7 @@ RSpec.describe "publishing a pact using the all in one endpoint", validate_oas: 
     end
 
     it "returns a validation error response" do
-      expect {
-        subject
-      }.to raise_error(OpenapiFirst::RequestInvalidError)
-      # expect(subject).to be_a_json_error_response("missing")
+      expect(subject).to be_a_json_error_response("missing")
     end
   end
 
