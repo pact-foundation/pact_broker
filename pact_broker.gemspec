@@ -54,7 +54,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency "roar", "~> 1.1"
   gem.add_runtime_dependency "dry-validation", "~> 1.8"
   gem.add_runtime_dependency "reform", "~> 2.6"
-  gem.add_runtime_dependency "sequel", "~> 5.28"
+  gem.add_runtime_dependency "sequel", "~> 5.90"
   gem.add_runtime_dependency "webmachine", ">= 2.0.0.beta", "< 3.0"
   gem.add_runtime_dependency "semver2", "~> 3.4.2"
   gem.add_runtime_dependency "rack", "~> 3.1", ">= 3.1.16"
