@@ -32,7 +32,7 @@ module PactBroker::Api
           it "creates a new pacticipant when the pacticipant does not exist" do
             allow(PactBroker::Pacticipants::Service).to receive(:find_pacticipant_by_name).and_return(nil)
             subject
-            last_response.status.should == 404
+            expect(last_response.status).to eq 404
           end
 
           context "when pacticipant exist" do
@@ -45,7 +45,7 @@ module PactBroker::Api
 
             it "updates the existing pacticipant" do
               subject
-              last_response.status.should == 200
+              expect(last_response.status).to eq 200
             end
           end
         end
@@ -87,7 +87,7 @@ module PactBroker::Api
 
             it "updates the existing pacticipant" do
               subject
-              last_response.status.should == 201
+              expect(last_response.status).to eq 201
             end
           end
         end
