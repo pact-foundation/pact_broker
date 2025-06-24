@@ -12,9 +12,6 @@ RSpec.shared_context "app" do
 
     # If the feature spec should be used to validate the OAS, add the metadata `validate_oas: true` to the top level spec
     if example.metadata[:validate_oas]
-      OpenapiFirst::Test.setup do |test|
-        test.ignore_unknown_request = true
-      end
       OpenapiFirst::Test.app(builder.to_app)
     else
       builder.to_app
