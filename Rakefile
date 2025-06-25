@@ -4,7 +4,11 @@ require "bundler/gem_tasks"
 require "rubygems"
 require "bundler"
 begin
-  Bundler.setup(:default, :development)
+  if ARGV.map{|arg| arg.include?("spec") }.any?
+    Bundler.setup(:default, :development, :test)
+  else
+    Bundler.setup(:default, :development)
+  end
 rescue Bundler::BundlerError => e
   $stderr.puts e.message
   $stderr.puts "Run `bundle install` to install missing gems"

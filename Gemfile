@@ -9,6 +9,8 @@ gem "conventional-changelog", "~>1.3"
 gem "bump", "~> 0.5"
 gem "padrino-core", ">= 0.16.0.pre3", require: false
 gem "rackup", "~> 2.2"
+# TODO: using release-candidate of pact-support is release remove this and restore to gemspec.
+gem "pact-support", github: "pact-foundation/pact-support", branch: "release-1.21.3.rc1"
 
 group :development do
   gem "pry-byebug"
@@ -33,7 +35,7 @@ group :test do
   gem "approvals", ">=0.0.24", "<1.0.0"
   gem "tzinfo", "~>2.0"
   gem "faraday-retry", "~>2.0"
-  gem "openapi_first", ">= 2.3", "< 3"
+  gem "openapi_first", "2.9.2" # pinned to specific version due to changelog volatility
 end
 
 group :pg, optional: true do
