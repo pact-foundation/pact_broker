@@ -159,7 +159,7 @@ module PactBroker
 
       # Overwriting an existing pact with the same consumer/provider/consumer version number
       # by creating a new revision (that is, a new PactPublication with an incremented revision number)
-      # Modifing pacts is strongly discouraged now, and support for it will be dropped in the next major version of the Pact Broker
+      # Modifying pacts is strongly discouraged now, and support for it will be dropped in the next major version of the Pact Broker
       def create_pact_revision params, existing_pact
         logger.info("Updating existing pact publication", params.without(:json_content))
         logger.debug("Content #{params[:json_content]}")
