@@ -207,13 +207,13 @@ module PactBroker
               logger.warn "Interaction '#{interaction['description']}' does not have a request or response, adding dummy request and response so that they can be parsed and appear on the UI."
             end
 
-            # Add dummy request for async messages
+            # Add dummy HTML request for async messages
             interaction["request"] ||= {
               method: "FAKE_ASYNC_METHOD",
               path: interaction["description"]
             }
 
-            # Add dummy response for async messages
+            # Add dummy HTML response for async messages
             unless interaction.key?("response")
               interaction["response"] = {
                 status: "FAKE_ASYNC_METHOD",
@@ -222,7 +222,23 @@ module PactBroker
                   metadata: interaction.delete("metadata")
                 }
               }
-            end
+            end            
+
+            # Add dummy HTML request/response for synchronous messages
+            if interaction["type"] == "Synchronous/Messages"
+              interaction["request"] = {
+                method: "FAKE_SYNC_METHOD",
+                path: interaction["description"],
+                body: interaction.delete("request"),
+              }
+              interaction["response"] = {
+                status: "FAKE_SYNC_METHOD",
+                body: {
+                  contents: interaction.delete("response"),
+                }              
+              }              
+            end            
+
           end
 
           new_json_content = pact_object.to_json  

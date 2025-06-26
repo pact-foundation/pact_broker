@@ -90,17 +90,25 @@ module Pact
         reified = Reification.from_term(interaction.request)
         return "ASYNC_REQUEST" if reified[:method] == "FAKE_ASYNC_METHOD"
 
-        ordered = ordered_clean_hash(reified)
-        ordered[:body] = reified[:body] if reified[:body]
+        ordered = ordered_clean_hash(reified).tap do |h|
+          h[:body] = reified[:body] if reified[:body]
+        end
+
+        return ordered[:body].to_h.slice("contents", "metadata") if ordered[:method] == "FAKE_SYNC_METHOD"
+
         ordered
       end
 
       def clean_response
         raw = Reification.from_term(interaction.response)
-        if raw[:status] == "FAKE_ASYNC_METHOD"
-          raw.dig(:body) || {}
+
+        case raw[:status]
+        when "FAKE_ASYNC_METHOD"
+          raw[:body] || {}
+        when "FAKE_SYNC_METHOD"
+          Array(raw.dig(:body, "contents")).map { |item| item.slice("contents", "metadata") }
         else
-          ordered_clean_hash raw
+          ordered_clean_hash(raw)
         end
       end
 

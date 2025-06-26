@@ -7,7 +7,7 @@
     },
     "interactions": [
         {
-            "description": "a message interaction",
+            "description": "async message interaction",
             "providerStates": [
                 {
                     "name": "provider is at state one",
@@ -23,7 +23,8 @@
             },
             "metadata": {
                 "meta": "data"
-            }
+            },
+            "type": "Asynchronous/Messages"
         },
         {
             "description": "a request for alligators",
@@ -52,16 +53,38 @@
                         }
                     ]
                 }
-            }
+            },
+            "type": "Synchronous/HTTP"
         },
         {
-            "description": "another message interaction",
-            "contents": {
-                "something": "other content"
+            "description": "sync message interaction",
+            "request": {
+                "contents": {
+                    "content": "ChJwbHVnaW4tZHJpdmVyLXJ1c3QSBTAuMC4w",
+                    "contentType": "application/protobuf;message=InitPluginRequest",
+                    "contentTypeHint": "BINARY",
+                    "encoded": "base64"
+                },
+                "metadata": {
+                    "requestKey1": "value",
+                    "requestKey2": "value2"
+                }
             },
-            "metadata": {
-                "where": "location"
-            }
+            "response": [
+                {
+                    "contents": {
+                        "content": "CggIABIEdGVzdA==",
+                        "contentType": "application/protobuf;message=InitPluginResponse",
+                        "contentTypeHint": "BINARY",
+                        "encoded": "base64"
+                    },
+                    "metadata": {
+                        "responseKey1": "value",
+                        "responseKey2": "value2"
+                    }
+                }
+            ],
+            "type": "Synchronous/Messages"
         }
     ],
     "metadata": {

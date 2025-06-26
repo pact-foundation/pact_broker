@@ -17,12 +17,16 @@ module PactBroker
         end
 
         it "renders correct markdown for a pact with mixed v4 sync/async interactions" do
-          render_and_compare("v4_mixed_sync_async_interactions")
+          render_and_compare("v4_mixed_http_sync_async_interactions")
         end
 
         it "renders correct markdown for a pact with v3 async messages" do
           render_and_compare("v3_async_messages")
         end
+
+        it "renders correct markdown for a pact with v4 sync messages" do
+          render_and_compare("v4_sync_messages")
+        end        
       end
     end
   end

@@ -1,0 +1,112 @@
+{
+    "consumer": {
+        "name": "consumer"
+    },
+    "provider": {
+        "name": "provider"
+    },
+    "interactions": [
+        {
+            "comments": {
+                "testname": "pact::test_proto_client"
+            },
+            "description": "init plugin request",
+            "interactionMarkup": {
+                "markup": "```protobuf\nmessage InitPluginRequest {\n    string implementation = 1;\n    string version = 2;\n}\n```\n```protobuf\nmessage InitPluginResponse {\n    message .io.pact.plugin.CatalogueEntry catalogue = 1;\n}\n```\n",
+                "markupType": "COMMON_MARK"
+            },
+            "key": "c05e8d0d3e683897",
+            "pending": false,
+            "pluginConfiguration": {
+                "protobuf": {
+                    "descriptorKey": "347713ea68bb68288a09c8fd5350e928",
+                    "service": "PactPlugin/InitPlugin"
+                }
+            },
+            "request": {
+                "contents": {
+                    "content": "ChJwbHVnaW4tZHJpdmVyLXJ1c3QSBTAuMC4w",
+                    "contentType": "application/protobuf;message=InitPluginRequest",
+                    "contentTypeHint": "BINARY",
+                    "encoded": "base64"
+                },
+                "metadata": {
+                    "requestKey1": "value",
+                    "requestKey2": "value2"
+                },
+                "matchingRules": {
+                    "body": {
+                        "$.request.implementation": {
+                            "combine": "AND",
+                            "matchers": [
+                                {
+                                    "match": "notEmpty"
+                                }
+                            ]
+                        },
+                        "$.request.version": {
+                            "combine": "AND",
+                            "matchers": [
+                                {
+                                    "match": "semver"
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "response": [
+                {
+                    "contents": {
+                        "content": "CggIABIEdGVzdA==",
+                        "contentType": "application/protobuf;message=InitPluginResponse",
+                        "contentTypeHint": "BINARY",
+                        "encoded": "base64"
+                    },
+                    "metadata": {
+                        "responseKey1": "value",
+                        "responseKey2": "value2"
+                    },
+                    "matchingRules": {
+                        "body": {
+                            "$.response.catalogue": {
+                                "combine": "AND",
+                                "matchers": [
+                                    {
+                                        "match": "values"
+                                    }
+                                ]
+                            },
+                            "$.response.catalogue.*": {
+                                "combine": "AND",
+                                "matchers": [
+                                    {
+                                        "match": "type"
+                                    }
+                                ]
+                            },
+                            "$.response.catalogue.key": {
+                                "combine": "AND",
+                                "matchers": [
+                                    {
+                                        "match": "notEmpty"
+                                    }
+                                ]
+                            },
+                            "$.response.catalogue.type": {
+                                "combine": "AND",
+                                "matchers": [
+                                    {
+                                        "match": "regex",
+                                        "regex": "CONTENT_MATCHER|CONTENT_GENERATOR"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            ],
+            "type": "Synchronous/Messages"
+        }
+    ]
+}
