@@ -19,7 +19,11 @@ module Pact
         end
 
         def render_full_interaction
-          render("/interaction.erb")
+          if interaction.request == "ASYNC_REQUEST"
+            render("/interaction_async.erb")
+          else
+            render("/interaction.erb")
+          end
         end
 
         def render template_file

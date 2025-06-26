@@ -70,7 +70,12 @@ module Pact
       end
 
       def request
-        fix_json_formatting JSON.pretty_generate(clean_request)
+        the_clean_request = clean_request
+        if the_clean_request == "ASYNC_REQUEST"
+          "ASYNC_REQUEST"
+        else  
+          fix_json_formatting JSON.pretty_generate(clean_request)
+        end
       end
 
       def response
@@ -82,14 +87,29 @@ module Pact
       attr_reader :interaction, :consumer_contract
 
       def clean_request
-        reified_request = Reification.from_term(interaction.request)
-        ordered_clean_hash(reified_request).tap do | hash |
-          hash[:body] = reified_request[:body] if reified_request[:body]
+        reified = Reification.from_term(interaction.request)
+        return "ASYNC_REQUEST" if reified[:method] == "FAKE_ASYNC_METHOD"
+
+        ordered = ordered_clean_hash(reified).tap do |h|
+          h[:body] = reified[:body] if reified[:body]
         end
+
+        return ordered[:body].to_h.slice("contents", "metadata") if ordered[:method] == "FAKE_SYNC_METHOD"
+
+        ordered
       end
 
       def clean_response
-        ordered_clean_hash Reification.from_term(interaction.response)
+        raw = Reification.from_term(interaction.response)
+
+        case raw[:status]
+        when "FAKE_ASYNC_METHOD"
+          raw[:body] || {}
+        when "FAKE_SYNC_METHOD"
+          Array(raw.dig(:body, "contents")).map { |item| item.slice("contents", "metadata") }
+        else
+          ordered_clean_hash(raw)
+        end
       end
 
       # Remove empty body and headers hashes from response, and empty headers from request,
