@@ -20,7 +20,7 @@ module Pact
 
         def render_full_interaction
           if interaction.request == "ASYNC_REQUEST"
-            render("/interacton_async.erb")
+            render("/interaction_async.erb")
           else
             render("/interaction.erb")
           end
