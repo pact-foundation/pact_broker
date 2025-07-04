@@ -219,40 +219,40 @@ module PactBroker
         end        
 
         def add_dummy_html_request_response_to_asynchronous_message(interaction)
-            if !interaction["request"] || !interaction["response"]
-              logger.warn "Interaction '#{interaction['description']}' does not have a request or response, adding dummy request and response so that they can be parsed and appear on the UI."
-            end
+          if !interaction["request"] || !interaction["response"]
+            logger.warn "Interaction '#{interaction['description']}' does not have a request or response, adding dummy request and response so that they can be parsed and appear on the UI."
+          end
 
-            interaction["request"] ||= {
-              method: "FAKE_ASYNC_METHOD",
-              path: interaction["description"]
-            }
+          interaction["request"] ||= {
+            method: "FAKE_ASYNC_METHOD",
+            path: interaction["description"]
+          }
 
-            unless interaction.key?("response")
-              interaction["response"] = {
-                status: "FAKE_ASYNC_METHOD",
-                body: {
-                  contents: interaction.delete("contents"),
-                  metadata: interaction.delete("metadata")
-                }
+          unless interaction.key?("response")
+            interaction["response"] = {
+              status: "FAKE_ASYNC_METHOD",
+              body: {
+                contents: interaction.delete("contents"),
+                metadata: interaction.delete("metadata")
               }
-            end      
+            }
+          end      
         end
 
         def add_dummy_html_request_response_to_synchronous_message(interaction)
-            if interaction["type"] == "Synchronous/Messages"
-              interaction["request"] = {
-                method: "FAKE_SYNC_METHOD",
-                path: interaction["description"],
-                body: interaction.delete("request"),
-              }
-              interaction["response"] = {
-                status: "FAKE_SYNC_METHOD",
-                body: {
-                  contents: interaction.delete("response"),
-                }              
+          if interaction["type"] == "Synchronous/Messages"
+            interaction["request"] = {
+              method: "FAKE_SYNC_METHOD",
+              path: interaction["description"],
+              body: interaction.delete("request"),
+            }
+            interaction["response"] = {
+              status: "FAKE_SYNC_METHOD",
+              body: {
+                contents: interaction.delete("response"),
               }              
-            end    
+            }              
+          end    
         end
 
         def h string
