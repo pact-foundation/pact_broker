@@ -195,10 +195,64 @@ module PactBroker
         end
 
         def consumer_contract
-          Pact::ConsumerContract.from_json(@json_content)
+          pact_object = JSON.parse(@json_content, quirks_mode: true)
+          convert_v3_messages_to_interactions(pact_object)
+
+          pact_object["interactions"]&.each do |interaction|
+            add_dummy_html_request_response_to_asynchronous_message(interaction)
+            add_dummy_html_request_response_to_synchronous_message(interaction)
+          end
+
+          new_json_content = pact_object.to_json  
+
+          Pact::ConsumerContract.from_json(new_json_content)
         rescue => e
           logger.info "Could not parse the following content to a Pact due to #{e.class} #{e.message}, showing raw content instead: #{@json_content}"
           raise NotAPactError
+        end
+
+        def convert_v3_messages_to_interactions(pact_object)
+          return unless pact_object.key?("messages")
+
+          logger.warn "Detected a v3 Pact, converting 'messages' to 'interactions'."
+          pact_object["interactions"] = pact_object.delete("messages")
+        end        
+
+        def add_dummy_html_request_response_to_asynchronous_message(interaction)
+          if !interaction["request"] || !interaction["response"]
+            logger.warn "Interaction '#{interaction['description']}' does not have a request or response, adding dummy request and response so that they can be parsed and appear on the UI."
+          end
+
+          interaction["request"] ||= {
+            method: "FAKE_ASYNC_METHOD",
+            path: interaction["description"]
+          }
+
+          unless interaction.key?("response")
+            interaction["response"] = {
+              status: "FAKE_ASYNC_METHOD",
+              body: {
+                contents: interaction.delete("contents"),
+                metadata: interaction.delete("metadata")
+              }
+            }
+          end      
+        end
+
+        def add_dummy_html_request_response_to_synchronous_message(interaction)
+          if interaction["type"] == "Synchronous/Messages"
+            interaction["request"] = {
+              method: "FAKE_SYNC_METHOD",
+              path: interaction["description"],
+              body: interaction.delete("request"),
+            }
+            interaction["response"] = {
+              status: "FAKE_SYNC_METHOD",
+              body: {
+                contents: interaction.delete("response"),
+              }              
+            }              
+          end    
         end
 
         def h string
