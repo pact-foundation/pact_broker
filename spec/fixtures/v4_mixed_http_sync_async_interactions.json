@@ -1,0 +1,90 @@
+{
+    "consumer": {
+        "name": "Consumer"
+    },
+    "provider": {
+        "name": "Provider"
+    },
+    "interactions": [
+        {
+            "description": "async message interaction",
+            "providerStates": [
+                {
+                    "name": "provider is at state one",
+                    "params": {}
+                },
+                {
+                    "name": "provider is at state two",
+                    "params": {}
+                }
+            ],
+            "contents": {
+                "some": "content"
+            },
+            "metadata": {
+                "meta": "data"
+            },
+            "type": "Asynchronous/Messages"
+        },
+        {
+            "description": "a request for alligators",
+            "providerState": "alligators exist",
+            "request": {
+                "method": "get",
+                "path": "/alligators"
+            },
+            "response": {
+                "status": 200,
+                "body": {
+                    "alligators": [
+                        {
+                            "name": "Bob",
+                            "phoneNumber": "12345678"
+                        }
+                    ]
+                }
+            },
+            "type": "Synchronous/HTTP"
+        },
+        {
+            "description": "sync message interaction",
+            "request": {
+                "contents": {
+                    "content": "ChJwbHVnaW4tZHJpdmVyLXJ1c3QSBTAuMC4w",
+                    "contentType": "application/protobuf;message=InitPluginRequest",
+                    "contentTypeHint": "BINARY",
+                    "encoded": "base64"
+                },
+                "metadata": {
+                    "requestKey1": "value",
+                    "requestKey2": "value2"
+                }
+            },
+            "response": [
+                {
+                    "contents": {
+                        "content": "CggIABIEdGVzdA==",
+                        "contentType": "application/protobuf;message=InitPluginResponse",
+                        "contentTypeHint": "BINARY",
+                        "encoded": "base64"
+                    },
+                    "metadata": {
+                        "responseKey1": "value",
+                        "responseKey2": "value2"
+                    }
+                }
+            ],
+            "type": "Synchronous/Messages"
+        }
+    ],
+    "metadata": {
+        "pactRust": {
+            "ffi": "0.4.21",
+            "mockserver": "1.2.8",
+            "models": "1.2.2"
+        },
+        "pactSpecification": {
+            "version": "4.0"
+        }
+    }
+}
