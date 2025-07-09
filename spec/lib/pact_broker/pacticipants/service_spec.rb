@@ -33,7 +33,7 @@ module PactBroker
         end
 
         context "when there are potential duplicates" do
-          it "creates a message for each dupliate" do
+          it "creates a message for each duplicate" do
             expect(Service).to receive(:potential_duplicate_pacticipant_message).with("Fred", fred_duplicates, base_url)
             expect(Service).to receive(:potential_duplicate_pacticipant_message).with("Mary", mary_dulicates, base_url)
             subject

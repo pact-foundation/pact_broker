@@ -1,4 +1,4 @@
-# Can't stop the gression tests loading the spec_helper becaues of the .rspec file
+# Can't stop the gression tests loading the spec_helper because of the .rspec file
 # At least we can avoid executing it.
 return if ENV["REGRESSION"] == "true"
 

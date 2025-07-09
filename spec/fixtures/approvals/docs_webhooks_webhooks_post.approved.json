@@ -35,13 +35,13 @@
     "status": 201,
     "headers": {
       "content-type": "application/hal+json;charset=utf-8",
-      "location": "https://pact-broker/webhooks/dCGCl-Ba3PqEFJ_iE9mJkQ",
+      "location": "https://pact-broker/webhooks/67c2884a-5773-5c8b-93e7-0776f1cda018",
       "content-length": "<id>",
       "date": "<date>",
       "server": "Webmachine-Ruby/2.0.1 Rack/3.1"
     },
     "body": {
-      "uuid": "dCGCl-Ba3PqEFJ_iE9mJkQ",
+      "uuid": "67c2884a-5773-5c8b-93e7-0776f1cda018",
       "description": "an example webhook",
       "enabled": true,
       "request": {
@@ -65,11 +65,11 @@
       "_links": {
         "self": {
           "title": "an example webhook",
-          "href": "https://pact-broker/webhooks/dCGCl-Ba3PqEFJ_iE9mJkQ"
+          "href": "https://pact-broker/webhooks/67c2884a-5773-5c8b-93e7-0776f1cda018"
         },
         "pb:execute": {
           "title": "Test the execution of the webhook with the latest matching pact or verification by sending a POST request to this URL",
-          "href": "https://pact-broker/webhooks/dCGCl-Ba3PqEFJ_iE9mJkQ/execute"
+          "href": "https://pact-broker/webhooks/67c2884a-5773-5c8b-93e7-0776f1cda018/execute"
         },
         "pb:webhooks": {
           "title": "All webhooks",
