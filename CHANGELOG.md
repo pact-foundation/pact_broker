@@ -1,3 +1,23 @@
+<a name="v2.116.0"></a>
+### v2.116.0 (2025-07-04)
+
+#### Features
+
+* render sync messages	 ([c0ad9f5b](/../../commit/c0ad9f5b))
+* render async messages mixed v4 and v3	 ([d727d950](/../../commit/d727d950))
+* add deployed-environments to pacticipant response and tag versions (#804)	 ([d8c7ee65](/../../commit/d8c7ee65))
+* show deployed-environments in branch versions response (#803)	 ([cc346010](/../../commit/cc346010))
+* add tag_versions endpoint	 ([42bf5203](/../../commit/42bf5203))
+* added deployed-environments to `/parcticipants/$name/versions` abd (#801)	 ([af66f6a3](/../../commit/af66f6a3))
+
+#### Bug Fixes
+
+* rubocop errors	 ([e311422c](/../../commit/e311422c))
+* refactored long consumer_contract method	 ([7d8af4d5](/../../commit/7d8af4d5))
+* remove unsupported Pact::Term from test example	 ([1a4056bd](/../../commit/1a4056bd))
+* rename interaction_async.erb filename	 ([77ddcb59](/../../commit/77ddcb59))
+* refactored the query to filter out duplicate integration rows (#806)	 ([7bff0f0d](/../../commit/7bff0f0d))
+
 <a name="v2.115.0"></a>
 ### v2.115.0 (2025-03-17)
 
