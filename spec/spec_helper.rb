@@ -25,7 +25,6 @@ if ENV["OAS_COVERAGE_CHECK_ENABLED"] == "true"
 
   at_exit do
     oas_coverage = OpenapiFirst::Test::Coverage.result.coverage
-    OpenapiFirst::Test.report_coverage
     if oas_coverage < 100
       puts "Exiting with status 2 (failure), because API coverage was #{oas_coverage}% instead of 100%!"
       exit 2
