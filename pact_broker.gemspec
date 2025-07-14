@@ -59,9 +59,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency "semver2", "~> 3.4.2"
   gem.add_runtime_dependency "rack", "~> 3.1", ">= 3.1.16"
   gem.add_runtime_dependency "redcarpet", ">= 3.5.1", "~>3.5"
-  # TODO: restore this with when latest master is released as 1.21.3
-  # remove the Gemfile entry pointing to master
-  # gem.add_runtime_dependency "pact-support" , ">= 1.21.3", "~> 1.21"
+  gem.add_runtime_dependency "pact-support" , "~> 1.21", "1.21.2"
   gem.add_runtime_dependency "haml", "~>5.0"
   gem.add_runtime_dependency "sucker_punch", "~>3.0"
   gem.add_runtime_dependency "rack-protection", "~> 4.1"
