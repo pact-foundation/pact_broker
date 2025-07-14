@@ -44,7 +44,7 @@ TBC.
 
   * Ensure conflicting fields are not used.
   * Return an error if any of the pacticipants in the specified selectors or the environment do not exist.
-  * Do not check for the existance of version numbers or tags, or pacticipants in the ignore selectors.
+  * Do not check for the existence of version numbers or tags, or pacticipants in the ignore selectors.
 
 1. "Resolve" the ignore selectors (find the pacticipant and version IDs for the selectors).
 
@@ -64,13 +64,13 @@ TBC.
 
 1. Identify the inferred unresolved selectors (the selectors for the pacticipant versions that are already in the target scope)
 
-  * Collect all the pacticipant names from the integrations identified in the previous step. For every pacticipant name that does NOT already have a specified selector, create a new unresolved "inferred" selector for that pacticipant, and set the version selection attributes to be the target scope from the original `can-i-deploy` query. eg. Given we have identifed the required `Integration` for consumer Foo and provider Bar, and we are determining if we can deploy Foo to production, create an unresolved selector for Bar in the production environment (`UnresolvedSelector.new(pacticipant_name: "Bar", environment_name: "production"`).
+  * Collect all the pacticipant names from the integrations identified in the previous step. For every pacticipant name that does NOT already have a specified selector, create a new unresolved "inferred" selector for that pacticipant, and set the version selection attributes to be the target scope from the original `can-i-deploy` query. eg. Given we have identified the required `Integration` for consumer Foo and provider Bar, and we are determining if we can deploy Foo to production, create an unresolved selector for Bar in the production environment (`UnresolvedSelector.new(pacticipant_name: "Bar", environment_name: "production"`).
 
 1. "Resolve" the inferred selectors (find the pacticipant and version IDs).
 
 1. Add the specified and inferred resolved selectors together to make the final collection of selectors that will be used to query the matrix.
 
-1. Peform the matrix query.
+1. Perform the matrix query.
 
   * When there are 2 or more total resolved selectors (the usual usecase):
 
@@ -84,7 +84,7 @@ TBC.
 
       * For each selector, find the verifications where the provider version is one of the versions described by the selector, and the consumer is one of `all_pacticipants_in_selectors`.
 
-    * Join the pact/consumer verison dataset to the verification/provider version dataset.
+    * Join the pact/consumer version dataset to the verification/provider version dataset.
 
       * The two datasets are joined on the `pact_version_id` - this is the ID of the unique pact content that every pact publication and provider verification has a reference to. A left outer join is used, so that if there is a pact that doesn't have a verification, a row is present for the pact, with empty provider version columns. This allows us to identify that there is a missing verification.
 
