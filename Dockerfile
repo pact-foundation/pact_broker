@@ -1,4 +1,4 @@
-FROM ruby:3.2.4-alpine3.18@sha256:d048a1acdba980fecea26b1064c786d3d379d98948f942f05d2e5dc269b5016b
+FROM ruby:3.2.8-alpine3.20@sha256:98952f58f4c0b5564f81e1e6bbf972225817d18f23835ddfc78a855bbbcf490d
 
 WORKDIR /home
 
@@ -9,13 +9,15 @@ RUN apk update \
     "bash>=4.4" \
     "ca-certificates>=20211220" \
     "git>=2.20" \
-    "postgresql14-dev>=14.2" \
+    "postgresql15-dev" \
     "sqlite-dev>=3.36" \
     "sqlite>=3.36" \
     "tzdata>=2019" \
     "mariadb-dev>=10.3" \
     "mysql-client>=10.3.25" \
-    "postgresql14-client>=14.2" \
+    "postgresql15-client" \
+    "yaml-dev" \
+    "gcompat" \
     && rm -rf /var/cache/apk/*
 
 RUN apk add --no-cache openssl less

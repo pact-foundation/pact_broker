@@ -37,7 +37,7 @@ group :test do
 end
 
 group :pg, optional: true do
-  gem "pg", "~>1.2"
+  gem "pg", "~>1.6"
 end
 
 group :mysql, optional: true do
