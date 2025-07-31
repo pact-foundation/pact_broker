@@ -15,8 +15,8 @@
     "headers": {
       "access-control-allow-methods": "GET, PUT, PATCH, DELETE, OPTIONS",
       "content-length": "0",
-      "date": "Wed, 01 Sep 2021 00:07:21 GMT",
-      "server": "Webmachine-Ruby/2.0.1 Rack/3.1"
+      "date": "<date>",
+      "server": "Webmachine-Ruby/2.0.1 Rack/3.2"
     },
     "body": ""
   }

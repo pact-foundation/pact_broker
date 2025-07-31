@@ -16,7 +16,7 @@
       "content-type": "application/hal+json;charset=utf-8",
       "content-length": "<id>",
       "date": "<date>",
-      "server": "Webmachine-Ruby/2.0.1 Rack/3.1"
+      "server": "Webmachine-Ruby/2.0.1 Rack/3.2"
     },
     "body": {
       "uuid": "d2181b32-8b03-4daf-8cc0-d9168b2f6fac",
