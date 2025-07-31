@@ -24,7 +24,7 @@
       "content-type": "application/hal+json;charset=utf-8",
       "content-length": "840",
       "date": "<date>",
-      "server": "Webmachine-Ruby/2.0.1 Rack/3.1"
+      "server": "Webmachine-Ruby/2.0.1 Rack/3.2"
     },
     "body": {
       "_embedded": {

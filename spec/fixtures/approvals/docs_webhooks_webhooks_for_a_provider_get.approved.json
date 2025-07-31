@@ -16,7 +16,7 @@
       "content-type": "application/hal+json;charset=utf-8",
       "content-length": "<id>",
       "date": "<date>",
-      "server": "Webmachine-Ruby/2.0.1 Rack/3.1"
+      "server": "Webmachine-Ruby/2.0.1 Rack/3.2"
     },
     "body": {
       "_links": {

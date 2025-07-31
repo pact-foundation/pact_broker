@@ -38,7 +38,7 @@
       "location": "https://pact-broker/webhooks/dCGCl-Ba3PqEFJ_iE9mJkQ",
       "content-length": "<id>",
       "date": "<date>",
-      "server": "Webmachine-Ruby/2.0.1 Rack/3.1"
+      "server": "Webmachine-Ruby/2.0.1 Rack/3.2"
     },
     "body": {
       "uuid": "dCGCl-Ba3PqEFJ_iE9mJkQ",
