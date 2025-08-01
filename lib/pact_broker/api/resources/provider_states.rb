@@ -25,12 +25,18 @@ module PactBroker
           :'pacts::pact'
         end
 
+        def environment_uuid
+          identifier_from_path[:environment_uuid]
+        end
+
+        def branch_name
+          identifier_from_path[:branch_name]
+        end
+
         private
 
-        # attr_reader :provider_states
-
         def provider_states
-          @provider_states ||= provider_state_service.list_provider_states(provider)
+          @provider_states ||= provider_state_service.list_provider_states(provider, branch_name, environment_uuid)
         end
       end
     end
