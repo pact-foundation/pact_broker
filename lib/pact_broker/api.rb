@@ -47,6 +47,8 @@ module PactBroker
         # Provider states
 
         add ["pacts", "provider", :provider_name, "provider-states"], Api::Resources::ProviderStates, { resource_name: "provider_states" }
+        add ["pacts", "provider", :provider_name, "provider-states", "branch", :branch_name], Api::Resources::ProviderStates, { resource_name: "provider_states_for_branch" }
+        add ["pacts", "provider", :provider_name, "provider-states", "environment", :environment_uuid], Api::Resources::ProviderStates, { resource_name: "provider_states_for_environment" }
 
 
         # Verifications
