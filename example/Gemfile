@@ -1,10 +1,8 @@
 source "https://rubygems.org"
 
 gem "pact_broker", path: "../" # Would pin this to a known minor version when using properly eg. gem "pact_broker", "~> 2.90"
-gem "puma", "~> 6.6" # Can be replaced with your choice of application server such as 'webrick', 'thin, 'puma' etc
-# gem "webrick"
-gem "sqlite3", "~>2.0" # Sqlite is just for testing. Replace this with "pg" for production.
+gem "puma"
+gem "sqlite3" # Sqlite is just for testing. Replace this with "pg" for production.
 # gem "pg" # Production database gem
-gem "padrino-core", ">= 0.16.0.pre3"
-gem "sinatra", "~> 4.0"
+gem "padrino-core", ">= 0.16.0.pre3" # Required for the pact_broker UI.
 
