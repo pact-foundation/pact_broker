@@ -33,7 +33,7 @@ group :test do
   gem "approvals", ">=0.0.24", "<1.0.0"
   gem "tzinfo", "~>2.0"
   gem "faraday-retry", "~>2.0"
-  gem "openapi_first", "2.11.0" # pinned to specific version due to changelog volatility
+  gem "openapi_first", "~>2.0"
 end
 
 group :pg, optional: true do
