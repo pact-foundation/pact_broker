@@ -14,11 +14,25 @@ module PactBroker
         end
 
         def allowed_methods
-          ["DELETE", "OPTIONS"]
+          ["GET", "DELETE", "OPTIONS"]
         end
 
         def resource_exists?
           consumer && provider
+        end
+
+        def to_json
+          decorator_class(:pact_versions_decorator).new(pacts).to_json(**decorator_options(identifier_from_path))
+        end
+
+        def pacts
+          @pacts ||= pact_service.find_pacts_for_provider_and_consumer_by_consumer_branch(
+            provider_name,
+            consumer_name,
+            branch_name: identifier_from_path[:branch_name],
+            main_branch: identifier_from_path[:branch_name] ? false : true,
+            latest: identifier_from_path[:resource_name] == "latest_pact_publications_for_main_branch"
+          )
         end
 
         def delete_resource
