@@ -403,7 +403,7 @@
     // ---------------------------------------------------------------------
 
     // Fetch the model from the server. If the server's representation of the
-    // model differs from its current attributes, they will be overriden,
+    // model differs from its current attributes, they will be overridden,
     // triggering a `"change"` event.
     fetch: function(options) {
       options = options ? _.clone(options) : {};
@@ -1239,7 +1239,7 @@
     tagName: 'div',
 
     // jQuery delegate for element lookup, scoped to DOM elements within the
-    // current view. This should be prefered to global lookups where possible.
+    // current view. This should be preferred to global lookups where possible.
     $: function(selector) {
       return this.$el.find(selector);
     },
