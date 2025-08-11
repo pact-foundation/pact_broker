@@ -59,7 +59,7 @@ jobs:
     env:
       OAS_COVERAGE_CHECK_ENABLED: "true"
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby_version }}
@@ -79,7 +79,7 @@ jobs:
           - "16"
           - "17"
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
       - run: script/test/run-rake-on-docker-compose-postgres.sh
         env:
           POSTGRES_DOCKER_IMAGE_TAG: ${{ matrix.postgres_docker_image_tag }}
@@ -87,13 +87,13 @@ jobs:
   mysql:
     runs-on: "ubuntu-latest"
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
       - run: script/test/run-rake-on-docker-compose-mysql.sh
 
   rubocop:
     runs-on: "ubuntu-latest"
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
@@ -102,7 +102,7 @@ jobs:
   pact-verify:
     runs-on: "ubuntu-latest"
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
@@ -114,7 +114,7 @@ jobs:
   bundle-audit:
     runs-on: "ubuntu-latest"
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
@@ -130,7 +130,7 @@ jobs:
       PRE_COMMIT_HOME: ${{ github.workspace }}/.pre-commit
 
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
 
       - name: Cache pre-commit
         uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
