@@ -55,7 +55,7 @@ paths:
                     items:
                       $ref: '#/components/schemas/Notice'
         "400":
-          description: Validation errror
+          description: Validation error
           content:
             application/problem+json:
               schema:

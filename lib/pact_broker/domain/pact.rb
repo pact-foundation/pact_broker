@@ -127,7 +127,7 @@ module PactBroker
 
       # This class has various incarnations with different properties loaded.
       # They should probably be different classes, but for now, raise an error if
-      # an attribute is called when it hasn't been set in the constuctor, because
+      # an attribute is called when it hasn't been set in the constructor, because
       # returning nil when there should be an object causes bugs.
       def get_attribute_if_set attribute_name
         val = instance_variable_get("@#{attribute_name}".to_sym)
