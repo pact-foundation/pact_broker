@@ -45,7 +45,7 @@ module PactBroker
 
           let(:deployed_versions) do
             [
-              td.create_deployed_version_for_consumer_version(uuid: '1234', target: target, environment_name: "test").and_return(:deployed_version)
+              td.create_deployed_version_for_consumer_version(uuid: "1234", target: target, environment_name: "test").and_return(:deployed_version)
             ]
           end
 
