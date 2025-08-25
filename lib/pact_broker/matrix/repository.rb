@@ -33,6 +33,13 @@ module PactBroker
         resolved_selectors_builder.resolve_inferred_selectors(integrations, options) if infer_selectors
 
         considered_rows, ignored_rows = find_considered_and_ignored_rows(resolved_selectors_builder.all_selectors, resolved_selectors_builder.ignore_selectors, options)
+        logger.info "Matrix results",
+          selectors: unresolved_specified_selectors,
+          options: options,
+          considered_rows_size: considered_rows.size,
+          ignored_rows_size: ignored_rows.size,
+          resolved_selectors: resolved_selectors_builder.all_selectors
+
         QueryResults.new(
           considered_rows.sort,
           ignored_rows.sort,
