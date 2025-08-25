@@ -39,16 +39,20 @@ module PactBroker
 
           let(:environments) do
             [
-              instance_double("PactBroker::Deployments::Environment",
-                uuid: "1234",
-                name: "test",
-                display_name: "Test"
-              )
+              td.create_environment("test", uuid: "1234", display_name: "Test").and_return(:environment)
             ]
           end
 
+          let(:deployed_versions) do
+            [
+              td.create_deployed_version_for_consumer_version(uuid: "1234", target: target, environment_name: "test").and_return(:deployed_version)
+            ]
+          end
+
+          let(:target) { nil }
+
           let(:base_url) { "http://example.org" }
-          let(:options) { { user_options: { base_url: base_url, resource_url: "resource_url", environments: environments } } }
+          let(:options) { { user_options: { base_url: base_url, resource_url: "resource_url", environments: environments, deployed_versions: deployed_versions } } }
           let(:decorator) { VersionDecorator.new(version) }
 
           subject { JSON.parse(decorator.to_json(options), symbolize_names: true) }
@@ -102,6 +106,34 @@ module PactBroker
 
           it "includes a link to the latest verification results for the pacts for this version" do
             expect(subject[:_links][:'pb:latest-verification-results-where-pacticipant-is-consumer'][:href]).to match(%r{http://.*/verification-results/.*/latest})
+          end
+
+          context "when application is deployed to an env" do
+            it "includes a link to the deployed environments for this version" do
+              expect(subject[:_links][:'pb:deployed-environments']).to be_instance_of(Array)
+              expect(subject[:_links][:'pb:deployed-environments'].first).to eq(
+                                                                               title: "Version deployed to Test",
+                                                                               name: "Test",
+                                                                               href: "http://example.org/deployed-versions/1234",
+                                                                               currently_deployed: true,
+                                                                               )
+              expect(subject[:_links][:'pb:deployed-environments'].first).to_not include(:application_instance)
+            end
+
+            context "when deployed with application instance variable" do
+              let(:target) { "instance-1" }
+
+              it "includes a link to the deployed environments for this version along with application instance node" do
+                expect(subject[:_links][:'pb:deployed-environments']).to be_instance_of(Array)
+                expect(subject[:_links][:'pb:deployed-environments'].first).to eq(
+                                                                                 title: "Version deployed to Test",
+                                                                                 name: "Test",
+                                                                                 href: "http://example.org/deployed-versions/1234",
+                                                                                 currently_deployed: true,
+                                                                                 application_instance: "instance-1",
+                                                                                 )
+              end
+            end
           end
 
           it "includes a list of environments that this version can be deployed to" do
