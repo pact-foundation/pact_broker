@@ -83,7 +83,9 @@ module PactBroker
               name: deployed_version.environment.display_name,
               href: deployed_version_url(deployed_version, context.fetch(:base_url)),
               currently_deployed: deployed_version.currently_deployed
-            }
+            }.tap do |hash|
+              hash[:application_instance] = deployed_version.application_instance unless deployed_version.application_instance.nil?
+            end
           end
         end
 
