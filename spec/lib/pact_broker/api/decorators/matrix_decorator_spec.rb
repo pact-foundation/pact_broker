@@ -89,7 +89,8 @@ module PactBroker
                 environments: [
                   {
                     name: "test",
-                    displayName: "Test"
+                    displayName: "Test",
+                    applicationInstance: "test-instance"
                   },
                   {
                     name: "production",
@@ -136,7 +137,8 @@ module PactBroker
                 environments: [
                   {
                     name: "test",
-                    displayName: "Test"
+                    displayName: "Test",
+                    applicationInstance: "test-instance"
                   },
                   {
                     name: "production",
@@ -194,7 +196,7 @@ module PactBroker
 
           let(:deployed_versions) do
             [
-              instance_double("PactBroker::Deployments::DeployedVersion", environment: test_environment, created_at: DateTime.new(2021, 1, 1))
+              instance_double("PactBroker::Deployments::DeployedVersion", environment: test_environment, created_at: DateTime.new(2021, 1, 1), application_instance: "test-instance", is_a?: true)
             ]
           end
 
