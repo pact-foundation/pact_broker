@@ -9,7 +9,6 @@ module PactBroker
         property :name
         property :display_name, camelize: true
         property :production
-        property :application_instance, getter: ->(options) { options[:user_options].fetch(:application_instance, nil) }, writeable: false, camelize: true
 
         include Timestamps
 
