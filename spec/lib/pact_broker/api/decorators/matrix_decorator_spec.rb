@@ -86,16 +86,7 @@ module PactBroker
 
                   }
                 ],
-                environments: [
-                  {
-                    name: "test",
-                    displayName: "Test"
-                  },
-                  {
-                    name: "production",
-                    displayName: "Production"
-                  }
-                ],
+                environments: environments,
                 _links: {
                   self: {
                     href: "http://example.org/pacticipants/Consumer/versions/1.0.0"
@@ -133,16 +124,7 @@ module PactBroker
                     latest: true
                   }
                 ],
-                environments: [
-                  {
-                    name: "test",
-                    displayName: "Test"
-                  },
-                  {
-                    name: "production",
-                    displayName: "Production"
-                  }
-                ],
+                environments: environments,
                 _links: {
                   self: {
                     href: "http://example.org/pacticipants/Provider/versions/4.5.6"
@@ -161,6 +143,19 @@ module PactBroker
                 ]
               }
             }
+          end
+
+          let(:environments) do
+            [
+              {
+                name: "test",
+                displayName: "Test"
+              },
+              {
+                name: "production",
+                displayName: "Production"
+              }
+            ]
           end
 
           let(:verification_hash) do
@@ -194,9 +189,11 @@ module PactBroker
 
           let(:deployed_versions) do
             [
-              instance_double("PactBroker::Deployments::DeployedVersion", environment: test_environment, created_at: DateTime.new(2021, 1, 1))
+              instance_double("PactBroker::Deployments::DeployedVersion", environment: test_environment, created_at: DateTime.new(2021, 1, 1), application_instance: application_instance, is_a?: true)
             ]
           end
+
+          let(:application_instance) { nil }
 
           let(:released_versions) do
             [
@@ -256,12 +253,40 @@ module PactBroker
           let(:json) { MatrixDecorator.new(query_results_with_deployment_status_summary).to_json(user_options: { base_url: "http://example.org" }) }
           let(:parsed_json) { JSON.parse(json, symbolize_names: true) }
 
-          it "includes the consumer details" do
-            expect(parsed_json[:matrix][0][:consumer]).to match_pact consumer_hash
+          context "when application instance is not set" do
+            it "includes the consumer details" do
+              expect(parsed_json[:matrix][0][:consumer]).to match_pact consumer_hash
+            end
+
+            it "includes the provider details" do
+              expect(parsed_json[:matrix][0][:provider]).to match_pact provider_hash
+            end
           end
 
-          it "includes the provider details" do
-            expect(parsed_json[:matrix][0][:provider]).to match_pact provider_hash
+          context "when application instance is set" do
+            let(:environments) do
+              [
+                {
+                  name: "test",
+                  displayName: "Test",
+                  applicationInstance: "test-instance"
+                },
+                {
+                  name: "production",
+                  displayName: "Production"
+                }
+              ]
+            end
+
+            let(:application_instance) { "test-instance" }
+
+            it "includes the consumer details" do
+              expect(parsed_json[:matrix][0][:consumer]).to match_pact consumer_hash
+            end
+
+            it "includes the provider details" do
+              expect(parsed_json[:matrix][0][:provider]).to match_pact provider_hash
+            end
           end
 
           it "includes the verification details" do
