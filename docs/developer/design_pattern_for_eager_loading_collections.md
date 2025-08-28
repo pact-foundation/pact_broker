@@ -2,7 +2,7 @@
 
 For collection resources (eg. `/versions` ), associations included in the items (eg. branch versions) must be eager loaded for performance reasons.
 
-The responsiblities of each class used to render a collection resource are as follows:
+The responsibilities of each class used to render a collection resource are as follows:
 
 * collection decorator (eg. `VersionsDecorator`) - delegate each item in the collection to be rendered by the decorator for the individual item, render pagination links
 * item decorator (eg. `VersionDecorator`) - render the JSON for each item
@@ -16,7 +16,7 @@ To efficiently render a collection resource, associations must be eager loaded w
 
 The decorator is the class that knows what associations are going to be called on the model to render the JSON, so following the design guideline of "put things together that change together", the best place for the declaration of "what associations should be eager loaded for this decorator" is in the decorator itself. The `PactBroker::Api::Decorators::BaseDecorator` has a default implementation of this method called `eager_load_associations` which attempts to automatically identify the required associations, but this can be overridden when necessary.
 
-We can therefore add the following responsiblities to our previous list:
+We can therefore add the following responsibilities to our previous list:
 
 * item decorator - return a list of all the associations (including nested associations) that should be eager loaded in order to render its item
 * repository - eager load the associations that have been passed into it
