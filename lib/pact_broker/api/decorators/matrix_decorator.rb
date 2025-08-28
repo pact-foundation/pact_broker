@@ -111,8 +111,8 @@ module PactBroker
         end
 
         def environments(deployed_versions, released_versions, base_url)
-          (deployed_versions + released_versions).sort_by(&:created_at).collect { |v| [v.environment, v.is_a?(Deployments::DeployedVersion) ? v.application_instance : nil] }.uniq.collect do | environment, application_instance |
-            environment_decorator_class.new(environment).to_hash(user_options: { base_url: base_url, application_instance: application_instance })
+          (deployed_versions + released_versions).sort_by(&:created_at).collect(&:environment).uniq.collect do | environment |
+            environment_decorator_class.new(environment).to_hash(user_options: { base_url: base_url })
           end
         end
 
