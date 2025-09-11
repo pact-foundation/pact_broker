@@ -1,0 +1,49 @@
+name: Test Pact Broker via Pact-Ruby V2
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  pact-v2-verify:
+    if: "!contains(github.event.head_commit.message, '[ci-skip]')"
+    runs-on: "ubuntu-latest"
+    env:
+      PACT_RUBY_V2_ENABLE: true
+    strategy:
+      matrix:
+        pact_url:
+          - "https://raw.githubusercontent.com/YOU54F/pact_broker-client/refs/heads/feat/pact-ruby-v2/spec/pacts/Pact%20Broker%20Client%20V2-Pact%20Broker.json"
+          - "https://raw.githubusercontent.com/YOU54F/pact_broker-client/refs/heads/feat/pact-ruby-v2/spec/pacts/pact_broker_client-pact_broker.json"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+      #   with:
+      #     bundler-cache: true
+      - run: bundle install
+      - name: Verify pacts
+        env:
+          PACT_URL: ${{ matrix.pact_url }}
+        run: "PACT_URL=${PACT_URL} bundle exec rake pact:v2:verify"
+  pact-v1-verify:
+    if: "!contains(github.event.head_commit.message, '[ci-skip]')"
+    runs-on: "ubuntu-latest"
+    env:
+      PACT_RUBY_V2_ENABLE: true
+    strategy:
+      matrix:
+        pact_url:
+          - "https://raw.githubusercontent.com/YOU54F/pact_broker-client/refs/heads/feat/pact-ruby-v2/spec/pacts/Pact%20Broker%20Client%20V2-Pact%20Broker.json"
+          - "https://raw.githubusercontent.com/YOU54F/pact_broker-client/refs/heads/feat/pact-ruby-v2/spec/pacts/pact_broker_client-pact_broker.json"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+      #   with:
+      #     bundler-cache: true
+      - run: bundle install
+      - name: Verify pacts
+        env:
+          PACT_URL: ${{ matrix.pact_url }}
+          CI: false
+        run: "bundle exec rake pact:verify:at[${PACT_URL}]"

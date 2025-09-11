@@ -3,19 +3,23 @@ require "rspec/core/rake_task"
 
 RSpec::Core::RakeTask.new("spec:focus") do |task|
   task.rspec_opts = "--tag @focus"
+  task.exclude_pattern = "spec/pact/consumers/*_spec.rb"
 end
 
 RSpec::Core::RakeTask.new("spec:quick") do |task|
   task.rspec_opts = "--tag ~@no_db_clean --tag ~@migration --format progress"
+  task.exclude_pattern = "spec/pact/consumers/*_spec.rb"
 end
 
 RSpec::Core::RakeTask.new("regression") do |task|
   task.pattern = "regression/**{,/*/**}/*_spec.rb"
   task.rspec_opts = "--require ./regression/regression_helper.rb"
+  task.exclude_pattern = "spec/pact/consumers/*_spec.rb"
 end
 
 RSpec::Core::RakeTask.new("spec:slow") do |task|
   task.rspec_opts = "--tag @no_db_clean --tag @migration  --format progress"
+  task.exclude_pattern = "spec/pact/consumers/*_spec.rb"
 end
 
 task :set_simplecov_command_to_spec_quick do
