@@ -22,6 +22,7 @@ end
 group :test do
   gem "simplecov", :require => false
   gem "pact", "~>1.14"
+  gem "pact-support", github: "pact-foundation/pact-support", branch: "fix/json_load_regression"
   gem "rspec-pact-matchers", "~>0.1"
   gem "bundler-audit", "~>0.4"
   gem "webmock", "~>3.9"
