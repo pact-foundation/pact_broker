@@ -55,7 +55,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby_version: ["3.2"]
+        ruby_version: ["3.2", "3.3", "3.4"]
     env:
       OAS_COVERAGE_CHECK_ENABLED: "true"
     steps:
