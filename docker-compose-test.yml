@@ -50,7 +50,7 @@ services:
       - ./docs:/home/docs
 
   mysql:
-    image: mysql:5.7.44@sha256:4bc6bc963e6d8443453676cae56536f4b8156d78bae03c0145cbe47c2aad73bb
+    image: mysql:9.4.0@sha256:91447968e66961302339ec4dc4d385f5e1a957d98e63c7d52ecf8b1de0907346
     #image: arm64v8/mysql # for m1 macs
     command: --default-authentication-plugin=mysql_native_password
     environment:
