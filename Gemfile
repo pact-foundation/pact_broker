@@ -26,7 +26,7 @@ group :test do
   gem "bundler-audit", "~>0.4"
   gem "webmock", "~>3.9"
   gem "rspec", "~>3.0"
-  gem "rspec-its", "~>1.2"
+  gem "rspec-its", "~>2.0"
   gem "database_cleaner", "~>1.8", ">= 1.8.1"
   gem "timecop", "~> 0.9"
   gem "faraday", "~>2.0"
