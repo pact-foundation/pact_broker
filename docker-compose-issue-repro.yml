@@ -2,7 +2,7 @@ version: "3"
 
 services:
   postgres:
-    image: postgres@sha256:0f4f20021a065d114083d1b95d9fb89ad847cbc4c3cc9238417815c7df42350f
+    image: postgres@sha256:1d288494853e244e7a78d87b3526e650e5221c622f9768ecac9313d0874a9c39
     healthcheck:
       test: psql postgres --command "select 1" -U postgres
     environment:
