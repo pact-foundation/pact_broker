@@ -95,6 +95,26 @@ module PactBroker
         pact_repository.find_latest_pacts_for_provider provider_name, options[:tag]
       end
 
+      def find_latest_pacts_for_provider_by_consumer_branch provider_name, options = {}
+        options[:latest] = true
+        pact_repository.find_pacts_by_consumer_branch provider_name, options
+      end
+
+      def find_pacts_for_provider_by_consumer_branch provider_name, options = {}
+        pact_repository.find_pacts_by_consumer_branch provider_name, options
+      end
+
+      def find_pacts_for_provider_and_consumer_by_consumer_branch provider_name, consumer, options = {}
+        options[:consumer] = consumer
+        pact_repository.find_pacts_by_consumer_branch provider_name, options
+      end
+
+      def find_latest_pacts_for_provider_and_consumer_by_consumer_branch provider_name, consumer, options = {}
+        options[:consumer] = consumer
+        options[:latest] = true
+        pact_repository.find_pacts_by_consumer_branch provider_name, options
+      end
+
       def find_pact_versions_for_provider provider_name, options = {}
         pact_repository.find_pact_versions_for_provider provider_name, options[:tag]
       end
