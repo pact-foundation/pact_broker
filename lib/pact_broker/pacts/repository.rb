@@ -151,6 +151,36 @@ module PactBroker
         query.all.sort_by{ | p| p.consumer_name.downcase }.collect(&:to_head_pact)
       end
 
+      def find_pacts_by_consumer_branch(provider_name, options = {})
+        consumer_name = options[:consumer]
+        latest = options.fetch(:latest, false)
+        branch = options[:branch_name]
+        main_branch = options.fetch(:main_branch, false)
+        
+        query = scope_for(PactPublication)
+                  .eager_for_domain_with_content
+                  .for_provider_name(provider_name)
+        
+        if consumer_name
+          query = query.for_consumer_name(consumer_name)
+        end
+
+        if main_branch
+          if latest
+            query = query.latest_for_main_branches
+          else
+            query = query.for_main_branches
+          end
+        else 
+          if latest
+            query = query.latest_for_consumer_branch(branch)
+          else
+            query = query.for_branch_name(branch)
+          end
+        end
+        query.all.sort_by{ | p| p.consumer_name.downcase }.collect(&:to_head_pact)
+      end
+
       def find_for_verification(provider_name, consumer_version_selectors)
         PactsForVerificationRepository.new.find(provider_name, consumer_version_selectors)
       end

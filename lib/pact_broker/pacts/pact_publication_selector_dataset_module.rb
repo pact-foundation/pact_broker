@@ -44,6 +44,14 @@ module PactBroker
           .remove_overridden_revisions_from_complete_query
       end
 
+      def for_main_branches
+        consumers_join = { Sequel[:pact_publications][:consumer_id] => Sequel[:consumers][:id] }
+        query = self
+        query
+          .join(:pacticipants, consumers_join, { table_alias: :consumers })
+          .remove_overridden_revisions_from_complete_query
+      end
+
       def for_currently_deployed_versions(environment_name)
         deployed_versions_join = {
           Sequel[:pact_publications][:consumer_version_id] => Sequel[:deployed_versions][:version_id]
