@@ -35,12 +35,31 @@ class HalRelationProxyApp
   RESPONSE_BODY_REPLACEMENTS = {
   }
 
+  QUERY_STRING_REPLACEMENTS = {
+   "latestby=cvpv&q[][latest]=true&q[][pacticipant]=Foo&q[][tag]=prod&q[][version]=1%2e2%2e3&q[][pacticipant]=Bar" => "q[][pacticipant]=Foo&q[][version]=1%2e2%2e3&q[][pacticipant]=Bar&q[][latest]=true&q[][tag]=prod&latestby=cvpv",
+   "latestby=cvpv&q[][latest]=true&q[][pacticipant]=Foo&q[][version]=1%2e2%2e4&q[][pacticipant]=Bar" => "q[][pacticipant]=Foo&q[][version]=1%2e2%2e4&q[][pacticipant]=Bar&q[][latest]=true&latestby=cvpv",
+   "latestby=cvpv&q[][pacticipant]=Foo+Thing&q[][pacticipant]=Bar&q[][version]=1%2e2%2e3&q[][version]=4%2e5%2e6" => "q[][pacticipant]=Foo+Thing&q[][version]=1%2e2%2e3&q[][pacticipant]=Bar&q[][version]=4%2e5%2e6&latestby=cvpv",
+   "latestby=cvpv&q[][pacticipant]=Foo&q[][pacticipant]=Bar&q[][version]=1%2e2%2e3&q[][version]=4%2e5%2e6" => "q[][pacticipant]=Foo&q[][version]=1%2e2%2e3&q[][pacticipant]=Bar&q[][version]=4%2e5%2e6&latestby=cvpv",
+   "latestby=cvpv&q[][latest]=true&q[][pacticipant]=Foo&q[][pacticipant]=Bar&q[][tag]=prod&q[][version]=1%2e2%2e3" => "q[][pacticipant]=Foo&q[][version]=1%2e2%2e3&q[][pacticipant]=Bar&q[][latest]=true&q[][tag]=prod&latestby=cvpv",
+   "latestby=cvpv&q[][latest]=true&q[][pacticipant]=Foo&q[][pacticipant]=Bar&q[][version]=1%2e2%2e4" => "q[][pacticipant]=Foo&q[][version]=1%2e2%2e4&q[][pacticipant]=Bar&q[][latest]=true&latestby=cvpv",
+   "latestby=cvpv&q[][pacticipant]=Foo&q[][pacticipant]=Bar&q[][version]=1%2e2%2e3&q[][version]=9%2e9%2e9" => "q[][pacticipant]=Foo&q[][version]=1%2e2%2e3&q[][pacticipant]=Bar&q[][version]=9%2e9%2e9&latestby=cvpv"
+  }
+
   def initialize(app)
     @app = app
   end
 
   def call env
     original_path = env["PATH_INFO"]
+    original_query = env["QUERY_STRING"]
+
+    QUERY_STRING_REPLACEMENTS.each do | (find, replace) |
+      env["QUERY_STRING"] = env["QUERY_STRING"].gsub(find, replace)
+    end
+
+    if env["QUERY_STRING"] != original_query
+      puts "Modified query string: #{env["QUERY_STRING"]}"
+    end
     env_with_modified_path = env
     PATH_REPLACEMENTS.each do | (find, replace) |
       env_with_modified_path["PATH_INFO"] = env_with_modified_path["PATH_INFO"].gsub(find, replace)

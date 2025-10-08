@@ -107,7 +107,7 @@ jobs:
         with:
           bundler-cache: true
       - name: Verify pacts
-        run: "GIT_SHA=${GITHUB_SHA} GIT_BRANCH=${GITHUB_REF##*/} bundle exec rake pact:verify"
+        run: "GIT_SHA=${GITHUB_SHA} bundle exec rake pact:verify"
         env:
           PACTFLOW_PACT_FOUNDATION_TOKEN: ${{ secrets.PACTFLOW_PACT_FOUNDATION_TOKEN }}
 
