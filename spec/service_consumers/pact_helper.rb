@@ -55,7 +55,7 @@ Pact.service_provider "Pact Broker" do
     honours_pacts_from_pact_broker do
       pact_broker_base_url "https://pact-foundation.pactflow.io", token: ENV["PACTFLOW_PACT_FOUNDATION_TOKEN"]
       consumer_version_selectors [
-          { mainBranch: true }, { deployedOrReleased: true },
+          { mainBranch: true }, { deployed: true },
         ]
       enable_pending true
       include_wip_pacts_since "2000-01-01"
