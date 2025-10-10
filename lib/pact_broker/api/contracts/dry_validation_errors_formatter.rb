@@ -41,6 +41,9 @@ module PactBroker
             add_error(errors_hash, error.path.first, "#{error.path.last} #{error.text} (at index #{error.path[1]})")
           elsif error_path_classes == [Symbol, Integer]
             add_error(errors_hash, error.path.first, "#{error.text} (at index #{error.path[1]})")
+          elsif error_path_classes == [Symbol, Symbol, Integer]
+            # this should be refactored to dynamically handle patterns instead of hardcoding the patterns
+            add_error(errors_hash, error.path.first, "#{error.path[1]} #{error.text} (at index #{error.path[2]})")
           else
             # Don't have any usecases for this - will deal with it when it happens
             raise PactBroker::Error, "Cannot currently format an error message with path classes #{error_path_classes}"
