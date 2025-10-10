@@ -1,0 +1,32 @@
+name: contract_requiring_verification_published
+
+# This workflow leverages the https://docs.pact.io/pact_broker/webhooks#the-contract-requiring-verification-published-event webhook
+
+on:
+  repository_dispatch:
+    types:
+      - contract_requiring_verification_published
+
+env:
+  PACT_BROKER_PUBLISH_VERIFICATION_RESULTS: true
+  PACT_URL: ${{ github.event.client_payload.pact_url }}
+  GIT_COMMIT: ${{ github.event.client_payload.sha }}
+  GIT_BRANCH: ${{ github.event.client_payload.branch }}
+  DESCRIPTION: ${{ github.event.client_payload.message }}
+
+jobs:
+  verify-contract-requiring-verification:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{env.GIT_COMMIT}}
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - name: ${{env.DESCRIPTION}}
+        run: |
+          GIT_SHA=${{env.GIT_COMMIT}} bundle exec rake pact:verify:at"['${PACT_URL}']"
+        env:
+          PACT_BROKER_BASE_URL: https://pact-foundation.pactflow.io
+          PACT_BROKER_TOKEN: ${{ secrets.PACTFLOW_PACT_FOUNDATION_TOKEN }}
