@@ -88,7 +88,7 @@ module PactBroker
             end
           end
 
-          context "when there are currently deployed versons" do
+          context "when there are currently deployed versions" do
             before do
               td.create_environment("test")
                 .create_pact_with_hierarchy("Foo", "1", "Bar")

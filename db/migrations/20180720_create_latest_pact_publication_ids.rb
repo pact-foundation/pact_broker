@@ -14,7 +14,7 @@ Sequel.migration do
       foreign_key :provider_id, :pacticipants, null: false, on_delete: :cascade
       foreign_key :pact_publication_id, :pact_publications, null: false, on_delete: :cascade, unique: true
       foreign_key :pact_version_id, :pact_versions, null: false, on_delete: :cascade
-      index [:provider_id, :consumer_version_id], unique: true, name: "unq_latest_ppid_prov_conver"
+      index [:provider_id, :consumer_version_id], unique: true, name: "unq_latest_ppid_prov_conver"  # typos:ignore
       index [:provider_id, :consumer_id], name: "lpp_provider_id_consumer_id_index"
     end
   end
