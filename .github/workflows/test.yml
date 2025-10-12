@@ -140,7 +140,7 @@ jobs:
           key: |
             ${{ runner.os }}-pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
       - name: Set up uv
-        uses: astral-sh/setup-uv@f0ec1fc3b38f5e7cd731bb6ce540c5af426746bb # v6.1.0
+        uses: astral-sh/setup-uv@3259c6206f993105e3a61b142c2d97bf4b9ef83d # v7.1.0
         with:
           enable-cache: true
           cache-suffix: pre-commit
