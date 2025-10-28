@@ -49,18 +49,54 @@ module PactBroker
               title: "All versions of a pact for a given consumer, provider and consumer version tag",
               templated: false
             },
-            "pb:latest-branch-pact-version" =>
-             {
-               href: base_url + "/pacts/provider/{provider}/consumer/{consumer}/branch/{branch}/latest",
-               title: "Latest version of a pact for a given consumer, provider and consumer version branch",
-               templated: false
-             },
-             "pb:branch-pact-versions" =>
-             {
-               href: base_url + "/pacts/provider/{provider}/consumer/{consumer}/branch/{branch}",
-               title: "All versions of a pact for a given consumer, provider and consumer version branch",
-               templated: false
-             },
+            "pb:branch-pact-versions" =>
+            {
+              href: base_url + "/pacts/provider/{provider}/consumer/{consumer}/branch/{branch}",
+              title: "All versions of pacts for a provider, for a named consumers branch",
+              templated: true
+            },
+            "pb:latest-branch-pact-versions" =>
+            {
+              href: base_url + "/pacts/provider/{provider}/consumer/{consumer}/branch/{branch}/latest",
+              title: "Latest version of pact for a provider, for a named consumers branch",
+              templated: true
+            },
+            "pb:main-branch-pact-versions" =>
+            {
+              href: base_url + "/pacts/provider/{provider}/consumer/{consumer}/branch",
+              title: "All versions of pacts for a provider, for a named consumers main branch",
+              templated: true
+            },
+            "pb:latest-main-branch-pact-versions" =>
+            {
+              href: base_url + "/pacts/provider/{provider}/consumer/{consumer}/branch/latest",
+              title: "Latest version of pact for a provider, for a named consumers main branch",
+              templated: true
+            },
+            "pb:provider-pacts-with-main-branch" =>
+            {
+              href: base_url + "/pacts/provider/{provider}/branch",
+              title: "All pacts for a provider, for any consumers main branch",
+              templated: true
+            },
+            "pb:provider-pacts-with-branch" =>
+            {
+              href: base_url + "/pacts/provider/{provider}/branch/{branch}",
+              title: "All pacts for a provider, for any consumers named branch",
+              templated: true
+            },
+            "pb:latest-provider-pacts-with-main-branch" =>
+            {
+              href: base_url + "/pacts/provider/{provider}/branch/latest",
+              title: "Latest pact for a provider, for any consumers main branch",
+              templated: true
+            },
+            "pb:latest-provider-pacts-with-branch" =>
+            {
+              href: base_url + "/pacts/provider/{provider}/branch/{branch}/latest",
+              title: "Latest pacts for a provider, for any consumers named branch",
+              templated: true
+            },
             "pb:pacticipants" =>
             {
               href: base_url + "/pacticipants",
@@ -85,22 +121,10 @@ module PactBroker
               title: "Latest pacts for provider with the specified tag",
               templated: true
             },
-            "pb:latest-provider-pacts-with-branch" =>
-            {
-              href: base_url + "/pacts/provider/{provider}/branch/{branch}/latest",
-              title: "Latest pacts for provider with the specified branch",
-              templated: true
-            },
             "pb:provider-pacts-with-tag" =>
             {
               href: base_url + "/pacts/provider/{provider}/tag/{tag}",
               title: "All pact versions for the provider with the specified consumer version tag",
-              templated: true
-            },
-            "pb:provider-pacts-with-branch" =>
-            {
-              href: base_url + "/pacts/provider/{provider}/branch/{branch}",
-              title: "All pact versions for the provider with the specified consumer version branch",
               templated: true
             },
             "pb:provider-pacts" =>
