@@ -35,8 +35,8 @@ module PactBroker
         add ["pacts", "provider", :provider_name, "consumer", :consumer_name, "tag", :tag], Api::Resources::TaggedPactVersions, {resource_name: "tagged_pact_publications"}
         add ["pacts", "provider", :provider_name, "consumer", :consumer_name, "branch"], Api::Resources::PactVersionsForBranch, {resource_name: "pact_publications_for_main_branch"}
         add ["pacts", "provider", :provider_name, "consumer", :consumer_name, "branch", "latest"], Api::Resources::PactVersionsForBranch, {resource_name: "latest_pact_publications_for_main_branch"}
-        add ["pacts", "provider", :provider_name, "consumer", :consumer_name, "branch", :branch_name], Api::Resources::PactVersionsForBranch, {resource_name: "pact_publications_for_branch"}
         add ["pacts", "provider", :provider_name, "consumer", :consumer_name, "branch", :branch_name, "latest"], Api::Resources::PactVersionsForBranch, {resource_name: "latest_pact_publications_for_branch"}
+        add ["pacts", "provider", :provider_name, "consumer", :consumer_name, "branch", :branch_name], Api::Resources::PactVersionsForBranch, {resource_name: "pact_publications_for_branch"}
 
         # Pacts
         add ["pacts", "provider", :provider_name, "consumer", :consumer_name, "version", :consumer_version_number], Api::Resources::Pact, {resource_name: "pact_publication"}
@@ -46,6 +46,8 @@ module PactBroker
         add ["pacts", "provider", :provider_name, "consumer", :consumer_name, "version", :consumer_version_number, "diff", "previous-distinct"], Api::Resources::PactContentDiff, {resource_name: "previous_distinct_pact_version_diff"}
         add ["pacts", "provider", :provider_name, "consumer", :consumer_name, "version", :consumer_version_number, "diff", "version", :comparison_consumer_version], Api::Resources::PactContentDiff, {resource_name: "pact_version_diff_by_consumer_version"}
         add ["pacts", "provider", :provider_name, "consumer", :consumer_name, "pact-version", :pact_version_sha, "diff", "pact-version", :comparison_pact_version_sha], Api::Resources::PactContentDiff, {resource_name: "pact_version_diff_by_pact_version_sha"}
+        add ["pacts", "provider", :provider_name, "branch", "latest"], Api::Resources::LatestProviderPactsForBranch, {resource_name: "latest_main_branch_provider_pact_publications"}
+        add ["pacts", "provider", :provider_name, "branch", :branch_name, "latest"], Api::Resources::LatestProviderPactsForBranch, {resource_name: "latest_branch_provider_pact_publications"}
         add ["pacts", "provider", :provider_name, "branch", :branch_name], Api::Resources::ProviderPactsForConsumerBranch, {resource_name: "branch_provider_pact_publications"}
         add ["pacts", "provider", :provider_name, "branch"], Api::Resources::ProviderPactsForConsumerBranch, {resource_name: "main_branch_provider_pact_publications"}
 
@@ -81,8 +83,6 @@ module PactBroker
         add ["pacts", "provider", :provider_name, "tag", :tag], Api::Resources::ProviderPacts, {resource_name: "tagged_provider_pact_publications"}
         add ["pacts", "provider", :provider_name, "consumer", :consumer_name, "latest-untagged"], Api::Resources::LatestPact, {resource_name: "latest_untagged_pact_publication", tag: :untagged}
         add ["pacts", "provider", :provider_name, "latest"], Api::Resources::LatestProviderPacts, {resource_name: "latest_provider_pact_publications"}
-        add ["pacts", "provider", :provider_name, "branch", :branch_name, "latest"], Api::Resources::LatestProviderPactsForBranch, {resource_name: "latest_branch_provider_pact_publications"}
-        add ["pacts", "provider", :provider_name, "branch", "latest"], Api::Resources::LatestProviderPactsForBranch, {resource_name: "latest_main_branch_provider_pact_publications"}
         add ["pacts", "provider", :provider_name, "latest", :tag], Api::Resources::LatestProviderPacts, {resource_name: "latest_tagged_provider_pact_publications"}
         add ["pacts", "latest"], Api::Resources::LatestPacts, {resource_name: "latest_pacts"}
 
