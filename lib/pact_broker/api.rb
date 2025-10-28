@@ -36,6 +36,7 @@ module PactBroker
         add ["pacts", "provider", :provider_name, "consumer", :consumer_name, "branch"], Api::Resources::PactVersionsForBranch, {resource_name: "pact_publications_for_main_branch"}
         add ["pacts", "provider", :provider_name, "consumer", :consumer_name, "branch", "latest"], Api::Resources::PactVersionsForBranch, {resource_name: "latest_pact_publications_for_main_branch"}
         add ["pacts", "provider", :provider_name, "consumer", :consumer_name, "branch", :branch_name], Api::Resources::PactVersionsForBranch, {resource_name: "pact_publications_for_branch"}
+        add ["pacts", "provider", :provider_name, "consumer", :consumer_name, "branch", :branch_name, "latest"], Api::Resources::PactVersionsForBranch, {resource_name: "latest_pact_publications_for_branch"}
 
         # Pacts
         add ["pacts", "provider", :provider_name, "consumer", :consumer_name, "version", :consumer_version_number], Api::Resources::Pact, {resource_name: "pact_publication"}

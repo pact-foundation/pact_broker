@@ -33,13 +33,13 @@ module PactBroker
           pact_service.find_pacts_for_provider_by_consumer_branch(
           provider_name, 
           branch_name: identifier_from_path[:branch_name], 
-          main_branch: identifier_from_path[:branch_name] ? false : true
+          main_branch: identifier_from_path[:branch_name].nil?,
           )
         end
 
         def resource_title
           suffix = identifier_from_path[:branch_name] ? " with consumer version branch '#{identifier_from_path[:branch_name]}'" : ""
-          "All pact versions for the provider #{identifier_from_path[:provider_name]}#{suffix}"
+          "All pact versions for the provider #{identifier_from_path[:provider_name]}#{suffix}#{!!identifier_from_path[:main_branch] ? ' for main branch' : ''}"
         end
       end
     end
