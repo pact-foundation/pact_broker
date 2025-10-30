@@ -53,36 +53,44 @@ class HalRelationProxyApp
     "latestby=cvpv&q%5B%5D%5Bpacticipant%5D=Foo&q%5B%5D%5Bpacticipant%5D=Bar&q%5B%5D%5Bversion%5D=1.2.3&q%5B%5D%5Bversion%5D=4.5.6" =>
       "q%5B%5D%5Bpacticipant%5D=Foo&q%5B%5D%5Bversion%5D=1.2.3&q%5B%5D%5Bpacticipant%5D=Bar&q%5B%5D%5Bversion%5D=4.5.6&latestby=cvpv",
     # pact-ruby-v2 pact (as v2) verified by pact-ruby-v1
-    "latestby=cvpv&q[][pacticipant]=Foo&q[][pacticipant]=Bar&q[][version]=1%2e2%2e3&q[][version]=4%2e5%2e6" =>
-      "q%5B%5D%5Bpacticipant%5D=Foo&q%5B%5D%5Bversion%5D=1.2.3&q%5B%5D%5Bpacticipant%5D=Bar&q%5B%5D%5Bversion%5D=4.5.6&latestby=cvpv",
+    # "latestby=cvpv&q[][pacticipant]=Foo&q[][pacticipant]=Bar&q[][version]=1%2e2%2e3&q[][version]=4%2e5%2e6" =>
+    #   "q%5B%5D%5Bpacticipant%5D=Foo&q%5B%5D%5Bversion%5D=1.2.3&q%5B%5D%5Bpacticipant%5D=Bar&q%5B%5D%5Bversion%5D=4.5.6&latestby=cvpv",
 
     # pact-ruby-v2 pact (as v2) verified by pact-ruby-v2
     "latestby=cvpv&q%5B%5D%5Bpacticipant%5D=Foo+Thing&q%5B%5D%5Bpacticipant%5D=Bar&q%5B%5D%5Bversion%5D=1.2.3&q%5B%5D%5Bversion%5D=4.5.6" =>
       "q%5B%5D%5Bpacticipant%5D=Foo%20Thing&q%5B%5D%5Bversion%5D=1.2.3&q%5B%5D%5Bpacticipant%5D=Bar&q%5B%5D%5Bversion%5D=4.5.6&latestby=cvpv",
     # pact-ruby-v2 pact (as v2) verified by pact-ruby-v1
-    "latestby=cvpv&q[][pacticipant]=Foo+Thing&q[][pacticipant]=Bar&q[][version]=1%2e2%2e3&q[][version]=4%2e5%2e6" =>
-      "q%5B%5D%5Bpacticipant%5D=Foo%20Thing&q%5B%5D%5Bversion%5D=1.2.3&q%5B%5D%5Bpacticipant%5D=Bar&q%5B%5D%5Bversion%5D=4.5.6&latestby=cvpv",
+    # "latestby=cvpv&q[][pacticipant]=Foo+Thing&q[][pacticipant]=Bar&q[][version]=1%2e2%2e3&q[][version]=4%2e5%2e6" =>
+    #   "q%5B%5D%5Bpacticipant%5D=Foo%20Thing&q%5B%5D%5Bversion%5D=1.2.3&q%5B%5D%5Bpacticipant%5D=Bar&q%5B%5D%5Bversion%5D=4.5.6&latestby=cvpv",
 
     # pact-ruby-v2 pact (as v2) verified by pact-ruby-v2
     "latestby=cvpv&q%5B%5D%5Bpacticipant%5D=Foo&q%5B%5D%5Bpacticipant%5D=Bar&q%5B%5D%5Bversion%5D=1.2.3&q%5B%5D%5Bversion%5D=9.9.9" =>
       "q%5B%5D%5Bpacticipant%5D=Foo&q%5B%5D%5Bversion%5D=1.2.3&q%5B%5D%5Bpacticipant%5D=Bar&q%5B%5D%5Bversion%5D=9.9.9&latestby=cvpv",
     # pact-ruby-v2 pact (as v2) verified by pact-ruby-v1
-    "latestby=cvpv&q[][pacticipant]=Foo&q[][pacticipant]=Bar&q[][version]=1%2e2%2e3&q[][version]=9%2e9%2e9" =>
-      "q%5B%5D%5Bpacticipant%5D=Foo&q%5B%5D%5Bversion%5D=1.2.3&q%5B%5D%5Bpacticipant%5D=Bar&q%5B%5D%5Bversion%5D=9.9.9&latestby=cvpv",
+    # "latestby=cvpv&q[][pacticipant]=Foo&q[][pacticipant]=Bar&q[][version]=1%2e2%2e3&q[][version]=9%2e9%2e9" =>
+    #   "q%5B%5D%5Bpacticipant%5D=Foo&q%5B%5D%5Bversion%5D=1.2.3&q%5B%5D%5Bpacticipant%5D=Bar&q%5B%5D%5Bversion%5D=9.9.9&latestby=cvpv",
 
     # pact-ruby-v2 pact (as v2) verified by pact-ruby-v2 
     "latestby=cvpv&q%5B%5D%5Blatest%5D=true&q%5B%5D%5Bpacticipant%5D=Foo&q%5B%5D%5Bpacticipant%5D=Bar&q%5B%5D%5Btag%5D=prod&q%5B%5D%5Bversion%5D=1.2.3" => 
       "q%5B%5D%5Bpacticipant%5D=Foo&q%5B%5D%5Bversion%5D=1.2.3&q%5B%5D%5Bpacticipant%5D=Bar&q%5B%5D%5Blatest%5D=true&q%5B%5D%5Btag%5D=prod&latestby=cvpv",
     # pact-ruby-v2 pact (as v2) verified by pact-ruby-v1
-    "latestby=cvpv&q[][latest]=true&q[][pacticipant]=Foo&q[][pacticipant]=Bar&q[][tag]=prod&q[][version]=1%2e2%2e3" => 
-      "q%5B%5D%5Bpacticipant%5D=Foo&q%5B%5D%5Bversion%5D=1.2.3&q%5B%5D%5Bpacticipant%5D=Bar&q%5B%5D%5Blatest%5D=true&q%5B%5D%5Btag%5D=prod&latestby=cvpv",
+    # "latestby=cvpv&q[][latest]=true&q[][pacticipant]=Foo&q[][pacticipant]=Bar&q[][tag]=prod&q[][version]=1%2e2%2e3" => 
+    #   "q%5B%5D%5Bpacticipant%5D=Foo&q%5B%5D%5Bversion%5D=1.2.3&q%5B%5D%5Bpacticipant%5D=Bar&q%5B%5D%5Blatest%5D=true&q%5B%5D%5Btag%5D=prod&latestby=cvpv",
 
     # pact-ruby-v2 pact (as v2) verified by pact-ruby-v2
     "latestby=cvpv&q%5B%5D%5Blatest%5D=true&q%5B%5D%5Bpacticipant%5D=Foo&q%5B%5D%5Bpacticipant%5D=Bar&q%5B%5D%5Bversion%5D=1.2.4" => 
       "q%5B%5D%5Bpacticipant%5D=Foo&q%5B%5D%5Bversion%5D=1.2.4&q%5B%5D%5Bpacticipant%5D=Bar&q%5B%5D%5Blatest%5D=true&latestby=cvpv",
     # pact-ruby-v2 pact (as v2) verified by pact-ruby-v1
-    "latestby=cvpv&q[][latest]=true&q[][pacticipant]=Foo&q[][pacticipant]=Bar&q[][version]=1%2e2%2e4" => 
-      "q%5B%5D%5Bpacticipant%5D=Foo&q%5B%5D%5Bversion%5D=1.2.4&q%5B%5D%5Bpacticipant%5D=Bar&q%5B%5D%5Blatest%5D=true&latestby=cvpv",
+    # "latestby=cvpv&q[][latest]=true&q[][pacticipant]=Foo&q[][pacticipant]=Bar&q[][version]=1%2e2%2e4" => 
+    #   "q%5B%5D%5Bpacticipant%5D=Foo&q%5B%5D%5Bversion%5D=1.2.4&q%5B%5D%5Bpacticipant%5D=Bar&q%5B%5D%5Blatest%5D=true&latestby=cvpv",
+    # pact-broker-cli rust rewrite (unordered query params)
+   "latestby=cvpv&q[][latest]=true&q[][pacticipant]=Foo&q[][tag]=prod&q[][version]=1%2e2%2e3&q[][pacticipant]=Bar" => "q[][pacticipant]=Foo&q[][version]=1%2e2%2e3&q[][pacticipant]=Bar&q[][latest]=true&q[][tag]=prod&latestby=cvpv",
+   "latestby=cvpv&q[][latest]=true&q[][pacticipant]=Foo&q[][version]=1%2e2%2e4&q[][pacticipant]=Bar" => "q[][pacticipant]=Foo&q[][version]=1%2e2%2e4&q[][pacticipant]=Bar&q[][latest]=true&latestby=cvpv",
+   "latestby=cvpv&q[][pacticipant]=Foo+Thing&q[][pacticipant]=Bar&q[][version]=1%2e2%2e3&q[][version]=4%2e5%2e6" => "q[][pacticipant]=Foo+Thing&q[][version]=1%2e2%2e3&q[][pacticipant]=Bar&q[][version]=4%2e5%2e6&latestby=cvpv",
+   "latestby=cvpv&q[][pacticipant]=Foo&q[][pacticipant]=Bar&q[][version]=1%2e2%2e3&q[][version]=4%2e5%2e6" => "q[][pacticipant]=Foo&q[][version]=1%2e2%2e3&q[][pacticipant]=Bar&q[][version]=4%2e5%2e6&latestby=cvpv",
+   "latestby=cvpv&q[][latest]=true&q[][pacticipant]=Foo&q[][pacticipant]=Bar&q[][tag]=prod&q[][version]=1%2e2%2e3" => "q[][pacticipant]=Foo&q[][version]=1%2e2%2e3&q[][pacticipant]=Bar&q[][latest]=true&q[][tag]=prod&latestby=cvpv",
+   "latestby=cvpv&q[][latest]=true&q[][pacticipant]=Foo&q[][pacticipant]=Bar&q[][version]=1%2e2%2e4" => "q[][pacticipant]=Foo&q[][version]=1%2e2%2e4&q[][pacticipant]=Bar&q[][latest]=true&latestby=cvpv",
+   "latestby=cvpv&q[][pacticipant]=Foo&q[][pacticipant]=Bar&q[][version]=1%2e2%2e3&q[][version]=9%2e9%2e9" => "q[][pacticipant]=Foo&q[][version]=1%2e2%2e3&q[][pacticipant]=Bar&q[][version]=9%2e9%2e9&latestby=cvpv"
   }
 
   def initialize(app)

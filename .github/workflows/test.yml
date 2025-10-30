@@ -108,9 +108,10 @@ jobs:
         with:
           bundler-cache: true
       - name: Verify pacts
-        run: "GIT_SHA=${GITHUB_SHA} GIT_BRANCH=${GITHUB_REF##*/} bundle exec rake pact:verify"
+        run: "GIT_SHA=${GITHUB_SHA} bundle exec rake pact:verify"
         env:
-          PACTFLOW_PACT_FOUNDATION_TOKEN: ${{ secrets.PACTFLOW_PACT_FOUNDATION_TOKEN }}
+          PACT_BROKER_TOKEN: ${{ secrets.PACTFLOW_PACT_FOUNDATION_TOKEN }}
+          PACT_BROKER_BASE_URL: https://pact-foundation.pactflow.io
 
   pact-v2-verify:
     runs-on: "ubuntu-latest"
