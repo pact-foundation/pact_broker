@@ -44,7 +44,8 @@ group :test do
 end
 
 group :pg, optional: true do
-  gem "pg", "~>1.6"
+  gem "pg", "~>1.6", force_ruby_platform: true
+  gem "sequel_pg", require: "sequel"
 end
 
 group :mysql, optional: true do
