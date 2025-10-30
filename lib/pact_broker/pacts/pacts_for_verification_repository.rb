@@ -296,10 +296,10 @@ module PactBroker
 
       def remove_explicitly_specified_verifiable_pacts(pact_publications, explicitly_specified_verifiable_pacts)
         pact_publications.reject do | pact_publication |
-          explicitly_specified_verifiable_pacts.find{ | explict_pact |
-            explict_pact.consumer.id == pact_publication.consumer_id &&
-              explict_pact.provider.id == pact_publication.provider_id &&
-              explict_pact.pact_version_sha == pact_publication.pact_version_sha
+          explicitly_specified_verifiable_pacts.find{ | explicit_pact |
+            explicit_pact.consumer.id == pact_publication.consumer_id &&
+              explicit_pact.provider.id == pact_publication.provider_id &&
+              explicit_pact.pact_version_sha == pact_publication.pact_version_sha
           }
         end
       end

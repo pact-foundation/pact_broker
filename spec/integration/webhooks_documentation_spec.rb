@@ -5,7 +5,7 @@ require "pact_broker/api"
 WEBHOOK_TESTED_DOCUMENTATION_PATHS = []
 WEBHOOKS_NO_DOCUMENTATION = %w[
 ]
-WEBHOOK_ROUTES_REQURING_A_DOCUMENTATION_TEST = PactBroker.routes
+WEBHOOK_ROUTES_REQUIRING_A_DOCUMENTATION_TEST = PactBroker.routes
       .select { | route | route.path_include?("webhook") }
       .reject { | route | WEBHOOKS_NO_DOCUMENTATION.include?(route.path) }
 
@@ -55,7 +55,7 @@ RSpec.describe "webhook routes" do
   end
 
   after(:all) do
-    missed_routes = WEBHOOK_ROUTES_REQURING_A_DOCUMENTATION_TEST.reject { | route | WEBHOOK_TESTED_DOCUMENTATION_PATHS.include?(route.path) }
+    missed_routes = WEBHOOK_ROUTES_REQUIRING_A_DOCUMENTATION_TEST.reject { | route | WEBHOOK_TESTED_DOCUMENTATION_PATHS.include?(route.path) }
 
     if missed_routes.any? && ENV["DEBUG"] != "true"
       puts "WEBHOOK ROUTES MISSING DOCUMENTATION COVERAGE:"
@@ -208,7 +208,7 @@ RSpec.describe "webhook routes" do
 
     describe "POST" do
       before do
-        allow(PactBroker::Webhooks::Service).to receive(:next_uuid).and_return("dCGCl-Ba3PqEFJ_iE9mJkQ")
+        allow(PactBroker::Webhooks::Service).to receive(:next_uuid).and_return("67c2884a-5773-5c8b-93e7-0776f1cda018")
       end
 
       let(:http_params) { webhook_hash.to_json }
