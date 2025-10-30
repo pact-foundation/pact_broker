@@ -112,6 +112,24 @@ jobs:
         env:
           PACTFLOW_PACT_FOUNDATION_TOKEN: ${{ secrets.PACTFLOW_PACT_FOUNDATION_TOKEN }}
 
+  pact-v2-verify:
+    runs-on: "ubuntu-latest"
+    strategy:
+      matrix:
+        pact_url:
+          - "https://raw.githubusercontent.com/pact-foundation/pact_broker-client/refs/heads/master/spec/pacts/Pact%20Broker%20Client%20V2-Pact%20Broker.json"
+          - "https://raw.githubusercontent.com/pact-foundation/pact_broker-client/refs/heads/master/spec/pacts/pact_broker_client-pact_broker.json"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - run: bundle install
+      - name: Verify pacts
+        env:
+          PACT_URL: ${{ matrix.pact_url }}
+        run: "PACT_URL=${PACT_URL} bundle exec rake pact:v2:verify"
+
   bundle-audit:
     runs-on: "ubuntu-latest"
     steps:
