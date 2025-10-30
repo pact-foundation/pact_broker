@@ -78,6 +78,7 @@ jobs:
           - "15"
           - "16"
           - "17"
+          - "18"
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - run: script/test/run-rake-on-docker-compose-postgres.sh
