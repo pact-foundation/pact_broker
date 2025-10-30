@@ -41,14 +41,21 @@ Pact.service_provider "Pact Broker" do
 
   app { HalRelationProxyApp.new(app_to_verify) }
   app_version ENV["GIT_SHA"] if ENV["GIT_SHA"]
-  app_version_tags [ENV["GIT_BRANCH"]] if ENV["GIT_BRANCH"]
+  branch = `git rev-parse --abbrev-ref HEAD`.strip
+  if branch.start_with?("refs/pull/") || branch.start_with?("HEAD")
+    branch = ENV["GITHUB_HEAD_REF"] || branch.split("/").last
+  end
+  if branch.nil? || branch.empty?
+    branch = ENV["GIT_BRANCH"]
+  end
+  app_version_branch branch
   publish_verification_results ENV["CI"] == "true"
 
-  if ENV.fetch("PACTFLOW_PACT_FOUNDATION_TOKEN", "") != ""
+  if ENV.fetch("PACT_BROKER_TOKEN", "") != ""
     honours_pacts_from_pact_broker do
-      pact_broker_base_url "https://pact-foundation.pactflow.io", token: ENV["PACTFLOW_PACT_FOUNDATION_TOKEN"]
+      pact_broker_base_url ENV.fetch("PACT_BROKER_BASE_URL", ""), token: ENV["PACT_BROKER_TOKEN"]
       consumer_version_selectors [
-          { tag: "master", latest: true }
+          { mainBranch: true }, { deployed: true },
         ]
       enable_pending true
       include_wip_pacts_since "2000-01-01"

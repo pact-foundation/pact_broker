@@ -400,4 +400,20 @@
       no_op
     end
 
+    provider_state "the pb:latest-pact-versions relation exists in the index resource" do
+      no_op
+    end
+
+    provider_state "the pb:pacticipants relation exists in the index resource" do
+      no_op
+    end
+
+    provider_state "the pb:pacticipant relation exists in the index resource" do
+      no_op
+    end
+    
+    provider_state "a webhook with uuid non-existent-uuid does not exist" do
+      no_op
+    end
+    
   end
