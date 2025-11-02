@@ -1,3 +1,10 @@
+<a name="v2.117.1"></a>
+### v2.117.1 (2025-11-02)
+
+#### Bug Fixes
+
+* dashboard loading after zeitwerk rename prep	 ([13112e2f](/../../commit/13112e2f))
+
 <a name="v2.117.0"></a>
 ### v2.117.0 (2025-10-28)
 
