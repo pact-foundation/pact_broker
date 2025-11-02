@@ -44,7 +44,7 @@ module PactBroker
                           []
                         end
 
-          view_index_items = ViewModel::IndexItems.new(index_items, base_url: base_url, view: view)
+          view_index_items = PactBroker::UI::ViewModels::IndexItems.new(index_items, base_url: base_url, view: view)
 
           page = :'dashboard/show'
           locals = {
