@@ -85,7 +85,7 @@ module PactBroker
       private :merge_consumer_version_selectors
 
       # Now that we de-duplicate the pact contents when verifying though the 'pacts for verification' API,
-      # we no longer get a webhook triggered for the verification results publication of each indiviual
+      # we no longer get a webhook triggered for the verification results publication of each individual
       # consumer version tag, meaning that only the most recent commit will get the updated verification status.
       # To fix this, each URL of the pacts returned by the 'pacts for verification' API now contains the
       # relevant selectors in the metadata, so that when the verification results are published,

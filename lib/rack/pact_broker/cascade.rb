@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # This is a modified version of the Rack::Cascade class from https://github.com/rack/rack/blob/2833813/lib/rack/cascade.rb
-# that short circuts the cascade if a response body is provided for a 404/403 response.
+# that short circuits the cascade if a response body is provided for a 404/403 response.
 # This is to allow the UI and API to be in a cascade, but allows the UI
 # to return a 404 page when the route matches, but there is no domain object found.
 # If we don't do this, then the 404 from the UI causes an API response to be returned.
