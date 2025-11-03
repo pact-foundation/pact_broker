@@ -1,6 +1,3 @@
-require "pact_broker/api/resources/provider_states"
-require "pact_broker/application_context"
-require "pact_broker/pacts/provider_state_service"
 
 module PactBroker
   module Api

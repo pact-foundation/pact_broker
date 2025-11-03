@@ -1,16 +1,7 @@
-require "pact_broker/api/pact_broker_urls"
-require "pact_broker/ui/helpers/url_helper"
-require "pact_broker/date_helper"
-require "pact_broker/ui/view_models/matrix_tag"
-require "pact_broker/ui/view_models/matrix_branch"
-require "pact_broker/ui/view_models/matrix_deployed_version"
-require "pact_broker/ui/view_models/matrix_released_version"
-require "pact_broker/versions/abbreviate_number"
-require "pact_broker/messages"
 require "forwardable"
 
 module PactBroker
-  module UI
+  module Ui
     module ViewModels
       class MatrixLine
         include PactBroker::Api::PactBrokerUrls

@@ -1,4 +1,3 @@
-require "pact_broker/api/decorators/reason_decorator"
 
 module PactBroker
   module MatrixTestSupport

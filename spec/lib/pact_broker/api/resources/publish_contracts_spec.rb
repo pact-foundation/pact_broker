@@ -1,4 +1,3 @@
-require "pact_broker/api/resources/publish_contracts"
 
 module PactBroker
   module Api

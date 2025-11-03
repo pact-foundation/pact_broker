@@ -1,14 +1,9 @@
 require "sequel"
-require "pact_broker/db/validate_encoding"
-require "pact_broker/db/migrate"
-require "pact_broker/db/migrate_data"
-require "pact_broker/db/version"
-require "pact_broker/db/table_dependency_calculator"
 
 Sequel.datetime_class = DateTime
 
 module PactBroker
-  module DB
+  module Db
     MIGRATIONS_DIR = File.expand_path("../../../db/migrations", __FILE__)
 
     def self.connection= connection
@@ -21,19 +16,21 @@ module PactBroker
 
     def self.run_migrations database_connection, options = {}
       Sequel.extension :migration
-      Sequel::TimestampMigrator.new(database_connection, PactBroker::DB::MIGRATIONS_DIR, options).run
+      Sequel::TimestampMigrator.new(database_connection, PactBroker::Db::MIGRATIONS_DIR, options).run
     end
 
     def self.run_data_migrations database_connection
-      PactBroker::DB::MigrateData.(database_connection)
+      PactBroker::Db::MigrateData.(database_connection)
     end
 
     def self.is_current? database_connection, options = {}
-      Sequel::TimestampMigrator.is_current?(database_connection, PactBroker::DB::MIGRATIONS_DIR, options)
+      Sequel.extension :migration
+      Sequel::TimestampMigrator.is_current?(database_connection, PactBroker::Db::MIGRATIONS_DIR, options)
     end
 
     def self.check_current database_connection, options = {}
-      Sequel::TimestampMigrator.check_current(database_connection, PactBroker::DB::MIGRATIONS_DIR, options)
+      Sequel.extension :migration
+      Sequel::TimestampMigrator.check_current(database_connection, PactBroker::Db::MIGRATIONS_DIR, options)
     end
 
     def self.truncate database_connection, options = {}
@@ -50,11 +47,11 @@ module PactBroker
     end
 
     def self.version database_connection
-      PactBroker::DB::Version.call(database_connection)
+      PactBroker::Db::Version.call(database_connection)
     end
 
     def self.validate_connection_config
-      PactBroker::DB::ValidateEncoding.(connection)
+      PactBroker::Db::ValidateEncoding.(connection)
     end
 
     def self.set_mysql_strict_mode_if_mysql

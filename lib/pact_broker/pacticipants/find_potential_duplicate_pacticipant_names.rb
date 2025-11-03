@@ -1,4 +1,3 @@
-require "pact_broker/domain/group"
 
 module PactBroker
   module Pacticipants

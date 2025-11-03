@@ -1,7 +1,6 @@
 require_relative "base_decorator"
 require_relative "pagination_links"
 require_relative "label_decorator"
-require "pact_broker/domain/label"
 
 module PactBroker
   module Api

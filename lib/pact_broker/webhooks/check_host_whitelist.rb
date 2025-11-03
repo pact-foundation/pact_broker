@@ -4,7 +4,7 @@ module PactBroker
   module Webhooks
     class CheckHostWhitelist
 
-      def self.call(host, whitelist = PactBroker.configuration.webhook_host_whitelist)
+      def self.call(host, whitelist = PactBroker::Configuration.configuration.webhook_host_whitelist)
         whitelist.select{ | whitelist_host | match?(host, whitelist_host) }
       end
 

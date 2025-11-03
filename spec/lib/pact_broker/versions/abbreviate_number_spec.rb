@@ -1,4 +1,3 @@
-require "pact_broker/versions/abbreviate_number"
 
 module PactBroker
   module Versions

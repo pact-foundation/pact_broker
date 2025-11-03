@@ -1,4 +1,3 @@
-require "pact_broker/domain/label"
 
 module PactBroker
   module Labels

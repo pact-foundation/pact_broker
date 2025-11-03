@@ -1,7 +1,6 @@
-require "pact_broker/db/log_quietener"
 
 module PactBroker
-  module DB
+  module Db
     describe Logger do
       let(:logs) { StringIO.new }
       let(:wrapped_logger) { ::Logger.new(logs) }

@@ -1,4 +1,3 @@
-require "pact_broker/api/resources/latest_provider_pacts"
 
 module PactBroker
   module Api

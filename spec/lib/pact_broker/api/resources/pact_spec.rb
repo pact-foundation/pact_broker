@@ -1,7 +1,4 @@
-require "pact_broker/api/resources/pact"
 require "rack/test"
-require "pact_broker/pacts/service"
-require "pact_broker/pacticipants/service"
 
 module PactBroker::Api
   module Resources
@@ -23,7 +20,7 @@ module PactBroker::Api
             allow_any_instance_of(Pact).to receive(:badge_url_for_latest_pact).and_return("http://badge")
             allow_any_instance_of(Pact).to receive(:ui_base_url).and_return("http://example.org")
             allow(PactBroker::Pacts::Service).to receive(:find_pact).and_return(pact)
-            allow(PactBroker.configuration.html_pact_renderer).to receive(:call).and_return(html)
+            allow(PactBroker::Configuration.configuration.html_pact_renderer).to receive(:call).and_return(html)
           end
 
           subject { get "/pacts/provider/provider_name/consumer/consumer_name/versions/1.2.3",{}, {"HTTP_ACCEPT" => "text/html"} }
@@ -39,7 +36,7 @@ module PactBroker::Api
           end
 
           it "uses the configured HTML renderer" do
-            expect(PactBroker.configuration.html_pact_renderer).to receive(:call).with(pact, html_options)
+            expect(PactBroker::Configuration.configuration.html_pact_renderer).to receive(:call).with(pact, html_options)
             subject
           end
 

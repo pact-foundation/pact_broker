@@ -1,9 +1,5 @@
-require "pact_broker/webhooks/service"
-require "pact_broker/webhooks/triggered_webhook"
-require "pact_broker/webhooks/webhook_event"
 require "webmock/rspec"
 require "sucker_punch/testing/inline"
-require "pact_broker/webhooks/execution_configuration"
 
 module PactBroker
   module Webhooks

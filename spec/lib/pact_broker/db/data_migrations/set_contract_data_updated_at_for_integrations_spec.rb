@@ -1,9 +1,8 @@
-require "pact_broker/db/data_migrations/set_contract_data_updated_at_for_integrations"
 require "timecop"
 require "tzinfo"
 
 module PactBroker
-  module DB
+  module Db
     module DataMigrations
       describe SetContractDataUpdatedAtForIntegrations do
         before do

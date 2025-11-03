@@ -1,16 +1,14 @@
-require "pact_broker/db/clean_incremental"
-require "pact_broker/matrix/unresolved_selector"
 require "timecop"
 
 module PactBroker
-  module DB
+  module Db
     describe CleanIncremental do
       def pact_publication_count_for(consumer_name, version_number)
         PactBroker::Pacts::PactPublication.where(consumer_version: PactBroker::Domain::Version.where_pacticipant_name(consumer_name).where(number: version_number)).count
       end
 
       let(:options) { {} }
-      let(:db) { PactBroker::DB.connection }
+      let(:db) {PactBroker::Db.connection }
 
 
       let(:latest_dev_selector) { PactBroker::Matrix::UnresolvedSelector.new(tag: "dev", latest: true) }
@@ -18,7 +16,7 @@ module PactBroker
       let(:limit) { 3 }
       let(:dry_run) { false }
 
-      subject { CleanIncremental.call(PactBroker::DB.connection, options) }
+      subject { CleanIncremental.call(PactBroker::Db.connection, options) }
 
       describe ".call"do
         context "when there are specified versions to keep" do

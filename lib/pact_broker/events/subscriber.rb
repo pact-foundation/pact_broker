@@ -29,22 +29,29 @@ end
 
 module PactBroker
   module Events
-    extend self
+    # Zeitwerk expects this module to exist based on filename
+    module Subscriber
+      # Event subscription utilities
+      extend self
 
-    def subscribe(*args)
-      if block_given?
-        result = nil
-        TemporaryListeners.subscribe(*args) do
-          result = yield
+      def subscribe(*args)
+        if block_given?
+          result = nil
+          TemporaryListeners.subscribe(*args) do
+            result = yield
+          end
+          result
+        else
+          Wisper.subscribe(*args)
         end
-        result
-      else
-        Wisper.subscribe(*args)
+      end
+
+      def unsubscribe(*args)
+        Wisper.unsubscribe(*args)
       end
     end
-
-    def unsubscribe(*args)
-      Wisper.unsubscribe(*args)
-    end
+    
+    # For backward compatibility, also expose methods at Events module level
+    extend Subscriber
   end
 end

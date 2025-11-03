@@ -1,4 +1,3 @@
-require "pact_broker/matrix/service"
 require "support/matrix_test_support"
 
 module PactBroker

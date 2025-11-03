@@ -1,4 +1,3 @@
-require "pact_broker/pacticipants/generate_display_name"
 
 module PactBroker
   module Pacticipants

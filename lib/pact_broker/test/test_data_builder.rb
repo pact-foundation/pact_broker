@@ -1,39 +1,4 @@
 require "json"
-require "pact_broker/string_refinements"
-require "pact_broker/repositories"
-require "pact_broker/services"
-require "pact_broker/webhooks/repository"
-require "pact_broker/webhooks/service"
-require "pact_broker/webhooks/trigger_service"
-require "pact_broker/webhooks/webhook_execution_result"
-require "pact_broker/pacts/repository"
-require "pact_broker/pacts/service"
-require "pact_broker/pacts/content"
-require "pact_broker/pacticipants/repository"
-require "pact_broker/pacticipants/service"
-require "pact_broker/versions/repository"
-require "pact_broker/versions/service"
-require "pact_broker/tags/repository"
-require "pact_broker/labels/repository"
-require "pact_broker/tags/service"
-require "pact_broker/domain"
-require "pact_broker/versions/repository"
-require "pact_broker/pacts/repository"
-require "pact_broker/pacticipants/repository"
-require "pact_broker/verifications/repository"
-require "pact_broker/verifications/service"
-require "pact_broker/tags/repository"
-require "pact_broker/webhooks/repository"
-require "pact_broker/certificates/certificate"
-require "pact_broker/deployments/environment_service"
-require "pact_broker/deployments/deployed_version_service"
-require "pact_broker/deployments/released_version_service"
-require "pact_broker/versions/branch_version_repository"
-require "pact_broker/integrations/repository"
-require "pact_broker/contracts/service"
-require "pact_broker/contracts/contract_to_publish"
-require "pact_broker/contracts/contracts_to_publish"
-
 require "ostruct"
 
 module PactBroker
@@ -694,7 +659,7 @@ module PactBroker
 
       # Remember! This must be called before adding the IDs
       def generate_pact_version_sha json_content
-        PactBroker.configuration.sha_generator.call(json_content)
+        PactBroker::Configuration.configuration.sha_generator.call(json_content)
       end
 
       def prepare_json_content(json_content)

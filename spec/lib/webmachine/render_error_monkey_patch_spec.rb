@@ -1,5 +1,5 @@
 require "webmachine/render_error_monkey_patch"
-require "webmachine/adapters/rack3_adapter"
+require "webmachine/adapters/rack3"
 
 module Webmachine
   describe ".render_error" do

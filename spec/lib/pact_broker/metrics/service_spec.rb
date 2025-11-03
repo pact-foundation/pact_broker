@@ -1,4 +1,3 @@
-require "pact_broker/metrics/service"
 
 module PactBroker
   module Metrics

@@ -1,6 +1,3 @@
-require "pact_broker/api/resources/verifications"
-require "pact_broker/pacts/service"
-require "pact_broker/verifications/service"
 
 module PactBroker
   module Api
@@ -64,7 +61,7 @@ module PactBroker
               allow(Pacts::Service).to receive(:find_for_verification_publication).and_return(verified_pacts)
               allow(PactBroker::Verifications::Service).to receive(:next_number).and_return(next_verification_number)
               allow(PactBroker::Api::Decorators::VerificationDecorator).to receive(:new).and_return(decorator)
-              allow(PactBroker.configuration).to receive(:show_webhook_response?).and_return("some-boolean")
+              allow(PactBroker::Configuration.configuration).to receive(:show_webhook_response?).and_return("some-boolean")
             end
 
             let(:verified_pacts) { double("verified pacts") }

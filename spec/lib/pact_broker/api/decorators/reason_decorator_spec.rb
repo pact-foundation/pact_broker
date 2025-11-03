@@ -1,6 +1,3 @@
-require "pact_broker/api/decorators/reason_decorator"
-require "pact_broker/matrix/reason"
-require "pact_broker/matrix/resolved_selector"
 
 module PactBroker
   module Api

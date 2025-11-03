@@ -1,26 +1,19 @@
-require "pact_broker/ui/controllers/base"
-require "pact_broker/ui/view_models/matrix_lines"
-require "pact_broker/matrix/unresolved_selector"
-require "pact_broker/matrix/parse_query"
-require "pact_broker/logging"
-require "pact_broker/api/pact_broker_urls"
-require "pact_broker/ui/helpers/matrix_helper"
 require "haml"
 
 module PactBroker
-  module UI
+  module Ui
     module Controllers
       class CanIDeploy < Base
 
         include PactBroker::Services
-        include PactBroker::UI::Helpers::MatrixHelper
+        include PactBroker::Ui::Helpers::MatrixHelper
 
         get "/:pacticipant_name/latest-version/:tag/can-i-deploy/to/:environment_tag" do
           # selector and options must be in sync with lib/pact_broker/api/resources/can_i_deploy_pacticipant_version_by_tag_to_tag_badge.rb
           selectors = [ PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: params[:pacticipant_name], latest: true, tag: params[:tag]) ]
           options = { latestby: "cvp", limit: 100, tag: params[:to] }
           result = matrix_service.find(selectors, options)
-          lines = PactBroker::UI::ViewModels::MatrixLines.new(result, base_url: base_url)
+          lines = PactBroker::Ui::ViewModels::MatrixLines.new(result, base_url: base_url)
           locals = {
             lines: lines,
             selectors: create_selector_objects(selectors),

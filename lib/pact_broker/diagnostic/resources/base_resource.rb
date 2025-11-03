@@ -1,5 +1,4 @@
 require "webmachine"
-require "pact_broker/api/resources/authentication"
 
 module PactBroker
   module Diagnostic
@@ -13,8 +12,8 @@ module PactBroker
         end
 
         def forbidden?
-          return false unless PactBroker.configuration.authorization_configured?
-          !PactBroker.configuration.authorize.call(self, {})
+          return false unless PactBroker::Configuration.configuration.authorization_configured?
+          !PactBroker::Configuration.configuration.authorize.call(self, {})
         end
 
         def base_url

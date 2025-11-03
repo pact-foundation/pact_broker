@@ -1,5 +1,5 @@
 require "webmachine"
-require "webmachine/adapters/rack3_adapter"
+require "webmachine/adapters/rack3"
 require "rack/test"
 
 module Webmachine

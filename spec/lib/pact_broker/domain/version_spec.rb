@@ -1,5 +1,3 @@
-require "pact_broker/domain/version"
-require "pact_broker/db/clean/selector"
 
 module PactBroker
   module Domain
@@ -132,7 +130,7 @@ module PactBroker
               .create_consumer_version("3", tag_names: %w{master})
           end
 
-          let(:selector) { PactBroker::DB::Clean::Selector.new(tag: "master", max_age: max_age) }
+          let(:selector) { PactBroker::Db::Clean::Selector.new(tag: "master", max_age: max_age) }
 
           let(:max_age) { 3 }
           let(:four_days_ago) { Date.today - 4 }
@@ -151,7 +149,7 @@ module PactBroker
               .create_consumer_version("3", branch: "main")
           end
 
-          let(:selector) { PactBroker::DB::Clean::Selector.new(branch: true, latest: true) }
+          let(:selector) { PactBroker::Db::Clean::Selector.new(branch: true, latest: true) }
 
           it "selects the consumer versions that are the latest for their branches" do
             expect(version_numbers).to eq %w{2 3}
@@ -170,7 +168,7 @@ module PactBroker
               .create_consumer_version("4", branch: "main")
           end
 
-          let(:selector) { PactBroker::DB::Clean::Selector.new(branch: true, latest: true) }
+          let(:selector) { PactBroker::Db::Clean::Selector.new(branch: true, latest: true) }
 
           it "selects the consumer versions that are the latest for their branches, but does not specify which branch they belong to, as it might be multiple, and we don't want a version row for each branch" do
             expect(version_numbers).to eq %w{1 4}
@@ -190,7 +188,7 @@ module PactBroker
               .create_consumer_version("6", branch: "main")
           end
 
-          let(:selector) { PactBroker::DB::Clean::Selector.new(main_branch: true, latest: true) }
+          let(:selector) { PactBroker::Db::Clean::Selector.new(main_branch: true, latest: true) }
 
           it "selects the versions that are the latest for their branches" do
             expect(version_numbers).to eq %w{2 5}
@@ -211,7 +209,7 @@ module PactBroker
               .create_consumer_version("6", branch: "main")
           end
 
-          let(:selector) { PactBroker::DB::Clean::Selector.new(main_branch: true) }
+          let(:selector) { PactBroker::Db::Clean::Selector.new(main_branch: true) }
 
           it "selects the versions for the main branches" do
             expect(version_numbers).to eq %w{1 2 4 5}
@@ -274,7 +272,7 @@ module PactBroker
         end
 
         context "when selecting all currently deployed versions" do
-          let(:selector) { PactBroker::DB::Clean::Selector.new(deployed: true) }
+          let(:selector) { PactBroker::Db::Clean::Selector.new(deployed: true) }
 
           before do
             td.create_environment("test")
@@ -301,7 +299,7 @@ module PactBroker
         end
 
         context "when selecting all currently released+supported versions" do
-          let(:selector) { PactBroker::DB::Clean::Selector.new(released: true) }
+          let(:selector) { PactBroker::Db::Clean::Selector.new(released: true) }
 
           before do
             td.create_environment("test")

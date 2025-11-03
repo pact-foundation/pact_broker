@@ -11,7 +11,7 @@ end
 # new version of the code.
 
 module PactBroker
-  module DB
+  module Db
     class MigrateData
       include PactBroker::Logging
 

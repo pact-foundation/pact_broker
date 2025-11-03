@@ -1,4 +1,3 @@
-require "pact_broker/api/pact_broker_urls"
 
 describe "Get an environment" do
   before do

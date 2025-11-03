@@ -1,4 +1,3 @@
-require "pact_broker/verifications/repository"
 
 module PactBroker
   module Verifications
@@ -174,7 +173,7 @@ module PactBroker
 
         context "when no tag is specified" do
           before do
-            PactBroker.configuration.order_versions_by_date = false
+            PactBroker::Configuration.configuration.order_versions_by_date = false
             td.create_provider("Provider1")
               .create_consumer("Consumer1")
               .create_consumer_version("1.2.3")

@@ -1,4 +1,13 @@
-require "pact_broker/api/contracts/dry_validation_methods"
+require "dry-validation"
+
+module PactBroker
+  module Api
+    module Contracts
+      module DryValidationMacros
+      end
+    end
+  end
+end
 
 Dry::Validation.register_macro(:not_multiple_lines) do
   PactBroker::Api::Contracts::DryValidationMethods.validate_not_multiple_lines(value, key)

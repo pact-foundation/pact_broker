@@ -1,10 +1,3 @@
-require "pact_broker/api/resources/base_resource"
-require "pact_broker/configuration"
-require "pact_broker/domain/verification"
-require "pact_broker/api/contracts/verification_contract"
-require "pact_broker/api/decorators/verification_decorator"
-require "pact_broker/api/decorators/extended_verification_decorator"
-require "pact_broker/api/resources/metadata_resource_methods"
 
 module PactBroker
   module Api

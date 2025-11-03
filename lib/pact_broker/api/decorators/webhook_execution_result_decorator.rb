@@ -1,6 +1,4 @@
-require_relative "base_decorator"
 require "json"
-require "pact_broker/messages"
 
 module PactBroker
   module Api

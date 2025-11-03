@@ -22,10 +22,9 @@ connection.timezone = :utc
 # exit
 
 require "pact_broker/db"
-PactBroker::DB.connection = connection
+PactBroker::Db.connection = connection
 require "pact_broker"
 require "support/test_data_builder"
-
 require "database/table_dependency_calculator"
 PactBroker::Database::TableDependencyCalculator.call(connection).each do | table_name |
   connection[table_name].delete
@@ -45,7 +44,7 @@ end
 #   'githubVerificationStatus' => '${pactbroker.githubVerificationStatus}'
 # }
 
-PactBroker.configuration.base_equality_only_on_content_that_affects_verification_results = false
+PactBroker::Configuration.configuration.base_equality_only_on_content_that_affects_verification_results = false
 
 # json_content = <<-HEREDOC
 # {

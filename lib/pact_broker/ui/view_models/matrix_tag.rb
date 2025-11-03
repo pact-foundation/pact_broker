@@ -1,9 +1,5 @@
-require "pact_broker/api/pact_broker_urls"
-require "pact_broker/ui/helpers/url_helper"
-require "pact_broker/date_helper"
-
 module PactBroker
-  module UI
+  module Ui
     module ViewModels
       class MatrixTag
         include PactBroker::Api::PactBrokerUrls

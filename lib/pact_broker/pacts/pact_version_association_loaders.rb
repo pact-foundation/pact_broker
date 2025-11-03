@@ -1,4 +1,3 @@
-require "pact_broker/verifications/latest_verification_id_for_pact_version_and_provider_version"
 
 module PactBroker
   module Pacts

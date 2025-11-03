@@ -1,8 +1,6 @@
-require "pact_broker/db/data_migrations/helpers"
-require "pact_broker/pacticipants/generate_display_name"
 
 module PactBroker
-  module DB
+  module Db
     module DataMigrations
       class SetPacticipantDisplayName
         extend Helpers

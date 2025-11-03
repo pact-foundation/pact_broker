@@ -1,5 +1,4 @@
 require "rack/utils"
-require "pact_broker/matrix/unresolved_selector"
 
 module PactBroker
   module Matrix

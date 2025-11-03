@@ -1,4 +1,3 @@
-require "pact_broker/webhooks/pact_and_verification_parameters"
 
 module PactBroker
   module Webhooks

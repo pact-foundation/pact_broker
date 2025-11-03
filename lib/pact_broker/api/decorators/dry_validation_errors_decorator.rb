@@ -1,8 +1,6 @@
 # Formats Dry::Validation::MessageSet errors into the "old" Pact Broker errors format
 # TODO: delete this in favour of problem+json in the next major version
 
-require "pact_broker/api/contracts/dry_validation_errors_formatter"
-
 module PactBroker
   module Api
     module Decorators

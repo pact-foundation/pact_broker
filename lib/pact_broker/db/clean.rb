@@ -1,10 +1,7 @@
 require "sequel"
-require "pact_broker/project_root"
-require "pact_broker/logging"
-require "pact_broker/db/clean/selector"
 
 module PactBroker
-  module DB
+  module Db
     class Clean
       include PactBroker::Logging
 

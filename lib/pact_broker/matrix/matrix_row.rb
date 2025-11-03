@@ -1,14 +1,3 @@
-require "pact_broker/dataset"
-require "pact_broker/logging"
-require "pact_broker/pacts/pact_version"
-require "pact_broker/domain/pacticipant"
-require "pact_broker/domain/version"
-require "pact_broker/domain/verification"
-require "pact_broker/domain/tag"
-require "pact_broker/pacts/pact_publication"
-require "pact_broker/matrix/matrix_row_dataset_module"
-require "pact_broker/matrix/matrix_row_instance_methods"
-require "pact_broker/matrix/matrix_row_verification_dataset_module"
 
 # The PactBroker::Matrix::MatrixRow represents a row in the table that is created when
 # the consumer versions are joined to the provider versions via the pacts and verifications tables,

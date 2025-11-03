@@ -1,6 +1,5 @@
 require_relative "base_decorator"
 require_relative "integration_decorator"
-require "pact_broker/api/decorators/pagination_links"
 
 module PactBroker
   module Api

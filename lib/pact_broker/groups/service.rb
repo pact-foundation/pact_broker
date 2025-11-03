@@ -1,5 +1,3 @@
-require "pact_broker/repositories"
-require "pact_broker/domain/index_item"
 
 module PactBroker
   module Groups

@@ -131,7 +131,6 @@
 
   provider_state "an error occurs while publishing a pact" do
     set_up do
-      require "pact_broker/pacts/service"
       allow(PactBroker::Pacts::Service).to receive(:create_or_update_pact).and_raise("an error")
     end
     tear_down do

@@ -1,4 +1,3 @@
-require "pact_broker/config/runtime_configuration"
 
 module PactBroker
   module Config

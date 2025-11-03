@@ -1,5 +1,3 @@
-require "pact_broker/api/resources"
-require "pact_broker/application_context"
 
 module PactBroker
   module Api
@@ -31,13 +29,13 @@ module PactBroker
 
           it "calls super in its constructor" do
             expect(application_context.before_resource).to receive(:call)
-            expect(PactBroker.configuration.before_resource).to receive(:call)
+            expect(PactBroker::Configuration.configuration.before_resource).to receive(:call)
             resource
           end
 
           it "calls super in finish_request" do
             expect(application_context.after_resource).to receive(:call)
-            expect(PactBroker.configuration.after_resource).to receive(:call)
+            expect(PactBroker::Configuration.configuration.after_resource).to receive(:call)
             resource.finish_request
           end
 

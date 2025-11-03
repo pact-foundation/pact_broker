@@ -1,7 +1,4 @@
-require "pact_broker/webhooks/render"
 require "cgi"
-require "pact_broker/domain/webhook_request"
-require "pact_broker/string_refinements"
 
 module PactBroker
   module Webhooks

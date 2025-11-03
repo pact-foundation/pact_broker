@@ -1,9 +1,3 @@
-require "pact_broker/services"
-require "pact_broker/repositories"
-require "pact_broker/logging"
-require "pact_broker/integrations/integration"
-require "pact_broker/db/models"
-require "pact_broker/repositories/scopes"
 
 module PactBroker
   module Integrations
@@ -49,7 +43,7 @@ module PactBroker
 
       def self.delete_all
         # TODO move all these into their own repositories
-        PactBroker::DB.each_integration_model do | model |
+        Db::Models.each_integration_model do | model |
           if PactBroker::Dataset::Helpers.postgres?
             logger.info("Truncating ", model.table_name)
             model.truncate(cascade: true)

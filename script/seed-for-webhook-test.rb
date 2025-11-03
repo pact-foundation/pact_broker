@@ -16,10 +16,9 @@ connection.timezone = :utc
 # Uncomment these lines to open a pry session for inspecting the database
 
 require "pact_broker/db"
-PactBroker::DB.connection = connection
+PactBroker::Db.connection = connection
 require "pact_broker"
 require "support/test_data_builder"
-
 require "database/table_dependency_calculator"
 PactBroker::Database::TableDependencyCalculator.call(connection).each do | table_name |
   connection[table_name].delete
@@ -44,7 +43,7 @@ webhook_body = {
   #   username: "foo",
   #   password: "bar")
 
-PactBroker.configuration.base_equality_only_on_content_that_affects_verification_results = false
+PactBroker::Configuration.configuration.base_equality_only_on_content_that_affects_verification_results = false
 
 TestDataBuilder.new
     .create_global_contract_published_webhook(

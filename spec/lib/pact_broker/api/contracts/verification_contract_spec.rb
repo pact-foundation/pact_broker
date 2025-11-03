@@ -1,7 +1,4 @@
-require "pact_broker/api/contracts/verification_contract"
-require "pact_broker/api/decorators/verification_decorator"
-require "pact_broker/domain/verification"
-
+ 
 module PactBroker
   module Api
     module Contracts
@@ -26,7 +23,7 @@ module PactBroker
         describe "errors" do
 
           before do
-            allow(PactBroker.configuration).to receive(:order_versions_by_date).and_return(order_versions_by_date)
+            allow(PactBroker::Configuration.configuration).to receive(:order_versions_by_date).and_return(order_versions_by_date)
           end
 
           context "with valid fields" do

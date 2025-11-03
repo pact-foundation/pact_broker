@@ -1,7 +1,3 @@
-require "pact_broker/matrix/matrix_row"
-require "pact_broker/matrix/matrix_row_dataset_module"
-require "pact_broker/matrix/matrix_row_instance_methods"
-require "pact_broker/matrix/matrix_row_verification_dataset_module"
 
 # Same as PactBroker::Matrix::MatrixRow
 # except the data is sourced from the pact_publications table, and contains

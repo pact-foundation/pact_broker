@@ -1,13 +1,12 @@
-require "pact_broker/db/clean"
 
 module PactBroker
-  module DB
+  module Db
     # Inner queries don't work on MySQL. Seriously, MySQL???
-    describe Clean, skip: true, pending: !!DB.mysql?  do
+    describe Clean, skip: true, pending: !!Db.mysql?  do
       let(:options) { {} }
-      let(:db) { PactBroker::DB.connection }
+      let(:db) {PactBroker::Db.connection }
 
-      subject { Clean.call(PactBroker::DB.connection, options) }
+      subject { Clean.call(PactBroker::Db.connection, options) }
 
       describe ".call"do
 

@@ -39,7 +39,7 @@ describe "Execute a webhook" do
 
     context "when a webhook host whitelist is not configured" do
       before do
-        allow(PactBroker.configuration).to receive(:show_webhook_response?).and_return(false)
+        allow(PactBroker::Configuration.configuration).to receive(:show_webhook_response?).and_return(false)
       end
 
       it "does not show any response details" do
@@ -49,7 +49,7 @@ describe "Execute a webhook" do
 
     context "when a webhook host whitelist is configured" do
       before do
-        allow(PactBroker.configuration).to receive(:show_webhook_response?).and_return(true)
+        allow(PactBroker::Configuration.configuration).to receive(:show_webhook_response?).and_return(true)
       end
 
       it "includes response details" do
@@ -59,7 +59,7 @@ describe "Execute a webhook" do
   end
 
   context "when an error occurs", no_db_clean: true do
-    let(:app) { Rack::PactBroker::DatabaseTransaction.new(PactBroker::API, PactBroker::DB.connection) }
+    let(:app) { Rack::PactBroker::DatabaseTransaction.new(PactBroker::API,PactBroker::Db.connection) }
 
     let!(:request) do
       stub_request(:post, /http/).to_raise(Errno::ECONNREFUSED)

@@ -1,4 +1,3 @@
-require "pact_broker/labels/repository"
 
 module PactBroker
   module Labels
@@ -71,7 +70,7 @@ module PactBroker
 
           context "when case sensitivity is turned off and a name with different case is used" do
             before do
-              allow(PactBroker.configuration).to receive(:use_case_sensitive_resource_names).and_return(false)
+              allow(PactBroker::Configuration.configuration).to receive(:use_case_sensitive_resource_names).and_return(false)
             end
 
             let(:options) { {pacticipant_name: pacticipant_name.upcase, label_name: label_name.upcase} }
@@ -84,7 +83,7 @@ module PactBroker
 
           context "when case sensitivity is turned on and a label name with different case is used" do
             before do
-              allow(PactBroker.configuration).to receive(:use_case_sensitive_resource_names).and_return(true)
+              allow(PactBroker::Configuration.configuration).to receive(:use_case_sensitive_resource_names).and_return(true)
             end
 
             let(:options) { {pacticipant_name: pacticipant_name, label_name: label_name.upcase} }
@@ -96,7 +95,7 @@ module PactBroker
 
           context "when case sensitivity is turned on and a pacticipant name with different case is used" do
             before do
-              allow(PactBroker.configuration).to receive(:use_case_sensitive_resource_names).and_return(true)
+              allow(PactBroker::Configuration.configuration).to receive(:use_case_sensitive_resource_names).and_return(true)
             end
 
             let(:options) { {pacticipant_name: pacticipant_name.upcase, label_name: label_name} }

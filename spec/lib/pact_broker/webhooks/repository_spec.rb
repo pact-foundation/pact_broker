@@ -1,4 +1,3 @@
-require "pact_broker/webhooks/repository"
 
 module PactBroker
   module Webhooks
@@ -324,7 +323,7 @@ module PactBroker
 
       describe "find_all" do
         before do
-          allow(PactBroker).to receive(:policy_scope!).and_call_original
+          allow(PactBroker::Policies).to receive(:policy_scope!).and_call_original
           Repository.new.create uuid, webhook, consumer, provider
           Repository.new.create "some-other-uuid", webhook, consumer, provider
         end
@@ -337,7 +336,7 @@ module PactBroker
         end
 
         it "uses the policy" do
-          expect(PactBroker).to receive(:policy_scope!)
+          expect(PactBroker::Policies).to receive(:policy_scope!)
           subject
         end
       end
@@ -414,7 +413,7 @@ module PactBroker
 
       describe "find_webhooks_to_trigger" do
         before do
-          allow(PactBroker).to receive(:policy_scope!).and_call_original
+          allow(PactBroker::Policies).to receive(:policy_scope!).and_call_original
         end
 
         let(:enabled) { true }
@@ -425,7 +424,7 @@ module PactBroker
           td.create_webhook(event_names: ["contract_published"], enabled: enabled, description: "Enabled webhook")
             .create_consumer("Foo")
             .create_provider("Bar")
-          expect(PactBroker).to_not receive(:policy_scope!)
+          expect(PactBroker::Policies).to_not receive(:policy_scope!)
           is_expected.to contain_exactly(
             have_attributes(description: "Enabled webhook")
           )
