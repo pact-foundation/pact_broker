@@ -1,4 +1,3 @@
-require "pact_broker/matrix/parse_query"
 
 module PactBroker
   module Matrix

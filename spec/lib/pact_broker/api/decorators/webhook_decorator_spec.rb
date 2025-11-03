@@ -1,6 +1,4 @@
-require "pact_broker/api/decorators/webhook_decorator"
-require "pact_broker/domain/webhook"
-
+# 
 module PactBroker
   module Api
     module Decorators

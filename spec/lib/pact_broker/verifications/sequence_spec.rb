@@ -1,4 +1,3 @@
-require "pact_broker/verifications/sequence"
 
 module PactBroker
   module Verifications

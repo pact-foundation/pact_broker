@@ -1,14 +1,7 @@
-require "pact_broker/api/pact_broker_urls"
-require "pact_broker/ui/helpers/url_helper"
-require "pact_broker/date_helper"
-require "pact_broker/versions/abbreviate_number"
-require "pact_broker/configuration"
-require "pact_broker/ui/view_models/index_item_branch_head"
-require "pact_broker/ui/view_models/index_item_provider_branch_head"
 require "forwardable"
 
 module PactBroker
-  module UI
+  module Ui
     module ViewModels
       class IndexItem
         extend Forwardable
@@ -89,11 +82,11 @@ module PactBroker
         end
 
         def consumer_group_url
-          Helpers::URLHelper.group_url(consumer_name, base_url)
+          Helpers::UrlHelper.group_url(consumer_name, base_url)
         end
 
         def provider_group_url
-          Helpers::URLHelper.group_url(provider_name, base_url)
+          Helpers::UrlHelper.group_url(provider_name, base_url)
         end
 
         def latest_pact_url
@@ -101,7 +94,7 @@ module PactBroker
         end
 
         def dashboard_url
-          Helpers::URLHelper.dashboard_url(consumer_name, provider_name, base_url)
+          Helpers::UrlHelper.dashboard_url(consumer_name, provider_name, base_url)
         end
 
         def pact_url
@@ -109,7 +102,7 @@ module PactBroker
         end
 
         def pact_matrix_url
-          Helpers::URLHelper.matrix_url_for_consumer_version(consumer_name, consumer_version_number, provider_name, base_url)
+          Helpers::UrlHelper.matrix_url_for_consumer_version(consumer_name, consumer_version_number, provider_name, base_url)
         end
 
         def any_webhooks?

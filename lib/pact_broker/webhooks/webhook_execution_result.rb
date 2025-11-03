@@ -1,5 +1,3 @@
-require "pact_broker/webhooks/http_request_with_redacted_headers"
-require "pact_broker/webhooks/http_response_with_utf_8_safe_body"
 
 module PactBroker
   module Webhooks

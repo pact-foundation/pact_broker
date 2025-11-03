@@ -1,6 +1,3 @@
-require "pact_broker/domain/pacticipant"
-require "pact_broker/error"
-require "pact_broker/repositories/scopes"
 
 module PactBroker
   module Pacticipants
@@ -100,7 +97,7 @@ module PactBroker
 
       def handle_multiple_pacticipants_found(name, pacticipants)
         names = pacticipants.collect(&:name).join(", ")
-        raise PactBroker::Error.new("Found multiple pacticipants with a case insensitive name match for '#{name}': #{names}. Please delete one of them, or set PactBroker.configuration.use_case_sensitive_resource_names = true")
+        raise PactBroker::Error.new("Found multiple pacticipants with a case insensitive name match for '#{name}': #{names}. Please delete one of them, or set PactBroker::Configuration.configuration.use_case_sensitive_resource_names = true")
       end
 
       def search_by_name(pacticipant_name)

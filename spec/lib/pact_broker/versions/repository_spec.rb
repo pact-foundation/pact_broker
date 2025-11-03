@@ -1,4 +1,3 @@
-require "pact_broker/versions/repository"
 
 module PactBroker
   module Versions
@@ -182,7 +181,7 @@ module PactBroker
 
           context "when case sensitivity is turned off and names with different cases are used" do
             before do
-              allow(PactBroker.configuration).to receive(:use_case_sensitive_resource_names).and_return(false)
+              allow(PactBroker::Configuration.configuration).to receive(:use_case_sensitive_resource_names).and_return(false)
             end
 
             subject { described_class.new.find_by_pacticipant_name_and_number pacticipant_name.upcase, version_number.upcase }

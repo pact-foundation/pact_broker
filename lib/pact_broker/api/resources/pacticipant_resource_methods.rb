@@ -4,7 +4,7 @@ module PactBroker
       module PacticipantResourceMethods
 
         def potential_duplicate_pacticipants? pacticipant_names
-          if PactBroker.configuration.check_for_potential_duplicate_pacticipant_names
+          if PactBroker::Configuration.configuration.check_for_potential_duplicate_pacticipant_names
             messages = pacticipant_service.messages_for_potential_duplicate_pacticipants pacticipant_names, base_url
             if messages.any?
               response.body = messages.join("\n")

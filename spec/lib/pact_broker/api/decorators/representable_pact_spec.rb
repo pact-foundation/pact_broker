@@ -1,5 +1,4 @@
 require "spec/support/test_data_builder"
-require "pact_broker/api/decorators/representable_pact"
 
 module PactBroker::Api::Decorators
   describe RepresentablePact do

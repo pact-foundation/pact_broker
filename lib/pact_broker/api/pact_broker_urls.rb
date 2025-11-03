@@ -1,6 +1,4 @@
 require "erb"
-require "pact_broker/pacts/metadata"
-require "pact_broker/logging"
 require "base64"
 require "rack"
 

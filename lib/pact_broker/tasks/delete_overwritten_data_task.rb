@@ -1,5 +1,5 @@
 module PactBroker
-  module DB
+  module Db
     class DeleteOverwrittenDataTask < ::Rake::TaskLib
       attr_accessor :database_connection
       attr_accessor :max_age
@@ -17,7 +17,6 @@ module PactBroker
           namespace :db do
             desc "Delete overwritten pacts and verifications from database"
             task :delete_overwritten_data do | _t, _args |
-              require "pact_broker/db/delete_overwritten_data"
               require "yaml"
 
               instance_eval(&block)
@@ -36,7 +35,7 @@ module PactBroker
               options[:dry_run] = dry_run
 
               start_time = Time.now
-              results = PactBroker::DB::DeleteOverwrittenData.call(database_connection, options)
+              results = PactBroker::Db::DeleteOverwrittenData.call(database_connection, options)
               end_time = Time.now
               elapsed_seconds = (end_time - start_time).to_i
               output "Results (#{elapsed_seconds} seconds)", results

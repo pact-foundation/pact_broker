@@ -1,4 +1,4 @@
-require "pact_broker/matrix/integration_row"
+
 # A "find only" repository for the PactBroker::Matrix::Integration object.
 # The PactBroker::Matrix::Integration object is not a Sequel Model like the PactBroker::Integrations::Integration - it is built from the
 # matrix data specifically for a given matrix query, and as well as the consumer/provider attributes, it also

@@ -1,9 +1,7 @@
-require "pact_broker/ui/controllers/base"
-require "pact_broker/ui/view_models/index_items"
 require "haml"
 
 module PactBroker
-  module UI
+  module Ui
     module Controllers
       class Dashboard < Base
         include PactBroker::Services
@@ -44,7 +42,7 @@ module PactBroker
                           []
                         end
 
-          view_index_items = PactBroker::UI::ViewModels::IndexItems.new(index_items, base_url: base_url, view: view)
+          view_index_items = PactBroker::Ui::ViewModels::IndexItems.new(index_items, base_url: base_url, view: view)
 
           page = :'dashboard/show'
           locals = {

@@ -1,10 +1,9 @@
 require "spec/support/test_data_builder"
-require "pact_broker/domain/order_versions.rb"
 
 describe PactBroker::Domain::OrderVersions do
 
   before do
-    allow(PactBroker.configuration).to receive(:order_versions_by_date).and_return(false)
+    allow(PactBroker::Configuration.configuration).to receive(:order_versions_by_date).and_return(false)
   end
   context "when order_versions_by_date is false (the default)" do
     before do
@@ -25,7 +24,7 @@ describe PactBroker::Domain::OrderVersions do
 
   context "when order_versions_by_date is true (recommended)" do
     before do
-      allow(PactBroker.configuration).to receive(:order_versions_by_date).and_return(true)
+      allow(PactBroker::Configuration.configuration).to receive(:order_versions_by_date).and_return(true)
     end
     let(:consumer) { td.create_consumer.and_return(:consumer) }
     let!(:version_1) { PactBroker::Domain::Version.create(pacticipant_id: consumer.id, number: "2") }

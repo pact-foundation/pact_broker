@@ -2,8 +2,6 @@ require "pact/consumer_contract"
 require "pact/reification"
 require "redcarpet"
 require "pact/doc/markdown/consumer_contract_renderer"
-require "pact_broker/api/pact_broker_urls"
-require "pact_broker/logging"
 require "rack"
 
 module PactBroker
@@ -117,7 +115,7 @@ module PactBroker
         end
 
         def badges_protected?
-          !PactBroker.configuration.enable_public_badge_access
+          !PactBroker::Configuration.configuration.enable_public_badge_access
         end
 
         def base_url

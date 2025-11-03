@@ -1,10 +1,3 @@
-require "pact_broker/matrix/deployment_status_summary"
-require "pact_broker/matrix/matrix_row"
-require "pact_broker/matrix/query_results"
-require "pact_broker/matrix/integration"
-require "pact_broker/matrix/resolved_selector"
-require "pact_broker/matrix/query_results"
-
 
 module PactBroker
   module Matrix

@@ -1,12 +1,11 @@
-require "pact_broker/db/migrate_data"
 
-RSpec.describe PactBroker::DB::MigrateData do
+RSpec.describe PactBroker::Db::MigrateData do
   let(:database_connection) { double("Database Connection") }
   let(:options) { {} }
   let(:logger) { double("debug") }
 
   before do
-    allow(PactBroker::DB::MigrateData).to receive(:logger).and_return(logger)
+    allow(PactBroker::Db::MigrateData).to receive(:logger).and_return(logger)
     described_class.registered_migrations.each do |migration|
       allow(migration).to receive(:call)
     end

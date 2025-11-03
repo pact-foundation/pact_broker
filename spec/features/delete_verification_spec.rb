@@ -1,5 +1,4 @@
 require "support/test_data_builder"
-require "pact_broker/api/pact_broker_urls"
 
 describe "Delete a verification" do
   let!(:verification) do

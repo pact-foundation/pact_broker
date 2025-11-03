@@ -1,10 +1,9 @@
-require "pact_broker/pacts/content"
 
 module PactBroker
-  module DB
+  module Db
     module DataMigrations
       class SetInteractionsCounts
-        # This was never included in PactBroker::DB::MigrateData::MIGRATIONS
+        # This was never included in PactBroker::Db::MigrateData::MIGRATIONS
 
         def self.call(connection)
           self_join = {

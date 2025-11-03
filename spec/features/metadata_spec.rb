@@ -1,5 +1,4 @@
 require "webmock/rspec"
-require "pact_broker/api/pact_broker_urls"
 
 RSpec.describe "passing the pact selection criteria through the verification results to the triggered webhooks" do
   before do

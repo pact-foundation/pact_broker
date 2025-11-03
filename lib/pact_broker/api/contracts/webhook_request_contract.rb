@@ -1,7 +1,3 @@
-require "pact_broker/api/contracts/base_contract"
-require "pact_broker/webhooks/render"
-require "pact_broker/webhooks/check_host_whitelist"
-require "pact_broker/api/contracts/validation_helpers"
 
 module PactBroker
   module Api
@@ -59,28 +55,28 @@ module PactBroker
         end
 
         def allowed_webhook_method?(http_method)
-          PactBroker.configuration.webhook_http_method_whitelist.any? do | allowed_method |
+          PactBroker::Configuration.configuration.webhook_http_method_whitelist.any? do | allowed_method |
             http_method.downcase == allowed_method.downcase
           end
         end
 
         def http_method_error_message
-          if PactBroker.configuration.webhook_http_method_whitelist.size == 1
-            "must be #{PactBroker.configuration.webhook_http_method_whitelist.first}. See /doc/webhooks#whitelist for more information."
+          if PactBroker::Configuration.configuration.webhook_http_method_whitelist.size == 1
+            "must be #{PactBroker::Configuration.configuration.webhook_http_method_whitelist.first}. See /doc/webhooks#whitelist for more information."
           else
-            "must be one of #{PactBroker.configuration.webhook_http_method_whitelist.join(", ")}. See /doc/webhooks#whitelist for more information."
+            "must be one of #{PactBroker::Configuration.configuration.webhook_http_method_whitelist.join(", ")}. See /doc/webhooks#whitelist for more information."
           end
         end
 
         def allowed_webhook_scheme?(url)
           scheme = parse_uri(url).scheme
-          PactBroker.configuration.webhook_scheme_whitelist.any? do | allowed_scheme |
+          PactBroker::Configuration.configuration.webhook_scheme_whitelist.any? do | allowed_scheme |
             scheme.downcase == allowed_scheme.downcase
           end
         end
 
         def scheme_error_message
-          "scheme must be #{PactBroker.configuration.webhook_scheme_whitelist.join(", ")}. See /doc/webhooks#whitelist for more information."
+          "scheme must be #{PactBroker::Configuration.configuration.webhook_scheme_whitelist.join(", ")}. See /doc/webhooks#whitelist for more information."
         end
 
         def parse_uri(uri_string, placeholder = "placeholder")
@@ -96,11 +92,11 @@ module PactBroker
         end
 
         def host_whitelist
-          PactBroker.configuration.webhook_host_whitelist
+          PactBroker::Configuration.configuration.webhook_host_whitelist
         end
 
         def host_error_message
-          "host must be in the whitelist #{PactBroker.configuration.webhook_host_whitelist.collect(&:inspect).join(", ")}. See /doc/webhooks#whitelist for more information."
+          "host must be in the whitelist #{PactBroker::Configuration.configuration.webhook_host_whitelist.collect(&:inspect).join(", ")}. See /doc/webhooks#whitelist for more information."
         end
 
         def valid_webhook_url?(url)

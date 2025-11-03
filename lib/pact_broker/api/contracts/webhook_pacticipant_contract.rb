@@ -1,4 +1,3 @@
-require "pact_broker/api/contracts/base_contract"
 
 module PactBroker
   module Api

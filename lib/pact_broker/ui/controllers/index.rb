@@ -1,10 +1,7 @@
-require "pact_broker/ui/controllers/base"
-require "pact_broker/ui/view_models/index_items"
-require "pact_broker/string_refinements"
 require "haml"
 
 module PactBroker
-  module UI
+  module Ui
     module Controllers
       class Index < Base
         include PactBroker::Services
@@ -33,7 +30,7 @@ module PactBroker
             error_messages << "No pacticipants found matching: \"#{search}\""
           end
 
-          view_index_items = PactBroker::UI::ViewModels::IndexItems.new(index_items, base_url: base_url)
+          view_index_items = PactBroker::Ui::ViewModels::IndexItems.new(index_items, base_url: base_url)
 
           page = tags ? :'index/show-with-tags' : :'index/show'
           locals = {

@@ -1,4 +1,3 @@
-require "pact_broker/api/decorators/base_decorator"
 
 # Decorates the individual validation error message Dry::Validation::Message
 

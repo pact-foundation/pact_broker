@@ -1,10 +1,9 @@
-require "pact_broker/db/delete_overwritten_data"
 
 module PactBroker
-  module DB
-    describe DeleteOverwrittenData, skip: !!DB.mysql? do
+  module Db
+    describe DeleteOverwrittenData, skip: !!Db.mysql? do
       describe ".call" do
-        let(:db) { PactBroker::DB.connection }
+        let(:db) {PactBroker::Db.connection }
         let(:max_age) { nil }
         let(:dry_run) { nil }
         let(:limit) { nil }

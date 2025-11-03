@@ -3,7 +3,6 @@ require "sequel/connection_pool/threaded"
 require "yaml"
 require "pact_broker/logging"
 require "erb"
-require "pact_broker/project_root"
 require "fileutils"
 
 module PactBroker
@@ -66,7 +65,7 @@ module PactBroker
     end
 
     def self.configuration_for_env env
-      database_yml = PactBroker.project_root.join("config","database.yml")
+      database_yml = PactBroker::ProjectRoot.path.join("config","database.yml")
       config = YAML.load(ERB.new(File.read(database_yml)).result, aliases: true)
       config.fetch(env).fetch(ENV.fetch("DATABASE_ADAPTER","default"))
     end

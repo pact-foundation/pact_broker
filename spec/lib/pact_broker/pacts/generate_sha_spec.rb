@@ -1,4 +1,3 @@
-require "pact_broker/pacts/generate_sha"
 
 module PactBroker
   module Pacts
@@ -53,7 +52,7 @@ module PactBroker
 
         context "when equality is based on the verifiable content only" do
           before do
-            PactBroker.configuration.base_equality_only_on_content_that_affects_verification_results = true
+            PactBroker::Configuration.configuration.base_equality_only_on_content_that_affects_verification_results = true
           end
 
           it "sorts the content" do

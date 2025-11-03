@@ -1,7 +1,6 @@
-require "pact_broker/db/data_migrations/set_interactions_counts"
 
 module PactBroker
-  module DB
+  module Db
     module DataMigrations
       describe SetInteractionsCounts do
         describe ".call" do

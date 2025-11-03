@@ -1,7 +1,4 @@
 require "dry-validation"
-require "pact_broker/messages"
-require "pact_broker/project_root"
-require "pact_broker/string_refinements"
 
 module PactBroker
   module Api

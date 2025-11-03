@@ -1,4 +1,3 @@
-require "pact_broker/api/contracts/dry_validation_errors_formatter"
 
 module PactBroker
   module Test

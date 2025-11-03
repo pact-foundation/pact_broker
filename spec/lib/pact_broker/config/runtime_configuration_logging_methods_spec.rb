@@ -1,4 +1,3 @@
-require "pact_broker/config/runtime_configuration_logging_methods"
 
 module PactBroker
   module Config

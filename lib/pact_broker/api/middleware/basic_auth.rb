@@ -1,6 +1,4 @@
 require "rack"
-require "pact_broker/hash_refinements"
-require "pact_broker/string_refinements"
 
 module PactBroker
   module Api

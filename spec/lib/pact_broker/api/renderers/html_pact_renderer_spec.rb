@@ -1,4 +1,3 @@
-require "pact_broker/api/renderers/html_pact_renderer"
 require "timecop"
 
 module PactBroker
@@ -9,7 +8,7 @@ module PactBroker
         before do
           ENV["BACKUP_TZ"] = ENV["TZ"]
           ENV["TZ"] = "Australia/Melbourne"
-          PactBroker.configuration.enable_public_badge_access = true
+          PactBroker::Configuration.configuration.enable_public_badge_access = true
           allow(PactBroker::Api::PactBrokerUrls).to receive(:pact_url).with("http://base", pact).and_return(pact_url)
           allow(PactBroker::Api::PactBrokerUrls).to receive(:matrix_for_pact_url).with(pact, "http://base").and_return(matrix_url)
           allow_any_instance_of(HtmlPactRenderer).to receive(:logger).and_return(logger)
@@ -100,7 +99,7 @@ module PactBroker
 
           context "when enable_public_badge_access is false" do
             before do
-              PactBroker.configuration.enable_public_badge_access = false
+              PactBroker::Configuration.configuration.enable_public_badge_access = false
             end
 
             it "renders a message instructing the user to turn public access on" do

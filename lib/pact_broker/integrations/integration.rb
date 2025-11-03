@@ -1,9 +1,3 @@
-require "pact_broker/dataset"
-require "pact_broker/verifications/pseudo_branch_status"
-require "pact_broker/domain/verification"
-require "pact_broker/webhooks/latest_triggered_webhook"
-require "pact_broker/webhooks/webhook"
-require "pact_broker/verifications/latest_verification_for_consumer_and_provider"
 
 module PactBroker
   module Integrations

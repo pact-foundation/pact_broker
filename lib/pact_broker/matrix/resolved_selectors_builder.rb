@@ -1,4 +1,3 @@
-require "pact_broker/matrix/selector_resolver"
 
 # Builds the array of ResolvedSelector objects using the
 # ignore selectors, the specified selectors, and the inferred integrations.

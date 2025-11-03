@@ -1,8 +1,4 @@
-require "pact_broker/deployments/environment"
 require "securerandom"
-require "pact_broker/pacticipants/generate_display_name"
-require "pact_broker/string_refinements"
-require "pact_broker/repositories/scopes"
 
 module PactBroker
   module Deployments
@@ -56,7 +52,7 @@ module PactBroker
       end
 
       def scope_for(scope)
-        PactBroker.policy_scope!(scope)
+        PactBroker::Policies.policy_scope!(scope)
       end
     end
   end

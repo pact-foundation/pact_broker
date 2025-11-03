@@ -1,8 +1,7 @@
-require "pact_broker/ui/controllers/clusters"
 require "rack/test"
 
 module PactBroker
-  module UI
+  module Ui
     module Controllers
       describe Clusters do
 

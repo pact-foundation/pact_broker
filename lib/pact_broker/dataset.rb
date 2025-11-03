@@ -1,5 +1,4 @@
 require "sequel"
-require "pact_broker/dataset/page"
 
 Sequel.extension :escaped_like
 
@@ -31,7 +30,7 @@ module PactBroker
     end
 
     def name_like column_name, value
-      if PactBroker.configuration.use_case_sensitive_resource_names
+      if PactBroker::Configuration.configuration.use_case_sensitive_resource_names
         if mysql?
           # sigh, mysql, this is the only way to perform a case sensitive search
           Sequel.like(column_name, value.gsub("_", "\\_"), { case_insensitive: false })
@@ -108,7 +107,7 @@ module Sequel
   # For matching identifying names based on the :use_case_sensitive_resource_names config setting.
   # This has been used inconsistently, and in the next major version, support for case insensitive names will be dropped.
   def self.name_like(column_name, value)
-    if PactBroker.configuration.use_case_sensitive_resource_names
+    if PactBroker::Configuration.configuration.use_case_sensitive_resource_names
       if PactBroker::Dataset::Helpers.mysql?
         # sigh, mysql, this is the only way to perform a case sensitive search
         Sequel.like(column_name, PactBroker::Dataset::Helpers.escape_wildcards(value), { case_insensitive: false })

@@ -1,9 +1,4 @@
 require "dry-validation"
-require "pact_broker/api/contracts/dry_validation_macros"
-require "pact_broker/api/contracts/dry_validation_methods"
-require "pact_broker/api/contracts/dry_validation_errors_formatter"
-require "pact_broker/messages"
-require "pact_broker/hash_refinements"
 
 module PactBroker
   module Api
