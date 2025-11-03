@@ -26,13 +26,6 @@ module PactBroker
 
     # TODO pass in configuration
     def self.default_application_context(overrides = {})
-      require "pact_broker/api/decorators/configuration"
-      require "pact_broker/api/contracts/configuration"
-      require "pact_broker/api/decorators/decorator_context_creator"
-      require "pact_broker/webhooks/execution_configuration_creator"
-      require "pact_broker/errors/error_logger"
-      require "pact_broker/errors/error_reporter"
-      require "pact_broker/api/resources/error_response_generator"
 
       params = {
         decorator_configuration: PactBroker::Api::Decorators::Configuration.default_configuration,
@@ -40,7 +33,7 @@ module PactBroker
         decorator_context_creator: PactBroker::Api::Decorators::DecoratorContextCreator,
         webhook_execution_configuration_creator: PactBroker::Webhooks::ExecutionConfigurationCreator,
         error_logger: PactBroker::Errors::ErrorLogger,
-        error_reporter: PactBroker::Errors::ErrorReporter.new(PactBroker.configuration.api_error_reporters),
+        error_reporter: PactBroker::Errors::ErrorReporter.new(PactBroker::Configuration.configuration.api_error_reporters),
         error_response_generator: PactBroker::Api::Resources::ErrorResponseGenerator,
       }.merge(overrides)
 

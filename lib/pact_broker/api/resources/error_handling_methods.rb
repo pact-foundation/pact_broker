@@ -1,5 +1,3 @@
-require "pact_broker/api/decorators/validation_errors_problem_json_decorator"
-require "pact_broker/api/decorators/custom_error_problem_json_decorator"
 
 module PactBroker
   module Api

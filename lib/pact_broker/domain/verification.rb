@@ -1,6 +1,4 @@
-require "pact_broker/dataset"
 require "json"
-require "pact_broker/pacts/content"
 require "sequel/extensions/symbol_aref_refinement"
 
 module PactBroker
@@ -131,7 +129,7 @@ module PactBroker
         end
 
         def delete
-          require "pact_broker/webhooks/triggered_webhook"
+          
           PactBroker::Webhooks::TriggeredWebhook.where(verification: self).delete
           super
         end

@@ -1,9 +1,4 @@
 require "ostruct"
-require "pact_broker/api/pact_broker_urls"
-require "pact_broker/api/decorators/reason_decorator"
-require "pact_broker/api/decorators/format_date_time"
-require "pact_broker/api/decorators/embedded_branch_version_decorator"
-require "pact_broker/api/decorators/embedded_environment_decorator"
 
 module PactBroker
   module Api

@@ -8,16 +8,16 @@ module PactBroker
         include Webmachine::Resource::Authentication
 
         def authenticated? resource, authorization_header
-          return true unless PactBroker.configuration.authentication_configured?
+          return true unless PactBroker::Configuration.configuration.authentication_configured?
 
-          if PactBroker.configuration.authenticate
-            authorized = PactBroker.configuration.authenticate.call(resource, authorization_header, {})
+          if PactBroker::Configuration.configuration.authenticate
+            authorized = PactBroker::Configuration.configuration.authenticate.call(resource, authorization_header, {})
             return true if authorized
           end
 
-          if PactBroker.configuration.authenticate_with_basic_auth
+          if PactBroker::Configuration.configuration.authenticate_with_basic_auth
             basic_auth(authorization_header, "Pact Broker") do |username, password|
-              authorized = PactBroker.configuration.authenticate_with_basic_auth.call(resource, username, password, {})
+              authorized = PactBroker::Configuration.configuration.authenticate_with_basic_auth.call(resource, username, password, {})
               return true if authorized
             end
           end

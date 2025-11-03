@@ -1,4 +1,3 @@
-require "pact_broker/webhooks/status"
 
 module PactBroker
   module Webhooks

@@ -7,7 +7,7 @@
 require "delegate"
 
 module PactBroker
-  module DB
+  module Db
     class LogQuietener < SimpleDelegator
       def error *args
         if error_is_about_table_not_existing?(args)

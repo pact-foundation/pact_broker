@@ -1,7 +1,3 @@
-require "pact_broker/dataset"
-require "pact_broker/webhooks/execution"
-require "pact_broker/hash_refinements"
-
 # Represents the relationship between a webhook and the event and object
 # that caused it to be triggered. eg a pact publication
 
@@ -25,7 +21,6 @@ module PactBroker
         include PactBroker::Dataset
 
         def delete
-          require "pact_broker/webhooks/execution"
           PactBroker::Webhooks::Execution.where(triggered_webhook: self).delete
           super
         end
@@ -109,7 +104,7 @@ module PactBroker
         if finished?
           0
         else
-          (PactBroker.configuration.webhook_retry_schedule.size + 1) - number_of_attempts_made
+          (PactBroker::Configuration.configuration.webhook_retry_schedule.size + 1) - number_of_attempts_made
         end
       end
     end

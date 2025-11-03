@@ -1,6 +1,3 @@
-require "pact_broker/configuration"
-require "pact_broker/db/models"
-require "pact_broker/api/decorators/format_date_time"
 
 module PactBroker
   module Metrics

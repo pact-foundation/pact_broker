@@ -1,4 +1,3 @@
-require "pact_broker/services"
 
 module PactBroker
   class BuildHttpOptions

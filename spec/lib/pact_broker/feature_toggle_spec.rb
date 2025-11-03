@@ -1,4 +1,3 @@
-require "pact_broker/feature_toggle"
 require "anyway/testing/helpers"
 
 module PactBroker

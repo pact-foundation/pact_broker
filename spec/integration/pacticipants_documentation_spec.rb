@@ -1,6 +1,5 @@
 require "timecop"
 require "tzinfo"
-require "pact_broker/api"
 
 PACTICIPANT_TESTED_DOCUMENTATION_PATHS = []
 PACTICIPANTS_NO_DOCUMENTATION = %w[
@@ -13,8 +12,8 @@ PACTICIPANT_ROUTES_REQURING_A_DOCUMENTATION_TEST = PactBroker.routes
 RSpec.describe "pacticipant routes" do
   before do
     Timecop.freeze(Time.new(2021, 9, 1, 10, 7, 21, TZInfo::Timezone.get("Australia/Melbourne")))
-    allow(PactBroker.configuration).to receive(:user_agent).and_return("Pact Broker")
-    allow(PactBroker.configuration).to receive(:base_urls).and_return(["http://pact-broker"])
+    allow(PactBroker::Configuration.configuration).to receive(:user_agent).and_return("Pact Broker")
+    allow(PactBroker::Configuration.configuration).to receive(:base_urls).and_return(["http://pact-broker"])
     td.create_consumer("foo")
       .create_provider("bar")
       .create_consumer_version("3e1f00a04")

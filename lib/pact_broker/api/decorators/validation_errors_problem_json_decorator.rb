@@ -1,6 +1,4 @@
 # Formats a nested Hash of errors into application/problem+json format.
-require "pact_broker/string_refinements"
-
 module PactBroker
   module Api
     module Decorators

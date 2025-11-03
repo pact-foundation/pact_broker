@@ -4,7 +4,7 @@ require "rake/tasklib"
 
 require 'pact_broker/tasks'
 
-PactBroker::DB::VersionTask.new do | task |
+PactBroker::Db::VersionTask.new do | task |
   require 'my_app/db'
   task.database_connection = MyApp::DB
 end
@@ -12,7 +12,7 @@ end
 =end
 
 module PactBroker
-  module DB
+  module Db
     class VersionTask < ::Rake::TaskLib
 
       attr_accessor :database_connection
@@ -27,8 +27,7 @@ module PactBroker
             desc "Display the current database migration version"
             task :version do
               instance_eval(&block)
-              require "pact_broker/db/version"
-              puts PactBroker::DB::Version.call(database_connection)
+              puts PactBroker::Db::Version.call(database_connection)
             end
           end
         end

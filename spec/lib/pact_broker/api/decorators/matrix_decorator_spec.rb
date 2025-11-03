@@ -1,8 +1,4 @@
-require "pact_broker/api/decorators/matrix_decorator"
-require "pact_broker/matrix/query_results_with_deployment_status_summary"
-require "pact_broker/matrix/deployment_status_summary"
-require "pact_broker/matrix/matrix_row"
-
+ 
 module PactBroker
   module Api
     module Decorators

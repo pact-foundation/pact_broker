@@ -1,4 +1,3 @@
-require "pact_broker/integrations/integration"
 
 module PactBroker
   module Integrations

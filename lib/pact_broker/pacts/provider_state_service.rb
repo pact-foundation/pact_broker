@@ -1,8 +1,3 @@
-require "pact_broker/services"
-require "pact_broker/pacts/selectors"
-require "pact_broker/pacts/pact_publication"
-require "pact_broker/repositories"
-
 
 module PactBroker
   module Pacts

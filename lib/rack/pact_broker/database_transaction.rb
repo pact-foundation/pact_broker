@@ -52,7 +52,7 @@ module Rack
       end
 
       def do_not_rollback? response
-        response[1].delete(::PactBroker::DO_NOT_ROLLBACK)
+        response[1].delete(::PactBroker::Constants::DO_NOT_ROLLBACK)
       end
     end
   end

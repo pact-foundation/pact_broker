@@ -1,5 +1,3 @@
-require "pact_broker/webhooks/event_listener"
-require "pact_broker/events/subscriber"
 
 module PactBroker
   module Api
@@ -7,7 +5,7 @@ module PactBroker
       module WebhookExecutionMethods
         def handle_webhook_events(event_context = {})
           @webhook_event_listener = PactBroker::Webhooks::EventListener.new(webhook_options(event_context))
-          PactBroker::Events.subscribe(webhook_event_listener) do
+          Events::Subscriber.subscribe(webhook_event_listener) do
             yield
           end
         end

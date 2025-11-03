@@ -1,4 +1,3 @@
-require "pact_broker/api/resources/can_i_deploy"
 
 module PactBroker
   module Api

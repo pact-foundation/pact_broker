@@ -1,8 +1,7 @@
 require "sequel"
-require "pact_broker/messages"
 
 module PactBroker
-  module DB
+  module Db
     class ConnectionConfigurationError < StandardError; end
     class ValidateEncoding
       extend PactBroker::Messages

@@ -1,5 +1,3 @@
-require "pact_broker/diagnostic/resources/heartbeat"
-require "pact_broker/diagnostic/app"
 require "rack/test"
 
 module PactBroker

@@ -1,5 +1,5 @@
 module PactBroker
-  module DB
+  module Db
     class Version
       def self.call database_connection
         if database_connection.tables.include?(:schema_migrations)

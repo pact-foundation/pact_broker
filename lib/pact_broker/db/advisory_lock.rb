@@ -1,4 +1,3 @@
-require "pact_broker/logging"
 
 # Uses a Postgres advisory lock to ensure that a given block of code can only have ONE
 # thread in excution at a time against a given database.
@@ -13,7 +12,7 @@ require "pact_broker/logging"
 #
 
 module PactBroker
-  module DB
+  module Db
     class AdvisoryLock
       include PactBroker::Logging
 

@@ -1,4 +1,3 @@
-require "pact_broker/domain/index_item"
 
 module PactBroker
   module Domain

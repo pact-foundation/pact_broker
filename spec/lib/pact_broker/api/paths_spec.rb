@@ -1,4 +1,3 @@
-require "pact_broker/api/paths"
 
 module PactBroker
   module Api

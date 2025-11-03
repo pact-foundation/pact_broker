@@ -1,4 +1,3 @@
-require "pact_broker/verifications/summary_for_consumer_version"
 
 module PactBroker
   module Verifications

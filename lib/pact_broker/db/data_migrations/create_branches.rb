@@ -1,7 +1,6 @@
-require "pact_broker/db/data_migrations/helpers"
 
 module PactBroker
-  module DB
+  module Db
     module DataMigrations
       class CreateBranches
         extend Helpers

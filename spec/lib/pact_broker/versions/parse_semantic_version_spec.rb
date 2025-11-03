@@ -1,4 +1,3 @@
-require "pact_broker/versions/parse_semantic_version"
 
 module PactBroker
   module Versions

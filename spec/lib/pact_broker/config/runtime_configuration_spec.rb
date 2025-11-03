@@ -1,4 +1,3 @@
-require "pact_broker/config/runtime_configuration"
 require "anyway/testing/helpers"
 
 module PactBroker

@@ -1,4 +1,3 @@
-require "pact_broker/pacts/sort_content"
 
 module PactBroker
   module Pacts

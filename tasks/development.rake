@@ -34,7 +34,7 @@ task :'pact_broker:routes', [:search_term] do | _t, args |
     CONNECTION = Sequel.connect({ adapter: "sqlite", database: f.path, encoding: "utf8", sql_log_level: :debug })
 
     require "pact_broker/db"
-    PactBroker::DB.run_migrations(CONNECTION)
+   PactBroker::Db.run_migrations(CONNECTION)
 
     require "pact_broker/api"
     require "webmachine/describe_routes"

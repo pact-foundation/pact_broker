@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "uri"
-require "pact_broker/messages"
 
 
 # This class is for https://github.com/pact-foundation/pact_broker/issues/101

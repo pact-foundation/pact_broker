@@ -1,4 +1,3 @@
-require "pact_broker/api/resources/error_handling_methods"
 
 module PactBroker
   module Api

@@ -1,4 +1,3 @@
-require "pact_broker/api/decorators/format_date_time"
 
 RSpec::Matchers.define :be_datey do |_expected|
   match do |actual|

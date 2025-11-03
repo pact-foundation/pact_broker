@@ -1,6 +1,3 @@
-require "pact_broker/services"
-require "pact_broker/api/decorators/version_decorator"
-require "pact_broker/api/resources/base_resource"
 
 module PactBroker
   module Api

@@ -1,5 +1,4 @@
 require "i18n"
-require "pact_broker/api/pact_broker_urls"
 
 I18n.config.load_path << File.expand_path("../locale/en.yml", __FILE__)
 

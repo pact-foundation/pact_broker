@@ -1,10 +1,9 @@
-require "pact_broker/app"
 
 module PactBroker
   describe App do
 
     before do
-      allow(PactBroker::DB).to receive(:run_migrations)
+      allow(PactBroker::Db).to receive(:run_migrations)
     end
 
     class TestApp < PactBroker::App
@@ -15,7 +14,7 @@ module PactBroker
 
     let(:app) do
       TestApp.new do | configuration |
-        configuration.database_connection = PactBroker::DB.connection
+        configuration.database_connection =PactBroker::Db.connection
       end
     end
 
@@ -55,8 +54,8 @@ module PactBroker
     describe "before_resource and after_resource" do
       CALLBACKS = []
       before do
-        PactBroker.configuration.before_resource { | _resource | CALLBACKS << "before" }
-        PactBroker.configuration.after_resource { | _resource | CALLBACKS << "after" }
+        PactBroker::Configuration.configuration.before_resource { | _resource | CALLBACKS << "before" }
+        PactBroker::Configuration.configuration.after_resource { | _resource | CALLBACKS << "after" }
       end
 
       it "executes the callbacks" do
@@ -71,7 +70,7 @@ module PactBroker
         get "/", nil, { "HTTP_ACCEPT" => "text/html" }
       end
 
-      context "when the UI returns a non 404 response" do
+      context "when the Ui returns a non 404 response" do
         let(:custom_ui) { double("ui", call: [200, {}, ["hello"]]) }
 
         it "returns the given page" do
@@ -79,7 +78,7 @@ module PactBroker
         end
       end
 
-      context "when the UI returns a 404 response" do
+      context "when the Ui returns a 404 response" do
         let(:custom_ui) { double("ui", call: [404, {}, []]) }
 
         it "passes on the call to the rest of the app" do
@@ -140,7 +139,7 @@ module PactBroker
       end
 
       describe "use_ui_auth" do
-        it "allows the UI to be protected" do
+        it "allows the Ui to be protected" do
           app.use_ui_auth TestAuth
 
           basic_authorize "foo", "bar"
@@ -170,7 +169,7 @@ module PactBroker
         let(:test_auth_1) { instance_double("TestAuth1", call: [404, {}, []]) }
         let(:test_auth_2) { instance_double("TestAuth2", call: [404, {}, []]) }
 
-        it "calls the UI auth before the API auth" do
+        it "calls the Ui auth before the API auth" do
           expect(test_auth_1).to receive(:call).ordered
           expect(test_auth_2).to receive(:call).ordered
           app.use_ui_auth TestAuth1
@@ -182,7 +181,7 @@ module PactBroker
 
     describe "authenticate" do
       before do
-        PactBroker.configuration.authenticate do | _resource, authorization_header, _options |
+        PactBroker::Configuration.configuration.authenticate do | _resource, authorization_header, _options |
           authorization_header == "letmein"
         end
       end
@@ -204,7 +203,7 @@ module PactBroker
 
     describe "authenticate_with_basic_auth" do
       before do
-        PactBroker.configuration.authenticate_with_basic_auth do | _resource, username, password, _options |
+        PactBroker::Configuration.configuration.authenticate_with_basic_auth do | _resource, username, password, _options |
           username == "username" && password == "password"
         end
       end
@@ -217,7 +216,7 @@ module PactBroker
         end
       end
 
-      context "with a request for the UI with incorrect username or password" do
+      context "with a request for the Ui with incorrect username or password" do
         it "returns a 401" do
           basic_authorize "foo", "password"
           get "/", nil, {"HTTP_ACCEPT" => "text/html"}
@@ -241,7 +240,7 @@ module PactBroker
         end
       end
 
-      context "with a request for the UI with correct username or password" do
+      context "with a request for the Ui with correct username or password" do
         it "returns a 200" do
           basic_authorize "username", "password"
           get "/", nil, {"HTTP_ACCEPT" => "text/html"}
@@ -260,7 +259,7 @@ module PactBroker
 
     describe "authorize" do
       before do
-        PactBroker.configuration.authorize do | resource, _options |
+        PactBroker::Configuration.configuration.authorize do | resource, _options |
           resource.request.headers["Role"] == "important"
         end
       end
@@ -272,7 +271,7 @@ module PactBroker
         end
       end
 
-      context "with a request for the UI with an authorized request" do
+      context "with a request for the Ui with an authorized request" do
         it "returns a 200" do
           get "/", nil, {"HTTP_ACCEPT" => "text/html", "HTTP_ROLE" => "important"}
           expect(last_response.status).to eq 200
@@ -293,8 +292,8 @@ module PactBroker
         end
       end
 
-      context "with a request for the UI with an unauthorized request" do
-        it "returns a 200 because there's no point doing authorization on the UI at the moment" do
+      context "with a request for the Ui with an unauthorized request" do
+        it "returns a 200 because there's no point doing authorization on the Ui at the moment" do
           get "/", nil, {"HTTP_ACCEPT" => "text/html"}
           expect(last_response.status).to eq 200
         end

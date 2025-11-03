@@ -1,4 +1,3 @@
-require "pact_broker/diagnostic/resources/base_resource"
 
 module PactBroker
   module Diagnostic

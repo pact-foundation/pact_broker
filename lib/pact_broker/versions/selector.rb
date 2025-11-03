@@ -1,5 +1,3 @@
-require "pact_broker/pacts/selector"
-require "pact_broker/hash_refinements"
 
 module PactBroker
   module Versions

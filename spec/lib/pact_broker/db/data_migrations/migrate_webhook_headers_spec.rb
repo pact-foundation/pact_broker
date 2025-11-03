@@ -1,7 +1,6 @@
-require "pact_broker/db/data_migrations/migrate_webhook_headers"
 
 module PactBroker
-  module DB
+  module Db
     module DataMigrations
       describe MigrateWebhookHeaders, migration: true do
         describe ".call" do

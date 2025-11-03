@@ -1,5 +1,3 @@
-require "pact_broker/config/runtime_configuration_logging_methods"
-require "pact_broker/string_refinements"
 
 module PactBroker
   module Config

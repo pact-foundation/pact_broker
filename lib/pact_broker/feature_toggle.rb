@@ -1,4 +1,3 @@
-require "pact_broker/config/runtime_configuration"
 
 module PactBroker
   class FeatureToggle
@@ -15,7 +14,11 @@ module PactBroker
     end
 
     def self.feature_in_env_var?(feature)
-      PactBroker.configuration.features[feature.to_s.downcase.to_sym] == true
+      PactBroker::Configuration.configuration.features[feature.to_s.downcase.to_sym] == true
+    end
+
+    def self.feature_enabled?(feature, ignore_env = false)
+      FeatureToggle.enabled?(feature, ignore_env)
     end
   end
 

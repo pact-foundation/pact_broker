@@ -1,5 +1,4 @@
 require "spec/support/test_data_builder"
-require "pact_broker/pacts/merger"
 require "json"
 
 module PactBroker

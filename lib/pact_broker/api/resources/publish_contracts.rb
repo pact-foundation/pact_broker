@@ -1,8 +1,3 @@
-require "pact_broker/api/resources/base_resource"
-require "pact_broker/api/resources/webhook_execution_methods"
-require "pact_broker/contracts/contracts_to_publish"
-require "pact_broker/api/contracts/publish_contracts_schema"
-require "pact_broker/pacts/parse"
 
 module PactBroker
   module Api
@@ -53,7 +48,7 @@ module PactBroker
         private
 
         def parsed_contracts
-          @parsed_contracts ||= decorator_class(:publish_contracts_decorator).new(PactBroker::Contracts::ContractsToPublish.new).from_hash(params, { user_options: { sha_generator: PactBroker.configuration.sha_generator } } )
+          @parsed_contracts ||= decorator_class(:publish_contracts_decorator).new(PactBroker::Contracts::ContractsToPublish.new).from_hash(params, { user_options: { sha_generator: PactBroker::Configuration.configuration.sha_generator } } )
         end
 
         def params

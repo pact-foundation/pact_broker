@@ -1,6 +1,4 @@
-require "pact_broker/diagnostic/resources/heartbeat"
-require "pact_broker/diagnostic/resources/dependencies"
-require "webmachine/adapters/rack3_adapter"
+require "webmachine/adapters/rack3"
 
 module PactBroker
   module Diagnostic

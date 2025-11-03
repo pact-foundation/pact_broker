@@ -1,5 +1,3 @@
-require "pact_broker/matrix/matrix_row"
-require "pact_broker/matrix/resolved_selector"
 
 module PactBroker
   module Matrix

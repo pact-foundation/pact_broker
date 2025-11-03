@@ -1,5 +1,3 @@
-require "pact_broker/pacts/selectors"
-require "pact_broker/pacts/selector"
 
 module PactBroker
   module Pacts

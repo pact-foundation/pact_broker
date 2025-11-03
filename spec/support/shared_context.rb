@@ -1,4 +1,3 @@
-require "pact_broker/test/test_data_builder"
 
 RSpec.shared_context "stubbed services" do
   let(:pact_service) { class_double("PactBroker::Pacts::Service").as_stubbed_const }

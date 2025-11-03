@@ -1,4 +1,3 @@
-require "pact_broker/app"
 require "support/test_database"
 
 module PactBroker

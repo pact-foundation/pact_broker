@@ -1,4 +1,3 @@
-require "pact_broker/api/resources/base_resource"
 
 module PactBroker
   module Api

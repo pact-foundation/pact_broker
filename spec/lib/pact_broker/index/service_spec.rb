@@ -1,4 +1,3 @@
-require "pact_broker/index/service"
 
 module PactBroker
   module Index

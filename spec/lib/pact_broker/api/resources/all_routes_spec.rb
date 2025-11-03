@@ -3,9 +3,6 @@
 # This test will fail when a new resource is added that does not either have a policy_record which returns an object,
 # or has not been explicitly ignored in the spec/support/all_routes_spec_support.yml file.
 
-require "pact_broker/api"
-require "pact_broker/pacts/generate_sha"
-
 PACT_CONTENT = TestDataBuilder.new.fixed_json_content("foo", "bar", "1")
 PACT_VERSION_SHA = PactBroker::Pacts::GenerateSha.call(PACT_CONTENT)
 

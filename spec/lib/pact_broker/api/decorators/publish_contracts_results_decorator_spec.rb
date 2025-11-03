@@ -1,6 +1,3 @@
-require "pact_broker/api/decorators/publish_contracts_results_decorator"
-require "pact_broker/contracts/contracts_publication_results"
-require "pact_broker/contracts/notice"
 
 module PactBroker
   module Api

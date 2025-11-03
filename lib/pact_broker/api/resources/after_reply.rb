@@ -1,4 +1,3 @@
-require "pact_broker/async/after_reply"
 
 module PactBroker
   module Api

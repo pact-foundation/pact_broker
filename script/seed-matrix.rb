@@ -12,10 +12,9 @@ DATABASE_CREDENTIALS = {logger: Logger.new($stdout), adapter: "sqlite", database
 connection = Sequel.connect(DATABASE_CREDENTIALS)
 connection.timezone = :utc
 require "pact_broker/db"
-PactBroker::DB.connection = connection
+PactBroker::Db.connection = connection
 require "pact_broker"
 require "support/test_data_builder"
-
 require "database/table_dependency_calculator"
 PactBroker::Database::TableDependencyCalculator.call(connection).each do | table_name |
   connection[table_name].delete

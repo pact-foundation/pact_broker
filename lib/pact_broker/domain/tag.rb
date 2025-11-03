@@ -1,5 +1,3 @@
-require "pact_broker/dataset"
-require "pact_broker/tags/eager_loaders"
 
 module PactBroker
   module Domain

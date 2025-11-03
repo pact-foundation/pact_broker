@@ -1,7 +1,6 @@
-require "pact_broker/db/data_migrations/set_consumer_ids_for_pact_publications"
 
 module PactBroker
-  module DB
+  module Db
     module DataMigrations
       describe SetConsumerIdsForPactPublications, migration: true do
         describe ".call" do

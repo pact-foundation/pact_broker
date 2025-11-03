@@ -12,7 +12,7 @@ module PactBroker
         if @unscoped == true
           scope
         else
-          PactBroker.policy_scope!(scope)
+          PactBroker::Policies.policy_scope!(scope)
         end
       end
 

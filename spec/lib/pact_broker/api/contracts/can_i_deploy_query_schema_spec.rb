@@ -1,5 +1,3 @@
-require "pact_broker/api/contracts/can_i_deploy_query_schema"
-require "pact_broker/api/contracts/dry_validation_errors_formatter"
 
 module PactBroker
   module Api

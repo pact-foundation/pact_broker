@@ -1,7 +1,6 @@
-require "pact_broker/ui/controllers/can_i_deploy"
 
 module PactBroker
-  module UI
+  module Ui
     module Controllers
       describe CanIDeploy do
 

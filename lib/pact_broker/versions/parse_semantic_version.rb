@@ -1,12 +1,11 @@
 require "semver"
-require "pact_broker/configuration"
 
 module PactBroker
   module Versions
     class ParseSemanticVersion
 
       def self.call string_version
-        PactBroker.configuration.semver_formats.each do |semver_format|
+        PactBroker::Configuration.configuration.semver_formats.each do |semver_format|
           parsed_version = ::SemVer.parse(string_version, semver_format)
           return SemVerWrapper.new(parsed_version, semver_format) unless parsed_version.nil?
         end

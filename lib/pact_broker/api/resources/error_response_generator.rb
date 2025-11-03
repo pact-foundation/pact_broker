@@ -1,8 +1,3 @@
-require "pact_broker/configuration"
-require "pact_broker/api/decorators/runtime_error_problem_json_decorator"
-require "pact_broker/errors"
-require "pact_broker/messages"
-
 # Generates the response headers and body for use when there is a runtime
 # error in the business logic (services and repositories) when executing a Webmachine resource request.
 # Obfuscates any exception messages that might expose vulnerablities in production.
@@ -30,7 +25,7 @@ module PactBroker
         def self.display_message(error, message, obfuscated_message)
           if message
             message
-          elsif PactBroker.configuration.show_backtrace_in_error_response?
+          elsif PactBroker::Configuration.configuration.show_backtrace_in_error_response?
             error.message || obfuscated_message
           else
             PactBroker::Errors.reportable_error?(error) ? obfuscated_message : error.message
@@ -52,7 +47,7 @@ module PactBroker
               reference: error_reference
             }
           }
-          if PactBroker.configuration.show_backtrace_in_error_response?
+          if PactBroker::Configuration.configuration.show_backtrace_in_error_response?
             response_body[:error][:backtrace] = error.backtrace
           end
           response_body

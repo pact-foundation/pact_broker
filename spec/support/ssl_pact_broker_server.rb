@@ -30,7 +30,7 @@ if __FILE__ == $0
     config.logger = ::Logger.new($stdout)
     config.logger.level = ::Logger::INFO
     config.auto_migrate_db = true
-    config.database_connection = Sequel.connect(DATABASE_CREDENTIALS.merge(:logger => PactBroker::DB::LogQuietener.new(Logger.new(StringIO.new))))
+    config.database_connection = Sequel.connect(DATABASE_CREDENTIALS.merge(:logger => PactBroker::Db::LogQuietener.new(Logger.new(StringIO.new))))
   end
 
   require "webrick"

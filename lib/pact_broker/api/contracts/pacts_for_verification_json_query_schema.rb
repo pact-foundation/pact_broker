@@ -1,6 +1,3 @@
-require "pact_broker/api/contracts/base_contract"
-require "pact_broker/api/contracts/consumer_version_selector_contract"
-require "pact_broker/logging"
 
 module PactBroker
   module Api

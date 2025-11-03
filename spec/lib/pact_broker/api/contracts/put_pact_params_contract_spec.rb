@@ -1,5 +1,3 @@
-require "pact_broker/api/contracts/put_pact_params_contract"
-require "pact_broker/pacts/pact_params"
 
 module PactBroker
   module Api
@@ -8,7 +6,7 @@ module PactBroker
         include PactBroker::Test::ApiContractSupport
 
         before do
-          allow(PactBroker.configuration).to receive(:order_versions_by_date).and_return(order_versions_by_date)
+          allow(PactBroker::Configuration.configuration).to receive(:order_versions_by_date).and_return(order_versions_by_date)
         end
 
         let(:json_content) { {"some" => "json" }.to_json }
