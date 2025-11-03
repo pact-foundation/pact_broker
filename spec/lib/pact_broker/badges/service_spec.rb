@@ -1,4 +1,3 @@
-require "pact_broker/badges/service"
 require "webmock/rspec"
 
 module PactBroker
@@ -345,7 +344,7 @@ module PactBroker
 
         context "when the shields_io_base_url is not configured" do
           before do
-            PactBroker.configuration.shields_io_base_url = nil
+            PactBroker::Configuration.configuration.shields_io_base_url = nil
           end
 
           it "does not make an http request" do

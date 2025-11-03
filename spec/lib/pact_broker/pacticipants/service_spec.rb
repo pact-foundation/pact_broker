@@ -1,6 +1,3 @@
-require "pact_broker/pacticipants/service"
-require "pact_broker/domain/tag"
-require "pact_broker/domain/pact"
 
 module PactBroker
   module Pacticipants
@@ -98,8 +95,8 @@ module PactBroker
 
       describe ".maybe_set_main_branch" do
         before do
-          allow(PactBroker.configuration).to receive(:auto_detect_main_branch).and_return(true)
-          allow(PactBroker.configuration).to receive(:main_branch_candidates).and_return(["foo", "bar"])
+          allow(PactBroker::Configuration.configuration).to receive(:auto_detect_main_branch).and_return(true)
+          allow(PactBroker::Configuration.configuration).to receive(:main_branch_candidates).and_return(["foo", "bar"])
           td.create_pacticipant("Foo", main_branch: main_branch)
         end
 

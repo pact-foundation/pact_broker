@@ -1,4 +1,3 @@
-require "pact_broker/api/contracts/environment_schema"
 
 module PactBroker
   module Api

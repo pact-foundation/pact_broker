@@ -1,21 +1,6 @@
 require "delegate"
-require "pact_broker/repositories"
-require "pact_broker/services"
-require "pact_broker/logging"
 require "base64"
 require "securerandom"
-require "pact_broker/webhooks/job"
-require "pact_broker/webhooks/triggered_webhook"
-require "pact_broker/webhooks/status"
-require "pact_broker/webhooks/webhook_event"
-require "pact_broker/verifications/placeholder_verification"
-require "pact_broker/pacts/placeholder_pact"
-require "pact_broker/api/decorators/webhook_decorator"
-require "pact_broker/hash_refinements"
-require "pact_broker/webhooks/execution_configuration"
-require "pact_broker/messages"
-require "pact_broker/webhooks/pact_and_verification_parameters"
-require "pact_broker/feature_toggle"
 
 module PactBroker
   module Webhooks

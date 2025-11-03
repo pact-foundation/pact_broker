@@ -1,4 +1,3 @@
-require "pact_broker/api/contracts/validation_helpers"
 
 module PactBroker
   module Api

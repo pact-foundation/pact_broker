@@ -1,5 +1,5 @@
 module PactBroker
-  module DB
+  module Db
     module DataMigrations
       module Helpers
         def column_exists?(connection, table, column)

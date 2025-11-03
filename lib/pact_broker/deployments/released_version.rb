@@ -1,4 +1,3 @@
-require "pact_broker/dataset"
 
 module PactBroker
   module Deployments

@@ -1,4 +1,3 @@
-require "pact_broker/api/resources/webhook_execution"
 
 module PactBroker
   module Api
@@ -59,7 +58,7 @@ module PactBroker
               end
 
               it "generates a JSON response body for the execution result" do
-                allow(PactBroker.configuration).to receive(:show_webhook_response?).and_return("foo")
+                allow(PactBroker::Configuration.configuration).to receive(:show_webhook_response?).and_return("foo")
                 expect(decorator).to receive(:to_json).with(user_options: hash_including(expected_user_options))
                 subject
               end

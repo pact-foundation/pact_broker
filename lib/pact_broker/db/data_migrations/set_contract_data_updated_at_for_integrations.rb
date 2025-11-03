@@ -1,7 +1,7 @@
 # Populate the newly created contract_data_updated_at date in the integrations table
 # using the latest created_at date from the pact_publications or verifications tables.
 module PactBroker
-  module DB
+  module Db
     module DataMigrations
       class SetContractDataUpdatedAtForIntegrations
         def self.call(connection)

@@ -1,7 +1,4 @@
-require "pact_broker/api/decorators/dry_validation_errors_problem_json_decorator"
-require "pact_broker/api/decorators/validation_errors_problem_json_decorator"
-require "pact_broker/api/contracts/base_contract"
-
+ 
 module PactBroker
   module Api
     module Decorators

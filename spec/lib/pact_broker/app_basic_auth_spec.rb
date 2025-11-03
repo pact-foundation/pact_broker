@@ -1,4 +1,3 @@
-require "pact_broker/app"
 require "anyway/testing/helpers"
 
 module PactBroker
@@ -6,7 +5,7 @@ module PactBroker
     include Anyway::Testing::Helpers
 
     before do
-      allow(PactBroker::DB).to receive(:run_migrations)
+      allow(PactBroker::Db).to receive(:run_migrations)
     end
 
     class TestApp2 < PactBroker::App
@@ -38,7 +37,7 @@ module PactBroker
 
     let(:app) do
       TestApp2.new do | configuration |
-        configuration.database_connection = PactBroker::DB.connection
+        configuration.database_connection =PactBroker::Db.connection
       end
     end
 

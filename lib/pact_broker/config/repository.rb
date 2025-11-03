@@ -1,4 +1,3 @@
-require "pact_broker/config/setting"
 
 module PactBroker
   module Config

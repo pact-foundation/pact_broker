@@ -58,7 +58,7 @@ RSpec.describe "publishing a pact using the all in one endpoint", validate_oas: 
 
   context "with a conflicting pact" do
     before do
-      allow(PactBroker.configuration).to receive(:allow_dangerous_contract_modification).and_return(false)
+      allow(PactBroker::Configuration.configuration).to receive(:allow_dangerous_contract_modification).and_return(false)
       td.create_pact_with_hierarchy("Foo", "1", "Bar")
     end
 

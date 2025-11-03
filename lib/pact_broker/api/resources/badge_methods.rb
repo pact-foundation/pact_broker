@@ -24,7 +24,7 @@ module PactBroker
         end
 
         def is_authorized?(authorization_header)
-          super || PactBroker.configuration.enable_public_badge_access
+          super || PactBroker::Configuration.configuration.enable_public_badge_access
         end
 
         def policy_name

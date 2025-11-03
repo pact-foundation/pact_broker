@@ -1,9 +1,3 @@
-require "pact_broker/dataset"
-require "pact_broker/messages"
-require "pact_broker/domain/label"
-require "pact_broker/string_refinements"
-require "pact_broker/pacticipants/generate_display_name"
-require "pact_broker/pacticipants/latest_version_for_pacticipant_eager_loader"
 
 module PactBroker
   module Domain

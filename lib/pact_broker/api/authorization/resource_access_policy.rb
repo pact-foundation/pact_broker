@@ -1,5 +1,3 @@
-require "pact_broker/api/authorization/resource_access_rules"
-require "pact_broker/api/paths"
 
 module PactBroker
   module Api

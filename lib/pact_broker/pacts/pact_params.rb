@@ -1,5 +1,3 @@
-require "pact_broker/json"
-require "pact_broker/constants"
 require "ostruct"
 
 module PactBroker
@@ -23,7 +21,7 @@ module PactBroker
       def self.from_request(request, path_info)
         json_content = request.body.to_s
         parsed_content = begin
-          parsed = JSON.parse(json_content, PACT_PARSING_OPTIONS)
+          parsed = JSON.parse(json_content, PactBroker::Json::PACT_PARSING_OPTIONS)
           json_content = parsed.to_json # remove whitespace
           parsed
         rescue

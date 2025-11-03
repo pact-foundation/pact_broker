@@ -1,5 +1,4 @@
-require "webmachine/adapters/rack3_adapter"
-require "pact_broker/string_refinements"
+require "webmachine/adapters/rack3"
 
 # Code to describe the routes in a Webmachine API, including
 # path, resource class, allowed methods, schemas, policy class.

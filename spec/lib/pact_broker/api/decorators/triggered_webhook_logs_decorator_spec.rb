@@ -1,4 +1,3 @@
-require "pact_broker/api/decorators/triggered_webhook_logs_decorator"
 
 module PactBroker
   module Api

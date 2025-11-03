@@ -1,5 +1,3 @@
-require "pact_broker/configuration"
-require "pact_broker/logging"
 
 module PactBroker
   module Errors
@@ -18,7 +16,7 @@ module PactBroker
       end
 
       def self.log_as_warning?(error)
-        PactBroker.configuration.warning_error_classes.any? { |clazz| error.is_a?(clazz) || error.cause&.is_a?(clazz) }
+        PactBroker::Configuration.configuration.warning_error_classes.any? { |clazz| error.is_a?(clazz) || error.cause&.is_a?(clazz) }
       end
     end
   end

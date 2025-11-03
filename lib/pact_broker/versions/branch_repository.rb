@@ -1,4 +1,3 @@
-require "pact_broker/repositories/scopes"
 module PactBroker
   module Versions
     class BranchRepository

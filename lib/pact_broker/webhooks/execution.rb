@@ -1,5 +1,3 @@
-require "pact_broker/dataset"
-
 module PactBroker
   module Webhooks
     class Execution < Sequel::Model(:webhook_executions)

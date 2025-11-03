@@ -1,4 +1,3 @@
-require "pact_broker/api/resources/released_version"
 
 module PactBroker
   module Api

@@ -1,6 +1,3 @@
-require "pact_broker/deployments/deployed_version"
-require "pact_broker/repositories/scopes"
-require "pact_broker/events/publisher"
 
 module PactBroker
   module Deployments
@@ -100,7 +97,7 @@ module PactBroker
       end
 
       def self.maybe_create_deployed_version_for_tag(version, environment_name)
-        if PactBroker.configuration.create_deployed_versions_for_tags
+        if PactBroker::Configuration.configuration.create_deployed_versions_for_tags
           if (environment = environment_service.find_by_name(environment_name))
             logger.info("Creating deployed version for #{version.pacticipant.name} version #{version.number} in environment #{environment_name} (because create_deployed_versions_for_tags=true)")
             find_or_create(next_uuid, version, environment, nil, auto_created: true)

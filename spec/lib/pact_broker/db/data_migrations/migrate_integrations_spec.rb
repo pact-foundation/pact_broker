@@ -1,7 +1,6 @@
-require "pact_broker/db/data_migrations/migrate_integrations"
 
 module PactBroker
-  module DB
+  module Db
     module DataMigrations
       describe MigrateIntegrations, migration: true do
         before do

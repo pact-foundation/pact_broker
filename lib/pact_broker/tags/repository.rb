@@ -1,5 +1,3 @@
-require "pact_broker/domain/tag"
-require "pact_broker/repositories"
 
 module PactBroker
   module Tags

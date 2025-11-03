@@ -1,6 +1,3 @@
-require "pact_broker/deployments/released_version"
-require "pact_broker/repositories/scopes"
-require "pact_broker/events/publisher"
 
 module PactBroker
   module Deployments

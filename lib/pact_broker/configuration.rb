@@ -1,25 +1,20 @@
-require "pact_broker/version"
-require "pact_broker/error"
 require "semantic_logger"
 require "forwardable"
-require "pact_broker/config/runtime_configuration"
-require "anyway/auto_cast"
 require "request_store"
 
 module PactBroker
   def self.configuration
-    RequestStore.store[:pact_broker_configuration] ||= Configuration.default_configuration
+    Configuration.configuration
   end
 
   def self.set_configuration(configuration)
-    RequestStore.store[:pact_broker_configuration] = configuration
+    Configuration.set_configuration(configuration)
   end
 
   # @private, for testing only
   def self.reset_configuration
-    RequestStore.store[:pact_broker_configuration] = Configuration.default_configuration
+    Configuration.reset_configuration
   end
-
   class Configuration
     extend Forwardable
 
@@ -47,9 +42,6 @@ module PactBroker
     end
 
     def self.default_configuration
-      require "pact_broker/versions/parse_semantic_version"
-      require "pact_broker/pacts/generate_sha"
-
       config = Configuration.new
       config.html_pact_renderer = default_html_pact_render
       config.version_parser = PactBroker::Versions::ParseSemanticVersion
@@ -57,8 +49,7 @@ module PactBroker
       config.example_data_seeder = lambda do
         # Do the require in the lambda, not at the top of the file, because we need
         # the database connection to be made before loading any Sequel::Model classes.
-        require "pact_broker/db/seed_example_data"
-        PactBroker::DB::SeedExampleData.call
+        PactBroker::Db::SeedExampleData.call
       end
 
       # TODO get rid of unsafe-inline
@@ -75,7 +66,7 @@ module PactBroker
         script_src: "'self' 'unsafe-inline' 'unsafe-eval'",
         frame_ancestors: "'self'"
       }
-      config.policy_builder = -> (object) { DefaultPolicy.new(nil, object) }
+      config.policy_builder = -> (object) { Policies::DefaultPolicy.new(nil, object) }
       config.policy_scope_builder = -> (scope) { scope }
       config
     end
@@ -130,7 +121,6 @@ module PactBroker
 
     def self.default_html_pact_render
       lambda { |pact, options|
-        require "pact_broker/api/renderers/html_pact_renderer"
         PactBroker::Api::Renderers::HtmlPactRenderer.call pact, options
       }
     end
@@ -208,7 +198,6 @@ module PactBroker
 
     def load_from_database!
       # Can't require a Sequel::Model class before the connection has been set
-      require "pact_broker/config/load"
       PactBroker::Config::Load.call(runtime_configuration)
     end
 
@@ -236,6 +225,19 @@ module PactBroker
       else
         new_runtime_configuration.public_send("#{key}=", value)
       end
+    end
+
+    def self.configuration
+      RequestStore.store[:pact_broker_configuration] ||= Configuration.default_configuration
+    end
+
+    def self.set_configuration(configuration)
+      RequestStore.store[:pact_broker_configuration] = configuration
+    end
+
+    # @private, for testing only
+    def self.reset_configuration
+      RequestStore.store[:pact_broker_configuration] = Configuration.default_configuration
     end
   end
 end

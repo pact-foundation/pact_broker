@@ -1,4 +1,3 @@
-require "pact_broker/api/resources/pact_content_diff"
 
 module PactBroker
   module Api

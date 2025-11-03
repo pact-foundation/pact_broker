@@ -1,4 +1,3 @@
-require "pact_broker/webhooks/triggered_webhook"
 
 module PactBroker
   module Webhooks
@@ -9,7 +8,7 @@ module PactBroker
 
       describe "remaining_attempts" do
         before do
-          PactBroker.configuration.webhook_retry_schedule = [1, 1, 1]
+          PactBroker::Configuration.configuration.webhook_retry_schedule = [1, 1, 1]
           allow(subject).to receive(:webhook_executions).and_return([double("execution")])
         end
 

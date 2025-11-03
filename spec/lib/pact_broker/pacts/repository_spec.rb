@@ -1,10 +1,5 @@
 # Yes, I know this file is too bug, but cmd+shift+t is too useful!
 
-require "pact_broker/pacts/repository"
-require "pact_broker/pacts/pact_params"
-require "pact_broker/versions/repository"
-require "pact_broker/pacticipants/repository"
-
 module PactBroker
   module Pacts
     describe Repository do
@@ -129,8 +124,8 @@ module PactBroker
           let(:sha_2) { "1" }
 
           before do
-            # PactBroker.configuration.base_equality_only_on_content_that_affects_verification_results = true
-            # allow(PactBroker.configuration.sha_generator).to receive(:call).and_return(sha_1, sha_2)
+            # PactBroker::Configuration.configuration.base_equality_only_on_content_that_affects_verification_results = true
+            # allow(PactBroker::Configuration.configuration.sha_generator).to receive(:call).and_return(sha_1, sha_2)
             Repository.new.create(
               version_id: version.id,
               consumer_id: consumer.id,

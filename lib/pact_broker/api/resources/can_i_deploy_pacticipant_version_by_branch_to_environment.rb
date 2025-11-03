@@ -1,5 +1,3 @@
-require "pact_broker/api/resources/matrix"
-require "pact_broker/api/decorators/matrix_decorator"
 
 module PactBroker
   module Api

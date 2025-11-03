@@ -1,11 +1,9 @@
-require "pact_broker/ui/controllers/base"
-require "pact_broker/ui/view_models/index_items"
 require "haml"
 
 # TODO handle 404 gracefully
 
 module PactBroker
-  module UI
+  module Ui
     module Controllers
       class Groups < Base
         include PactBroker::Services
@@ -30,13 +28,13 @@ module PactBroker
           pacticipant = pacticipant_service.find_pacticipant_by_name(params[:name])
           {
             csv_path: "#{base_url}/groups/#{ERB::Util.url_encode(params[:name])}.csv",
-            max_pacticipants: PactBroker.configuration.network_diagram_max_pacticipants,
+            max_pacticipants: PactBroker::Configuration.configuration.network_diagram_max_pacticipants,
             pacticipant_name: params[:name],
             repository_url: pacticipant&.repository_url,
             base_url: base_url,
             pacticipant: pacticipant,
             details_url: "#{base_url}/pacticipants/#{ERB::Util.url_encode(params[:name])}",
-            network_url: "#{base_url}/pacticipants/#{ERB::Util.url_encode(params[:name])}/network?maxPacticipants=#{PactBroker.configuration.network_diagram_max_pacticipants}"
+            network_url: "#{base_url}/pacticipants/#{ERB::Util.url_encode(params[:name])}/network?maxPacticipants=#{PactBroker::Configuration.configuration.network_diagram_max_pacticipants}"
           }.merge(overrides)
         end
       end

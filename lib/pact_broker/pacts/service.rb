@@ -1,12 +1,3 @@
-require "pact_broker/repositories"
-require "pact_broker/services"
-require "pact_broker/logging"
-require "pact_broker/pacts/merger"
-require "pact_broker/pacts/verifiable_pact"
-require "pact_broker/pacts/squash_pacts_for_verification"
-require "pact_broker/events/publisher"
-require "pact_broker/messages"
-require "pact_broker/hash_refinements"
 
 module PactBroker
   module Pacts
@@ -23,7 +14,7 @@ module PactBroker
       extend SquashPactsForVerification
 
       def generate_sha(json_content)
-        PactBroker.configuration.sha_generator.call(json_content)
+        PactBroker::Configuration.configuration.sha_generator.call(json_content)
       end
 
       def find_latest_pact params
@@ -205,7 +196,7 @@ module PactBroker
       private :create_pact_revision
 
       def disallowed_modification?(existing_pact, new_pact_version_sha)
-        !PactBroker.configuration.allow_dangerous_contract_modification && existing_pact && existing_pact.pact_version_sha != new_pact_version_sha
+        !PactBroker::Configuration.configuration.allow_dangerous_contract_modification && existing_pact && existing_pact.pact_version_sha != new_pact_version_sha
       end
 
       # When no publication for the given consumer/provider/consumer version number exists

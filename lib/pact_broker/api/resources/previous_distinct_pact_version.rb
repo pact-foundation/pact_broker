@@ -1,7 +1,3 @@
-require "pact_broker/api/resources/base_resource"
-require "pact_broker/pacts/pact_params"
-require "pact_broker/pacts/diff"
-require "pact_broker/api/decorators/pact_decorator"
 
 module PactBroker
   module Api

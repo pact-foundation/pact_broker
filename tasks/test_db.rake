@@ -1,24 +1,25 @@
+require "pact_broker"
 require "pact_broker/tasks"
 
-PactBroker::DB::MigrationTask.new do | task |
+PactBroker::Db::MigrationTask.new do | task |
   ENV["RACK_ENV"] ||= "test"
   require_relative "../spec/support/test_database"
   task.database_connection = ::PactBroker::TestDatabase.connection_for_test_database
 end
 
-PactBroker::DB::DataMigrationTask.new do | task |
+PactBroker::Db::DataMigrationTask.new do | task |
   ENV["RACK_ENV"] ||= "test"
   require_relative "../spec/support/test_database"
   task.database_connection = ::PactBroker::TestDatabase.connection_for_test_database
 end
 
-PactBroker::DB::VersionTask.new do | task |
+PactBroker::Db::VersionTask.new do | task |
   ENV["RACK_ENV"] ||= "test"
   require_relative "../spec/support/test_database"
   task.database_connection = ::PactBroker::TestDatabase.connection_for_test_database
 end
 
-PactBroker::DB::CleanTask.new do | task |
+PactBroker::Db::CleanTask.new do | task |
   ENV["RACK_ENV"] ||= "test"
   require_relative "../spec/support/test_database"
   require "semantic_logger"
@@ -29,7 +30,7 @@ PactBroker::DB::CleanTask.new do | task |
   SemanticLogger.add_appender(io: $stdout)
 end
 
-PactBroker::DB::DeleteOverwrittenDataTask.new do | task |
+PactBroker::Db::DeleteOverwrittenDataTask.new do | task |
   ENV["RACK_ENV"] ||= "test"
   require_relative "../spec/support/test_database"
   task.database_connection = ::PactBroker::TestDatabase.connection_for_test_database

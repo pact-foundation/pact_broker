@@ -1,4 +1,3 @@
-require "pact_broker/labels/service"
 
 module PactBroker
   module Labels

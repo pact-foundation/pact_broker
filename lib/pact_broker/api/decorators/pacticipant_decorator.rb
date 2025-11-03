@@ -2,9 +2,6 @@ require_relative "base_decorator"
 require_relative "embedded_version_decorator"
 require_relative "embedded_label_decorator"
 require_relative "timestamps"
-require "pact_broker/feature_toggle"
-
-require "pact_broker/domain"
 
 module PactBroker
   module Api

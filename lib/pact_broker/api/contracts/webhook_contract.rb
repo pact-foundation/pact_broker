@@ -1,7 +1,3 @@
-require "pact_broker/api/contracts/base_contract"
-require "pact_broker/api/contracts/webhook_request_contract"
-require "pact_broker/api/contracts/webhook_pacticipant_contract"
-require "pact_broker/webhooks/webhook_event"
 
 module PactBroker
   module Api

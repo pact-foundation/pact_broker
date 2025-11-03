@@ -1,6 +1,5 @@
 require "timecop"
 require "tzinfo"
-require "pact_broker/api"
 
 WEBHOOK_TESTED_DOCUMENTATION_PATHS = []
 WEBHOOKS_NO_DOCUMENTATION = %w[
@@ -13,8 +12,8 @@ WEBHOOK_ROUTES_REQURING_A_DOCUMENTATION_TEST = PactBroker.routes
 RSpec.describe "webhook routes" do
   before do
     Timecop.freeze(Time.new(2021, 9, 1, 10, 7, 21, TZInfo::Timezone.get("Australia/Melbourne")))
-    allow(PactBroker.configuration).to receive(:user_agent).and_return("Pact Broker")
-    allow(PactBroker.configuration).to receive(:base_urls).and_return(["http://pact-broker"])
+    allow(PactBroker::Configuration.configuration).to receive(:user_agent).and_return("Pact Broker")
+    allow(PactBroker::Configuration.configuration).to receive(:base_urls).and_return(["http://pact-broker"])
     # Need to hardcode this because it depends on the database id.
     allow(PactBroker::Api::PactBrokerUrls).to receive(:encode_metadata).and_return("3e193ecb37ad04b43ce974a38352c704b2e0ed6b")
     td.create_consumer("Foo")
@@ -293,7 +292,7 @@ RSpec.describe "webhook routes" do
     describe "POST" do
       before do
         stub_request(:post, /http/).to_return(:status => 200)
-        allow(PactBroker.configuration).to receive(:webhook_host_whitelist).and_return([/.*/])
+        allow(PactBroker::Configuration.configuration).to receive(:webhook_host_whitelist).and_return([/.*/])
       end
 
       include_examples "supports POST"
@@ -311,7 +310,7 @@ RSpec.describe "webhook routes" do
     describe "POST" do
       before do
         stub_request(:post, /http/).to_return(:status => 200)
-        allow(PactBroker.configuration).to receive(:webhook_host_whitelist).and_return([/.*/])
+        allow(PactBroker::Configuration.configuration).to receive(:webhook_host_whitelist).and_return([/.*/])
       end
 
       let(:http_params) do

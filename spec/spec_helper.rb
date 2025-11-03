@@ -3,11 +3,10 @@
 return if ENV["REGRESSION"] == "true"
 
 $: << File.expand_path("../../", __FILE__)
-
+require "pact_broker"
 RACK_ENV = ENV["RACK_ENV"] = "test"
 ENV["PACT_BROKER_LOG_LEVEL"] ||= "fatal"
 require "spec/support/simplecov"
-
 require "support/logging"
 require "support/database"
 require "rack/test"
@@ -15,7 +14,7 @@ require "rspec/its"
 require "rspec/pact/matchers"
 require "sucker_punch/testing/inline"
 require "webmock/rspec"
-require "pact_broker/policies"
+require "i18n"
 
 if ENV["OAS_COVERAGE_CHECK_ENABLED"] == "true"
   require "openapi_first"
@@ -42,9 +41,9 @@ I18n.config.enforce_available_locales = false
 RSpec.configure do | config |
   config.before :each do
     PactBroker.reset_configuration
-    PactBroker.configuration.seed_example_data = false
-    PactBroker.configuration.base_equality_only_on_content_that_affects_verification_results = false
-    require "pact_broker/badges/service"
+    PactBroker::Configuration.configuration.seed_example_data = false
+    PactBroker::Configuration.configuration.base_equality_only_on_content_that_affects_verification_results = false
+    
     PactBroker::Badges::Service.clear_cache
   end
 

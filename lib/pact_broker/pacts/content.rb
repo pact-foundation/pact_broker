@@ -1,7 +1,3 @@
-require "pact_broker/pacts/parse"
-require "pact_broker/pacts/sort_content"
-require "pact_broker/pacts/generate_interaction_sha"
-require "pact_broker/hash_refinements"
 
 module PactBroker
   module Pacts

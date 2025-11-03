@@ -1,4 +1,3 @@
-require "pact_broker/matrix/resolved_selector"
 
 module PactBroker
   module Matrix

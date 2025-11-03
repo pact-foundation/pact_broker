@@ -1,5 +1,3 @@
-require "pact_broker/dataset"
-require "pact_broker/deployments/currently_deployed_version_id"
 
 module PactBroker
   module Deployments

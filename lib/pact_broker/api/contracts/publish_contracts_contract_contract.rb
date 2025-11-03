@@ -1,5 +1,3 @@
-require "pact_broker/api/contracts/base_contract"
-require "pact_broker/api/contracts/utf_8_validation"
 
 # The contract for the contract object in the publish contracts request
 module PactBroker
@@ -27,7 +25,7 @@ module PactBroker
           end
 
           if value
-            char_number, fragment = PactBroker::Api::Contracts::UTF8Validation.fragment_before_invalid_utf_8_char(value)
+            char_number, fragment = PactBroker::Api::Contracts::Utf8Validation.fragment_before_invalid_utf_8_char(value)
             if char_number
               base.failure(validation_message("non_utf_8_char_in_contract", char_number: char_number, fragment: fragment))
             end

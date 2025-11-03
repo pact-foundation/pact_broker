@@ -1,20 +1,5 @@
 require "ostruct"
-require "pact_broker/logging"
-require "pact_broker/pacts/generate_sha"
-require "pact_broker/pacts/pact_publication"
-require "pact_broker/pacts/pact_version"
 require "pact/shared/json_differ"
-require "pact_broker/domain"
-require "pact_broker/pacts/parse"
-require "pact_broker/pacts/latest_pact_publication_id_for_consumer_version"
-require "pact_broker/pacts/verifiable_pact"
-require "pact_broker/pacts/selected_pact"
-require "pact_broker/pacts/selector"
-require "pact_broker/pacts/selectors"
-require "pact_broker/feature_toggle"
-require "pact_broker/pacts/pacts_for_verification_repository"
-require "pact_broker/pacts/content"
-require "pact_broker/policies"
 
 module PactBroker
   module Pacts
@@ -24,7 +9,7 @@ module PactBroker
       include PactBroker::Repositories
 
       def scope_for(scope)
-        PactBroker.policy_scope!(scope)
+        PactBroker::Policies.policy_scope!(scope)
       end
 
       # For the times when it doesn't make sense to use the scoped class, this is a way to

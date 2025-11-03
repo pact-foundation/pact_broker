@@ -1,8 +1,3 @@
-require "pact_broker/repositories"
-require "pact_broker/matrix/resolved_selector"
-require "pact_broker/matrix/resolved_selector_builder"
-require "pact_broker/matrix/selector_ignorer"
-
 
 # Take the selectors and options provided by the user (eg. [{ pacticipant_name: "Foo", pacticipant_version_number: "1" }], { to_environment: "prod" })
 # that use pacticipant/version/branch/environment names,

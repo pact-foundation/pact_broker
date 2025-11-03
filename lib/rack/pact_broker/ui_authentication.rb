@@ -1,8 +1,7 @@
-require "pact_broker/api/resources/authentication"
 
 module Rack
   module PactBroker
-    class UIAuthentication
+    class UiAuthentication
 
       include ::PactBroker::Api::Resources::Authentication
 

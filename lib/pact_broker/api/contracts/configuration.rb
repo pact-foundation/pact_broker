@@ -1,4 +1,3 @@
-require "pact_broker/string_refinements"
 
 # Allow contracts to be accessed by name and configured/overridden for pf
 

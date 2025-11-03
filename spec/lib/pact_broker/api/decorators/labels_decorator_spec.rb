@@ -1,6 +1,4 @@
-require "pact_broker/api/decorators/labels_decorator"
-require "pact_broker/labels/service"
-
+ 
 module PactBroker
   module Api
     module Decorators

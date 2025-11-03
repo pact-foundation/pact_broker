@@ -1,5 +1,3 @@
-require "pact_broker/webhooks/webhook_request_logger"
-require "pact_broker/domain/webhook_request"
 
 module PactBroker
   module Webhooks

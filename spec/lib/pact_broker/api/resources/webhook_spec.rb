@@ -1,4 +1,3 @@
-require "pact_broker/api/resources/webhook"
 
 module PactBroker::Api
   module Resources

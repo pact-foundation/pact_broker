@@ -1,4 +1,3 @@
-require "pact_broker/events/subscriber"
 
 module PactBroker
   module Api

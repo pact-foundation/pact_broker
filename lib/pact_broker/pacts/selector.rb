@@ -1,4 +1,3 @@
-require "pact_broker/hash_refinements"
 
 module PactBroker
   module Pacts

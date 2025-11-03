@@ -1,4 +1,3 @@
-require "pact_broker/domain/verification"
 
 # Represents a non WIP, successful verification for a provider version with a tag.
 

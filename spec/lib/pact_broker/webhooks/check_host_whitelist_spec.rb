@@ -1,4 +1,3 @@
-require "pact_broker/webhooks/check_host_whitelist"
 
 module PactBroker
   module Webhooks

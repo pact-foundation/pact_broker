@@ -1,9 +1,9 @@
 require "erb"
 
 module PactBroker
-  module UI
+  module Ui
     module Helpers
-      module URLHelper
+      module UrlHelper
 
         extend self
 

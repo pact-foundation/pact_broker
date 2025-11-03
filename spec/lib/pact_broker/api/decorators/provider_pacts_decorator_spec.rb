@@ -1,4 +1,3 @@
-require "pact_broker/api/decorators/provider_pacts_decorator"
 
 module PactBroker
   module Api

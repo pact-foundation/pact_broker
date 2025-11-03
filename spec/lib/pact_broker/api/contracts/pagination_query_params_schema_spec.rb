@@ -1,4 +1,3 @@
-require "pact_broker/api/contracts/pagination_query_params_schema"
 
 module PactBroker
   module Api

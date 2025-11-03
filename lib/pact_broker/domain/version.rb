@@ -1,6 +1,3 @@
-require "pact_broker/dataset"
-require "pact_broker/domain/order_versions"
-require "pact_broker/versions/eager_loaders"
 
 module PactBroker
   module Domain
@@ -183,12 +180,6 @@ module PactBroker
         end
 
         def delete
-          require "pact_broker/pacts/pact_publication"
-          require "pact_broker/domain/verification"
-          require "pact_broker/domain/tag"
-          require "pact_broker/deployments/deployed_version"
-          require "pact_broker/deployments/released_version"
-
           PactBroker::Deployments::DeployedVersion.where(version: self).delete
           PactBroker::Deployments::ReleasedVersion.where(version: self).delete
           PactBroker::Domain::Verification.where(provider_version: self).delete

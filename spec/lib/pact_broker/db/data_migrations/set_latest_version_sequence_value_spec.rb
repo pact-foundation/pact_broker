@@ -1,7 +1,6 @@
-require "pact_broker/db/data_migrations/set_latest_version_sequence_value"
 
 module PactBroker
-  module DB
+  module Db
     module DataMigrations
       describe SetLatestVersionSequenceValue, data_migration: true do
         include MigrationHelpers

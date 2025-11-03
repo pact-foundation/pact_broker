@@ -1,4 +1,3 @@
-require "pact_broker/api/contracts/pacts_for_verification_query_string_schema"
 
 module PactBroker
   module Api

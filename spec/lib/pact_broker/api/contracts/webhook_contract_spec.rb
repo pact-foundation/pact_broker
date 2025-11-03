@@ -1,5 +1,3 @@
-require "pact_broker/api/contracts/webhook_contract"
-require "pact_broker/api/decorators/webhook_decorator"
 
 module PactBroker
   module Api
@@ -24,8 +22,8 @@ module PactBroker
 
         describe "errors" do
           before do
-            PactBroker.configuration.webhook_http_method_whitelist = webhook_http_method_whitelist
-            PactBroker.configuration.webhook_host_whitelist = webhook_host_whitelist
+            PactBroker::Configuration.configuration.webhook_http_method_whitelist = webhook_http_method_whitelist
+            PactBroker::Configuration.configuration.webhook_host_whitelist = webhook_host_whitelist
             allow(PactBroker::Webhooks::CheckHostWhitelist).to receive(:call).and_return(whitelist_matches)
             allow(PactBroker::Pacticipants::Service).to receive(:find_pacticipant_by_name).with("Foo").and_return(consumer)
             allow(PactBroker::Pacticipants::Service).to receive(:find_pacticipant_by_name).with("Bar").and_return(provider)

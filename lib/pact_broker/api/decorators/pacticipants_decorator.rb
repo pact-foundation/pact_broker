@@ -1,9 +1,6 @@
 require "roar/json/hal"
-require "pact_broker/api/pact_broker_urls"
 require_relative "embedded_version_decorator"
 require_relative "pagination_links"
-require "pact_broker/domain/pacticipant"
-require "pact_broker/api/decorators/pacticipant_decorator"
 
 module PactBroker
   module Api
@@ -46,15 +43,6 @@ module PactBroker
 
       class NonEmbeddedPacticipantCollectionDecorator < BaseDecorator
         collection :entries, :as => :pacticipants, :class => PactBroker::Domain::Pacticipant, :extend => DeprecatedPacticipantDecorator, embedded: false
-      end
-
-      # TODO deprecate this - breaking change for v 3.0
-      class DeprecatedPacticipantsDecorator < PacticipantsDecorator
-        def to_hash(options)
-          embedded_pacticipant_hash = super
-          non_embedded_pacticipant_hash = NonEmbeddedPacticipantCollectionDecorator.new(represented).to_hash(options)
-          embedded_pacticipant_hash.merge(non_embedded_pacticipant_hash)
-        end
       end
     end
   end

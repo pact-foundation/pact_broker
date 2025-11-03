@@ -1,5 +1,3 @@
-require "pact_broker/api/resources/base_resource"
-require "pact_broker/feature_toggle"
 require "json"
 
 module PactBroker
@@ -234,7 +232,7 @@ module PactBroker
             templated: true
           }
 
-          if PactBroker.feature_enabled?("disable_pacts_for_verification", true)
+          if PactBroker::FeatureToggle.feature_enabled?("disable_pacts_for_verification", true)
             links_hash.delete("pb:provider-pacts-for-verification")
             links_hash.delete("beta:provider-pacts-for-verification")
           end

@@ -1,7 +1,7 @@
 module PactBroker
   module Api
     module Contracts
-      module UTF8Validation
+      module Utf8Validation
         extend self
 
         def fragment_before_invalid_utf_8_char(string)

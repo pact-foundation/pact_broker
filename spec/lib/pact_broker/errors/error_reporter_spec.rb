@@ -1,15 +1,13 @@
-require "pact_broker/errors/error_reporter"
-require "pact_broker/configuration"
 
 module PactBroker
   module Errors
     describe ErrorReporter do
       before do
-        PactBroker.configuration.add_api_error_reporter do | error, options |
+        PactBroker::Configuration.configuration.add_api_error_reporter do | error, options |
           thing.call(error, options)
         end
 
-        PactBroker.configuration.add_api_error_reporter do | error, options |
+        PactBroker::Configuration.configuration.add_api_error_reporter do | error, options |
           thing.another_call(error, options)
         end
       end
@@ -19,7 +17,7 @@ module PactBroker
       let(:error_reference) { "bYWfnyWPlf" }
       let(:expected_options) { { env: env, error_reference: "bYWfnyWPlf" } }
       let(:env) { double("env") }
-      let(:reporter) { ErrorReporter.new(PactBroker.configuration.api_error_reporters) }
+      let(:reporter) { ErrorReporter.new(PactBroker::Configuration.configuration.api_error_reporters) }
 
       subject { reporter.call(error, error_reference, env) }
 

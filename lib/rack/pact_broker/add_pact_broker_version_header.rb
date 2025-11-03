@@ -1,4 +1,3 @@
-require "pact_broker/version"
 
 module Rack
   module PactBroker

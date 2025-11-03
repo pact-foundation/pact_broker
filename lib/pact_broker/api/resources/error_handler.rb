@@ -1,4 +1,3 @@
-require "pact_broker/configuration"
 require "securerandom"
 
 # Logs the error
