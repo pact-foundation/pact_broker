@@ -237,17 +237,20 @@ module PactBroker
           log_pact_publications_from_query("Potential WIP pacts for provider branch #{provider_version_branch} created after #{wip_start_date} by consumer tag", potential_wip_by_consumer_tag)
         end
 
+        # TODO this query could also be optimized but needs more work
+        # but it might allow a cleaner code structure
         wip_pact_publications_by_branch = remove_non_wip_for_branch(
           potential_wip_by_consumer_branch,
           provider,
           provider_version_branch,
+          wip_start_date,
           explicitly_specified_verifiable_pacts
         )
 
-        wip_pact_publications_by_tag = remove_non_wip_for_branch(
-          potential_wip_by_consumer_tag,
+        wip_pact_publications_by_tag = remove_non_wip_for_branch_optimized(
           provider,
           provider_version_branch,
+          wip_start_date,
           explicitly_specified_verifiable_pacts
         )
 
@@ -259,7 +262,7 @@ module PactBroker
         deduplicate_verifiable_pacts(verifiable_pacts).sort
       end
 
-      def remove_non_wip_for_branch(pact_publications_query, provider, provider_version_branch, explicitly_specified_verifiable_pacts)
+      def remove_non_wip_for_branch(pact_publications_query, provider, provider_version_branch, wip_start_date, explicitly_specified_verifiable_pacts)
         verified_by_this_branch = pact_publications_query.successfully_verified_by_provider_branch_when_not_wip(provider.id, provider_version_branch)
         verified_by_other_branch = pact_publications_query.successfully_verified_by_provider_another_branch_before_this_branch_first_created(provider.id, provider_version_branch)
 
@@ -274,6 +277,101 @@ module PactBroker
             verified_by_this_branch.all,
             verified_by_other_branch.all),
           explicitly_specified_verifiable_pacts)
+      end
+
+      def remove_non_wip_for_branch_optimized(provider, provider_version_branch, wip_start_date, explicitly_specified_verifiable_pacts)
+        # Optimized implementation using CTEs
+
+        verified_by_this_branch = build_optimized_verified_by_branch_query(provider.id, provider_version_branch, wip_start_date)
+        verified_by_other_branch = build_verified_by_other_branch_query(provider, provider_version_branch, wip_start_date)
+
+        log_debug_for_wip do
+          log_pact_publications("Ignoring pacts explicitly specified in the selectors", explicitly_specified_verifiable_pacts)
+          log_pact_publications_from_query("Ignoring pacts successfully verified by this provider branch when not WIP (optimized)", verified_by_this_branch)
+          log_pact_publications_from_query("Ignoring pacts successfully verified by another provider branch when not WIP", verified_by_other_branch)
+        end
+
+        # below part is functionally same as remove_non_wip_for_branch but because of the different query structure it looks different
+        # Eagerly load the results and subtract
+        potential_wip_by_consumer_tag = PactPublication.for_provider(provider).created_after(wip_start_date).for_all_tag_heads
+        all_potential = potential_wip_by_consumer_tag.eager(*PUBLICATION_ASSOCIATIONS_FOR_EAGER_LOAD).all
+        verified_this = verified_by_this_branch.all.collect { |row| PactPublication.call(row) }
+        verified_other = verified_by_other_branch.all
+
+        remove_explicitly_specified_verifiable_pacts(
+          PactPublication.subtract(all_potential, verified_this, verified_other),
+          explicitly_specified_verifiable_pacts
+        )
+      end
+
+      def build_optimized_verified_by_branch_query(provider_id, provider_version_branch, wip_start_date)
+        db = PactPublication.db
+        cte_opts = db.database_type == :postgres ? { materialized: true } : {}
+
+        # Build CTEs for query optimization
+        relevant_consumers = build_relevant_consumers_cte(provider_id, db)
+        head_tags = build_head_tags_cte(relevant_consumers, db)
+        verified_pact_versions = build_verified_pact_versions_cte(provider_id, provider_version_branch, db)
+
+        # Build main query with CTEs
+        inner_query = build_inner_pact_publications_query(provider_id, wip_start_date, db)
+
+        db.from(inner_query.as(:pp))
+          .with(:relevant_consumers, relevant_consumers, **cte_opts)
+          .with(:head_tags, head_tags, **cte_opts)
+          .with(:verified_pact_versions, verified_pact_versions, **cte_opts)
+          .select(Sequel[:pp].*)
+          .distinct
+          .join(:verified_pact_versions,
+            { Sequel[:pp][:pact_version_id] => Sequel[:v][:pact_version_id] },
+            { table_alias: :v })
+      end
+
+      def build_relevant_consumers_cte(provider_id, db)
+        db[:pact_publications]
+          .select(Sequel[:pact_publications][:consumer_id])
+          .distinct
+          .where(provider_id: provider_id)
+      end
+
+      def build_head_tags_cte(relevant_consumers, db)
+        db[:tags]
+          .where(Sequel[:tags][:pacticipant_id] => db[:relevant_consumers].select(:consumer_id) )
+          .select_group(:pacticipant_id, :name)
+          .select_append { max(version_order).as(:latest_version_order) }
+      end
+
+      def build_verified_pact_versions_cte(provider_id, provider_version_branch, _db)
+        PactBroker::Pacts::PactPublicationWipDatasetModule::VerificationForWipCalculations
+          .select(:pact_version_id)
+          .distinct
+          .where(success: true, wip: false, provider_id: provider_id)
+          .join(:branch_versions, {
+            Sequel[:verifications][:provider_version_id] => Sequel[:branch_versions][:version_id],
+            Sequel[:branch_versions][:pacticipant_id] => provider_id,
+            Sequel[:branch_versions][:branch_name] => provider_version_branch
+          })
+      end
+
+      def build_inner_pact_publications_query(provider_id, wip_start_date, db)
+        db[:pact_publications]
+          .select(Sequel[:pact_publications].*)
+          .join(:head_tags, {
+            Sequel[:pact_publications][:consumer_id] => Sequel[:head_tags][:pacticipant_id],
+            Sequel[:pact_publications][:consumer_version_order] => Sequel[:head_tags][:latest_version_order]
+          })
+          .select_append(Sequel[:head_tags][:name].as(:tag_name))
+          .where(Sequel[:pact_publications][:provider_id] => provider_id)
+          .where(Sequel[:pact_publications][:consumer_id] => db[:relevant_consumers].select(:consumer_id))
+          .where { Sequel[:pact_publications][:created_at] > wip_start_date }
+          .join(:latest_pact_publication_ids_for_consumer_versions,
+            { Sequel[:lp][:pact_publication_id] => Sequel[:pact_publications][:id] },
+            { table_alias: :lp })
+      end
+ 
+      def build_verified_by_other_branch_query(provider, provider_version_branch, wip_start_date)
+        potential_wip_by_consumer_tag = PactPublication.for_provider(provider).created_after(wip_start_date).for_all_tag_heads
+        potential_wip_by_consumer_tag.successfully_verified_by_provider_another_branch_before_this_branch_first_created(provider.id, provider_version_branch)
       end
 
       def remove_non_wip_for_tag(pact_publications_query, provider, tag, explicitly_specified_verifiable_pacts)
