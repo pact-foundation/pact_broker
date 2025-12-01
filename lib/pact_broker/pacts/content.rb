@@ -1,3 +1,4 @@
+require "active_support/core_ext/hash"
 require "pact_broker/pacts/parse"
 require "pact_broker/pacts/sort_content"
 require "pact_broker/pacts/generate_interaction_sha"
@@ -6,22 +7,37 @@ require "pact_broker/hash_refinements"
 module PactBroker
   module Pacts
     ProviderState = Struct.new(:name, :params)
+
+    MESSAGE_TYPES = %w[Asynchronous/Messages].freeze
+    INTERACTION_TYPES = %w[Synchronous/Messages Synchronous/HTTP].freeze
+
+    class ContentFactory
+      def self.from_json json_content
+        self.from_hash(JSON.parse(json_content))
+      end
+
+      def self.from_hash(pact_hash)
+        #  what is the reasoning behind this
+        if pact_hash.is_a?(Array)
+          return Content.new(pact_hash)
+        else
+          checkable_pact_hash = HashWithIndifferentAccess.new(pact_hash)
+          version = checkable_pact_hash.dig("metadata", "pactSpecification", "version") || "0.0"
+          if version && version.to_f >= 4.0
+            ContentVersion4.new(checkable_pact_hash)
+          else
+            Content.new(pact_hash)
+          end
+        end
+      end
+    end
+
     class Content
-
-
       include GenerateInteractionSha
       using PactBroker::HashRefinements
 
       def initialize pact_hash
         @pact_hash = pact_hash
-      end
-
-      def self.from_json json_content
-        new(Parse.call(json_content))
-      end
-
-      def self.from_hash pact_hash
-        new(pact_hash)
       end
 
       def to_hash
@@ -33,15 +49,15 @@ module PactBroker
       end
 
       def sort
-        Content.from_hash(SortContent.call(pact_hash))
+        ContentFactory.from_hash(SortContent.call(pact_hash))
       end
 
       def provider_states
-        messages_and_or_interactions_or_empty_array.flat_map do | interaction |
+        messages_and_or_interactions_or_empty_array.flat_map do |interaction|
           if interaction["providerState"].is_a?(String)
             [ProviderState.new(interaction["providerState"])]
           elsif interaction["providerStates"].is_a?(Array)
-            interaction["providerStates"].collect do | provider_state |
+            interaction["providerStates"].collect do |provider_state|
               ProviderState.new(provider_state["name"], provider_state["params"])
             end
           end
@@ -50,7 +66,7 @@ module PactBroker
 
       def interactions_missing_test_results
         return [] unless messages_and_or_interactions
-        messages_and_or_interactions.reject do | interaction |
+        messages_and_or_interactions.reject do |interaction|
           interaction["tests"]&.any?
         end
       end
@@ -76,8 +92,9 @@ module PactBroker
         if messages && messages.is_a?(Array)
           new_pact_hash["messages"] = merge_verification_results(messages, tests)
         end
-        Content.from_hash(new_pact_hash)
+        ContentFactory.from_hash(new_pact_hash)
       end
+
       # rubocop: enable Metrics/CyclomaticComplexity
 
       def with_ids(overwrite_existing_id = true)
@@ -89,7 +106,7 @@ module PactBroker
         if messages && messages.is_a?(Array)
           new_pact_hash["messages"] = add_ids(messages, overwrite_existing_id)
         end
-        Content.from_hash(new_pact_hash)
+        ContentFactory.from_hash(new_pact_hash)
       end
 
       def without_ids
@@ -101,11 +118,11 @@ module PactBroker
         if messages && messages.is_a?(Array)
           new_pact_hash["messages"] = remove_ids(messages)
         end
-        Content.from_hash(new_pact_hash)
+        ContentFactory.from_hash(new_pact_hash)
       end
 
       def interaction_ids
-        messages_and_or_interactions_or_empty_array.collect do | interaction |
+        messages_and_or_interactions_or_empty_array.collect do |interaction|
           interaction["_id"]
         end.compact
       end
@@ -153,7 +170,7 @@ module PactBroker
       attr_reader :pact_hash
 
       def add_ids(interactions, overwrite_existing_id)
-        interactions.map do | interaction |
+        interactions.map do |interaction|
           if interaction.is_a?(Hash)
             if !interaction.key?("_id") || overwrite_existing_id
               # just in case there is a previous ID in there
@@ -170,12 +187,12 @@ module PactBroker
       end
 
       def remove_ids(interactions_or_messages)
-        interactions_or_messages.collect{ | h | h.without("_id") }
+        interactions_or_messages.collect { |h| h.without("_id") }
       end
 
       def merge_verification_results(interactions, tests)
-        interactions.collect(&:dup).collect do | interaction |
-          interaction["tests"] = tests.select do | test |
+        interactions.collect(&:dup).collect do |interaction|
+          interaction["tests"] = tests.select do |test|
             test_is_for_interaction(interaction, test)
           end
           interaction
@@ -183,7 +200,7 @@ module PactBroker
       end
 
       def test_is_for_interaction(interaction, test)
-        test.is_a?(Hash) && interaction.is_a?(Hash) && ( interaction_ids_match(interaction, test) || description_and_state_match(interaction, test))
+        test.is_a?(Hash) && interaction.is_a?(Hash) && (interaction_ids_match(interaction, test) || description_and_state_match(interaction, test))
       end
 
       def interaction_ids_match(interaction, test)
@@ -193,6 +210,31 @@ module PactBroker
       def description_and_state_match(interaction, test)
         test["interactionDescription"] && test["interactionDescription"] == interaction["description"] && test["interactionProviderState"] == interaction["providerState"]
       end
+    end
+
+    class ContentVersion4 < Content
+
+      # messages are type in pactV4 interactions collection
+      def messages
+        if pact_hash.is_a?(Hash) && pact_hash["interactions"].is_a?(Array)
+          pact_hash["interactions"].filter do |interaction|
+            MESSAGE_TYPES.include?(interaction["type"])
+          end
+        else
+          []
+        end
+      end
+
+      def interactions
+        if pact_hash.is_a?(Hash) && pact_hash["interactions"].is_a?(Array)
+          pact_hash["interactions"].filter do |interaction|
+            INTERACTION_TYPES.include?(interaction["type"])
+          end
+        else
+          []
+        end
+      end
+
     end
   end
 end

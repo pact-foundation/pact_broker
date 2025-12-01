@@ -38,7 +38,7 @@ module PactBroker
         end
 
         before do
-          allow(Content).to receive(:from_json).and_return(content)
+          allow(ContentFactory).to receive(:from_json).and_return(content)
           allow(content).to receive(:sort).and_return(content)
         end
 
@@ -73,7 +73,7 @@ module PactBroker
 
         context "when equality is based on the verifiable content only" do
           it "does not sort the content" do
-            expect(Content).to_not receive(:from_json)
+            expect(ContentFactory).to_not receive(:from_json)
             subject
           end
 

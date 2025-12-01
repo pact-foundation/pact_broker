@@ -28,7 +28,7 @@ module PactBroker
           .where(Sequel[:pp2][:consumer_version_order] => nil)
 
           latest_pact_publications_query.each do | row |
-            content = PactBroker::Pacts::Content.from_json(row[:content])
+            content = PactBroker::Pacts::ContentFactory.from_json(row[:content])
             connection.from(:pact_versions)
               .where(id: row[:id])
               .update(

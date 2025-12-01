@@ -21,7 +21,7 @@ module PactBroker
       end
 
       def self.extract_verifiable_content_for_sha(json_content)
-        objects = Content.from_json(json_content)
+        objects = ContentFactory.from_json(json_content)
         sorted_content = measure_info("Sorting content", payload: { length: json_content.length }){ objects.sort }
         sorted_content.content_that_affects_verification_results.to_json
       end

@@ -14,8 +14,8 @@ module PactBroker
         previous_pact_hash = JSON.load(previous_pact_json_content, nil, PactBroker::PACT_PARSING_OPTIONS)
 
         if !raw
-          pact_hash = SortContent.call(PactBroker::Pacts::Content.from_hash(pact_hash).without_ids.to_hash)
-          previous_pact_hash = SortContent.call(PactBroker::Pacts::Content.from_hash(previous_pact_hash).without_ids.to_hash)
+          pact_hash = SortContent.call(PactBroker::Pacts::ContentFactory.from_hash(pact_hash).without_ids.to_hash)
+          previous_pact_hash = SortContent.call(PactBroker::Pacts::ContentFactory.from_hash(previous_pact_hash).without_ids.to_hash)
         end
 
         difference = diff(previous_pact_hash, pact_hash)

@@ -400,8 +400,8 @@ module PactBroker
           sha: sha,
           content: json_content,
           created_at: Sequel.datetime_class.now,
-          interactions_count: Content.from_json(json_content).interactions&.count || 0,
-          messages_count: Content.from_json(json_content).messages&.count || 0
+          interactions_count: ContentFactory.from_json(json_content).interactions&.count || 0,
+          messages_count: ContentFactory.from_json(json_content).messages&.count || 0
         ).upsert
       end
 

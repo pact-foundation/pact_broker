@@ -9,7 +9,8 @@ module PactBroker
             "ignored" => "foo",
             "interactions" => [interaction],
             "metadata" => {
-              "foo" => "bar"
+              "foo" => "bar",
+              "pactSpecification": { "version": "1" }
             }
           }
         end
@@ -19,7 +20,7 @@ module PactBroker
           allow(GenerateInteractionSha).to receive(:call).and_return("some-id")
         end
 
-        subject { Content.from_hash(pact_hash).with_ids }
+        subject { ContentFactory.from_hash(pact_hash).with_ids }
 
         context "when the interaction has an existing _id" do
           let(:interaction) { { "_id" => "blah", "foo" => "bar" } }
@@ -71,13 +72,14 @@ module PactBroker
 
       describe "content_that_affects_verification_results" do
 
-        subject { Content.from_hash(pact_hash).content_that_affects_verification_results }
+        subject { ContentFactory.from_hash(pact_hash).content_that_affects_verification_results }
 
         context "with messages" do
+          let(:message) { { "foo" => "bar" } }
           let(:pact_hash) do
             {
               "ignored" => "foo",
-              "messages" => [1],
+              "messages" => [message],
               "metadata" => {
                 "pactSpecification" => {
                   "version" => "1"
@@ -88,7 +90,7 @@ module PactBroker
 
           let(:expected_content) do
             {
-              "messages" => [1],
+              "messages" => [message],
               "pact_specification_version" => "1"
             }
           end
@@ -179,7 +181,6 @@ module PactBroker
         end
       end
 
-
       describe "provider_states" do
         let(:pact_content_1) do
           {
@@ -188,19 +189,19 @@ module PactBroker
                 providerState: "state 1"
               },
               {
-                providerStates: [ { name: "state 2" }, { name: "state 3", params: { foo: "bar" } } ]
+                providerStates: [{ name: "state 2" }, { name: "state 3", params: { foo: "bar" } }]
               },
               {}
             ],
             messages: [
               {
-                providerStates: [ { name: "state 4" } ]
+                providerStates: [{ name: "state 4" }]
               }
             ]
           }
         end
 
-        let(:content) { Content.from_json(pact_content_1.to_json) }
+        let(:content) { ContentFactory.from_json(pact_content_1.to_json) }
         let(:expected_provider_states) do
           [
             ProviderState.new("state 4"),
@@ -222,7 +223,7 @@ module PactBroker
       end
 
       describe "#pact_specification_version" do
-        subject { Content.from_hash(json) }
+        subject { ContentFactory.from_hash(json) }
         context "with pactSpecification.version" do
           let(:json) do
             {
@@ -277,10 +278,10 @@ module PactBroker
               {
                 "interactionProviderState" => "ps1",
                 "interactionDescription" => "desc1"
-              },{
-                "interactionProviderState" => "ps1",
-                "interactionDescription" => "desc1"
-              }
+              }, {
+              "interactionProviderState" => "ps1",
+              "interactionDescription" => "desc1"
+            }
             ]
           }
         end
@@ -289,39 +290,39 @@ module PactBroker
           {
             "interactions" => [
               {
-               "providerState" => "ps1",
-               "description" => "desc1",
+                "providerState" => "ps1",
+                "description" => "desc1",
               },
               {
-               "providerState" => "ps2",
-               "description" => "desc2",
+                "providerState" => "ps2",
+                "description" => "desc2",
               }
             ]
           }
         end
 
-        subject { Content.from_hash(pact_content).with_test_results(test_results) }
+        subject { ContentFactory.from_hash(pact_content).with_test_results(test_results) }
 
         let(:merged) do
           {
             "interactions" => [
               {
-               "providerState" => "ps1",
-               "description" => "desc1",
-               "tests" => [
-                {
-                  "interactionProviderState" => "ps1",
-                  "interactionDescription" => "desc1",
-                },{
+                "providerState" => "ps1",
+                "description" => "desc1",
+                "tests" => [
+                  {
+                    "interactionProviderState" => "ps1",
+                    "interactionDescription" => "desc1",
+                  }, {
                   "interactionProviderState" => "ps1",
                   "interactionDescription" => "desc1",
                 }
-               ]
-              },{
-               "providerState" => "ps2",
-               "description" => "desc2",
-               "tests" => []
-              }
+                ]
+              }, {
+              "providerState" => "ps2",
+              "description" => "desc2",
+              "tests" => []
+            }
             ]
           }
         end
@@ -330,14 +331,14 @@ module PactBroker
           {
             "interactions" => [
               {
-               "providerState" => "ps1",
-               "description" => "desc1",
-               "tests" => []
-              },{
-               "providerState" => "ps2",
-               "description" => "desc2",
-               "tests" => []
-              }
+                "providerState" => "ps1",
+                "description" => "desc1",
+                "tests" => []
+              }, {
+              "providerState" => "ps2",
+              "description" => "desc2",
+              "tests" => []
+            }
             ]
           }
         end
@@ -407,10 +408,10 @@ module PactBroker
             [
               {
                 "interactionId" => "1",
-                "success "=> false
-              },{
-                "foo" => "bar"
-              }
+                "success " => false
+              }, {
+              "foo" => "bar"
+            }
             ]
           end
 
@@ -418,10 +419,10 @@ module PactBroker
             {
               "interactions" => [
                 {
-                 "_id" => "1"
+                  "_id" => "1"
                 },
                 {
-                 "_id" => "2"
+                  "_id" => "2"
                 }
               ]
             }
@@ -431,15 +432,15 @@ module PactBroker
             {
               "interactions" => [
                 {
-                 "_id" => "1",
-                 "tests" => [{
+                  "_id" => "1",
+                  "tests" => [{
                     "interactionId" => "1",
-                    "success "=> false
+                    "success " => false
                   }]
-                },{
-                 "_id" => "2",
-                 "tests" => []
-                }
+                }, {
+                "_id" => "2",
+                "tests" => []
+              }
               ]
             }
           end
@@ -474,7 +475,7 @@ module PactBroker
           }
         end
 
-        subject { Content.from_json(content_hash.to_json) }
+        subject { ContentFactory.from_json(content_hash.to_json) }
 
         its(:interaction_ids) { is_expected.to eq ["1", "2"] }
 
@@ -482,6 +483,314 @@ module PactBroker
           let(:content_hash) { {} }
 
           its(:interaction_ids) { is_expected.to eq [] }
+        end
+      end
+
+      describe "#messages_count" do
+        context "when pact specification version is 4" do
+          let(:pact_hash) do
+            {
+              "consumer" => { "name" => "Foo" },
+              "provider" => { "name" => "Bar" },
+              "interactions" => [
+                {
+                  "_id" => "msg1",
+                  "type" => "Asynchronous/Messages",
+                  "description" => "a message",
+                  "contents" => { "foo" => "bar" }
+                },
+                {
+                  "_id" => "http1",
+                  "type" => "Synchronous/HTTP",
+                  "description" => "an http request",
+                  "request" => { "method" => "GET", "path" => "/foo" },
+                  "response" => { "status" => 200 }
+                },
+                {
+                  "_id" => "msg2",
+                  "type" => "Asynchronous/Messages",
+                  "description" => "another message",
+                  "contents" => { "baz" => "qux" }
+                }
+              ],
+              "metadata" => {
+                "pactSpecification" => { "version" => "4.0" }
+              }
+            }
+          end
+
+          subject { ContentFactory.from_hash(pact_hash) }
+
+          it "counts only interactions with type 'Asynchronous/Messages'" do
+            expect(subject.messages&.count).to eq(2)
+          end
+        end
+
+        context "when pact specification version is 3" do
+          let(:pact_hash) do
+            {
+              "consumer" => { "name" => "Foo" },
+              "provider" => { "name" => "Bar" },
+              "messages" => [
+                {
+                  "description" => "a message",
+                  "contents" => { "foo" => "bar" }
+                },
+                {
+                  "description" => "another message",
+                  "contents" => { "baz" => "qux" }
+                }
+              ],
+              "metadata" => {
+                "pactSpecification" => { "version" => "3.0.0" }
+              }
+            }
+          end
+
+          subject { ContentFactory.from_hash(pact_hash) }
+
+          it "counts messages from the messages array" do
+            expect(subject.messages&.count).to eq(2)
+          end
+        end
+
+        context "when pact specification version is 2" do
+          let(:pact_hash) do
+            {
+              "consumer" => { "name" => "Foo" },
+              "provider" => { "name" => "Bar" },
+              "messages" => [
+                {
+                  "description" => "a message",
+                  "contents" => { "foo" => "bar" }
+                }
+              ],
+              "metadata" => {
+                "pactSpecification" => { "version" => "2.0.0" }
+              }
+            }
+          end
+
+          subject { ContentFactory.from_hash(pact_hash) }
+
+          it "counts messages from the messages array" do
+            expect(subject.messages&.count).to eq(1)
+          end
+        end
+
+        context "when there are no messages" do
+          let(:pact_hash) do
+            {
+              "consumer" => { "name" => "Foo" },
+              "provider" => { "name" => "Bar" },
+              "interactions" => [
+                {
+                  "_id" => "http1",
+                  "type" => "Synchronous/HTTP",
+                  "description" => "an http request",
+                  "request" => { "method" => "GET", "path" => "/foo" },
+                  "response" => { "status" => 200 }
+                }
+              ],
+              "metadata" => {
+                "pactSpecification" => { "version" => "4.0" }
+              }
+            }
+          end
+
+          subject { ContentFactory.from_hash(pact_hash) }
+
+          it "returns 0" do
+            expect(subject.messages&.count).to eq(0)
+          end
+        end
+
+        context "when messages array is missing in v3 pact" do
+          let(:pact_hash) do
+            {
+              "consumer" => { "name" => "Foo" },
+              "provider" => { "name" => "Bar" },
+              "interactions" => [],
+              "metadata" => {
+                "pactSpecification" => { "version" => "3.0.0" }
+              }
+            }
+          end
+
+          subject { ContentFactory.from_hash(pact_hash) }
+
+          it "returns 0" do
+            expect(subject.messages&.count).to eq(nil)
+          end
+        end
+      end
+
+      describe "#interactions_count" do
+        context "when pact specification version is 4" do
+          let(:pact_hash) do
+            {
+              "consumer" => { "name" => "Foo" },
+              "provider" => { "name" => "Bar" },
+              "interactions" => [
+                {
+                  "_id" => "http1",
+                  "type" => "Synchronous/HTTP",
+                  "description" => "an http request",
+                  "request" => { "method" => "GET", "path" => "/foo" },
+                  "response" => { "status" => 200 }
+                },
+                {
+                  "_id" => "msg1",
+                  "type" => "Asynchronous/Messages",
+                  "description" => "a message",
+                  "contents" => { "foo" => "bar" }
+                },
+                {
+                  "_id" => "http2",
+                  "type" => "Synchronous/HTTP",
+                  "description" => "another http request",
+                  "request" => { "method" => "POST", "path" => "/bar" },
+                  "response" => { "status" => 201 }
+                }
+              ],
+              "metadata" => {
+                "pactSpecification" => { "version" => "4.0" }
+              }
+            }
+          end
+
+          subject { ContentFactory.from_hash(pact_hash) }
+
+          it "counts only interactions with type 'Synchronous/HTTP'" do
+            expect(subject.interactions&.count).to eq(2)
+          end
+        end
+
+        context "when pact specification version is 3" do
+          let(:pact_hash) do
+            {
+              "consumer" => { "name" => "Foo" },
+              "provider" => { "name" => "Bar" },
+              "interactions" => [
+                {
+                  "description" => "a request for foo",
+                  "request" => { "method" => "GET", "path" => "/foo" },
+                  "response" => { "status" => 200 }
+                },
+                {
+                  "description" => "a request for bar",
+                  "request" => { "method" => "GET", "path" => "/bar" },
+                  "response" => { "status" => 200 }
+                }
+              ],
+              "metadata" => {
+                "pactSpecification" => { "version" => "3.0.0" }
+              }
+            }
+          end
+
+          subject { ContentFactory.from_hash(pact_hash) }
+
+          it "counts interactions from the interactions array" do
+            expect(subject.interactions&.count).to eq(2)
+          end
+        end
+
+        context "when pact specification version is 2" do
+          let(:pact_hash) do
+            {
+              "consumer" => { "name" => "Foo" },
+              "provider" => { "name" => "Bar" },
+              "interactions" => [
+                {
+                  "description" => "a request",
+                  "request" => { "method" => "GET", "path" => "/foo" },
+                  "response" => { "status" => 200 }
+                }
+              ],
+              "metadata" => {
+                "pactSpecification" => { "version" => "2.0.0" }
+              }
+            }
+          end
+
+          subject { ContentFactory.from_hash(pact_hash) }
+
+          it "counts interactions from the interactions array" do
+            expect(subject.interactions&.count).to eq(1)
+          end
+        end
+
+        context "when there are no interactions" do
+          let(:pact_hash) do
+            {
+              "consumer" => { "name" => "Foo" },
+              "provider" => { "name" => "Bar" },
+              "interactions" => [
+                {
+                  "_id" => "msg1",
+                  "type" => "Asynchronous/Messages",
+                  "description" => "a message",
+                  "contents" => { "foo" => "bar" }
+                }
+              ],
+              "metadata" => {
+                "pactSpecification" => { "version" => "4.0" }
+              }
+            }
+          end
+
+          subject { ContentFactory.from_hash(pact_hash) }
+
+          it "returns 0" do
+            expect(subject.interactions&.count).to eq(0)
+          end
+        end
+
+        context "when interactions array is missing in v3 pact" do
+          let(:pact_hash) do
+            {
+              "consumer" => { "name" => "Foo" },
+              "provider" => { "name" => "Bar" },
+              "messages" => [],
+              "metadata" => {
+                "pactSpecification" => { "version" => "3.0.0" }
+              }
+            }
+          end
+
+          subject { ContentFactory.from_hash(pact_hash) }
+
+          it "returns 0" do
+            expect(subject.interactions&.count).to eq(nil)
+          end
+        end
+
+        context "when pact has both v4 interactions and v3 structure" do
+          let(:pact_hash) do
+            {
+              "consumer" => { "name" => "Foo" },
+              "provider" => { "name" => "Bar" },
+              "interactions" => [
+                {
+                  "_id" => "http1",
+                  "type" => "Synchronous/HTTP",
+                  "description" => "an http request",
+                  "request" => { "method" => "GET", "path" => "/foo" },
+                  "response" => { "status" => 200 }
+                }
+              ],
+              "metadata" => {
+                "pactSpecification" => { "version" => "4.0" }
+              }
+            }
+          end
+
+          subject { ContentFactory.from_hash(pact_hash) }
+
+          it "uses v4 logic when version is 4" do
+            expect(subject.interactions&.count).to eq(1)
+          end
         end
       end
     end

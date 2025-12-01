@@ -162,7 +162,7 @@ module PactBroker
 
       def set_interactions_and_messages_counts!
         if interactions_count.nil? || messages_count.nil?
-          content_object = PactBroker::Pacts::Content.from_json(content)
+          content_object = PactBroker::Pacts::ContentFactory.from_json(content)
           update(
             messages_count: content_object.messages&.count || 0,
             interactions_count: content_object.interactions&.count || 0

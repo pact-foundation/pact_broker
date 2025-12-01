@@ -238,7 +238,7 @@ module PactBroker
       private :create_pact
 
       def add_interaction_ids(json_content)
-        Content.from_json(json_content).with_ids.to_json
+        ContentFactory.from_json(json_content).with_ids.to_json
       end
 
       private :add_interaction_ids

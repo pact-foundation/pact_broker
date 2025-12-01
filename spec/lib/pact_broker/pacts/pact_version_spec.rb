@@ -446,6 +446,64 @@ module PactBroker
           it { is_expected.to be false }
         end
       end
+
+
+      describe "#set_interactions_and_messages_counts!" do
+        subject { pact_version.set_interactions_and_messages_counts!; pact_version }
+
+        context "with V4 style content in the content column" do
+          let!(:pact_version) do
+            td.create_consumer("Consumer")
+              .create_provider("Provider")
+              .create_consumer_version("1.0.0")
+              .create_pact
+            pv = PactVersion.order(:id).last
+            v4_hash = {
+              "consumer" => { "name" => "Consumer" },
+              "provider" => { "name" => "Provider" },
+              "interactions" => [
+                { "_id" => "msg1", "type" => "Asynchronous/Messages", "description" => "a message", "contents" => { "foo" => "bar" } },
+                { "_id" => "msg2", "type" => "Asynchronous/Messages", "description" => "another message", "contents" => { "baz" => "qux" } },
+                { "_id" => "http1", "type" => "Synchronous/HTTP", "description" => "an http request", "request" => { "method" => "GET", "path" => "/foo" }, "response" => { "status" => 200 } }
+              ],
+              "metadata" => { "pactSpecification" => { "version" => "4.0" } },
+            }
+            pv.update(content: v4_hash.to_json, messages_count: nil, interactions_count: nil)
+            pv
+          end
+
+          it "calculates counts from V4 interactions/messages" do
+            expect(subject.messages_count).to eq 2
+            expect(subject.interactions_count).to eq 1
+          end
+        end
+
+        context "with v2 style content (no messages array)" do
+          let!(:pact_version) do
+            td.create_consumer("Consumer")
+              .create_provider("Provider")
+              .create_consumer_version("1.0.0")
+              .create_pact
+            pv = PactVersion.order(:id).last
+            v2_hash = {
+              "consumer" => { "name" => "Consumer" },
+              "provider" => { "name" => "Provider" },
+              "interactions" => [
+                { "description" => "an http request", "request" => { "method" => "GET", "path" => "/foo" }, "response" => { "status" => 200 } }
+              ],
+              "metadata" => { "pactSpecification" => { "version" => "2.0.0" } }
+            }
+            pv.update(content: v2_hash.to_json, messages_count: nil, interactions_count: nil)
+            pv
+          end
+
+          it "calculates counts from v2 interactions only" do
+            expect(subject.messages_count).to eq 0
+            expect(subject.interactions_count).to eq 1
+          end
+        end
+      end
+
     end
   end
 end

@@ -1,0 +1,72 @@
+{
+  "consumer": { "name": "Foo" },
+  "interactions": [
+    {
+      "_id": "5d6f8d633693c2391ba8fff297444b3ef1ccd00b",
+      "contents": {
+        "content": { "id": 1, "name": "drover", "type": "bulldog" },
+        "contentType": "application/json",
+        "encoded": false
+      },
+      "description": "a request for a dog",
+      "matchingRules": {
+        "body": {
+          "$.id": { "combine": "AND", "matchers": [{ "match": "type" }] },
+          "$.name": { "combine": "AND", "matchers": [{ "match": "type" }] },
+          "$.type": {
+            "combine": "AND",
+            "matchers": [{ "match": "regex", "regex": "^(bulldog|sheepdog)$" }]
+          }
+        }
+      },
+      "metadata": { "queue": "animals" },
+      "pending": false,
+      "providerStates": [{ "name": "a dog named drover" }],
+      "type": "Asynchronous/Messages"
+    },
+    {
+      "_id": "a2cac63edba504277c1063f36620549785d78981",
+      "description": "a request to get a product",
+      "pending": false,
+      "providerStates": [{ "name": "a product with ID 10 exists" }],
+      "request": {
+        "headers": { "Authorization": ["Bearer 2019-01-14T11:34:18.045Z"] },
+        "matchingRules": {
+          "header": {
+            "$.Authorization[0]": {
+              "combine": "AND",
+              "matchers": [{ "match": "type" }]
+            }
+          }
+        },
+        "method": "GET",
+        "path": "/product/10"
+      },
+      "response": {
+        "body": {
+          "content": {
+            "id": "10",
+            "name": "28 Degrees",
+            "type": "CREDIT_CARD"
+          },
+          "contentType": "application/json",
+          "encoded": false
+        },
+        "headers": { "Content-Type": ["application/json; charset=utf-8"] },
+        "matchingRules": {
+          "body": {
+            "$": { "combine": "AND", "matchers": [{ "match": "type" }] }
+          }
+        },
+        "status": 200
+      },
+      "type": "Synchronous/HTTP"
+    }
+  ],
+  "metadata": {
+    "pact-js": { "version": "15.0.1" },
+    "pactRust": { "ffi": "0.4.22", "models": "1.3.7" },
+    "pactSpecification": { "version": "4.0" }
+  },
+  "provider": { "name": "Bar" }
+}

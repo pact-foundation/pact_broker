@@ -213,7 +213,7 @@ module PactBroker
       end
 
       def pact_content_with_test_results
-        @pact_content_with_test_results = PactBroker::Pacts::Content.from_json(pact_version.content).with_test_results(test_results)
+        @pact_content_with_test_results = PactBroker::Pacts::ContentFactory.from_json(pact_version.content).with_test_results(test_results)
       end
 
       # Whether the pact content was pending at the time the verification was run

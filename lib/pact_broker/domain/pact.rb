@@ -83,7 +83,7 @@ module PactBroker
 
       def content_object
         @content_object ||= begin
-          PactBroker::Pacts::Content.from_json(json_content)
+          PactBroker::Pacts::ContentFactory.from_json(json_content)
         rescue
           PactBroker::Pacts::Content.new
         end

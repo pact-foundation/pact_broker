@@ -73,6 +73,28 @@ module PactBroker
           expect(PactVersion.order(:id).last.messages_count).to eq 0
         end
 
+        context "with V4 style interactions and metadata" do
+          let(:json_content) do
+            {
+              "consumer" => { "name" => consumer_name },
+              "provider" => { "name" => provider_name },
+              "interactions" => [
+                { "_id" => "http1", "type" => "Synchronous/HTTP", "description" => "an http request", "request" => { "method" => "GET", "path" => "/foo" }, "response" => { "status" => 200 } },
+                { "_id" => "msg1", "type" => "Asynchronous/Messages", "description" => "a message", "contents" => { "foo" => "bar" } },
+                { "_id" => "msg2", "type" => "Asynchronous/Messages", "description" => "another message", "contents" => { "baz" => "qux" } }
+              ],
+              "metadata" => { "pactSpecification" => { "version" => "4.0" } }
+            }.to_json
+          end
+
+          it "persists V4 counts for messages and interactions" do
+            subject
+            pv = PactVersion.order(:id).last
+            expect(pv.messages_count).to eq 2
+            expect(pv.interactions_count).to eq 1
+          end
+        end
+
         context "when a pact already exists with exactly the same content" do
           let(:another_version) { Versions::Repository.new.create number: "2.0.0", pacticipant_id: consumer.id }
 
@@ -284,6 +306,27 @@ module PactBroker
 
           it "increments the revision_number by 1" do
             expect(subject.revision_number).to eq 2
+          end
+
+          context "with V4 style interactions and metadata" do
+            let(:json_content) do
+              {
+                "consumer" => { "name" => "A Consumer" },
+                "provider" => { "name" => "A Provider" },
+                "interactions" => [
+                  { "_id" => "http1", "type" => "Synchronous/HTTP", "description" => "an http request", "request" => { "method" => "GET", "path" => "/foo" }, "response" => { "status" => 200 } },
+                  { "_id" => "msg1", "type" => "Asynchronous/Messages", "description" => "a message", "contents" => { "foo" => "bar" } }
+                ],
+                "metadata" => { "pactSpecification" => { "version" => "4.0" } }
+              }.to_json
+            end
+
+            it "updates counts according to V4 schema" do
+              subject
+              pv = PactVersion.order(:id).last
+              expect(pv.messages_count).to eq 1
+              expect(pv.interactions_count).to eq 1
+            end
           end
 
           context "when there is a race condition" do
@@ -598,15 +641,15 @@ module PactBroker
       describe "find_pact" do
         let!(:pact) do
           pact = td
-            .create_consumer("Consumer")
-            .create_consumer_version("1.2.2")
-            .create_provider("Provider")
-            .create_pact
-            .create_consumer_version("1.2.4", branch: "dev")
-            .create_consumer_version_tag("prod")
-            .create_pact
-            .revise_pact
-            .and_return(:pact)
+                   .create_consumer("Consumer")
+                   .create_consumer_version("1.2.2")
+                   .create_provider("Provider")
+                   .create_pact
+                   .create_consumer_version("1.2.4", branch: "dev")
+                   .create_consumer_version_tag("prod")
+                   .create_pact
+                   .revise_pact
+                   .and_return(:pact)
           td
             .create_consumer_version("1.2.6")
             .create_pact

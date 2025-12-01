@@ -40,7 +40,7 @@ module PactBroker
         let(:expected_event_context) { { consumer_version_tags: ["dev"] } }
 
         before do
-          allow(Content).to receive(:from_json).and_return(content)
+          allow(ContentFactory).to receive(:from_json).and_return(content)
           allow(content).to receive(:with_ids).and_return(content_with_interaction_ids)
           allow(PactBroker::Pacts::GenerateSha).to receive(:call).and_call_original
           allow(Service).to receive(:broadcast)
