@@ -22,7 +22,7 @@
     "status": 200,
     "headers": {
       "content-type": "application/hal+json;charset=utf-8",
-      "content-length": "842",
+      "content-length": "840",
       "date": "<date>",
       "server": "Webmachine-Ruby/2.0.1 Rack/3.2"
     },
@@ -41,7 +41,7 @@
             },
             "_links": {
               "self": {
-                "href": "http://example.org/pacts/provider/Provider/consumer/Consumer%202/pact-version/0f22f551a422b027066db7635cad8bd8a59ac869/metadata/cyU1QiU1RCU1QnQlNUQ9cHJvZCZzJTVCJTVEJTVCbCU1RD10cnVlJnMlNUIlNUQlNUJjdiU1RD0xMA",
+                "href": "http://example.org/pacts/provider/Provider/consumer/Consumer%202/pact-version/0f22f551a422b027066db7635cad8bd8a59ac869/metadata/cyU1QiU1RCU1QnQlNUQ9cHJvZCZzJTVCJTVEJTVCbCU1RD10cnVlJnMlNUIlNUQlNUJjdiU1RD04",
                 "name": "Pact between Consumer 2 (4.5.6) and Provider"
               }
             }
