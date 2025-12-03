@@ -14,6 +14,7 @@ require "pact_broker/pacts/selectors"
 require "pact_broker/feature_toggle"
 require "pact_broker/pacts/pacts_for_verification_repository"
 require "pact_broker/pacts/content"
+require "pact_broker/pacts/interactions/types"
 require "pact_broker/policies"
 
 module PactBroker
@@ -394,14 +395,16 @@ module PactBroker
       end
 
       def create_pact_version consumer_id, provider_id, sha, json_content
+        content = Content.from_json(json_content)
         PactBroker::Pacts::PactVersion.new(
           consumer_id: consumer_id,
           provider_id: provider_id,
           sha: sha,
           content: json_content,
           created_at: Sequel.datetime_class.now,
-          interactions_count: Content.from_json(json_content).interactions&.count || 0,
-          messages_count: Content.from_json(json_content).messages&.count || 0
+          interactions_count: content.interactions&.count || 0,
+          messages_count: content.messages&.count || 0,
+          has_messages: Interactions::Types.for(content).has_messages?
         ).upsert
       end
 
