@@ -11,6 +11,8 @@ if ENV["SIMPLECOV_COMMAND_NAME"]
     SimpleCov.minimum_coverage 92
   when "pact:verify"
     SimpleCov.minimum_coverage 62
+  when "pact:v2:verify"
+    SimpleCov.minimum_coverage 62
   end
 end
 

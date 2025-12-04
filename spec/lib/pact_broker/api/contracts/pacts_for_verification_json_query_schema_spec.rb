@@ -3,7 +3,7 @@ require "pact_broker/api/contracts/pacts_for_verification_json_query_schema"
 module PactBroker
   module Api
     module Contracts
-      describe PactsForVerificationJSONQuerySchema do
+      describe PactsForVerificationJsonQuerySchema do
         include PactBroker::Test::ApiContractSupport
 
         let(:params) do
@@ -22,7 +22,7 @@ module PactBroker
           }]
         end
 
-        subject { format_errors_the_old_way(PactsForVerificationJSONQuerySchema.(params)) }
+        subject { format_errors_the_old_way(PactsForVerificationJsonQuerySchema.(params)) }
 
         context "when nothing is specified" do
           let(:params) { {} }

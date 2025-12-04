@@ -19,7 +19,11 @@ module PactBroker
       end
 
       it "logs values that don't have an initial default, but get set afterward" do
-        expect(subject).to include "webhook_certificates=[] source={:type=>:defaults}"
+        if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new("3.4")
+          expect(subject).to include "webhook_certificates=[] source={type: :defaults}"
+        else
+          expect(subject).to include "webhook_certificates=[] source={:type=>:defaults}"
+        end
       end
 
       context "with a database URL with no password" do
