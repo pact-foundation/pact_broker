@@ -14,6 +14,7 @@ require "pact_broker/pacts/selectors"
 require "pact_broker/feature_toggle"
 require "pact_broker/pacts/pacts_for_verification_repository"
 require "pact_broker/pacts/content"
+require "pact_broker/pacts/interactions/types"
 require "pact_broker/policies"
 
 module PactBroker
@@ -148,6 +149,36 @@ module PactBroker
           query = query.overall_latest
         end
 
+        query.all.sort_by{ | p| p.consumer_name.downcase }.collect(&:to_head_pact)
+      end
+
+      def find_pacts_by_consumer_branch(provider_name, options = {})
+        consumer_name = options[:consumer]
+        latest = options.fetch(:latest, false)
+        branch = options[:branch_name]
+        main_branch = options.fetch(:main_branch, false)
+        
+        query = scope_for(PactPublication)
+                  .eager_for_domain_with_content
+                  .for_provider_name(provider_name)
+        
+        if consumer_name
+          query = query.for_consumer_name(consumer_name)
+        end
+
+        if main_branch
+          if latest
+            query = query.latest_for_main_branches
+          else
+            query = query.for_main_branches
+          end
+        else 
+          if latest
+            query = query.latest_for_consumer_branch(branch)
+          else
+            query = query.for_branch_name(branch)
+          end
+        end
         query.all.sort_by{ | p| p.consumer_name.downcase }.collect(&:to_head_pact)
       end
 
@@ -364,14 +395,16 @@ module PactBroker
       end
 
       def create_pact_version consumer_id, provider_id, sha, json_content
+        content = Content.from_json(json_content)
         PactBroker::Pacts::PactVersion.new(
           consumer_id: consumer_id,
           provider_id: provider_id,
           sha: sha,
           content: json_content,
           created_at: Sequel.datetime_class.now,
-          interactions_count: Content.from_json(json_content).interactions&.count || 0,
-          messages_count: Content.from_json(json_content).messages&.count || 0
+          interactions_count: content.interactions&.count || 0,
+          messages_count: content.messages&.count || 0,
+          has_messages: Interactions::Types.for(content).has_messages?
         ).upsert
       end
 

@@ -456,6 +456,9 @@ module PactBroker
         parameters = default_parameters.merge(parameters)
         parameters.delete(:provider_version)
         verification = PactBroker::Domain::Verification.new(parameters)
+        if pact.nil?
+          @pact = find_pact(@consumer.name, @consumer_version.number, @provider.name)
+        end
         pact_version = PactBroker::Pacts::Repository.new.find_pact_version(@consumer, @provider, pact.pact_version_sha)
         @provider_version = version_repository.find_by_pacticipant_id_and_number_or_create(provider.id, provider_version_number)
         branch_version = PactBroker::Versions::BranchVersionRepository.new.add_branch(@provider_version, branch) if branch
@@ -714,13 +717,16 @@ module PactBroker
       def default_json_content
         {
           "consumer" => {
-             "name" => consumer.name
-           },
-           "provider" => {
-             "name" => provider.name
-           },
-           "interactions" => [],
-           "random" => rand
+            "name" => consumer.name
+          },
+          "provider" => {
+            "name" => provider.name
+          },
+          "interactions" => [],
+          "metadata" => {
+            "pactSpecification": { "version": "4.0" }
+          },
+          "random" => rand
          }.to_json
       end
 

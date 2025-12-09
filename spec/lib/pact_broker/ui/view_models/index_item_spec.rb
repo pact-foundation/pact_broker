@@ -3,7 +3,7 @@ require "pact_broker/domain/index_item"
 
 module PactBroker
   module UI
-    module ViewDomain
+    module ViewModels
       describe IndexItem do
 
         let(:consumer) { instance_double("PactBroker::Domain::Pacticipant", name: "Consumer Name") }
