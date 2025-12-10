@@ -4,8 +4,10 @@
 #
 # --cpu-period=100000 --cpu-quota=50000 \
 #
+POSTGRES_VERSION=${1:-17}
+
 docker run --name pact-broker-postgres \
 	-e POSTGRES_PASSWORD=postgres \
 	-p 5432:5432 \
 	-v $PWD:/data \
-	-d postgres:14
+	-d postgres:$POSTGRES_VERSION
