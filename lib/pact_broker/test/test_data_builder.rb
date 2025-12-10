@@ -724,7 +724,7 @@ module PactBroker
           },
           "interactions" => [],
           "metadata" => {
-            "pactSpecification": { "version": "4.0" }
+            "pactSpecification" => { "version" => "4.0" }
           },
           "random" => rand
          }.to_json

@@ -1,12 +1,4 @@
 require "anyway_config"
-require "pact_broker/config/runtime_configuration_logging_methods"
-require "pact_broker/config/runtime_configuration_database_methods"
-require "pact_broker/config/runtime_configuration_coercion_methods"
-require "pact_broker/version"
-require "pact_broker/config/runtime_configuration_basic_auth_methods"
-require "pact_broker/string_refinements"
-require "pact_broker/hash_refinements"
-require "pact_broker/error"
 
 module Anyway
   module Tracing
@@ -19,6 +11,15 @@ module Anyway
     end
   end
 end
+
+require "pact_broker/config/runtime_configuration_logging_methods"
+require "pact_broker/config/runtime_configuration_database_methods"
+require "pact_broker/config/runtime_configuration_coercion_methods"
+require "pact_broker/version"
+require "pact_broker/config/runtime_configuration_basic_auth_methods"
+require "pact_broker/string_refinements"
+require "pact_broker/hash_refinements"
+require "pact_broker/error"
 
 module PactBroker
   module Config
