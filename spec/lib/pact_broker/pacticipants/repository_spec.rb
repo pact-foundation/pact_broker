@@ -250,7 +250,7 @@ module PactBroker
             expect(searched_dataset.collect(&:name)).to eq([consumer_name])
           end
 
-          it "searches case insentively" do
+          it "searches case insensitively" do
             searched_dataset =  Repository.new.search_by_name "TEST"
             expect(searched_dataset.collect(&:name)).to include(*[consumer_name, provider_name])
           end
