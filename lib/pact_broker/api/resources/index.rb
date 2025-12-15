@@ -57,19 +57,19 @@ module PactBroker
             },
             "pb:latest-branch-pact-versions" =>
             {
-              href: base_url + "/pacts/provider/{provider}/consumer/{consumer}/branch/{branch}/latest",
+              href: base_url + "/pacts/provider/{provider}/consumer/{consumer}/branch/{branch}/latest/versions",
               title: "Latest version of pact for a provider, for a named consumers branch",
               templated: true
             },
             "pb:main-branch-pact-versions" =>
             {
-              href: base_url + "/pacts/provider/{provider}/consumer/{consumer}/branch",
+              href: base_url + "/pacts/provider/{provider}/consumer/{consumer}/branch/versions",
               title: "All versions of pacts for a provider, for a named consumers main branch",
               templated: true
             },
             "pb:latest-main-branch-pact-versions" =>
             {
-              href: base_url + "/pacts/provider/{provider}/consumer/{consumer}/branch/latest",
+              href: base_url + "/pacts/provider/{provider}/consumer/{consumer}/branch/latest/versions",
               title: "Latest version of pact for a provider, for a named consumers main branch",
               templated: true
             },
