@@ -33,10 +33,10 @@ module PactBroker
         add ["pacts", "provider", :provider_name, "consumer", :consumer_name, "versions"], Api::Resources::PactVersions, {resource_name: "pact_publications"}
         add ["pacts", "provider", :provider_name, "consumer", :consumer_name, "versions", :consumer_version_number], Api::Resources::Pact, {resource_name: "pact_publication", deprecated: true} # Not the standard URL, but keep for backwards compatibility
         add ["pacts", "provider", :provider_name, "consumer", :consumer_name, "tag", :tag], Api::Resources::TaggedPactVersions, {resource_name: "tagged_pact_publications"}
-        add ["pacts", "provider", :provider_name, "consumer", :consumer_name, "branch"], Api::Resources::PactVersionsForBranch, {resource_name: "pact_publications_for_main_branch"}
-        add ["pacts", "provider", :provider_name, "consumer", :consumer_name, "branch", "latest"], Api::Resources::PactVersionsForBranch, {resource_name: "latest_pact_publications_for_main_branch"}
-        add ["pacts", "provider", :provider_name, "consumer", :consumer_name, "branch", :branch_name, "latest"], Api::Resources::PactVersionsForBranch, {resource_name: "latest_pact_publications_for_branch"}
         add ["pacts", "provider", :provider_name, "consumer", :consumer_name, "branch", :branch_name], Api::Resources::PactVersionsForBranch, {resource_name: "pact_publications_for_branch"}
+        add ["pacts", "provider", :provider_name, "consumer", :consumer_name, "branch", "versions"], Api::Resources::PactVersionsForBranch, {resource_name: "pact_publications_for_main_branch"}
+        add ["pacts", "provider", :provider_name, "consumer", :consumer_name, "branch", "latest", "versions"], Api::Resources::PactVersionsForBranch, {resource_name: "latest_pact_publications_for_main_branch"}
+        add ["pacts", "provider", :provider_name, "consumer", :consumer_name, "branch", :branch_name, "latest", "versions"], Api::Resources::PactVersionsForBranch, {resource_name: "latest_pact_publications_for_branch"}
 
         # Pacts
         add ["pacts", "provider", :provider_name, "consumer", :consumer_name, "version", :consumer_version_number], Api::Resources::Pact, {resource_name: "pact_publication"}
