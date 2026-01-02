@@ -46,9 +46,18 @@ module PactBroker
 
       def for_main_branches
         consumers_join = { Sequel[:pact_publications][:consumer_id] => Sequel[:consumers][:id] }
-        query = self
-        query
+        branch_versions_join = {
+          Sequel[:branch_versions][:version_id] => Sequel[:pact_publications][:consumer_version_id],
+          Sequel[:branch_versions][:branch_name] => Sequel[:consumers][:main_branch]
+        }
+        base_query = self
+
+        if no_columns_selected?
+          base_query = base_query.select_all_qualified.select_append(Sequel[:branch_versions][:branch_name].as(:branch_name))
+        end
+        base_query
           .join(:pacticipants, consumers_join, { table_alias: :consumers })
+          .join(:branch_versions, branch_versions_join)
           .remove_overridden_revisions_from_complete_query
       end
 
