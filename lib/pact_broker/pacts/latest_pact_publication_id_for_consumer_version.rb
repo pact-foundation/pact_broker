@@ -23,7 +23,7 @@ end
 #  created_at          | timestamp without time zone |
 # Indexes:
 #  latest_pact_publication_ids_for_consume_pact_publication_id_key | UNIQUE btree (pact_publication_id)
-#  unq_latest_ppid_prov_conver                                     | UNIQUE btree (provider_id, consumer_version_id)
+#  unq_latest_ppid_prov_conver                                     | UNIQUE btree (provider_id, consumer_version_id)  # typos:ignore
 #  latest_pp_ids_for_cons_ver_con_ver_id_ndx                       | btree (consumer_version_id)
 #  lpp_provider_id_consumer_id_index                               | btree (provider_id, consumer_id)
 # Foreign key constraints:

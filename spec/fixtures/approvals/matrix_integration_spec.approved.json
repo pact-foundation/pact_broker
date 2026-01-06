@@ -106,7 +106,7 @@
       "PactBroker::Matrix::PactNotEverVerifiedByProvider"
     ]
   },
-  "PactBroker::Matrix::Service find when two applications have pacts with each other (nureva use case) when both application versions are specified explictly does not allow the two apps to be deployed together": {
+  "PactBroker::Matrix::Service find when two applications have pacts with each other (nureva use case) when both application versions are specified explicitly does not allow the two apps to be deployed together": {
     "deployable": null,
     "reasons": [
       "PactBroker::Matrix::PactNotEverVerifiedByProvider"
