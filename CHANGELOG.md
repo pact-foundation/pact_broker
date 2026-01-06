@@ -1,3 +1,15 @@
+<a name="v2.118.0"></a>
+### v2.118.0 (2026-01-02)
+
+#### Features
+
+* added has_messages column to pact_versions table (#880)	 ([34741dae](/../../commit/34741dae))
+
+#### Bug Fixes
+
+* remove route overlap and add tests for new routes	 ([45a81474](/../../commit/45a81474))
+* restore latest pact for branch endpoint	 ([cb867957](/../../commit/cb867957))
+
 <a name="v2.117.1"></a>
 ### v2.117.1 (2025-11-02)
 
