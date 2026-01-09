@@ -126,6 +126,44 @@ module PactBroker::Api
             expect(json_body["_links"]["pb:deployed-environments"]).to_not be_nil
           end
         end
+
+        context "when there are both deployed and undeployed versions" do
+          let(:deployed_version) do
+            td.use_consumer_version(version.number)
+              .create_deployed_version(
+                uuid: "1234",
+                currently_deployed: true,
+                version: version,
+                environment_name: test_environment.name,
+                created_at: DateTime.now - 3)
+              .create_deployed_version(
+                uuid: "5678",
+                currently_deployed: false,
+                version: version,
+                environment_name: prod_environment.name,
+                created_at: DateTime.now - 2)
+              .and_return(:deployed_version)
+          end
+
+          it "only includes currently deployed versions in pb:deployed-environments" do
+            subject
+            json_body = JSON.parse(last_response.body)
+            deployed_envs = json_body["_links"]["pb:deployed-environments"]
+
+            # Should only have 1 (test), not 2
+            expect(deployed_envs.size).to eq 1
+            expect(deployed_envs.first["name"]).to eq "Test"
+          end
+
+          it "does not include undeployed versions" do
+            subject
+            json_body = JSON.parse(last_response.body)
+            deployed_envs = json_body["_links"]["pb:deployed-environments"]
+
+            env_names = deployed_envs.map { |env| env["name"] }
+            expect(env_names).to_not include("prod")
+          end
+        end
       end
 
       describe "DELETE" do
