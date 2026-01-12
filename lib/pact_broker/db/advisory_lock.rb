@@ -1,7 +1,7 @@
 require "pact_broker/logging"
 
 # Uses a Postgres advisory lock to ensure that a given block of code can only have ONE
-# thread in excution at a time against a given database.
+# thread in execution at a time against a given database.
 # When the database is not Postgres, the block will yield without any locks, allowing
 # this class to be used safely with other database types, but without the locking
 # functionality.

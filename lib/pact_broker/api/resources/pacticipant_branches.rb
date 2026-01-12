@@ -33,7 +33,7 @@ module PactBroker
         end
 
         # Allows bulk deletion of pacticipant branches, keeping the specified branches and the main branch.
-        # Deletes the branches asyncronously, after the response has been sent, for performance reasons.
+        # Deletes the branches asynchronously, after the response has been sent, for performance reasons.
         def delete_resource
           after_reply do
             branch_service.delete_branches_for_pacticipant(pacticipant, exclude: exclude)

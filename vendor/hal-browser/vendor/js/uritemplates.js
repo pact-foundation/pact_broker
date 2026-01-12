@@ -31,8 +31,8 @@ function extend(base, newprops) {
 /**
  * Create a runtime cache around retrieved values from the context.
  * This allows for dynamic (function) results to be kept the same for multiple 
- * occuring expansions within one template.
- * Note: Uses key-value tupples to be able to cache null values as well.
+ * occurring expansions within one template.
+ * Note: Uses key-value tuples to be able to cache null values as well.
  */
  //TODO move this into prep-processing
 function CachingContext(context) {
@@ -44,13 +44,13 @@ CachingContext.prototype.get = function(key) {
     var result = val;
     
     if (isFunction(val)) { // check function-result-cache
-        var tupple = this.cache[key];
-        if (tupple !== null && tupple !== undefined) { 
-            result = tupple.val;
+        var tuple = this.cache[key];
+        if (tuple !== null && tuple !== undefined) { 
+            result = tuple.val;
         } else {
             result = val(this.raw);
             this.cache[key] = {key: key, val: result}; 
-            // NOTE: by storing tupples we make sure a null return is validly consistent too in expansions
+            // NOTE: by storing tuples we make sure a null return is validly consistent too in expansions
         }
     }
     return result;
@@ -339,7 +339,7 @@ function VarSpec (name, vhfn, nums) {
 VarSpec.build = function(name, expl, part, nums) {
     var valueHandler, valueModifier;
     
-    if (!!expl) { //interprete as boolean
+    if (!!expl) { //interpret as boolean
         valueHandler = explodeValueHandler;
     } else {
         valueHandler = simpleValueHandler;

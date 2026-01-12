@@ -28,7 +28,7 @@ describe "UI index" do
     context "with an array of tags" do
       let(:params) { { tags: ["prod"] } }
 
-      it "returns a table of pacts with the specfied tags" do
+      it "returns a table of pacts with the specified tags" do
         expect(subject.body.scan("<tr").to_a.size).to eq 3
       end
     end

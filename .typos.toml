@@ -1,0 +1,28 @@
+#:schema https://github.com/crate-ci/typos/raw/refs/heads/master/config.schema.json
+[files]
+ignore-hidden  = false
+extend-exclude = ["public/**", "vendor/hal-browser/vendor/**"]
+
+[default]
+extend-ignore-re = [
+    # Allow ignoring lines / blocks
+    "(?Rm)^.*(#|//)\\s*typos:ignore$",
+    "(?s)(#|//)\\s*typos:off.*?\\n\\s*(#|//)\\s*typos:on",
+    # Certificate blocks
+    "(?s)-----BEGIN CERTIFICATE-----.*?-----END CERTIFICATE-----",
+]
+
+[default.extend-identifiers]
+wisper = "wisper"
+Wisper = "Wisper"
+
+[type.changelog]
+extend-glob = ["CHANGELOG.md"]
+
+extend-ignore-re = [
+    # Ignore commits
+    "(?Rm)\\[[0-9a-f]+\\]\\(/../../commit/[0-9a-f]+\\)",
+    "(?Rm)^\\* [0-9a-f]+ - ",
+    # Ignore some proper names
+    "(?Rm)Taiki Ono",
+]

@@ -21,7 +21,7 @@ module PactBroker
 
           subject { get path; last_response }
 
-          it "searchs for the verification" do
+          it "searches for the verification" do
             expect(verification_service).to receive(:find).with(
               hash_including(
                 provider_name: "bar",

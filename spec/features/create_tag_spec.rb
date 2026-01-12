@@ -30,7 +30,7 @@ describe "Creating a tag" do
     end
   end
 
-  context "when there is an envionment with a matching name" do
+  context "when there is an environment with a matching name" do
     before do
       td.create_environment("foo")
     end

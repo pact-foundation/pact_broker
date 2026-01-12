@@ -52,10 +52,10 @@ module PactBroker
           Service.create(second_options_same_tag_name)
         end
 
-        let(:delete_tag_for_particpant_and_version) { subject.delete second_options_same_tag_name}
+        let(:delete_tag_for_participant_and_version) { subject.delete second_options_same_tag_name}
 
         it "deletes the tag for the particpiant and the version" do
-          expect{ delete_tag_for_particpant_and_version }.to change{
+          expect{ delete_tag_for_participant_and_version }.to change{
             PactBroker::Domain::Tag.all.count
           }.by(-1)
         end

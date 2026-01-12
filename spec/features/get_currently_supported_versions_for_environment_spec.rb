@@ -49,7 +49,7 @@ RSpec.describe "Get currently supported versions for environment" do
     context "with no matching versions" do
       let(:query_params) { { pacticipant: "waffle" } }
 
-      it "returns an emtpy list" do
+      it "returns an empty list" do
         expect(response_body_hash[:_embedded][:releasedVersions]).to eq []
       end
     end

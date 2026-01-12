@@ -19,7 +19,7 @@ RSpec.describe "a request to publish a pact with non-utf-8 chars" do
       "12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890\x8FDEF"
     end
 
-    it "truncates the fragement included in the error message" do
+    it "truncates the fragment included in the error message" do
       expect(JSON.parse(subject.body)).to eq("error" => "Request body has a non UTF-8 character at char 111 and cannot be parsed as JSON. Fragment preceding invalid character is: '1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890'")
     end
   end

@@ -240,12 +240,12 @@ Body:
 #### Response
 
 Status: `201`<br/>
-Headers: `{"Content-Type":"application/hal+json;charset=utf-8","Location":"https://pact-broker/webhooks/dCGCl-Ba3PqEFJ_iE9mJkQ"}`<br/>
+Headers: `{"Content-Type":"application/hal+json;charset=utf-8","Location":"https://pact-broker/webhooks/67c2884a-5773-5c8b-93e7-0776f1cda018"}`<br/>
 Body:
 
 ```
 {
-  "uuid": "dCGCl-Ba3PqEFJ_iE9mJkQ",
+  "uuid": "67c2884a-5773-5c8b-93e7-0776f1cda018",
   "description": "an example webhook",
   "enabled": true,
   "request": {
@@ -269,11 +269,11 @@ Body:
   "_links": {
     "self": {
       "title": "an example webhook",
-      "href": "https://pact-broker/webhooks/dCGCl-Ba3PqEFJ_iE9mJkQ"
+      "href": "https://pact-broker/webhooks/67c2884a-5773-5c8b-93e7-0776f1cda018"
     },
     "pb:execute": {
       "title": "Test the execution of the webhook with the latest matching pact or verification by sending a POST request to this URL",
-      "href": "https://pact-broker/webhooks/dCGCl-Ba3PqEFJ_iE9mJkQ/execute"
+      "href": "https://pact-broker/webhooks/67c2884a-5773-5c8b-93e7-0776f1cda018/execute"
     },
     "pb:webhooks": {
       "title": "All webhooks",
@@ -785,5 +785,3 @@ Body:
 ```
 logs
 ```
-
-

@@ -167,7 +167,7 @@ module Webmachine
 
       def base_uri(rack_req)
         # rack SCRIPT_NAME env var doesn't end with "/". This causes weird
-        # behavour when URI.join concatenates URI components in
+        # behaviour when URI.join concatenates URI components in
         # Webmachine::Decision::Flow#n11
         script_name = rack_req.script_name + SLASH
         URI.join(rack_req.base_url, script_name)

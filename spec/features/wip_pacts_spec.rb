@@ -98,7 +98,7 @@ RSpec.describe "the lifecycle of a WIP pact" do
   end
 
   context "when the includeWipPactsSince date is specified" do
-    context "a pact published afer the specified date, with a tag that is not specified explictly in the 'pacts for verification' request" do
+    context "a pact published after the specified date, with a tag that is not specified explicitly in the 'pacts for verification' request" do
       describe "when it is first published" do
         it "is included in the list of pacts to verify as a WIP pact" do
           publish_pact_with_master_tag
