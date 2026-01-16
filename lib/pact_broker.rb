@@ -4,6 +4,7 @@ require "pact_broker/app"
 require "pact_broker/db/log_quietener"
 require "request_store"
 require "pact_broker/configuration"
+
 module PactBroker
   def self.configuration
     RequestStore.store[:pact_broker_configuration] ||= Configuration.default_configuration
