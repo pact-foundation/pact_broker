@@ -4,22 +4,8 @@ require "semantic_logger"
 require "forwardable"
 require "pact_broker/config/runtime_configuration"
 require "anyway/auto_cast"
-require "request_store"
 
 module PactBroker
-  def self.configuration
-    RequestStore.store[:pact_broker_configuration] ||= Configuration.default_configuration
-  end
-
-  def self.set_configuration(configuration)
-    RequestStore.store[:pact_broker_configuration] = configuration
-  end
-
-  # @private, for testing only
-  def self.reset_configuration
-    RequestStore.store[:pact_broker_configuration] = Configuration.default_configuration
-  end
-
   class Configuration
     extend Forwardable
 
