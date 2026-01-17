@@ -1,0 +1,56 @@
+name: CI
+
+on: [ push, pull_request ]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby:
+          - '3.0'
+          - '3.1'
+          - '3.2'
+          - '3.3'
+          - '3.4'
+          - '3.5'
+          - '4.0'
+          - jruby
+          - truffleruby
+        include:
+          - ruby: '3.0'
+            rubygems_version: '3.5.23'
+          - ruby: '3.1'
+            rubygems_version: '3.6.9'
+    name: Ruby ${{ matrix.ruby }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+      - name: Update RubyGems
+        env:
+          RUBYGEMS_VERSION: ${{ matrix.rubygems_version }}
+        run: |
+            gem update --system ${RUBYGEMS_VERSION:-}
+            gem -v
+      - name: Install dependencies
+        run: bundle install --jobs 4 --retry 3
+      - name: Run tests
+        run: bundle exec rake test
+
+  # rubocop linting
+  rubocop:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+      - name: Install dependencies
+        run: bundle install --jobs 4 --retry 3
+      - name: Run rubocop
+        run: bundle exec rubocop --parallel

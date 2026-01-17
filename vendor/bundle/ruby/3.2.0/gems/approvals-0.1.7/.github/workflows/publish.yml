@@ -1,0 +1,58 @@
+name: Publish
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  publish-rubygems:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Ruby, JRuby and TruffleRuby
+        uses: ruby/setup-ruby@v1.215.0
+        with:
+          ruby-version : 2.7.6
+      - uses: actions/checkout@v4   
+      - name: Install dependecies
+        run: bundle install
+      - name: Run Tests
+        run: ./run_tests.sh
+      - name: Determine version from git tag
+        id: version
+        run: |
+          echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+
+
+      - name: set version
+        run: |
+          rm ./lib/approvals/version.rb
+          echo "module Approvals;  VERSION = \"${{ steps.version.outputs.tag }}\"; end"  > ./lib/approvals/version.rb
+  
+      - name: Push changes
+        run: |
+            git config --local user.email "action@github.com"
+            git config --local user.name "GitHub Action"
+            git commit -m "v${{ steps.version.outputs.tag }}" -a  || echo "nothing to commit"
+            git checkout -b temp
+            git fetch
+            git checkout main
+            git merge temp
+            remote="https://${GITHUB_ACTOR}:${{secrets.GITHUB_TOKEN}}@github.com/${GITHUB_REPOSITORY}.git"
+            branch="main"
+            git push "${remote}" ${branch} || echo "nothing to push"
+        shell: bash
+      - name: Generate gem credentials
+        run: |
+          mkdir -p ~/.gem
+          cat << EOF > ~/.gem/credentials
+          ---
+          :rubygems_api_key: ${{ secrets.RUBY_GEMS_KEY }}
+          EOF
+      - name: Chmod file
+        run: chmod 0600 ~/.gem/credentials
+      - name: Publish
+        run: |
+          git status
+          bundle exec rake release --trace
+
+ 

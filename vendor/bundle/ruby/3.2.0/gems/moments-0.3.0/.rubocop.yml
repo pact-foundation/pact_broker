@@ -1,0 +1,82 @@
+# inherit_from: .rubocop_todo.yml
+
+AllCops:
+  TargetRubyVersion: 2.5
+  NewCops: enable
+  SuggestExtensions: false
+  Exclude:
+    - 'gemfiles/*.gemfile'
+    - 'vendor/**/*'
+    - 'spec/**/*'
+
+Style/Documentation:
+  Enabled: false
+
+Style/BlockDelimiters:
+  Exclude:
+    - spec/**/*_spec.rb
+
+Style/GuardClause:
+  Enabled: false
+
+Style/IfUnlessModifier:
+  Enabled: false
+
+Layout/SpaceInsideHashLiteralBraces:
+  Enabled: false
+
+Style/Lambda:
+  Enabled: false
+
+Style/RaiseArgs:
+  Enabled: false
+
+Style/SignalException:
+  Enabled: false
+
+Metrics/AbcSize:
+  Max: 25
+
+Metrics/ClassLength:
+  Max: 120
+
+Metrics/ModuleLength:
+  Max: 100
+
+Layout/LineLength:
+  Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - spec/**/*_spec.rb
+
+Metrics/MethodLength:
+  Max: 15
+
+Style/SingleLineBlockParams:
+  Enabled: false
+
+Layout/EndAlignment:
+  EnforcedStyleAlignWith: variable
+
+Style/FormatString:
+  Enabled: false
+
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
+Layout/MultilineOperationIndentation:
+  EnforcedStyle: indented
+
+Style/WordArray:
+  Enabled: false
+
+Style/RedundantSelf:
+  Enabled: false
+
+Layout/HashAlignment:
+  Enabled: true
+  EnforcedLastArgumentHashStyle: always_ignore
+
+Style/TrivialAccessors:
+  AllowPredicates: true

@@ -1,0 +1,53 @@
+=== 1.7.0 (2021-05-20)
+
+* Add support for table comments on PostgreSQL (TSMMark) (#21)
+
+=== 1.6.0 (2020-10-05)
+
+* Add support for :namespace=>true option to attempt to automatically determine namespace (adam12) (#20)
+
+* Skip models that select from a subquery (adam12, jeremyevans) (#17)
+
+* Allow files to be skipped with sequel-annotate: false magic comment (adam12) (#18)
+
+* Ignore opening of singleton classes with class << when looking for models (adam12) (#16)
+
+=== 1.5.0 (2020-05-04)
+
+* Add support for magic comments in model files when using the :position=>:before option (qortex, jeremyevans) (#15)
+
+* Add support for PostgreSQL column comments (rgalanakis, jeremyevans) (#14)
+
+* Respect domain types on PostgreSQL (chanks) (#13)
+
+* Make schema comments handle table names that aren't just symbols (chanks) (#12)
+
+=== 1.4.0 (2018-11-15)
+
+* Support adding borders to the beginning and end of comments via :border option (kreynolds) (#9)
+
+* Support excluding indexes, constraints, and triggers from annotation via options (kreynolds) (#9)
+
+=== 1.3.1 (2018-09-27)
+
+* Make sure all annotation lines are commented by handling newlines inside annotations (jeremyevans)
+
+=== 1.3.0 (2018-07-17)
+
+* Support :namespace option to specify namespace to add for models nested in namespaces (jeremyevans)
+
+* Make Sequel::Annotate.annotate support STI classes and custom abstract base classes (a0s) (#7)
+
+=== 1.2.0 (2018-04-02)
+
+* Handle PostgreSQL 10+ identity columns when running on Sequel 5.7+ (jeremyevans)
+
+* Use multiline regexps when parsing schema on PostgreSQL (jeremyevans) (#5)
+
+=== 1.1.0 (2017-09-06)
+
+* Support :position=>:before option to annotate to put annotation at the beginning of the file (a0s) (#4)
+
+=== 1.0.0 (2015-09-14)
+
+* Initial Public Release

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml char="kiddo">
+  <node>
+    <content name="beatrice"/>
+  </node>
+  <node aliases="5">
+    <content/>
+  </node>
+</xml>

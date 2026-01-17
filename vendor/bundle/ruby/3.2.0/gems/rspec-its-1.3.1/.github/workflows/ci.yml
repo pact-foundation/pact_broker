@@ -1,0 +1,131 @@
+name: RSpec CI
+on:
+  push:
+    branches:
+      - 'main'
+      - '*-maintenance'
+      - '*-dev'
+  pull_request:
+    branches:
+      - '*'
+env:
+  BRANCH: '3-12-maintenance'
+  RSPEC_CI: true
+jobs:
+  test:
+    name: Ruby ${{ matrix.ruby }} ${{ matrix.name_extra || '' }}
+    runs-on: ${{ matrix.os || 'ubuntu-20.04' }}
+    strategy:
+      matrix:
+        ruby:
+          - '3.2'
+          - '3.1'
+          - '3.0'
+          - 2.7
+          - 2.6
+          - 2.5
+          - 2.4
+          - 2.3
+          - 2.2
+          - 2.1.9
+        env:
+          -
+            BRANCH: "main"
+        include:
+          - ruby: jruby-9.2.13.0
+            env:
+              JRUBY_OPTS: "--dev"
+          # Compatibility builds
+          - ruby: '3.2'
+            name_extra: "against RSpec 3.12"
+            env:
+              BRANCH: "3-12-maintenance"
+          - ruby: '3.1'
+            name_extra: "against RSpec 3.11"
+            env:
+              BRANCH: "3-11-maintenance"
+          - ruby: '3.1'
+            name_extra: "against RSpec 3.10"
+            env:
+              BRANCH: "3-10-maintenance"
+          - ruby: '3.0'
+            name_extra: "against RSpec 3.9"
+            env:
+              BRANCH: "3-9-maintenance"
+          - ruby: '3.0'
+            name_extra: "against RSpec 3.8"
+            env:
+              BRANCH: "3-8-maintenance"
+          - ruby: '3.0'
+            name_extra: "against RSpec 3.7"
+            env:
+              BRANCH: "3-7-maintenance"
+          - ruby: '3.0'
+            name_extra: "against RSpec 3.6"
+            env:
+              BRANCH: "3-6-maintenance"
+          - ruby: '3.0'
+            name_extra: "against RSpec 3.5"
+            env:
+              BRANCH: "3-5-maintenance"
+          - ruby: '3.0'
+            name_extra: "against RSpec 3.4"
+            env:
+              BRANCH: "3-4-maintenance"
+          - ruby: '3.0'
+            name_extra: "against RSpec 3.3"
+            env:
+              BRANCH: "3-3-maintenance"
+          - ruby: '3.0'
+            name_extra: "against RSpec 3.2"
+            env:
+              BRANCH: "3-2-maintenance"
+          - ruby: '3.0'
+            name_extra: "against RSpec 3.1"
+            env:
+              BRANCH: "3-1-maintenance"
+          - ruby: '3.0'
+            name_extra: "against RSpec 3.0"
+            env:
+              BRANCH: "3-0-maintenance"
+
+      fail-fast: false
+    continue-on-error: ${{ matrix.allow_failure || endsWith(matrix.ruby, 'head') }}
+    env: ${{ matrix.env }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler: ${{ matrix.bundler || 2 }}
+          ruby-version: ${{ matrix.ruby }}
+      - run: script/update_rubygems_and_install_bundler
+      - run: bundle install --binstubs --standalone
+      - run: script/test_all
+
+  legacy:
+    name: Legacy Ruby Builds (${{ matrix.container.version }})
+    runs-on: ubuntu-20.04
+    container:
+      image: ${{ matrix.container.tag }}
+      options: ${{ matrix.container.options || '--add-host github-complains-if-this-is-empty.com:127.0.0.1' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        container:
+          - version: "2.0"
+            tag: ghcr.io/rspec/docker-ci:2.0.0
+          - version: "1.9.3"
+            tag: ghcr.io/rspec/docker-ci:1.9.3
+          - version: "JRuby 1.7"
+            tag: ghcr.io/rspec/docker-ci:jruby-1.7
+          - version: "JRuby 9.1.17.0"
+            tag: ghcr.io/rspec/docker-ci:jruby-9.1.17.0
+            options: "--add-host rubygems.org:151.101.129.227 --add-host api.rubygems.org:151.101.129.227"
+    env:
+      ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+      LEGACY_CI: true
+      JRUBY_OPTS: ${{ matrix.container.jruby_opts || '--dev' }}
+    steps:
+      - uses: actions/checkout@v3
+      - run: script/legacy_setup.sh
+      - run: script/test_all

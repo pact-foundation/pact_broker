@@ -1,0 +1,6 @@
+{
+	:meal => "breakfast"
+	:proteins => "90%"
+	:price => 38
+	:delicious => true
+}

@@ -1,0 +1,12 @@
+*.gem
+.gem/
+.bundle
+pkg/*
+*.received.*
+.approvals
+tmp/
+vendor/
+
+ext/Rakefile
+.ruby-version
+.gitpod.yml

@@ -1,0 +1,5 @@
+--readme README.md
+--title 'string_pattern - You can easily generate strings supplying a very simple pattern. Also you can validate if a text fulfill an specific pattern or even generate a string following a pattern and returning wrong length, value... for testing your applications.'
+--charset utf-8
+--markup markdown
+'lib/**/*.rb' - '*.md' - 'LICENSE'

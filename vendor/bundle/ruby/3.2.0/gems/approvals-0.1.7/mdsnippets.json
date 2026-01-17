@@ -1,0 +1,5 @@
+{
+  "ExcludeDirectories": [ "pkg", "vendor" ],
+  "Convention": "InPlaceOverwrite",
+  "TocLevel": 5
+}

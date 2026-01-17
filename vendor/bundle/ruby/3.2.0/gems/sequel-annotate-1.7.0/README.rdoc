@@ -1,0 +1,131 @@
+= sequel-annotate
+
+sequel-annotate annotates Sequel models with schema information.  By
+default, it includes information on columns, indexes, and foreign key
+constraints for the current table.
+
+On PostgreSQL, this includes more advanced information, including
+check constraints, triggers, comments, and foreign keys constraints for other
+tables that reference the current table.
+
+== Example
+
+The schema comments are kept at the end of the file by default, using a format similar to:
+
+  class Item < Sequel::Model
+  end
+
+  # Table: items
+  # Columns:
+  #  id                    | integer               | PRIMARY KEY DEFAULT nextval('items_id_seq'::regclass)
+  #  category_id           | integer               | NOT NULL
+  #  manufacturer_name     | character varying(50) |
+  #  manufacturer_location | text                  |
+  #  in_stock              | boolean               | DEFAULT false
+  #  name                  | text                  | DEFAULT 'John'::text
+  #  price                 | double precision      | DEFAULT 0
+  # Indexes:
+  #  items_pkey        | PRIMARY KEY btree (id)
+  #  name              | UNIQUE btree (manufacturer_name, manufacturer_location)
+  #  manufacturer_name | btree (manufacturer_name)
+  # Check constraints:
+  #  pos_id | (id > 0)
+  # Foreign key constraints:
+  #  items_category_id_fkey       | (category_id) REFERENCES categories(id)
+  #  items_manufacturer_name_fkey | (manufacturer_name, manufacturer_location) REFERENCES manufacturers(name, location)
+  # Triggers:
+  #  valid_price | BEFORE INSERT OR UPDATE ON items FOR EACH ROW EXECUTE PROCEDURE valid_price()
+
+== Install
+
+  gem install sequel-annotate
+
+== Usage
+
+After loading the models:
+
+  require 'sequel/annotate'
+  Sequel::Annotate.annotate(Dir['models/*.rb'])
+
+That will append or replace the schema comment in each of the files.  It's best
+to run this when the repository is clean, and then use your source control
+tools (e.g. git diff) to see the changes it makes.
+
+In some cases, sequel-annotate may not be able to correctly guess the
+model for the file.  In that case, you may need to create an instance manually:
+
+  sa = Sequel::Annotate.new(Item)
+  sa.annotate('models/item.rb')
+
+If you want to get the schema comment for a model without appending it to
+a file:
+
+  sa.schema_comment
+
+If you want to put the schema comment at the beginning of the file you can use
+the :position option:
+
+  Sequel::Annotate.annotate(Dir['models/*.rb'], position: :before)
+
+or
+
+  sa = Sequel::Annotate.new(Item)
+  sa.annotate('models/item.rb', position: :before)
+
+If your models are nested in a namespace:
+
+  module ModelNamespace
+    class Item < Sequel::Model
+    end
+  end
+
+Then you can use the +:namespace+ option to set the namespace to use:
+
+  Sequel::Annotate.annotate(Dir['models/*.rb'], namespace: 'ModelNamespace')
+
+For PostgreSQL, you can optionally leave out indexes, foreign_keys, references,
+triggers, comments, and constraints by passing in false as a parameter as follows:
+
+  Sequel::Annotate.annotate(Dir['models/*.rb'], foreign_keys: false,
+                            :indexes: false, constraints: false, comments: false)
+
+The columns section can have a border on the top and bottom for easier visual distinction by setting the :border option to true
+
+  Sequel::Annotate.annotate(Dir['models/*.rb'], border: true)
+
+Models that use datasets that select from subqueries are automatically skipped,
+as annotations don't really make sense for them since they are not backed by a
+table.  You can skip other models by using a <tt># sequel-annotate: false</tt>
+magic comment somewhere in the file.
+
+=== Rake Task
+
+Here's an example rake task for sequel-annotate:
+
+  desc "Update model annotations"
+  task :annotate do
+    # Load the models first
+    Dir['models/*.rb'].each{|f| require_relative f}
+
+    require 'sequel/annotate'
+    Sequel::Annotate.annotate(Dir['models/*.rb'])
+  end
+
+== Running Tests
+
+Tests of sequel-annotate itself can be run with rake:
+
+  rake
+
+Set the SEQUEL_ANNOTATE_SPEC_POSTGRES_URL environment variable or appropriate
+libpq environment variables to specify which PostgreSQL database to connect to.
+
+== License
+
+MIT
+
+== Author
+
+Jeremy Evans <code@jeremyevans.net>
+
+Based on [annotate-sequel]{https://github.com/kennym/annotate-sequel} by Kenny Meyer.
