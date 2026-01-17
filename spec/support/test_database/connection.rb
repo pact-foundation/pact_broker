@@ -1,6 +1,7 @@
 require "sequel"
 require "sequel/connection_pool/threaded"
 require "yaml"
+require "pact_broker"
 require "pact_broker/logging"
 require "erb"
 require "pact_broker/project_root"

@@ -1,0 +1,23 @@
+name: Test
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    if: "!contains(github.event.head_commit.message, '[ci-skip]')"
+    runs-on: "ubuntu-latest"
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby_version: ["2.7", "3.0", "3.2"]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby_version }}
+      - run: "bundle install"
+      - name: Tests
+        run: "bundle exec rake"

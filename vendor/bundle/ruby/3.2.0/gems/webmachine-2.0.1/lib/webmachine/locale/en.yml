@@ -1,0 +1,30 @@
+en:
+  webmachine:
+    errors:
+      standard_body: "<!DOCTYPE html><html>\n
+        <head><title>%{title}</title></head>\n
+        <body><h1>%{title}</h1>\n
+        <p>%{message}</p>\n
+        <address>%{version} server</address></body></html>\n"
+      "400":
+        title: 400 Malformed Request
+        message: The request was malformed and could not be processed.
+      "404":
+        title: 404 Not Found
+        message: The requested document was not found on this server.
+      "500":
+        title: 500 Internal Server Error
+        message: "The server encountered an error while processing this request: <pre>\n%{error}</pre>"
+      "501":
+        title: 501 Not Implemented
+        message: "The server does not support the %{method} method."
+      "503":
+        title: 503 Service Unavailable
+        message: The server is currently unable to handle the request due to a temporary overloading or maintenance of the server.
+    create_path_nil: "post_is_create? returned true but create_path is nil! Define the create_path method in %{class}"
+    do_redirect: "Response had do_redirect but no Location header."
+    fsm_broke: "Decision FSM returned an unexpected value %{result} from decision %{state}."
+    invalid_media_type: "Invalid media type: %{type}"
+    not_resource_class: "%{class} is not a subclass of Webmachine::Resource"
+    process_post_invalid: "process_post returned %{result}"
+    match_all_symbol: '"*" as a path segment is deprecated and will be removed in a future release. Please use :*'

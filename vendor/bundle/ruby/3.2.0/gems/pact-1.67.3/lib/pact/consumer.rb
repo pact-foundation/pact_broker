@@ -1,0 +1,7 @@
+require 'pact/consumer_contract'
+require 'pact/consumer/configuration'
+require 'pact/consumer/consumer_contract_builder'
+require 'pact/consumer/consumer_contract_builders'
+require 'pact/consumer/interaction_builder'
+require 'pact/term'
+require 'pact/something_like'

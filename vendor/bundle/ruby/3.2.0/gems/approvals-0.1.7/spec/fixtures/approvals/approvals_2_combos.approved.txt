@@ -1,0 +1,12 @@
+["foo", 1, 2] => 3 foos
+["foo", 1, 4] => 5 foos
+["foo", 3, 2] => 5 foos
+["foo", 3, 4] => 7 foos
+["foo", 5, 2] => 7 foos
+["foo", 5, 4] => 9 foos
+["bar", 1, 2] => 3 bars
+["bar", 1, 4] => 5 bars
+["bar", 3, 2] => 5 bars
+["bar", 3, 4] => 7 bars
+["bar", 5, 2] => 7 bars
+["bar", 5, 4] => 9 bars

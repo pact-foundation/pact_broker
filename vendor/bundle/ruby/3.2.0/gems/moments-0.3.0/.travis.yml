@@ -1,0 +1,12 @@
+sudo: false
+cache: bundler
+language: ruby
+script: "bundle exec rspec"
+before_install:
+  - gem update --system
+  - gem --version
+  - bundle install
+rvm:
+  - 2.5.0
+  - 2.6.0
+  - 2.7.0

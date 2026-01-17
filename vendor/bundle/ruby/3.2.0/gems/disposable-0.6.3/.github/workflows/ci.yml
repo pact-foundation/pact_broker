@@ -1,0 +1,29 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: [2.6]
+        active_record: [5.2, 6.0]
+        dry_types: [1.0, 1.2]
+
+        include:
+          - ruby: 2.7
+            active_record: 6.1
+            dry_types: 1.5
+          # Due to https://github.com/actions/runner/issues/849, we have to use quotes for '3.0'
+          - ruby: '3.0'
+            active_record: 6.1
+            dry_types: 1.5
+
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby }}
+        # bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+    - run: ACTIVERECORD=${{ matrix.active_record}} DRY_TYPES=${{ matrix.dry_types }} bundle install
+    - run: ACTIVERECORD=${{ matrix.active_record}} DRY_TYPES=${{ matrix.dry_types }} bundle exec rake
