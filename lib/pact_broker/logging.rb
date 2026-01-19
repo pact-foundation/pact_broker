@@ -11,7 +11,7 @@ module PactBroker
       base.class_eval do
         # Returns [SemanticLogger::Logger] class level logger
         def self.logger
-          require "pact_broker/configuration"
+          require "pact_broker"
           @logger ||= PactBroker.configuration.custom_logger || SemanticLogger[self]
         end
 
