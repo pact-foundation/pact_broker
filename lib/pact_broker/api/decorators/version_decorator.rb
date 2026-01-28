@@ -25,7 +25,7 @@ module PactBroker
         def self.eager_load_associations
           [
             :pacticipant,
-            :pact_publications,
+            { pact_publications: [:consumer, :provider, { pact_version: :latest_verification }, :tags, :head_pact_publications_for_tags] },
             { branch_versions: [:version, :branch_head, { branch: :pacticipant }] },
             { tags: :head_tag }
           ]
