@@ -149,7 +149,7 @@ module PactBroker
           query = query.overall_latest
         end
 
-        query.all.sort_by{ | p| p.consumer_name.downcase }.collect(&:to_head_pact)
+        query.all.sort.collect(&:to_head_pact)
       end
 
       def find_pacts_by_consumer_branch(provider_name, options = {})
@@ -179,7 +179,7 @@ module PactBroker
             query = query.for_branch_name(branch)
           end
         end
-        query.all.sort_by{ | p| p.consumer_name.downcase }.collect(&:to_head_pact)
+        query.all.sort.collect(&:to_head_pact)
       end
 
       def find_for_verification(provider_name, consumer_version_selectors)
