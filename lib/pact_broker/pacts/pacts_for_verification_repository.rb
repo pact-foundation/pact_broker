@@ -18,13 +18,6 @@ module PactBroker
       include PactBroker::Services
       include PactBroker::Repositories::Scopes
 
-      # Maximum lookback window for WIP pacts (prevents timeout on large datasets)
-      MAX_WIP_LOOKBACK_DAYS = 14
-      # Minimum WIP window to ensure recent pacts are always included
-      MIN_WIP_WINDOW_DAYS = 7
-      # Default WIP window when calculation fails or no unverified pacts exist
-      DEFAULT_WIP_WINDOW_DAYS = 7
-
       PUBLICATION_ASSOCIATIONS_FOR_EAGER_LOAD = [
         :provider,
         :consumer,
@@ -105,17 +98,20 @@ module PactBroker
         # Step 1: Get list of unverified pact ages in days (e.g., [2, 5, 7, 10, 12, 14])
         unverified_ages = get_unverified_pact_ages_in_days(provider)
         
-        # Step 2: If no unverified pacts, use default 7-day window
+        # Step 2: If no unverified pacts, use default configured window
         if unverified_ages.empty?
-          logger.debug("No unverified pacts found for #{provider.name}, using default #{DEFAULT_WIP_WINDOW_DAYS}-day window") if logger.debug?
-          return Date.today - DEFAULT_WIP_WINDOW_DAYS
+          default_window = PactBroker.configuration.default_wip_window_days
+          logger.debug("No unverified pacts found for #{provider.name}, using default #{default_window}-day window") if logger.debug?
+          return Date.today - default_window
         end
 
         # Step 3: Calculate 80th percentile (ignore oldest 20% as abandoned work)
         p80_age = percentile_80(unverified_ages)
         
-        # Step 4: Ensure window is between 7-14 days, then return date
-        window_days = clamp_between(p80_age, MIN_WIP_WINDOW_DAYS, MAX_WIP_LOOKBACK_DAYS)
+        # Step 4: Ensure window is between configured min-max days, then return date
+        min_window = PactBroker.configuration.min_wip_window_days
+        max_window = PactBroker.configuration.max_wip_lookback_days
+        window_days = clamp_between(p80_age, min_window, max_window)
         wip_start_date = Date.today - window_days
         
         if logger.debug?
@@ -124,16 +120,18 @@ module PactBroker
         
         wip_start_date
       rescue StandardError => e
+        default_window = PactBroker.configuration.default_wip_window_days
         logger.error("Failed to calculate dynamic WIP window for provider #{provider.name}", error: e.class.name, message: e.message)
-        Date.today - DEFAULT_WIP_WINDOW_DAYS
+        Date.today - default_window
       end
 
       # Get ages (in days) of pacts that haven't been successfully verified yet
-      # Only looks back MAX_WIP_LOOKBACK_DAYS to keep query fast
+      # Only looks back the configured max_wip_lookback_days to keep query fast
       def get_unverified_pact_ages_in_days(provider)
+        max_days = PactBroker.configuration.max_wip_lookback_days
         PactPublication
           .where(provider_id: provider.id)
-          .where(Sequel.lit("created_at >= NOW() - INTERVAL '#{MAX_WIP_LOOKBACK_DAYS} days'"))
+          .where(Sequel.lit("created_at >= NOW() - INTERVAL '#{max_days} days'"))
           .left_join(:verifications, pact_version_id: :pact_version_id) { Sequel[:verifications][:success] =~ true }
           .where(Sequel[:verifications][:id] => nil)  # No successful verification = unverified
           .group(Sequel[:pact_publications][:id])

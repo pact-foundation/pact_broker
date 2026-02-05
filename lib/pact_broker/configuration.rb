@@ -205,6 +205,18 @@ module PactBroker
       ENV["PACT_BROKER_DYNAMIC_WIP_WINDOW"]&.downcase == "true"
     end
 
+    def max_wip_lookback_days
+      ENV["PACT_BROKER_MAX_WIP_LOOKBACK_DAYS"]&.to_i || 14
+    end
+
+    def min_wip_window_days
+      ENV["PACT_BROKER_MIN_WIP_WINDOW_DAYS"]&.to_i || 7
+    end
+
+    def default_wip_window_days
+      ENV["PACT_BROKER_DEFAULT_WIP_WINDOW_DAYS"]&.to_i || 7
+    end
+
     def enable_badge_resources= enable_badge_resources
       puts "Pact Broker configuration property `enable_badge_resources` is deprecated. Please use `enable_public_badge_access`"
       self.enable_public_badge_access = enable_badge_resources
