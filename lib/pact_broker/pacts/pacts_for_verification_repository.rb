@@ -139,12 +139,12 @@ module PactBroker
         # SQLite: julianday(date('now')) - julianday(date(created_at)) returns float days
         db = PactPublication.db
         age_expr = if db.database_type == :postgres
-          Sequel.lit("CURRENT_DATE - ?::date", Sequel[:pact_publications][:created_at])
-        else
-          # SQLite
-          Sequel.function(:julianday, Sequel.function(:date, 'now')) - 
-          Sequel.function(:julianday, Sequel.function(:date, Sequel[:pact_publications][:created_at]))
-        end
+                     Sequel.lit("CURRENT_DATE - ?::date", Sequel[:pact_publications][:created_at])
+                   else
+                     # SQLite
+                     Sequel.function(:julianday, Sequel.function(:date, "now")) -
+                     Sequel.function(:julianday, Sequel.function(:date, Sequel[:pact_publications][:created_at]))
+                   end
         
         PactPublication
           .where(Sequel[:pact_publications][:provider_id] => provider.id)
