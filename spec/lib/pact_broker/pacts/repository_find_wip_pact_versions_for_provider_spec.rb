@@ -450,22 +450,30 @@ module PactBroker
               before do
                 # Create 5 pacts at 2-3 days old
                 # P80 of [2,2,2,3,3] = 3 days → clamped to 7-day minimum
-                5.times do |i|
-                  days = i < 3 ? 2 : 3
-                  td.subtract_days(days)
-                    .create_pact_with_hierarchy("recent-#{i}", "1", "bar")
-                    .create_consumer_version_tag("feat-1")
-                  td.add_days(days)
-                end
-
+                td.subtract_days(2)
+                  .create_pact_with_hierarchy("recent-0", "1", "bar")
+                  .create_consumer_version_tag("feat-1")
+                  .create_pact_with_hierarchy("recent-1", "1", "bar")
+                  .create_consumer_version_tag("feat-1")
+                  .create_pact_with_hierarchy("recent-2", "1", "bar")
+                  .create_consumer_version_tag("feat-1")
+                
+                td.add_days(2)
+                  .subtract_days(3)
+                  .create_pact_with_hierarchy("recent-3", "1", "bar")
+                  .create_consumer_version_tag("feat-1")
+                  .create_pact_with_hierarchy("recent-4", "1", "bar")
+                  .create_consumer_version_tag("feat-1")
+                
                 # 6-day-old: inside 7-day minimum window
-                td.subtract_days(6)
+                td.add_days(3)
+                  .subtract_days(6)
                   .create_pact_with_hierarchy("six-day", "1", "bar")
                   .create_consumer_version_tag("feat-1")
-                td.add_days(6)
-
+                
                 # 8-day-old: outside 7-day minimum window
-                td.subtract_days(8)
+                td.add_days(6)
+                  .subtract_days(8)
                   .create_pact_with_hierarchy("eight-day", "1", "bar")
                   .create_consumer_version_tag("feat-1")
                 td.add_days(8)

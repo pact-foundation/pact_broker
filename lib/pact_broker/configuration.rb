@@ -205,14 +205,17 @@ module PactBroker
       ENV["PACT_BROKER_DYNAMIC_WIP_WINDOW"]&.downcase == "true"
     end
 
+    # Maximum lookback window (days) to query for unverified pacts. Prevents timeout on large datasets.
     def max_wip_lookback_days
       ENV["PACT_BROKER_MAX_WIP_LOOKBACK_DAYS"]&.to_i || 14
     end
 
+    # Minimum WIP window (days) to ensure recent pacts are always included, even if P80 is very low.
     def min_wip_window_days
       ENV["PACT_BROKER_MIN_WIP_WINDOW_DAYS"]&.to_i || 7
     end
 
+    # Default WIP window (days) used when dynamic calculation fails or no unverified pacts exist.
     def default_wip_window_days
       ENV["PACT_BROKER_DEFAULT_WIP_WINDOW_DAYS"]&.to_i || 7
     end
