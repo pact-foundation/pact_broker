@@ -129,19 +129,29 @@ module PactBroker
       end
 
       # Get ages (in days) of pacts that haven't been successfully verified yet
-      # Only looks back the configured max_wip_lookback_days to keep query fast
+      # Only looks back the configured max_wip_lookback_days to keep query fast  
       def get_unverified_pact_ages_in_days(provider)
         max_days = PactBroker.configuration.max_wip_lookback_days
         cutoff_date = DateTime.now - max_days
         
+        # Use database-specific date arithmetic that works on both PostgreSQL and SQLite
+        # PostgreSQL: CURRENT_DATE - created_at::date returns integer days
+        # SQLite: julianday(date('now')) - julianday(date(created_at)) returns float days
+        db = PactPublication.db
+        age_expr = if db.database_type == :postgres
+          Sequel.lit("CURRENT_DATE - ?::date", Sequel[:pact_publications][:created_at])
+        else
+          # SQLite
+          Sequel.function(:julianday, Sequel.function(:date, 'now')) - 
+          Sequel.function(:julianday, Sequel.function(:date, Sequel[:pact_publications][:created_at]))
+        end
+        
         PactPublication
-          .where(provider_id: provider.id)
-          .where(Sequel[:pact_publications][:created_at] >= cutoff_date)
-          .left_join(:verifications, pact_version_id: :pact_version_id) { Sequel[:verifications][:success] =~ true }
-          .where(Sequel[:verifications][:id] => nil)  # No successful verification = unverified
-          .group(Sequel[:pact_publications][:id])
-          .select_append { ((Sequel.function(:julianday, Sequel.function(:datetime, "now")) - Sequel.function(:julianday, :created_at))).cast(:integer).as(:age_days) }
-          .select_map(:age_days)
+          .where(Sequel[:pact_publications][:provider_id] => provider.id)
+          .where { Sequel[:pact_publications][:created_at] >= cutoff_date }
+          .left_join(:verifications, { pact_version_id: :pact_version_id, success: true })
+          .where(Sequel[:verifications][:id] => nil)
+          .select_map { Sequel.cast(age_expr, :integer).as(:age_days) }
           .compact
       end
 
