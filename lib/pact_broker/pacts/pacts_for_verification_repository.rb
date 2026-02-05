@@ -57,18 +57,7 @@ module PactBroker
         end
 
         provider = pacticipant_repository.find_by_name(provider_name)
-        
-        # If dynamic WIP window is enabled, use P80 calculation
-        # Otherwise, use original behavior (user must provide include_wip_pacts_since)
-        dynamic_enabled = PactBroker.configuration.dynamic_wip_window_enabled?
-        logger.debug("Dynamic WIP window: #{dynamic_enabled ? 'enabled' : 'disabled'}") if logger.debug?
-        
-        if dynamic_enabled
-          wip_start_date = calculate_wip_window(provider)
-        else
-          wip_start_date = options.fetch(:include_wip_pacts_since)
-          logger.debug("Using user-specified WIP window: #{wip_start_date}") if logger.debug?
-        end
+        wip_start_date = determine_wip_start_date(provider, options)
 
         wip_by_consumer_tags = find_wip_pact_versions_for_provider_by_provider_tags(
           provider,
@@ -90,6 +79,20 @@ module PactBroker
       end
 
       private
+
+      # Determine the WIP start date based on configuration and options
+      def determine_wip_start_date(provider, options)
+        dynamic_enabled = PactBroker.configuration.dynamic_wip_window_enabled?
+        logger.debug("Dynamic WIP window: #{dynamic_enabled ? 'enabled' : 'disabled'}") if logger.debug?
+        
+        if dynamic_enabled
+          calculate_wip_window(provider)
+        else
+          wip_start_date = options.fetch(:include_wip_pacts_since)
+          logger.debug("Using user-specified WIP window: #{wip_start_date}") if logger.debug?
+          wip_start_date
+        end
+      end
 
       # Calculate optimal WIP window using P80 (80th percentile) of unverified pact ages
       # Uses percentile instead of MAX to focus on active work and ignore abandoned pacts
@@ -299,18 +302,7 @@ module PactBroker
 
       def find_wip_pact_versions_for_provider_by_provider_branch(provider_name, provider_version_branch, explicitly_specified_verifiable_pacts, options)
         provider = pacticipant_repository.find_by_name(provider_name)
-        
-        # If dynamic WIP window is enabled, use P80 calculation
-        # Otherwise, use original behavior (user must provide include_wip_pacts_since)
-        dynamic_enabled = PactBroker.configuration.dynamic_wip_window_enabled?
-        logger.debug("Dynamic WIP window: #{dynamic_enabled ? 'enabled' : 'disabled'}") if logger.debug?
-        
-        if dynamic_enabled
-          wip_start_date = calculate_wip_window(provider)
-        else
-          wip_start_date = options.fetch(:include_wip_pacts_since)
-          logger.debug("Using user-specified WIP window: #{wip_start_date}") if logger.debug?
-        end
+        wip_start_date = determine_wip_start_date(provider, options)
 
         potential_wip_by_consumer_branch = PactPublication.for_provider(provider).created_after(wip_start_date).for_all_branch_heads
         potential_wip_by_consumer_tag = PactPublication.for_provider(provider).created_after(wip_start_date).for_all_tag_heads
