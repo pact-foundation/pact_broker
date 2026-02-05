@@ -208,6 +208,9 @@ module PactBroker
 
         context "when the pact was published before the specified include_wip_pacts_since" do
           before do
+            # Test legacy behavior where user date is honored
+            allow(PactBroker.configuration).to receive(:dynamic_wip_window_enabled?).and_return(false)
+            
             td.create_provider("bar")
               .create_provider_version("333", branch: provider_version_branch)
               .add_day

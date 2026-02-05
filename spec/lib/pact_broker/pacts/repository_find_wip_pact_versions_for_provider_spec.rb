@@ -9,6 +9,11 @@ module PactBroker
         let(:options) { { include_wip_pacts_since: include_wip_pacts_since } }
         let(:include_wip_pacts_since) { (Date.today - 1).to_datetime }
 
+        # Default to enabled unless explicitly testing legacy behavior
+        before do
+          allow(PactBroker.configuration).to receive(:dynamic_wip_window_enabled?).and_return(true)
+        end
+
         subject { Repository.new.find_wip_pact_versions_for_provider("bar", provider_version_branch, provider_tags, [], options) }
 
         context "when there are no tags" do
@@ -238,6 +243,10 @@ module PactBroker
 
         context "when the pact was published before the specified include_wip_pacts_since" do
           before do
+            # This test specifically validates legacy behavior where user input is honored
+            # If dynamic window enabled, user input would be ignored
+            allow(PactBroker.configuration).to receive(:dynamic_wip_window_enabled?).and_return(false)
+            
             td.create_provider("bar")
               .create_provider_version("333")
               .create_provider_version_tag("dev")
@@ -367,6 +376,158 @@ module PactBroker
 
           it "is included" do
             expect(subject.first.pending_provider_tags).to eq [provider_tags.first]
+          end
+        end
+
+        context "dynamic WIP window calculation" do
+          context "when dynamic WIP window is enabled" do
+            before do
+              allow(PactBroker.configuration).to receive(:dynamic_wip_window_enabled?).and_return(true)
+              
+              td.create_provider("bar")
+                .create_provider_version("333", tag_names: provider_tags)
+                .create_pact_with_hierarchy("foo", "1", "bar")
+                .create_consumer_version_tag("feat-1")
+            end
+
+            let(:include_wip_pacts_since) { (Date.today - 100).to_datetime }
+
+            it "overrides user input with calculated window" do
+              expect(subject.size).to eq 1
+              expect(subject.first.consumer_name).to eq "foo"
+            end
+
+            context "when pact is outside calculated window" do
+              before do
+                # 20-day-old pact: outside calculated window (7-14 days), inside user input (100 days)
+                td.subtract_days(20)
+                  .create_pact_with_hierarchy("old-consumer", "1", "bar")
+                  .create_consumer_version_tag("feat-1")
+                td.add_days(20)
+              end
+
+              it "excludes old pact" do
+                expect(subject.size).to eq 1
+                expect(subject.first.consumer_name).to eq "foo"
+              end
+            end
+
+            context "with failed verification" do
+              before do
+                td.create_verification(provider_version: "333", success: false)
+              end
+
+              it "includes as WIP" do
+                expect(subject.size).to eq 1
+              end
+            end
+
+            context "with successful verification" do
+              before do
+                td.create_verification(provider_version: "333", success: true)
+              end
+
+              it "excludes verified pact" do
+                expect(subject.size).to eq 0
+              end
+            end
+
+            context "with multiple consumers" do
+              before do
+                td.create_pact_with_hierarchy("consumer2", "1", "bar")
+                  .create_consumer_version_tag("feat-1")
+                  .create_pact_with_hierarchy("consumer3", "1", "bar")
+                  .create_consumer_version_tag("feat-1")
+              end
+
+              it "includes all unverified pacts" do
+                expect(subject.size).to eq 3
+                expect(subject.map(&:consumer_name)).to match_array(["foo", "consumer2", "consumer3"])
+              end
+            end
+
+            context "when P80 is below minimum" do
+              before do
+                # Create 5 pacts at 2-3 days old
+                # P80 of [2,2,2,3,3] = 3 days → clamped to 7-day minimum
+                5.times do |i|
+                  days = i < 3 ? 2 : 3
+                  td.subtract_days(days)
+                    .create_pact_with_hierarchy("recent-#{i}", "1", "bar")
+                    .create_consumer_version_tag("feat-1")
+                  td.add_days(days)
+                end
+
+                # 6-day-old: inside 7-day minimum window
+                td.subtract_days(6)
+                  .create_pact_with_hierarchy("six-day", "1", "bar")
+                  .create_consumer_version_tag("feat-1")
+                td.add_days(6)
+
+                # 8-day-old: outside 7-day minimum window
+                td.subtract_days(8)
+                  .create_pact_with_hierarchy("eight-day", "1", "bar")
+                  .create_consumer_version_tag("feat-1")
+                td.add_days(8)
+              end
+
+              it "enforces 7-day minimum window" do
+                consumer_names = subject.map(&:consumer_name)
+                expect(consumer_names).to include("six-day")
+                expect(consumer_names).not_to include("eight-day")
+              end
+            end
+          end
+
+          context "when dynamic WIP window is disabled" do
+            before do
+              allow(PactBroker.configuration).to receive(:dynamic_wip_window_enabled?).and_return(false)
+            end
+
+            context "with user date beyond 14 days" do
+              before do
+                td.create_provider("bar")
+                  .create_provider_version("333", tag_names: provider_tags)
+                  .create_pact_with_hierarchy("foo", "1", "bar")
+                  .create_consumer_version_tag("feat-1")
+              end
+
+              let(:include_wip_pacts_since) { (Date.today - 100).to_datetime }
+
+              it "uses user date without capping" do
+                expect(subject.size).to eq 1
+              end
+            end
+
+            context "with user date within 14 days" do
+              before do
+                td.create_provider("bar")
+                  .create_provider_version("333", tag_names: provider_tags)
+                  .create_pact_with_hierarchy("foo", "1", "bar")
+                  .create_consumer_version_tag("feat-1")
+              end
+
+              let(:include_wip_pacts_since) { (Date.today - 10).to_datetime }
+
+              it "uses user date" do
+                expect(subject.size).to eq 1
+              end
+            end
+
+            context "with no date specified" do
+              before do
+                td.create_provider("bar")
+                  .create_provider_version("333", tag_names: provider_tags)
+                  .create_pact_with_hierarchy("foo", "1", "bar")
+                  .create_consumer_version_tag("feat-1")
+              end
+
+              let(:options) { {} }
+
+              it "requires date parameter" do
+                expect { subject }.to raise_error(KeyError, /include_wip_pacts_since/)
+              end
+            end
           end
         end
       end

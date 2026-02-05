@@ -19,6 +19,9 @@ describe "Get provider pacts for verification" do
 
   context "when the provider exists" do
     before do
+      # Enable dynamic WIP window (production behavior) for all tests by default
+      allow(PactBroker.configuration).to receive(:dynamic_wip_window_enabled?).and_return(true)
+      
       td.create_provider("Provider")
         .create_consumer("Consumer")
         .create_consumer_version("0.0.1")

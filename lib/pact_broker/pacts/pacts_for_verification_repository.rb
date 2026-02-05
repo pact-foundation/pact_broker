@@ -18,6 +18,13 @@ module PactBroker
       include PactBroker::Services
       include PactBroker::Repositories::Scopes
 
+      # Maximum lookback window for WIP pacts (prevents timeout on large datasets)
+      MAX_WIP_LOOKBACK_DAYS = 14
+      # Minimum WIP window to ensure recent pacts are always included
+      MIN_WIP_WINDOW_DAYS = 7
+      # Default WIP window when calculation fails or no unverified pacts exist
+      DEFAULT_WIP_WINDOW_DAYS = 7
+
       PUBLICATION_ASSOCIATIONS_FOR_EAGER_LOAD = [
         :provider,
         :consumer,
@@ -57,7 +64,18 @@ module PactBroker
         end
 
         provider = pacticipant_repository.find_by_name(provider_name)
-        wip_start_date = options.fetch(:include_wip_pacts_since)
+        
+        # If dynamic WIP window is enabled, use P80 calculation
+        # Otherwise, use original behavior (user must provide include_wip_pacts_since)
+        dynamic_enabled = PactBroker.configuration.dynamic_wip_window_enabled?
+        logger.debug("Dynamic WIP window: #{dynamic_enabled ? 'enabled' : 'disabled'}") if logger.debug?
+        
+        if dynamic_enabled
+          wip_start_date = calculate_wip_window(provider)
+        else
+          wip_start_date = options.fetch(:include_wip_pacts_since)
+          logger.debug("Using user-specified WIP window: #{wip_start_date}") if logger.debug?
+        end
 
         wip_by_consumer_tags = find_wip_pact_versions_for_provider_by_provider_tags(
           provider,
@@ -79,6 +97,62 @@ module PactBroker
       end
 
       private
+
+      # Calculate optimal WIP window using P80 (80th percentile) of unverified pact ages
+      # Uses percentile instead of MAX to focus on active work and ignore abandoned pacts
+      # Returns: Date from N days ago (min 7 for weekly coverage, max 14 to align with query scope)
+      def calculate_wip_window(provider)
+        # Step 1: Get list of unverified pact ages in days (e.g., [2, 5, 7, 10, 12, 14])
+        unverified_ages = get_unverified_pact_ages_in_days(provider)
+        
+        # Step 2: If no unverified pacts, use default 7-day window
+        if unverified_ages.empty?
+          logger.debug("No unverified pacts found for #{provider.name}, using default #{DEFAULT_WIP_WINDOW_DAYS}-day window") if logger.debug?
+          return Date.today - DEFAULT_WIP_WINDOW_DAYS
+        end
+
+        # Step 3: Calculate 80th percentile (ignore oldest 20% as abandoned work)
+        p80_age = percentile_80(unverified_ages)
+        
+        # Step 4: Ensure window is between 7-14 days, then return date
+        window_days = clamp_between(p80_age, MIN_WIP_WINDOW_DAYS, MAX_WIP_LOOKBACK_DAYS)
+        wip_start_date = Date.today - window_days
+        
+        if logger.debug?
+          logger.debug("Dynamic WIP window for #{provider.name}: found #{unverified_ages.size} unverified pacts, P80=#{p80_age} days, window=#{window_days} days (#{wip_start_date})")
+        end
+        
+        wip_start_date
+      rescue StandardError => e
+        logger.error("Failed to calculate dynamic WIP window for provider #{provider.name}", error: e.class.name, message: e.message)
+        Date.today - DEFAULT_WIP_WINDOW_DAYS
+      end
+
+      # Get ages (in days) of pacts that haven't been successfully verified yet
+      # Only looks back MAX_WIP_LOOKBACK_DAYS to keep query fast
+      def get_unverified_pact_ages_in_days(provider)
+        PactPublication
+          .where(provider_id: provider.id)
+          .where(Sequel.lit("created_at >= NOW() - INTERVAL '#{MAX_WIP_LOOKBACK_DAYS} days'"))
+          .left_join(:verifications, pact_version_id: :pact_version_id) { Sequel[:verifications][:success] =~ true }
+          .where(Sequel[:verifications][:id] => nil)  # No successful verification = unverified
+          .group(Sequel[:pact_publications][:id])
+          .select_map(Sequel.lit("CEIL(EXTRACT(EPOCH FROM NOW() - created_at) / 86400)::INTEGER"))
+          .compact
+      end
+
+      # Calculate 80th percentile: find value where 80% of data points are less than or equal
+      # Example: [2,3,5,7,10,12,14,20] → 80% index = 6 → value = 14
+      def percentile_80(values)
+        sorted = values.sort
+        index = [(sorted.length * 0.80).ceil - 1, 0].max
+        sorted[index]
+      end
+
+      # Constrain value between min and max bounds
+      def clamp_between(value, min, max)
+        [[value, max].min, min].max
+      end
 
       # Note: created_at is coming back as a string for sqlite
       # Can't work out how to to tell Sequel that this should be a date
@@ -227,7 +301,18 @@ module PactBroker
 
       def find_wip_pact_versions_for_provider_by_provider_branch(provider_name, provider_version_branch, explicitly_specified_verifiable_pacts, options)
         provider = pacticipant_repository.find_by_name(provider_name)
-        wip_start_date = options.fetch(:include_wip_pacts_since)
+        
+        # If dynamic WIP window is enabled, use P80 calculation
+        # Otherwise, use original behavior (user must provide include_wip_pacts_since)
+        dynamic_enabled = PactBroker.configuration.dynamic_wip_window_enabled?
+        logger.debug("Dynamic WIP window: #{dynamic_enabled ? 'enabled' : 'disabled'}") if logger.debug?
+        
+        if dynamic_enabled
+          wip_start_date = calculate_wip_window(provider)
+        else
+          wip_start_date = options.fetch(:include_wip_pacts_since)
+          logger.debug("Using user-specified WIP window: #{wip_start_date}") if logger.debug?
+        end
 
         potential_wip_by_consumer_branch = PactPublication.for_provider(provider).created_after(wip_start_date).for_all_branch_heads
         potential_wip_by_consumer_tag = PactPublication.for_provider(provider).created_after(wip_start_date).for_all_tag_heads

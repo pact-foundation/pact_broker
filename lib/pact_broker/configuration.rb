@@ -201,6 +201,10 @@ module PactBroker
       webhook_host_whitelist&.any?
     end
 
+    def dynamic_wip_window_enabled?
+      ENV["PACT_BROKER_DYNAMIC_WIP_WINDOW"]&.downcase == "true"
+    end
+
     def enable_badge_resources= enable_badge_resources
       puts "Pact Broker configuration property `enable_badge_resources` is deprecated. Please use `enable_public_badge_access`"
       self.enable_public_badge_access = enable_badge_resources
