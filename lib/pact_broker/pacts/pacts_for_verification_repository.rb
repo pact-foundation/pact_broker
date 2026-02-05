@@ -132,13 +132,16 @@ module PactBroker
       # Only looks back the configured max_wip_lookback_days to keep query fast
       def get_unverified_pact_ages_in_days(provider)
         max_days = PactBroker.configuration.max_wip_lookback_days
+        cutoff_date = DateTime.now - max_days
+        
         PactPublication
           .where(provider_id: provider.id)
-          .where(Sequel.lit("created_at >= NOW() - INTERVAL '#{max_days} days'"))
+          .where(Sequel[:pact_publications][:created_at] >= cutoff_date)
           .left_join(:verifications, pact_version_id: :pact_version_id) { Sequel[:verifications][:success] =~ true }
           .where(Sequel[:verifications][:id] => nil)  # No successful verification = unverified
           .group(Sequel[:pact_publications][:id])
-          .select_map(Sequel.lit("CEIL(EXTRACT(EPOCH FROM NOW() - created_at) / 86400)::INTEGER"))
+          .select_append { ((Sequel.function(:julianday, Sequel.function(:datetime, "now")) - Sequel.function(:julianday, :created_at))).cast(:integer).as(:age_days) }
+          .select_map(:age_days)
           .compact
       end
 
