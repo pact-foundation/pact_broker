@@ -55,9 +55,24 @@ module PactBroker
         PactBroker::Pacts::PactPublication.where(provider: self).delete
         PactBroker::Domain::Verification.where(consumer: self).or(provider: self).delete
         PactBroker::Domain::Version.where(pacticipant: self).delete
-        PactBroker::Pacts::PactVersion.where(consumer: self).or(provider: self).delete
+        delete_pact_versions_in_batches
         PactBroker::Domain::Label.where(pacticipant: self).destroy
         super
+      end
+
+      BATCH_DELETE_SIZE = 500
+      def delete_pact_versions_in_batches
+        dataset = PactBroker::Pacts::PactVersion.where(consumer: self).or(provider: self)
+        total_deleted = 0
+
+        loop do
+          ids = dataset.limit(BATCH_DELETE_SIZE).select_map(:id)
+          break if ids.empty?
+
+          total_deleted += PactBroker::Pacts::PactVersion.where(id: ids).delete
+        end
+
+        total_deleted
       end
 
       def before_save
