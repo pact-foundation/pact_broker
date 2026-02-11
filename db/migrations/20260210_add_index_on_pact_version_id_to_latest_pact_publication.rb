@@ -1,3 +1,7 @@
+require_relative "migration_helper"
+
+include PactBroker::MigrationHelper
+
 Sequel.migration do
   up do
     if !mysql?

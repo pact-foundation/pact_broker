@@ -62,17 +62,13 @@ module PactBroker
 
       BATCH_DELETE_SIZE = 500
       def delete_pact_versions_in_batches
-        dataset = PactBroker::Pacts::PactVersion.where(consumer: self).or(provider: self)
-        total_deleted = 0
-
+        dataset = PactBroker::Pacts::PactVersion.where(consumer: self).or(provider: self).order(:id)
         loop do
-          ids = dataset.limit(BATCH_DELETE_SIZE).select_map(:id)
-          break if ids.empty?
-
-          total_deleted += PactBroker::Pacts::PactVersion.where(id: ids).delete
+          PactBroker::Pacts::PactVersion
+            .where(id: dataset.limit(BATCH_DELETE_SIZE).select(:id))
+            .delete
+          break if deleted.zero?
         end
-
-        total_deleted
       end
 
       def before_save
