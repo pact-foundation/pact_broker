@@ -64,7 +64,7 @@ module PactBroker
       def delete_pact_versions_in_batches
         dataset = PactBroker::Pacts::PactVersion.where(consumer: self).or(provider: self).order(:id)
         loop do
-          PactBroker::Pacts::PactVersion
+          deleted = PactBroker::Pacts::PactVersion
             .where(id: dataset.limit(BATCH_DELETE_SIZE).select(:id))
             .delete
           break if deleted.zero?
