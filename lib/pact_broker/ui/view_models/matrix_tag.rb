@@ -16,6 +16,7 @@ module PactBroker
           @version_number = params[:version_number]
           @created_at = params[:created_at]
           @latest = !!params[:latest]
+          @base_url = params[:base_url]
         end
 
         def tooltip
@@ -27,7 +28,9 @@ module PactBroker
         end
 
         def url
-          hal_browser_url("/pacticipants/#{ERB::Util.url_encode(pacticipant_name)}/versions/#{ERB::Util.url_encode(version_number)}/tags/#{ERB::Util.url_encode(name)}")
+          params = { pacticipant_name: pacticipant_name, version_number: version_number }
+          tag_path = "#{version_url_from_params(params, @base_url)}/tags/#{ERB::Util.url_encode(name)}"
+          hal_browser_url(tag_path, @base_url)
         end
 
         def relative_date date
