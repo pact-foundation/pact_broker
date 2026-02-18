@@ -27,12 +27,16 @@ Sequel.migration do
   end
 
   down do
-    alter_table(:pact_publications) do
-      drop_index([:provider_id, :created_at], name: "idx_pp_provider_created", if_exists: true)
-    end
+    if PactBroker::MigrationHelper.postgres?
+      alter_table(:pact_publications) do
+        drop_index([:provider_id, :created_at], name: "idx_pp_provider_created", if_exists: true)
+      end
 
-    alter_table(:verifications) do
-      drop_index([:provider_id, :provider_version_id, :success, :wip, :pact_version_id], name: "idx_verifications_provider_lookup", if_exists: true)
+      alter_table(:verifications) do
+        drop_index([:provider_id, :provider_version_id, :success, :wip, :pact_version_id], name: "idx_verifications_provider_lookup", if_exists: true)
+      end
+    else
+      # These indexes are safe to leave in place and don't change the test behaviour
     end
   end
 end
