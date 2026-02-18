@@ -4,7 +4,7 @@ include PactBroker::MigrationHelper
 
 Sequel.migration do
   # Disable transaction wrapper so we can use CONCURRENTLY for PostgreSQL
-  no_transaction
+  no_transaction if postgres?
   
   up do
     alter_table(:pact_publications) do
