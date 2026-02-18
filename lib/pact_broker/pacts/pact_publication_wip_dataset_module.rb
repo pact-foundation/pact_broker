@@ -19,13 +19,19 @@ module PactBroker
           end
 
           def join_branch_versions_excluding_branch(provider_id, branch_name)
+            # Only check branches that have been active in the last N days
+            # to avoid old stale branches causing cartesian explosion.
+            # Filter by verification execution_date rather than version created_at
+            # to avoid incorrectly excluding old versions with recent verifications.
+            recent_branch_cutoff = DateTime.now - PactBroker.configuration.verified_by_other_branch_before_this_branch_look_back
+
             branch_versions_join = {
               Sequel[:verifications][:provider_version_id] => Sequel[:branch_versions][:version_id],
               Sequel[:branch_versions][:pacticipant_id] => provider_id
             }
-            join(:branch_versions, branch_versions_join) do
-              Sequel.lit("branch_versions.branch_name != ?", branch_name)
-            end
+            join(:branch_versions, branch_versions_join)
+              .where { Sequel[:verifications][:execution_date] >= recent_branch_cutoff }
+              .where { Sequel.lit("branch_versions.branch_name != ?", branch_name) }
           end
 
           def join_provider_versions_for_provider_id_and_branch(provider_id, provider_version_branch)
@@ -45,10 +51,13 @@ module PactBroker
       end
 
       def successfully_verified_by_provider_branch_when_not_wip(provider_id, provider_version_branch)
+        # Only check verifications from last N days (old verifications unlikely relevant for WIP)
+        recent_cutoff = DateTime.now - PactBroker.configuration.verified_by_other_branch_before_this_branch_look_back
         successful_verifications = VerificationForWipCalculations
                                      .select(:pact_version_id)
                                      .distinct
                                      .successful_non_wip_by_provider(provider_id)
+                                     .where { Sequel[:verifications][:execution_date] >= recent_cutoff }
                                      .join_provider_versions_for_provider_id_and_branch(provider_id, provider_version_branch)
 
 
@@ -65,8 +74,8 @@ module PactBroker
                                      .select(:pact_version_id)
                                      .distinct
                                      .successful_non_wip_by_provider(provider_id)
-                                     .join_branch_versions_excluding_branch(provider_id, provider_version_branch)
                                      .verified_before_creation_date_of(first_version_for_branch)
+                                     .join_branch_versions_excluding_branch(provider_id, provider_version_branch)
 
         from_self(alias: :pp)
           .select(Sequel[:pp].*)

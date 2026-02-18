@@ -215,6 +215,13 @@ module PactBroker
       ENV["PACT_BROKER_MIN_WIP_WINDOW_DAYS"]&.to_i || 7
     end
 
+    # Lookback window (days) for checking if a pact was verified by another branch before this branch was created.
+    # Uses verification execution_date to find recent branch activity, avoiding false negatives when old
+    # version numbers are reused across branches.
+    def verified_by_other_branch_before_this_branch_look_back
+      ENV["PACT_BROKER_VERIFIED_BY_OTHER_BRANCH_LOOKBACK_DAYS"]&.to_i || 30
+    end
+
     # Default WIP window (days) used when dynamic calculation fails or no unverified pacts exist.
     def default_wip_window_days
       ENV["PACT_BROKER_DEFAULT_WIP_WINDOW_DAYS"]&.to_i || 7
