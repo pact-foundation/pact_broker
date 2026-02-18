@@ -16,9 +16,8 @@ require "rspec/pact/matchers"
 require "sucker_punch/testing/inline"
 require "webmock/rspec"
 require "pact_broker/policies"
-
+require "openapi_first"
 if ENV["OAS_COVERAGE_CHECK_ENABLED"] == "true"
-  require "openapi_first"
   OpenapiFirst::Test.setup do |test|
     test.register("pact_broker_oas.yaml")
   end

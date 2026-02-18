@@ -287,9 +287,13 @@ module PactBroker
       # NEW LOGIC
       # @return [Sequel::Dataset<PactBroker::Pacts::PactPublication>]
       def for_all_tag_heads
+        # Optimization: Only aggregate tags for consumers that have pacts for this provider.
+        relevant_consumer_ids = self.select(:consumer_id).distinct
+
         head_tags = PactBroker::Domain::Tag
                       .select_group(:pacticipant_id, :name)
-                      .select_append{ max(version_order).as(:latest_version_order) }
+                      .select_append{ max(:version_order).as(:latest_version_order) }
+                      .where(pacticipant_id: relevant_consumer_ids)
 
         head_tags_join = {
           Sequel[:pact_publications][:consumer_id] => Sequel[:head_tags][:pacticipant_id],

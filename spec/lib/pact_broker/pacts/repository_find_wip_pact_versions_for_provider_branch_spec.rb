@@ -282,6 +282,47 @@ module PactBroker
             expect(subject.first.provider_branch).to eq provider_version_branch
           end
         end
+
+        # Query optimization tests
+        context "when there are tags for consumers without pacts for this provider" do
+          before do
+            td.create_pact_with_hierarchy("foo", "1", "bar")
+              .create_consumer_version_tag("main")
+              .create_pact_with_hierarchy("other-consumer", "1", "different-provider")
+              .create_consumer_version_tag("main")
+              .create_consumer_version_tag("feat-1")
+          end
+
+          it "only includes consumers with pacts for this provider" do
+            expect(subject.map(&:consumer_name)).to eq ["foo"]
+          end
+        end
+
+        context "when there are verifications older than 30 days on same branch" do
+          before do
+            td.create_pact_with_hierarchy("foo", "1", "bar")
+              .create_consumer_version_tag("main")
+              .subtract_days(31)
+              .create_verification(provider_version: "1", branch: provider_version_branch, success: true, wip: false)
+          end
+
+          it "ignores old verifications and includes pact as WIP" do
+            expect(subject.length).to eq 1
+          end
+        end
+
+        context "when there are verifications from branches inactive for 30+ days" do
+          before do
+            td.create_pact_with_hierarchy("foo", "1", "bar")
+              .create_consumer_version_tag("main")
+              .subtract_days(35)
+              .create_verification(provider_version: "1", branch: "old-branch", success: true, wip: false)
+          end
+
+          it "ignores verifications from stale branches" do
+            expect(subject.length).to eq 1
+          end
+        end
       end
     end
   end
