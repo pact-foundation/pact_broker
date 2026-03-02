@@ -94,7 +94,7 @@ module PactBroker
         end
 
         def log_request
-          logger.info "Fetching pacts for verification by #{provider_name}", provider_name: provider_name, params: query
+          logger.debug "Fetching pacts for verification by #{provider_name}", provider_name: provider_name, params: query
         end
 
         def nested_query

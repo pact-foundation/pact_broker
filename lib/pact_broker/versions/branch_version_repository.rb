@@ -22,7 +22,7 @@ module PactBroker
       end
 
       def add_branch(version, branch_name, auto_created: false)
-        PactBroker.logger.info("BranchVersionRepository#add_branch method called with version #{version.inspect} and branch_name '#{branch_name}'")
+        PactBroker.logger.debug("BranchVersionRepository#add_branch method called with version #{version.inspect} and branch_name '#{branch_name}'")
         Sequel::Model.db.transaction do
           branch = find_or_create_branch(version.pacticipant, branch_name)
           branch_version = version.branch_version_for_branch(branch)

@@ -52,6 +52,16 @@ module PactBroker
       end
     end
 
+    def measure_debug(message, payload: {})
+      if logger.respond_to?(:measure_debug)
+        logger.measure_debug(message, payload: payload) do
+          yield
+        end
+      else
+        yield
+      end
+    end
+
     def log_error e, description = nil
       if logger.instance_of?(SemanticLogger::Logger)
         if description
