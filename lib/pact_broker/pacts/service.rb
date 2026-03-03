@@ -210,7 +210,7 @@ module PactBroker
 
       # When no publication for the given consumer/provider/consumer version number exists
       def create_pact(params, version, provider)
-        logger.info("Creating new pact publication", params.without(:json_content))
+        logger.debug("Creating new pact publication", params.without(:json_content))
         logger.debug("Content #{params[:json_content]}")
         json_content = add_interaction_ids(params[:json_content])
         pact = pact_repository.create(
