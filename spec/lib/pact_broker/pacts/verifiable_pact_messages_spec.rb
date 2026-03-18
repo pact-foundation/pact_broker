@@ -1,6 +1,3 @@
-require "pact_broker/pacts/verifiable_pact_messages"
-require "pact_broker/pacts/verifiable_pact"
-require "pact_broker/pacts/selectors"
 
 module PactBroker
   module Pacts

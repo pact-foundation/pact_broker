@@ -1,4 +1,3 @@
-require "pact_broker/api/resources/verification"
 
 module PactBroker
   module Api

@@ -1,4 +1,3 @@
-require "pact_broker/deployments/environment_service"
 
 module PactBroker
   module Deployments

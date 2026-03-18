@@ -11,7 +11,7 @@ describe "retrieving a pact" do
 
     context "when case sensitivity is turned on" do
       before do
-        allow(PactBroker.configuration).to receive(:use_case_sensitive_resource_names).and_return(true)
+        allow(PactBroker::Configuration.configuration).to receive(:use_case_sensitive_resource_names).and_return(true)
       end
 
       it "returns a 404 Not found" do
@@ -21,7 +21,7 @@ describe "retrieving a pact" do
 
     context "when case sensitivity is turned off" do
       before do
-        allow(PactBroker.configuration).to receive(:use_case_sensitive_resource_names).and_return(false)
+        allow(PactBroker::Configuration.configuration).to receive(:use_case_sensitive_resource_names).and_return(false)
       end
 
       it "returns a 200 Success" do
@@ -44,7 +44,7 @@ describe "retrieving a pact" do
 
     context "when case sensitivity is turned on" do
       before do
-        allow(PactBroker.configuration).to receive(:use_case_sensitive_resource_names).and_return(true)
+        allow(PactBroker::Configuration.configuration).to receive(:use_case_sensitive_resource_names).and_return(true)
       end
 
       it "returns a 404 Not found" do
@@ -54,7 +54,7 @@ describe "retrieving a pact" do
 
     context "when case sensitivity is turned off" do
       before do
-        allow(PactBroker.configuration).to receive(:use_case_sensitive_resource_names).and_return(false)
+        allow(PactBroker::Configuration.configuration).to receive(:use_case_sensitive_resource_names).and_return(false)
       end
 
       it "returns a 200 Success" do

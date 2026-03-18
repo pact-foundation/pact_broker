@@ -1,5 +1,3 @@
-require "pact_broker/domain"
-require "pact_broker/pacts/repository"
 
 module PactBroker
   module Repositories
@@ -62,12 +60,10 @@ module PactBroker
     # rubocop: disable Metrics/MethodLength
     def register_default_repositories
       register_repository(:pacticipant_repository) do
-        require "pact_broker/pacticipants/repository"
         Pacticipants::Repository.new
       end
 
       register_repository(:version_repository) do
-        require "pact_broker/versions/repository"
         Versions::Repository.new
       end
 
@@ -76,42 +72,34 @@ module PactBroker
       end
 
       register_repository(:tag_repository) do
-        require "pact_broker/tags/repository"
         Tags::Repository.new
       end
 
       register_repository(:label_repository) do
-        require "pact_broker/labels/repository"
         Labels::Repository.new
       end
 
       register_repository(:webhook_repository) do
-        require "pact_broker/webhooks/repository"
         Webhooks::Repository.new
       end
 
       register_repository(:verification_repository) do
-        require "pact_broker/verifications/repository"
         Verifications::Repository.new
       end
 
       register_repository(:matrix_repository) do
-        require "pact_broker/matrix/repository"
         Matrix::Repository.new
       end
 
       register_repository(:branch_repository) do
-        require "pact_broker/versions/branch_repository"
         PactBroker::Versions::BranchRepository.new
       end
 
       register_repository(:branch_version_repository) do
-        require "pact_broker/versions/branch_version_repository"
         PactBroker::Versions::BranchVersionRepository.new
       end
 
       register_repository(:integration_repository) do
-        require "pact_broker/integrations/repository"
         PactBroker::Integrations::Repository.new
       end
       # rubocop: enable Metrics/MethodLength

@@ -1,4 +1,3 @@
-require "pact_broker/api/decorators/pact_decorator"
 
 # Pactflow notes:
 # This decorator was added for Pactflow, but we needed to change it so much that there

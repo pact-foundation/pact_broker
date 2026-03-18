@@ -1,5 +1,3 @@
-require "pact_broker/api/decorators/dashboard_decorator"
-require "pact_broker/domain/index_item"
 
 ORIGINAL_TZ = ENV["TZ"]
 

@@ -1,6 +1,3 @@
-require "pact_broker/webhooks/trigger_service"
-require "pact_broker/versions/selectors"
-require "pact_broker/versions/selector"
 
 module PactBroker
   module Webhooks
@@ -339,7 +336,7 @@ module PactBroker
         before do
           allow(PactBroker::Pacts::Service).to receive(:search_for_latest_pact).and_return(pact)
           allow(PactBroker::Verifications::Service).to receive(:search_for_latest).and_return(verification)
-          allow(PactBroker.configuration).to receive(:show_webhook_response?).and_return("foo")
+          allow(PactBroker::Configuration.configuration).to receive(:show_webhook_response?).and_return("foo")
           allow(execution_configuration).to receive(:with_failure_log_message).and_return(execution_configuration)
         end
 
@@ -451,7 +448,7 @@ module PactBroker
           expect(TriggeredWebhook.first.status).to eq TriggeredWebhook::STATUS_SUCCESS
         end
 
-        it "does not call the PactBroker.configuration as it will have been reset after the end of the request" do
+        it "does not call the PactBroker::Configuration.configuration as it will have been reset after the end of the request" do
           expect(PactBroker).to_not receive(:configuration)
           subject
         end

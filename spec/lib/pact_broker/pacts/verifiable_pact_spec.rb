@@ -1,4 +1,3 @@
-require "pact_broker/pacts/verifiable_pact"
 
 module PactBroker
   module Pacts

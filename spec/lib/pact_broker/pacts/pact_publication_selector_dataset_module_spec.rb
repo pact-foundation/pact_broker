@@ -1,4 +1,3 @@
-require "pact_broker/pacts/pact_publication_selector_dataset_module"
 
 module PactBroker
   module Pacts

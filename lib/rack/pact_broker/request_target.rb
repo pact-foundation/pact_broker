@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-require "pact_broker/api/paths"
 
 module Rack
   module PactBroker

@@ -5,7 +5,7 @@ require "rack/pact_broker/database_transaction"
 describe "Execute a webhook" do
   before do
     td.create_pact_with_hierarchy("Foo", "1", "Bar")
-    allow(PactBroker.configuration).to receive(:webhook_scheme_whitelist).and_return(%w[http])
+    allow(PactBroker::Configuration.configuration).to receive(:webhook_scheme_whitelist).and_return(%w[http])
   end
 
   let(:params) do

@@ -1,11 +1,10 @@
-require "pact_broker/api/middleware/configuration"
 
 module PactBroker
   module Api
     module Middleware
       class TestApp
         def call(_)
-          [200, {}, [PactBroker.configuration.allow_dangerous_contract_modification.to_s]]
+          [200, {}, [PactBroker::Configuration.configuration.allow_dangerous_contract_modification.to_s]]
         end
       end
 

@@ -2,7 +2,7 @@ require "date"
 require "sequel"
 
 module PactBroker
-  module DB
+  module Db
     class DeleteOverwrittenData
       def self.call database_connection, options = {}
         new(database_connection, options).call
@@ -16,8 +16,6 @@ module PactBroker
       end
 
       def call
-        require "pact_broker/pacts/pact_publication"
-        require "pact_broker/domain/verification"
 
         deleted_counts = {}
         kept_counts = {}

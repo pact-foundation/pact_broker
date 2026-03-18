@@ -22,4 +22,11 @@ Padrino.logger = PactBrokerPadrinoLogger.new("Padrino")
 # seems to be used in production.
 Padrino.logger.info("Padrino has been configured with SemanticLogger")
 
-require "pact_broker/ui/app"
+module PactBroker
+  module Ui
+    # Placeholder module to satisfy Zeitwerk naming convention
+    # Actual UI functionality is loaded via the required files below
+
+  end
+end
+

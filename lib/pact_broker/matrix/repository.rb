@@ -1,14 +1,3 @@
-require "pact_broker/matrix/matrix_row"
-require "pact_broker/matrix/every_row"
-require "pact_broker/matrix/query_results"
-require "pact_broker/matrix/integration"
-require "pact_broker/matrix/query_results_with_deployment_status_summary"
-require "pact_broker/matrix/unresolved_selector"
-require "pact_broker/verifications/latest_verification_id_for_pact_version_and_provider_version"
-require "pact_broker/matrix/integrations_repository"
-require "pact_broker/matrix/resolved_selectors_builder"
-require "pact_broker/matrix/row_ignorer"
-require "pact_broker/matrix/integrations_repository"
 
 module PactBroker
   module Matrix

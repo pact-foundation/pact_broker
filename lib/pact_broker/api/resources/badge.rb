@@ -1,7 +1,3 @@
-require "pact_broker/api/resources/base_resource"
-require "pact_broker/verifications/pseudo_branch_status"
-require "pact_broker/configuration"
-require "pact_broker/api/resources/badge_methods"
 
 module PactBroker
   module Api
@@ -14,7 +10,7 @@ module PactBroker
         end
 
         def is_authorized?(authorization_header)
-          super || PactBroker.configuration.enable_public_badge_access
+          super || PactBroker::Configuration.configuration.enable_public_badge_access
         end
 
         def to_svg

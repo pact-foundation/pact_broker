@@ -1,5 +1,3 @@
-require "pact_broker/api/resources/base_resource"
-require "pact_broker/application_context"
 require "webmachine/application_monkey_patch"
 
 module PactBroker

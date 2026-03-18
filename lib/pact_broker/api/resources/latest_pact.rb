@@ -1,7 +1,3 @@
-require "pact_broker/api/resources/base_resource"
-require "pact_broker/configuration"
-require "pact_broker/api/decorators/extended_pact_decorator"
-require "pact_broker/pacts/metadata"
 
 module PactBroker
   module Api
@@ -38,7 +34,7 @@ module PactBroker
         end
 
         def to_html
-          PactBroker.configuration.html_pact_renderer.call(
+          PactBroker::Configuration.configuration.html_pact_renderer.call(
             pact, {
               base_url: ui_base_url,
               badge_url: "#{resource_url}/badge.svg"

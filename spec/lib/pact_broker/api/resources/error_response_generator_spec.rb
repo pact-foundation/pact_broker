@@ -1,6 +1,3 @@
-require "pact_broker/api/resources/error_response_generator"
-require "pact_broker/application_context"
-require "pact_broker/api/decorators/runtime_error_problem_json_decorator"
 
 module PactBroker
   module Api
@@ -9,7 +6,7 @@ module PactBroker
         describe ".call" do
           before do
             allow(error).to receive(:backtrace).and_return(["backtrace"])
-            allow(PactBroker.configuration).to receive(:show_backtrace_in_error_response?).and_return(false)
+            allow(PactBroker::Configuration.configuration).to receive(:show_backtrace_in_error_response?).and_return(false)
           end
           let(:error) { StandardError.new("test error") }
           let(:error_reference) { "bYWfnyWPlf" }
@@ -54,7 +51,7 @@ module PactBroker
 
           context "when show_backtrace_in_error_response? is true" do
             before do
-              allow(PactBroker.configuration).to receive(:show_backtrace_in_error_response?).and_return(true)
+              allow(PactBroker::Configuration.configuration).to receive(:show_backtrace_in_error_response?).and_return(true)
             end
 
             context "when the error is a PactBroker::Error or subclass" do
@@ -72,7 +69,7 @@ module PactBroker
 
           context "when show_backtrace_in_error_response? is false" do
             before do
-              allow(PactBroker.configuration).to receive(:show_backtrace_in_error_response?).and_return(false)
+              allow(PactBroker::Configuration.configuration).to receive(:show_backtrace_in_error_response?).and_return(false)
             end
 
             context "when the error is a PactBroker::Error or subclass" do

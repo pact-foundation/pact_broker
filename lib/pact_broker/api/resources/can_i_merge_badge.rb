@@ -1,5 +1,3 @@
-require "pact_broker/api/resources/base_resource"
-require "pact_broker/api/resources/badge_methods"
 
 module PactBroker
   module Api
@@ -25,7 +23,7 @@ module PactBroker
         private
 
         def default_cache_for_succesful_badge
-          PactBroker.configuration.badge_default_cache_setting
+          PactBroker::Configuration.configuration.badge_default_cache_setting
         end
 
         def results

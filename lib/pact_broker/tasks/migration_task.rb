@@ -4,7 +4,7 @@ require "rake/tasklib"
 
 require 'pact_broker/tasks'
 
-PactBroker::DB::MigrationTask.new do | task |
+PactBroker::Db::MigrationTask.new do | task |
   require 'my_app/db'
   task.database_connection = MyApp::DB
 end
@@ -12,7 +12,7 @@ end
 =end
 
 module PactBroker
-  module DB
+  module Db
     class MigrationTask < ::Rake::TaskLib
 
       attr_accessor :database_connection
@@ -28,8 +28,6 @@ module PactBroker
           namespace :db do
             desc "Run sequel migrations for pact broker database"
             task :migrate, [:target] do | _t, args |
-              require "pact_broker/db/migrate"
-              require "pact_broker/db/version"
 
               instance_eval(&block)
 
@@ -38,7 +36,7 @@ module PactBroker
               end
 
               if (logger = database_connection.loggers.first)
-                current_version = PactBroker::DB::Version.call(database_connection)
+                current_version = PactBroker::Db::Version.call(database_connection)
                 if options[:target]
                   logger.info "Migrating from schema version #{current_version} to #{options[:target]}"
                 else
@@ -46,10 +44,10 @@ module PactBroker
                 end
               end
 
-              PactBroker::DB::Migrate.call(database_connection, options)
+              PactBroker::Db::Migrate.call(database_connection, options)
 
               if logger
-                current_version = PactBroker::DB::Version.call(database_connection)
+                current_version = PactBroker::Db::Version.call(database_connection)
                 logger.info "Current schema version is now #{current_version}"
               end
             end

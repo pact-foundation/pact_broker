@@ -1,15 +1,4 @@
 require "forwardable"
-require "pact_broker/dataset"
-require "pact_broker/domain/pact"
-require "pact_broker/pacts/pact_version"
-require "pact_broker/integrations/integration"
-require "pact_broker/tags/head_pact_tag"
-require "pact_broker/pacts/pact_publication_dataset_module"
-require "pact_broker/pacts/pact_publication_wip_dataset_module"
-require "pact_broker/pacts/eager_loaders"
-require "pact_broker/pacts/lazy_loaders"
-require "pact_broker/pacts/pact_publication_clean_selector_dataset_module"
-require "pact_broker/pacts/head_pact"
 
 module PactBroker
   module Pacts

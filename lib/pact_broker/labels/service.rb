@@ -1,4 +1,3 @@
-require "pact_broker/repositories"
 
 module PactBroker
 

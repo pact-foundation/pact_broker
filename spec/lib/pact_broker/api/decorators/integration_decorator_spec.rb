@@ -1,6 +1,4 @@
-require "pact_broker/api/decorators/integration_decorator"
-require "pact_broker/integrations/integration"
-
+ 
 module PactBroker
   module Api
     module Decorators

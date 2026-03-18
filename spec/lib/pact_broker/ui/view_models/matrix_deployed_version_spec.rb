@@ -1,7 +1,6 @@
-require "pact_broker/ui/view_models/matrix_deployed_version"
 
 module PactBroker
-  module UI
+  module Ui
     module ViewModels
       describe MatrixDeployedVersion do
         before do
