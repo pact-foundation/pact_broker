@@ -7,7 +7,7 @@ describe "retrieving pact publications for main branch" do
   subject { get(path)  }
 
   before do
-    seed_example_data = PactBroker::DB::SeedExampleData.new
+    seed_example_data = PactBroker::Db::SeedExampleData.new
     
     td.create_consumer("Consumer", main_branch: "main")
       .create_provider("Provider")
