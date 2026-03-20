@@ -21,7 +21,7 @@ module PactBroker
           .collect{|fk| {from: it, to: fk[:table]} } }
           .flatten
           .uniq
-        table_names = @connection.tables - [:schema_migrations, :schema_info]
+        table_names = @connection.tables - [:schema_migrations, :schema_info, :pact_broker_schema_migrations, :pactflow_schema_migrations]
         check(table_names, dependencies, ordered_table_names)
         ordered_table_names
       end
