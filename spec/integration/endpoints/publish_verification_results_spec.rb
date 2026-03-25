@@ -1,4 +1,3 @@
-require "pact_broker/domain/verification"
 require "timecop"
 
 describe "Publishing a pact verification" do

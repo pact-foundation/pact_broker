@@ -1,19 +1,12 @@
-require "pact_broker/ui/controllers/base"
-require "pact_broker/ui/view_models/matrix_lines"
-require "pact_broker/matrix/unresolved_selector"
-require "pact_broker/matrix/parse_query"
-require "pact_broker/logging"
-require "pact_broker/api/pact_broker_urls"
-require "pact_broker/ui/helpers/matrix_helper"
 require "haml"
 
 module PactBroker
-  module UI
+  module Ui
     module Controllers
       class Matrix < Base
 
         include PactBroker::Services
-        include PactBroker::UI::Helpers::MatrixHelper
+        include PactBroker::Ui::Helpers::MatrixHelper
 
         get "/" do
           selectors = [OpenStruct.new, OpenStruct.new]
@@ -32,7 +25,7 @@ module PactBroker
               errors = matrix_service.validate_selectors(selectors, options)
               if errors.empty?
                 lines = matrix_service.find(selectors, options)
-                locals[:lines] = PactBroker::UI::ViewModels::MatrixLines.new(lines, base_url: base_url)
+                locals[:lines] = PactBroker::Ui::ViewModels::MatrixLines.new(lines, base_url: base_url)
                 locals[:badge_url] = matrix_badge_url(selectors, lines, base_url)
               else
                 locals[:errors] = errors
@@ -52,7 +45,7 @@ module PactBroker
                       ]
           options = { latestby: "cvpv", limit: 100 }
           lines = matrix_service.find(selectors, options)
-          lines = PactBroker::UI::ViewModels::MatrixLines.new(lines, base_url: base_url)
+          lines = PactBroker::Ui::ViewModels::MatrixLines.new(lines, base_url: base_url)
           locals =  {
                       lines: lines,
                       consumer_name: params[:consumer_name],

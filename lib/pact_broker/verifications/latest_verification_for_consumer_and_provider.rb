@@ -1,4 +1,3 @@
-require "pact_broker/domain/verification"
 
 module PactBroker
   module Verifications

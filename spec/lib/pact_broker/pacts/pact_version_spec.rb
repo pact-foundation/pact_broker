@@ -1,4 +1,3 @@
-require "pact_broker/pacts/pact_version"
 
 module PactBroker
   module Pacts
@@ -168,7 +167,7 @@ module PactBroker
 
       describe "#latest_consumer_version_number" do
         before do
-          PactBroker.configuration.order_versions_by_date = false
+          PactBroker::Configuration.configuration.order_versions_by_date = false
           builder = td
           builder
             .create_consumer

@@ -3,21 +3,18 @@ $: << File.expand_path("../../../", __FILE__)
 require "spec/support/simplecov"
 require "pact/provider/rspec"
 require "support/test_database"
-require "pact_broker/db"
-require "pact_broker/configuration"
-PactBroker::DB.connection = PactBroker::TestDatabase.database = ::PactBroker::TestDatabase.connection_for_test_database
-PactBroker.configuration.seed_example_data = false
-require "spec/support/database_cleaner"
 require "pact_broker"
-require "pact_broker/app"
 
+PactBroker::Db.connection = PactBroker::TestDatabase.database = ::PactBroker::TestDatabase.connection_for_test_database
+PactBroker::Configuration.configuration.seed_example_data = false
+require "spec/support/database_cleaner"
 require_relative "hal_relation_proxy_app"
 
 Dir.glob(File.join(File.dirname(__FILE__), "provider_states_for*.rb")).each do | path |
   require path
 end
 
-PactBroker.configuration.base_urls = ["http://example.org"]
+PactBroker::Configuration.configuration.base_urls = ["http://example.org"]
 
 pact_broker = PactBroker::App.new { |c| c.database_connection = PactBroker::TestDatabase.connection_for_test_database }
 app_to_verify = HalRelationProxyApp.new(pact_broker)

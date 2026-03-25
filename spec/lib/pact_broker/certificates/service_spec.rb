@@ -1,4 +1,3 @@
-require "pact_broker/certificates/service"
 
 module PactBroker
   module Certificates
@@ -45,7 +44,7 @@ module PactBroker
 
         context "with a certificate from the configuration (embedded)" do
           before do
-            allow(PactBroker.configuration).to receive(:webhook_certificates).and_return([{ description: "foo", content: File.read("spec/fixtures/certificates/cacert.pem") }])
+            allow(PactBroker::Configuration.configuration).to receive(:webhook_certificates).and_return([{ description: "foo", content: File.read("spec/fixtures/certificates/cacert.pem") }])
           end
 
           it "returns all the X509 Certificate objects" do
@@ -55,7 +54,7 @@ module PactBroker
 
         context "with a certificate from the configuration (path)" do
           before do
-            allow(PactBroker.configuration).to receive(:webhook_certificates).and_return([{ description: "foo", path: "spec/fixtures/certificates/cacert.pem" }])
+            allow(PactBroker::Configuration.configuration).to receive(:webhook_certificates).and_return([{ description: "foo", path: "spec/fixtures/certificates/cacert.pem" }])
           end
 
           it "returns all the X509 Certificate objects" do
@@ -64,7 +63,7 @@ module PactBroker
 
           context "when the file does not exist" do
             before do
-              allow(PactBroker.configuration).to receive(:webhook_certificates).and_return([{ description: "foo", path: "wrong" }])
+              allow(PactBroker::Configuration.configuration).to receive(:webhook_certificates).and_return([{ description: "foo", path: "wrong" }])
             end
 
             it "logs an error" do

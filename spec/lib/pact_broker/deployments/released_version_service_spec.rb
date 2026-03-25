@@ -1,5 +1,3 @@
-require "pact_broker/deployments/released_version_service"
-require "pact_broker/events/subscriber"
 
 module PactBroker
   module Deployments

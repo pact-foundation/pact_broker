@@ -1,4 +1,3 @@
-require "pact_broker/api/resources/verification_triggered_webhooks"
 
 module PactBroker
   module Api

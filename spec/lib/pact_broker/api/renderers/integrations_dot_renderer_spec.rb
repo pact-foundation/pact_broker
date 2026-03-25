@@ -1,4 +1,3 @@
-require "pact_broker/api/renderers/integrations_dot_renderer"
 
 module PactBroker
   module Api

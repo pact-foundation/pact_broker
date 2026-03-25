@@ -29,7 +29,7 @@ describe "Publishing a pact" do
   context "when a pact for this consumer version does exist" do
     before do
       td.create_pact_with_hierarchy("A Consumer", "1.2.3", "A Provider").and_return(:pact)
-      allow(PactBroker.configuration).to receive(:allow_dangerous_contract_modification).and_return(allow_dangerous_contract_modification)
+      allow(PactBroker::Configuration.configuration).to receive(:allow_dangerous_contract_modification).and_return(allow_dangerous_contract_modification)
     end
 
     context "when the content is different" do
@@ -80,7 +80,7 @@ describe "Publishing a pact" do
 
     context "when duplicate checking is on" do
       before do
-        PactBroker.configuration.check_for_potential_duplicate_pacticipant_names = true
+        PactBroker::Configuration.configuration.check_for_potential_duplicate_pacticipant_names = true
       end
 
       it "returns a 409" do
@@ -90,7 +90,7 @@ describe "Publishing a pact" do
 
     context "when duplicate checking is off" do
       before do
-        PactBroker.configuration.check_for_potential_duplicate_pacticipant_names = false
+        PactBroker::Configuration.configuration.check_for_potential_duplicate_pacticipant_names = false
       end
 
       it "returns a 201" do

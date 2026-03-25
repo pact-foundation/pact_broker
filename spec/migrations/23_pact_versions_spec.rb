@@ -1,4 +1,3 @@
-require "pact_broker/webhooks/execution_configuration"
 
 describe "migrate to pact versions (migrate 22-31)", migration: true do
   before do

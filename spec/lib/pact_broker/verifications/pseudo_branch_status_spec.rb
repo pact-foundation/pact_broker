@@ -1,4 +1,3 @@
-require "pact_broker/verifications/pseudo_branch_status"
 
 module PactBroker
   module Verifications

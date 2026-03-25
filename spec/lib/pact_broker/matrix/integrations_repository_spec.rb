@@ -1,6 +1,3 @@
-require "pact_broker/matrix/integrations_repository"
-require "pact_broker/matrix/integration"
-require "pact_broker/matrix/selector_resolver"
 
 module PactBroker
   module Matrix

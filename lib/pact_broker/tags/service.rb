@@ -1,6 +1,3 @@
-require "pact_broker/repositories"
-require "pact_broker/configuration"
-require "pact_broker/logging"
 
 module PactBroker
   module Tags

@@ -1,7 +1,5 @@
-require "pact_broker/hash_refinements"
-
 module PactBroker
-  module DB
+  module Db
     class Clean
       class Selector
         using PactBroker::HashRefinements

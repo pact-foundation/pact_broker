@@ -1,4 +1,3 @@
-require "pact_broker/pacts/squash_pacts_for_verification"
 
 module PactBroker
   module Pacts
