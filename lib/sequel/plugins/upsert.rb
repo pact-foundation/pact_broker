@@ -82,7 +82,7 @@ module Sequel
 
         def sync_deserialized_values_to_values
           if respond_to?(:deserialized_values) && deserialized_values.is_a?(Hash)
-            deserialized_values.each { |k, v| @values[k] = v }
+            deserialized_values.each { |k, v| values[k] = v }
           end
         end
 
