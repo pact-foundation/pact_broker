@@ -68,6 +68,7 @@ module Sequel
         end
 
         def manual_upsert(opts)
+          sync_deserialized_values_to_values
           # Can use slice when we drop support for Ruby 2.4
           query = values.select{ |k, _| self.class.upsert_plugin_identifying_columns.include?(k) }
           existing_record = model.where(query).single_record
@@ -76,6 +77,12 @@ module Sequel
             existing_record.save(opts)
           else
             save(opts)
+          end
+        end
+
+        def sync_deserialized_values_to_values
+          if respond_to?(:deserialized_values) && deserialized_values.is_a?(Hash)
+            deserialized_values.each { |k, v| @values[k] = v }
           end
         end
 
