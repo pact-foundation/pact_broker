@@ -25,6 +25,24 @@ describe "Updating an environment" do
     expect(response_body[:contacts]).to be nil
   end
 
+  context "when contacts are included in the update" do
+    let(:environment_hash) do
+      {
+        name: "test",
+        production: false,
+        displayName: "Testing",
+        contacts: [
+          { name: "Team Awesome", details: { emailAddress: "team@example.com" } }
+        ]
+      }
+    end
+
+    it "returns the updated contacts" do
+      subject
+      expect(response_body[:contacts]).to eq [{ name: "Team Awesome", details: { emailAddress: "team@example.com" } }]
+    end
+  end
+
   context "when the environment doesn't exist" do
     let(:path) { "/environments/5678" }
 

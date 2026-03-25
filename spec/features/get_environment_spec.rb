@@ -15,5 +15,6 @@ describe "Get an environment" do
   it "returns the environment" do
     expect(response_body[:uuid]).to eq "1234"
     expect(response_body[:name]).to eq "test"
+    expect(response_body[:contacts]).to eq [{ name: "Foo" }]
   end
 end

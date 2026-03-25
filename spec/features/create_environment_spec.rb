@@ -32,6 +32,7 @@ describe "Creating an environment" do
   it "returns the newly created environment" do
     expect(response_body).to include environment_hash.merge(name: "test")
     expect(response_body[:uuid]).to_not be nil
+    expect(response_body[:contacts]).to eq [{ name: "Team Awesome", details: { email: "foo@bar.com", arbitraryThing: "thing" } }]
   end
 
   context "with invalid params" do
