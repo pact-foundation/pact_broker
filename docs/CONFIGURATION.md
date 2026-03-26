@@ -277,6 +277,15 @@ penalty, so consider increasing this timeout if building a frequently accessed s
 **Allowed values:** -1 or any positive integer.<br/>
 **More information:** https://sequel.jeremyevans.net/rdoc-plugins/files/lib/sequel/extensions/connection_validator_rb.html<br/>
 
+### database_schema
+
+The PostgreSQL schema to use. If you need to use a schema other than the default public schema, set this value.
+
+**Environment variable name:** `PACT_BROKER_DATABASE_SCHEMA`<br/>
+**YAML configuration key name:** `database_schema`<br/>
+**Default:** `public`<br/>
+**Allowed values:** A valid PostgreSQL schema name<br/>
+
 <br/>
 
 ## Authentication and authorization
