@@ -30,7 +30,7 @@ module PactBroker
           PactVersion.order(:id).first
         end
 
-        it "returns the consuemr versions" do
+        it "returns the consumer versions" do
           expect(subject.consumer_versions.collect(&:number).sort).to eq ["1", "2"]
         end
       end

@@ -179,7 +179,7 @@
 * bulk delete branches (#652)	 ([14ac33c8](/../../commit/14ac33c8))
 * add latest version for branch endpoint (#644)	 ([c216bec8](/../../commit/c216bec8))
 * add no-cache header	 ([9a637327](/../../commit/9a637327))
-* suppport `page` + `size` as pagination params (#642)	 ([c71089fe](/../../commit/c71089fe))
+* support `page` + `size` as pagination params (#642)	 ([c71089fe](/../../commit/c71089fe))
 * do not include pb:record-deployment or pb:record-release relations for versions embedded in resources	 ([2f43590c](/../../commit/2f43590c))
 * remove status from individual error in problem+error response	 ([a4b3ec58](/../../commit/a4b3ec58))
 * add version_id indexes to deployed_versions and released_versions	 ([00fc7d10](/../../commit/00fc7d10))
@@ -216,7 +216,7 @@
 * do not error when no environment is found by name	 ([d1501618](/../../commit/d1501618))
 * ensure pact associations are eager loaded when finding a single pact	 ([c98abda6](/../../commit/c98abda6))
 * gracefully handle validating an array when a hash is expected	 ([b26ddb46](/../../commit/b26ddb46))
-* fix error occuring when can-i-deploy badge is requested and no version is found	 ([db7dee3a](/../../commit/db7dee3a))
+* fix error occurring when can-i-deploy badge is requested and no version is found	 ([db7dee3a](/../../commit/db7dee3a))
 * fix bug in error handling for 'can-i-deploy branch to environment' badge	 ([c23beb6b](/../../commit/c23beb6b))
 * improve performance of network diagram (#614)	 ([ffd3ec4b](/../../commit/ffd3ec4b))
 * fix error raised when attempting to log warning when webhook_redact_sensitive_data is set to false	 ([9b66270e](/../../commit/9b66270e))
@@ -379,7 +379,7 @@
 * check for potential duplicate pacticipants in publish contracts endpoint (#558)	 ([ed714f03](/../../commit/ed714f03))
 * add support for "can i merge" matrix query	 ([bb108ed2](/../../commit/bb108ed2))
 * remove inefficient skynet query for tags	 ([bdc2599c](/../../commit/bdc2599c))
-* update text for matrix version description when no version is in an enviroment	 ([3eb5581d](/../../commit/3eb5581d))
+* update text for matrix version description when no version is in an environment	 ([3eb5581d](/../../commit/3eb5581d))
 
 * **pacts for verification**
   * update wip and pending descriptions for wip pacts	 ([b06d4477](/../../commit/b06d4477))
@@ -461,7 +461,7 @@
 #### Features
 
 * add relation for can-i-deploy branch to environment badge	 ([6ece8e93](/../../commit/6ece8e93))
-* add badge url for 'can I deploy latest version of branch to envionment' endpoint	 ([086b8c10](/../../commit/086b8c10))
+* add badge url for 'can I deploy latest version of branch to environment' endpoint	 ([086b8c10](/../../commit/086b8c10))
 
 #### Bug Fixes
 
@@ -619,7 +619,7 @@
 * edge case in webhook description rendering with participants specified by labels (#512)	 ([7e6a78d8](/../../commit/7e6a78d8))
 
 * **matrix**
-  * prevent long version names overlfow the table (#511)	 ([3c279556](/../../commit/3c279556))
+  * prevent long version names overflow the table (#511)	 ([3c279556](/../../commit/3c279556))
 
 <a name="v2.87.0"></a>
 ### v2.87.0 (2021-10-05)
@@ -956,7 +956,7 @@
 #### Features
 
 * **wip**
-  * permenently enable feature that keeps pacts as WIP when verified via the URL from a webhook triggered by pact publication	 ([70071373](/../../commit/70071373))
+  * permanently enable feature that keeps pacts as WIP when verified via the URL from a webhook triggered by pact publication	 ([70071373](/../../commit/70071373))
 
 * allow error causes to be configured to log at warning level	 ([3a7bf5ea](/../../commit/3a7bf5ea))
 * add self relations for tags in matrix resource	 ([727cee99](/../../commit/727cee99))
@@ -1239,7 +1239,7 @@
 
 #### Bug Fixes
 
-* use relative URLs when base_url not explictly set to ensure app is not vulnerable to host header attacks	 ([92c45a0a](/../../commit/92c45a0a))
+* use relative URLs when base_url not explicitly set to ensure app is not vulnerable to host header attacks	 ([92c45a0a](/../../commit/92c45a0a))
 * raise PactBroker::Error when either pacticipant is not found in the business layer while attempting to delete an integration	 ([3c209a46](/../../commit/3c209a46))
 
 
@@ -1323,7 +1323,7 @@
   * highlight rows with the same consumer/provider/consumer version/provider version	 ([99b36d50](/../../commit/99b36d50))
 
 * **matrix**
-  * speed up query for UI by reducing the number of joins and removing unncessary criteria (#332)	 ([9e5ea8be](/../../commit/9e5ea8be))
+  * speed up query for UI by reducing the number of joins and removing unnecessary criteria (#332)	 ([9e5ea8be](/../../commit/9e5ea8be))
 
 * **pacts for verification**
   * add validation to only allow consumer to be specified for 'all' versions for a tag	 ([b39ad193](/../../commit/b39ad193))
@@ -1544,12 +1544,12 @@
 * **pacts for verification**
   * make latest flag required and true for now, until the 'all pacts for tag' is implemented	 ([ebbbbec9](/../../commit/ebbbbec9))
   * include WIP pacts in list of pacts to verify	 ([04a0f40c](/../../commit/04a0f40c))
-  * allow pending status information to be optionall included	 ([a80f2fd6](/../../commit/a80f2fd6))
+  * allow pending status information to be optionally included	 ([a80f2fd6](/../../commit/a80f2fd6))
   * support querying by POST	 ([5556b814](/../../commit/5556b814))
 
 * **matrix**
   * show pact version SHA in popup text, and highlight pact publications with the same pact version	 ([0d539093](/../../commit/0d539093))
-  * update 'pre-verifed' pop up text, and add icon to indicate when a pact is pre-verified	 ([a86010e5](/../../commit/a86010e5))
+  * update 'pre-verified' pop up text, and add icon to indicate when a pact is pre-verified	 ([a86010e5](/../../commit/a86010e5))
   * add tags to json response	 ([6d099f59](/../../commit/6d099f59))
 
 * **example data**
@@ -2433,7 +2433,7 @@
 #### Bug Fixes
 
 * return overwritten pact publication as latest if non exists as a latest version when rendering verification	 ([8217209](/../../commit/8217209))
-* #184 Escape username before asigning it to URI userinfo attribute	 ([81bb779](/../../commit/81bb779))
+* #184 Escape username before assigning it to URI userinfo attribute	 ([81bb779](/../../commit/81bb779))
 * remove non UTF-8 chars from webhook response bodies before saving the logs to the (UTF-8 encoded) database table	 ([0ee5b0b](/../../commit/0ee5b0b))
 * ensure webhook dependencies are saved before executing	 ([9a89d07](/../../commit/9a89d07))
 
@@ -2556,7 +2556,7 @@
 
 #### Bug Fixes
 
-* correct captialization in require	 ([db2e676](/../../commit/db2e676))
+* correct capitalization in require	 ([db2e676](/../../commit/db2e676))
 
 <a name="v2.7.0.beta.2"></a>
 ### v2.7.0.beta.2 (2017-10-31)
