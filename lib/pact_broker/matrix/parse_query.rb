@@ -3,12 +3,18 @@ require "pact_broker/matrix/unresolved_selector"
 
 module PactBroker
   module Matrix
+
+    class MalformedMatrixQueryError < StandardError;end
     class ParseQuery
       # rubocop: disable Metrics/CyclomaticComplexity
       # rubocop: disable Metrics/MethodLength
       def self.call query
         params = Rack::Utils.parse_nested_query(query)
-        selectors = (params["q"] || []).collect do |i|
+        q = (params["q"] || [])
+
+        raise(MalformedMatrixQueryError.new("Malformed query '#{q}' cannot be parsed.")) unless q.is_a?(Enumerable)
+
+        selectors = q.collect do |i|
           parse_selector(i)
         end
         options = {}
