@@ -53,6 +53,10 @@ module PactBroker
         with_updated_attribute(cert_store: value)
       end
 
+      def with_request_customizer(value)
+        with_updated_attribute(request_customizer: value)
+      end
+
       def webhook_context
         self[:webhook_context]
       end
