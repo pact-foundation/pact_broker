@@ -196,6 +196,13 @@ module PactBroker
           }
         end
 
+        {
+          "counts" => dry_run_counts(kept_per_selector),
+          "versionSummary" => pacticipant_results
+        }
+      end
+
+      def dry_run_counts(kept_per_selector)
         total_versions_count = PactBroker::Domain::Version.count
         versions_to_keep_count = version_ids_to_keep.count
         versions_to_delete_count = versions_to_delete.count
@@ -204,17 +211,14 @@ module PactBroker
         branches_to_delete_count = keep_branches && !keep_branches.empty? ? stale_branch_ids_to_delete.count : 0
 
         {
-          "counts" => {
-            "totalVersions" => total_versions_count,
-            "versionsToDelete" => versions_to_delete_count,
-            "versionsNotToKeep" => total_versions_count - versions_to_keep_count,
-            "versionsToKeep" => versions_to_keep_count,
-            "versionsToKeepBySelector" => kept_per_selector,
-            "totalBranches" => total_branches_count,
-            "branchesToDelete" => branches_to_delete_count,
-            "branchesToKeep" => total_branches_count - branches_to_delete_count
-          },
-          "versionSummary" => pacticipant_results
+          "totalVersions" => total_versions_count,
+          "versionsToDelete" => versions_to_delete_count,
+          "versionsNotToKeep" => total_versions_count - versions_to_keep_count,
+          "versionsToKeep" => versions_to_keep_count,
+          "versionsToKeepBySelector" => kept_per_selector,
+          "totalBranches" => total_branches_count,
+          "branchesToDelete" => branches_to_delete_count,
+          "branchesToKeep" => total_branches_count - branches_to_delete_count
         }
       end
 
