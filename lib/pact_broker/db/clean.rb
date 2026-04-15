@@ -228,7 +228,7 @@ module PactBroker
       end
 
       def keep_branches
-        @keep_branches ||= options[:keep_branches]&.collect { | unknown_thing | BranchSelector.from_hash(unknown_thing.to_hash) }
+        @keep_branches ||= options[:keep_branches]&.collect { | selector_hash | BranchSelector.from_hash(selector_hash.to_hash) }
       end
 
       def delete_overwritten_verifications
