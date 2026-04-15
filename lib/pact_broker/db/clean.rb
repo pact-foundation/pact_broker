@@ -2,6 +2,7 @@ require "sequel"
 require "pact_broker/project_root"
 require "pact_broker/logging"
 require "pact_broker/db/clean/selector"
+require "pact_broker/db/clean/branch_selector"
 
 module PactBroker
   module DB
@@ -130,6 +131,9 @@ module PactBroker
         delete_orphan_tags
         delete_orphan_versions
 
+        deleted_counts[:stale_branches] = delete_stale_branches
+        kept_counts[:stale_branches] = PactBroker::Domain::Pacticipant.db[:branches].count
+
         { kept: kept_counts, deleted: deleted_counts }
       end
 
@@ -178,6 +182,53 @@ module PactBroker
 
       def delete_orphan_versions
         db[:versions].where(id: referenced_version_ids).invert.delete
+      end
+
+      def delete_stale_branches
+        return 0 unless keep_branches && !keep_branches.empty?
+
+        ids_to_delete = stale_branch_ids_to_delete
+        count = ids_to_delete.count
+        PactBroker::Domain::Pacticipant.db[:branches].where(id: ids_to_delete).delete
+        count
+      end
+
+      def stale_branch_ids_to_delete
+        ids_to_keep = stale_branch_ids_to_keep
+        if ids_to_keep.nil?
+          db[:branches].where(false).select(:id)
+        else
+          db[:branches]
+            .select(Sequel[:branches][:id])
+            .left_outer_join(ids_to_keep, { Sequel[:branches][:id] => Sequel[:keep_branches][:id] }, table_alias: :keep_branches)
+            .where(Sequel[:keep_branches][:id] => nil)
+        end
+      end
+
+      def stale_branch_ids_to_keep
+        queries = []
+
+        main_branch_names = db[:pacticipants]
+          .exclude(main_branch: nil)
+          .select_map(:main_branch)
+          .uniq
+        queries << db[:branches].where(name: main_branch_names).select(:id) unless main_branch_names.empty?
+
+        keep_branches.each do | selector |
+          if selector.max_age
+            cutoff = Date.today - selector.max_age
+            queries << db[:branches].where { updated_at >= cutoff }.select(:id)
+          end
+          if selector.branch
+            queries << db[:branches].where(name: Array(selector.branch)).select(:id)
+          end
+        end
+
+        queries.empty? ? nil : queries.reduce(:union)
+      end
+
+      def keep_branches
+        @keep_branches ||= options[:keep_branches]&.collect { | unknown_thing | BranchSelector.from_hash(unknown_thing.to_hash) }
       end
 
       def delete_overwritten_verifications

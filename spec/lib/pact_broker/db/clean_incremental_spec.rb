@@ -154,6 +154,98 @@ module PactBroker
             expect { subject }.to change { versions_query.select_map([:number, :branch_name]) }.from(initial_versions).to(final_versions)
           end
         end
+
+        context "stale branch cleanup" do
+          before do
+            Timecop.freeze(Date.today - 100) do
+              td.publish_pact(consumer_name: "Foo", provider_name: "Bar", consumer_version_number: "1", branch: "feat/old")
+            end
+            Timecop.freeze(Date.today - 50) do
+              td.publish_pact(consumer_name: "Foo", provider_name: "Bar", consumer_version_number: "2", branch: "feat/fresh")
+              td.publish_pact(consumer_name: "Foo", provider_name: "Bar", consumer_version_number: "3", branch: "main")
+            end
+          end
+
+          # Keep all versions so only branch deletions are observable
+          let(:keep_all_versions) { [PactBroker::DB::Clean::Selector.new(max_age: 999)] }
+
+          context "when keep_branches is configured with a max_age" do
+            let(:options) { { keep: keep_all_versions, keep_branches: [PactBroker::DB::Clean::BranchSelector.new(max_age: 90)] } }
+
+            it "deletes branches whose updated_at is older than max_age" do
+              expect { subject }.to change { PactBroker::Versions::Branch.where(name: "feat/old").count }.from(1).to(0)
+            end
+
+            it "keeps branches updated within max_age" do
+              expect { subject }.to_not change { PactBroker::Versions::Branch.where(name: "feat/fresh").count }
+            end
+
+            it "does not delete the versions associated with the stale branch" do
+              expect { subject }.to_not change { PactBroker::Domain::Version.where(number: "1").count }
+            end
+          end
+
+          context "when the pacticipant has a main_branch set" do
+            before do
+              Timecop.freeze(Date.today - 100) do
+                # Publish a version on the main branch, making it "stale" by age
+                td.publish_pact(consumer_name: "Foo", provider_name: "Bar", consumer_version_number: "4", branch: "main-protected")
+              end
+              PactBroker::Domain::Pacticipant.where(name: "Foo").update(main_branch: "main-protected")
+            end
+
+            let(:options) { { keep: keep_all_versions, keep_branches: [PactBroker::DB::Clean::BranchSelector.new(max_age: 90)] } }
+
+            it "never deletes the main branch even when stale" do
+              expect { subject }.to_not change { PactBroker::Versions::Branch.where(name: "main-protected").count }
+            end
+          end
+
+          context "when a branch name is listed in keep_branches selectors" do
+            let(:options) do
+              {
+                keep: keep_all_versions,
+                keep_branches: [
+                  PactBroker::DB::Clean::BranchSelector.new(max_age: 90),
+                  PactBroker::DB::Clean::BranchSelector.new(branch: ["feat/old"])
+                ]
+              }
+            end
+
+            it "keeps explicitly named branches even when stale" do
+              expect { subject }.to_not change { PactBroker::Versions::Branch.where(name: "feat/old").count }
+            end
+          end
+
+          context "when keep_branches is nil (disabled)" do
+            let(:options) { { keep: keep_all_versions, keep_branches: nil } }
+
+            it "does not delete any branches" do
+              expect { subject }.to_not change { PactBroker::Versions::Branch.count }
+            end
+          end
+
+          context "when keep_branches is an empty array (disabled)" do
+            let(:options) { { keep: keep_all_versions, keep_branches: [] } }
+
+            it "does not delete any branches" do
+              expect { subject }.to_not change { PactBroker::Versions::Branch.count }
+            end
+          end
+
+          context "with the default options (no keep_branches specified)" do
+            let(:options) { {} }
+
+            it "applies the DEFAULT_KEEP_BRANCH_SELECTORS (90 days)" do
+              # feat/old was published 100 days ago, should be deleted by default
+              expect { subject }.to change { PactBroker::Versions::Branch.where(name: "feat/old").count }.from(1).to(0)
+            end
+
+            it "keeps branches updated within the default 90-day window" do
+              expect { subject }.to_not change { PactBroker::Versions::Branch.where(name: "feat/fresh").count }
+            end
+          end
+        end
       end
     end
   end
