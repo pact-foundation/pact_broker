@@ -1,4 +1,6 @@
 require "pact_broker/webhooks/webhook_request_template"
+require "openssl"
+require "base64"
 
 module PactBroker
   module Webhooks
@@ -189,6 +191,68 @@ module PactBroker
           let(:password) { "foo" }
 
           its(:display_password) { is_expected.to eq "**********" }
+        end
+      end
+
+      describe "header auth functions" do
+        let(:body) { "the request body" }
+        let(:username) { nil }
+        let(:password) { nil }
+
+        subject { WebhookRequestTemplate.new(attributes).build(template_params) }
+
+        describe "${hmacSign(key)}" do
+          let(:template_params) { { "fordSigningKey" => "s3cr3t" } }
+          let(:headers) { { "X-Signature" => "${hmacSign(fordSigningKey)}" } }
+
+          it "computes HMAC SHA-256 of the built body using the named secret" do
+            expected = OpenSSL::HMAC.hexdigest("SHA256", "s3cr3t", "the request body")
+            expect(subject.headers["x-signature"]).to eq expected
+          end
+
+          context "when the secret key is not in template_params" do
+            let(:template_params) { {} }
+
+            it "leaves the expression unexpanded" do
+              expect(subject.headers["x-signature"]).to eq "${hmacSign(fordSigningKey)}"
+            end
+          end
+        end
+
+        describe "${basicAuth(user, pass)}" do
+          let(:template_params) { { "myUser" => "alice", "myPass" => "s3cr3t" } }
+          let(:headers) { { "Authorization" => "${basicAuth(myUser, myPass)}" } }
+
+          it "sets the header to the base64-encoded user:pass credential" do
+            expect(subject.headers["authorization"]).to eq Base64.strict_encode64("alice:s3cr3t")
+          end
+
+          context "when arguments are literal strings not in template_params" do
+            let(:template_params) { {} }
+            let(:headers) { { "Authorization" => "${basicAuth(literalUser, literalPass)}" } }
+
+            it "uses the literal argument values" do
+              expect(subject.headers["authorization"]).to eq Base64.strict_encode64("literalUser:literalPass")
+            end
+          end
+        end
+
+        describe "${bearer(key)}" do
+          let(:template_params) { { "myToken" => "abc.def.ghi" } }
+          let(:headers) { { "Authorization" => "${bearer(myToken)}" } }
+
+          it "sets the header to 'Bearer <token>'" do
+            expect(subject.headers["authorization"]).to eq "Bearer abc.def.ghi"
+          end
+
+          context "when the argument is a literal string not in template_params" do
+            let(:template_params) { {} }
+            let(:headers) { { "Authorization" => "${bearer(literalToken)}" } }
+
+            it "uses the literal as the token" do
+              expect(subject.headers["authorization"]).to eq "Bearer literalToken"
+            end
+          end
         end
       end
 

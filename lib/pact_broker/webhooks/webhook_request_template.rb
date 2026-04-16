@@ -2,6 +2,8 @@ require "pact_broker/webhooks/render"
 require "cgi"
 require "pact_broker/domain/webhook_request"
 require "pact_broker/string_refinements"
+require "openssl"
+require "base64"
 
 module PactBroker
   module Webhooks
@@ -12,6 +14,9 @@ module PactBroker
       using PactBroker::StringRefinements
 
       HEADERS_TO_REDACT = [/authorization/i, /token/i]
+      HMAC_SIGN_PATTERN  = /\A\$\{hmacSign\(([^)]+)\)\}\z/
+      BASIC_AUTH_PATTERN = /\A\$\{basicAuth\(([^,]+),\s*([^)]+)\)\}\z/
+      BEARER_PATTERN     = /\A\$\{bearer\(([^)]+)\)\}\z/
 
       attr_accessor :method, :url, :body, :username, :password, :uuid
       attr_reader :headers
@@ -29,14 +34,15 @@ module PactBroker
       end
 
       def build(template_params, user_agent: nil, disable_ssl_verification: false, cert_store: nil)
+        body = build_body(template_params)
         attributes = {
           method: http_method,
           url: build_url(template_params),
-          headers: build_headers(template_params),
+          headers: build_headers(template_params, body),
           username: build_string(username, template_params),
           password: build_string(password, template_params),
           uuid: uuid,
-          body: build_body(template_params),
+          body: body,
           user_agent: user_agent,
           disable_ssl_verification: disable_ssl_verification,
           cert_store: cert_store
@@ -114,10 +120,30 @@ module PactBroker
         build_string(body_string, template_params)
       end
 
-      def build_headers(template_params)
+      def build_headers(template_params, body = nil)
         headers.each_with_object(Rack::Headers.new) do | (key, value), new_headers |
-          new_headers[key] = build_string(value, template_params)
+          new_headers[key] = build_header_value(value, template_params, body)
         end
+      end
+
+      def build_header_value(value, template_params, body)
+        if (m = value&.match(HMAC_SIGN_PATTERN))
+          secret = template_params[m[1].strip]
+          secret && body ? compute_hmac_sha256(secret, body) : build_string(value, template_params)
+        elsif (m = value&.match(BASIC_AUTH_PATTERN))
+          user = template_params.fetch(m[1].strip, m[1].strip)
+          pass = template_params.fetch(m[2].strip, m[2].strip)
+          Base64.strict_encode64("#{user}:#{pass}")
+        elsif (m = value&.match(BEARER_PATTERN))
+          token = template_params.fetch(m[1].strip, m[1].strip)
+          "Bearer #{token}"
+        else
+          build_string(value, template_params)
+        end
+      end
+
+      def compute_hmac_sha256(secret, body)
+        OpenSSL::HMAC.hexdigest("SHA256", secret, body.to_s)
       end
 
       def build_string(string, template_params)
