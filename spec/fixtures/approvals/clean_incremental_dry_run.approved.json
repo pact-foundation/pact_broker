@@ -18,7 +18,10 @@
         },
         "count": 1
       }
-    ]
+    ],
+    "totalBranches": 0,
+    "branchesToDelete": 0,
+    "branchesToKeep": 0
   },
   "versionSummary": {
     "Bar": {

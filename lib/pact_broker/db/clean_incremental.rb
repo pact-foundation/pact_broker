@@ -2,6 +2,7 @@ require "pact_broker/logging"
 require "pact_broker/matrix/unresolved_selector"
 require "pact_broker/date_helper"
 require "pact_broker/db/clean/selector"
+require "pact_broker/db/clean/branch_selector"
 
 module PactBroker
   module DB
@@ -14,7 +15,10 @@ module PactBroker
         PactBroker::DB::Clean::Selector.new(released: true),
         PactBroker::DB::Clean::Selector.new(max_age: 90)
       ]
-      TABLES = [:versions, :pact_publications, :pact_versions, :verifications, :triggered_webhooks, :webhook_executions]
+      DEFAULT_KEEP_BRANCH_SELECTORS = [
+        PactBroker::DB::Clean::BranchSelector.new(max_age: 90)
+      ]
+      TABLES = [:versions, :pact_publications, :pact_versions, :verifications, :triggered_webhooks, :webhook_executions, :branches]
 
       def self.call database_connection, options = {}
         new(database_connection, options).call
@@ -44,6 +48,7 @@ module PactBroker
           before_counts = current_counts
           PactBroker::Domain::Version.where(id: versions_to_delete.from_self.select_map(:id)).delete
           delete_orphan_pact_versions
+          delete_stale_branches
           after_counts = current_counts
 
           TABLES.each_with_object({}) do | table_name, comparison_counts |
@@ -66,6 +71,14 @@ module PactBroker
                   else
                     DEFAULT_KEEP_SELECTORS
                   end
+      end
+
+      def keep_branches
+        @keep_branches ||= if options.key?(:keep_branches)
+                             options[:keep_branches]&.collect { | selector_hash | PactBroker::DB::Clean::BranchSelector.from_hash(selector_hash.to_hash) }
+                           else
+                             DEFAULT_KEEP_BRANCH_SELECTORS
+                           end
       end
 
       def limit
@@ -94,6 +107,47 @@ module PactBroker
 
       def dry_run?
         options[:dry_run]
+      end
+
+      def delete_stale_branches
+        return unless keep_branches && !keep_branches.empty?
+
+        PactBroker::Versions::Branch.where(id: stale_branch_ids_to_delete.from_self.select_map(:id)).delete
+      end
+
+      def stale_branch_ids_to_delete
+        ids_to_keep = stale_branch_ids_to_keep
+        if ids_to_keep.nil?
+          PactBroker::Versions::Branch.where(false).select(:id)
+        else
+          PactBroker::Versions::Branch
+            .select(Sequel[:branches][:id])
+            .left_outer_join(ids_to_keep, { Sequel[:branches][:id] => Sequel[:keep_branches][:id] }, table_alias: :keep_branches)
+            .where(Sequel[:keep_branches][:id] => nil)
+        end
+      end
+
+      def stale_branch_ids_to_keep
+        queries = []
+
+        # Always keep main branches for each pacticipant
+        main_branch_names = PactBroker::Domain::Pacticipant
+          .exclude(main_branch: nil)
+          .select_map(:main_branch)
+          .uniq
+        queries << PactBroker::Versions::Branch.where(name: main_branch_names).select(Sequel[:branches][:id]) unless main_branch_names.empty?
+
+        keep_branches.each do | selector |
+          if selector.max_age
+            cutoff = Date.today - selector.max_age
+            queries << PactBroker::Versions::Branch.where { updated_at >= cutoff }.select(Sequel[:branches][:id])
+          end
+          if selector.branch
+            queries << PactBroker::Versions::Branch.where(name: Array(selector.branch)).select(Sequel[:branches][:id])
+          end
+        end
+
+        queries.empty? ? nil : queries.reduce(&:union)
       end
 
       def delete_orphan_pact_versions
@@ -142,19 +196,29 @@ module PactBroker
           }
         end
 
+        {
+          "counts" => dry_run_counts(kept_per_selector),
+          "versionSummary" => pacticipant_results
+        }
+      end
+
+      def dry_run_counts(kept_per_selector)
         total_versions_count = PactBroker::Domain::Version.count
         versions_to_keep_count = version_ids_to_keep.count
         versions_to_delete_count = versions_to_delete.count
 
+        total_branches_count = PactBroker::Versions::Branch.count
+        branches_to_delete_count = keep_branches && !keep_branches.empty? ? stale_branch_ids_to_delete.count : 0
+
         {
-          "counts" => {
-            "totalVersions" => total_versions_count,
-            "versionsToDelete" => versions_to_delete_count,
-            "versionsNotToKeep" => total_versions_count - versions_to_keep_count,
-            "versionsToKeep" => versions_to_keep_count,
-            "versionsToKeepBySelector" => kept_per_selector,
-          },
-          "versionSummary" => pacticipant_results
+          "totalVersions" => total_versions_count,
+          "versionsToDelete" => versions_to_delete_count,
+          "versionsNotToKeep" => total_versions_count - versions_to_keep_count,
+          "versionsToKeep" => versions_to_keep_count,
+          "versionsToKeepBySelector" => kept_per_selector,
+          "totalBranches" => total_branches_count,
+          "branchesToDelete" => branches_to_delete_count,
+          "branchesToKeep" => total_branches_count - branches_to_delete_count
         }
       end
 
