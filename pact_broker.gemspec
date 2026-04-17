@@ -76,4 +76,5 @@ Gem::Specification.new do |gem|
   # dropped in ruby 3.5 stdlib
   gem.add_runtime_dependency "ostruct", "~> 0.5" 
   gem.add_development_dependency "pstore", "~> 0.1" # until webmachine requires it
+  gem.add_runtime_dependency "json_schemer", "~> 2.5"
 end
