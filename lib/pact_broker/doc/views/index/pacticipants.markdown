@@ -10,7 +10,7 @@ Path: `/pacticipants`
 
 ### When publishing pacts
 
-Participants are created automatically when a pact is published to the pact broker. The name is based on the URL compontents used to publish the pact (ie. /pacts/provider/$PROVIDER\_NAME/consumer/$CONSUMER\_NAME/version/$CONSUMER\_VERSION), not on the contents of the pact, as the Pact Broker is designed to be agnostic of the actual pact format as much as possible.
+Participants are created automatically when a pact is published to the pact broker. The name is based on the URL components used to publish the pact (ie. /pacts/provider/$PROVIDER\_NAME/consumer/$CONSUMER\_NAME/version/$CONSUMER\_VERSION), not on the contents of the pact, as the Pact Broker is designed to be agnostic of the actual pact format as much as possible.
 
 ### Explicitly
 
