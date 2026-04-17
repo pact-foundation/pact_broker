@@ -1,3 +1,22 @@
+<a name="v2.119.0"></a>
+### v2.119.0 (2026-04-02)
+
+#### Features
+
+* support customising webhook requests	 ([d20a8274](/../../commit/d20a8274))
+* Optimize WIP Query Performance to Prevent Timeouts on Large Datasets (#902)	 ([711ac3c6](/../../commit/711ac3c6))
+
+#### Bug Fixes
+
+* add missing import and small improvement to batch delete (#899)	 ([2e83d012](/../../commit/2e83d012))
+* new unit test failure	 ([6c39e927](/../../commit/6c39e927))
+* avoid N+1 cascade	 ([681d98d9](/../../commit/681d98d9))
+* dont create index for mysql	 ([1ec72cc8](/../../commit/1ec72cc8))
+* Pacticipant API returning undeployed versions in pacticipant deployed-environments endpoint (#889)	 ([e217d3ba](/../../commit/e217d3ba))
+
+* **PACT-5504**
+  * use batch delete to speed up deletion	 ([e908035a](/../../commit/e908035a))
+
 <a name="v2.118.0"></a>
 ### v2.118.0 (2026-01-02)
 

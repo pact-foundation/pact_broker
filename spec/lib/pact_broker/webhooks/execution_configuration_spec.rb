@@ -13,6 +13,11 @@ module PactBroker
       it "deep merges webhook context" do
         expect(subject.with_webhook_context(a: 1, b: 1).with_webhook_context(b: 2)[:webhook_context]).to eq a: 1, b: 2
       end
+
+      it "sets the request_customizer" do
+        customizer = double("customizer")
+        expect(subject.with_request_customizer(customizer)[:request_customizer]).to eq customizer
+      end
     end
   end
 end
