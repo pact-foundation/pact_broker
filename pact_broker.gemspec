@@ -74,6 +74,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency "mutex_m", "~> 0.3" # until as-notifications -> webmachine requires it
   gem.add_runtime_dependency "csv", "~> 3.0" # lib/pact_broker/api/decorators/relationships_csv_decorator.rb
   # dropped in ruby 3.5 stdlib
-  gem.add_runtime_dependency "ostruct", "~> 0.5" 
+  gem.add_runtime_dependency "ostruct", "~> 0.5"
+  gem.add_runtime_dependency "json_schemer", "~> 2.5"
   gem.add_development_dependency "pstore", "~> 0.1" # until webmachine requires it
 end
