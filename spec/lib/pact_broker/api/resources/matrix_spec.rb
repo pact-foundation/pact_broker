@@ -1,5 +1,3 @@
-require "pact_broker/api/resources/matrix"
-require "pact_broker/matrix/service"
 
 module PactBroker
   module Api

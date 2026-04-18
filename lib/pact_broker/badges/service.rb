@@ -1,9 +1,5 @@
 require "net/http"
 require "uri"
-require "pact_broker/project_root"
-require "pact_broker/logging"
-require "pact_broker/configuration"
-require "pact_broker/build_http_options"
 require "erb"
 
 module PactBroker
@@ -17,7 +13,7 @@ module PactBroker
       CACHE = {}
 
       def can_provide_badge_using_redirect?
-        PactBroker.configuration.badge_provider_mode == :redirect && !!PactBroker.configuration.shields_io_base_url
+        PactBroker::Configuration.configuration.badge_provider_mode == :redirect && !!PactBroker::Configuration.configuration.shields_io_base_url
       end
 
       def pact_verification_badge pact, label, initials, pseudo_branch_verification_status, metadata = {}
@@ -122,7 +118,7 @@ module PactBroker
       end
 
       def dynamic_svg pact, label, initials, pseudo_branch_verification_status, metadata
-        return nil unless PactBroker.configuration.shields_io_base_url
+        return nil unless PactBroker::Configuration.configuration.shields_io_base_url
         uri = pact_verification_badge_url(pact, label, initials, pseudo_branch_verification_status, metadata)
         begin
           response = do_request(uri)
@@ -137,7 +133,7 @@ module PactBroker
       end
 
       def build_shield_io_uri left_text, right_text, color
-        shield_base_url = PactBroker.configuration.shields_io_base_url
+        shield_base_url = PactBroker::Configuration.configuration.shields_io_base_url
         path = "/badge/#{escape_text(left_text)}-#{escape_text(right_text)}-#{color}.svg"
         URI.parse(shield_base_url + path)
       end
@@ -150,7 +146,7 @@ module PactBroker
         with_cache uri do
           request = Net::HTTP::Get.new(uri)
           options = {read_timeout: 3, open_timeout: 1, ssl_timeout: 1, continue_timeout: 1}
-          options.merge! PactBroker::BuildHttpOptions.call(uri, disable_ssl_verification: PactBroker.configuration.disable_ssl_verification)
+          options.merge! PactBroker::BuildHttpOptions.call(uri, disable_ssl_verification: PactBroker::Configuration.configuration.disable_ssl_verification)
 
           Net::HTTP.start(uri.hostname, uri.port, :ENV, options) do |http|
             http.request request
@@ -176,7 +172,7 @@ module PactBroker
                     else "pact-unknown-lightgrey.svg"
                     end
         file_name = "pact_not_found-unknown-lightgrey.svg" unless pact
-        File.read(PactBroker.project_root.join("public", "images", file_name))
+        File.read(PactBroker::ProjectRoot.path.join("public", "images", file_name))
       end
     end
   end

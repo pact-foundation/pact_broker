@@ -1,4 +1,3 @@
-require "pact_broker/versions/branch_version"
 
 module PactBroker
   module Versions

@@ -1,8 +1,6 @@
-require "pact_broker/ui/view_models/index_items"
-require "pact_broker/index/page"
 
 module PactBroker
-  module UI
+  module Ui
     module ViewModels
       describe IndexItems do
 

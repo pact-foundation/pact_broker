@@ -1,5 +1,3 @@
-require "pact_broker/api/decorators/embedded_tag_decorator"
-require "pact_broker/tags/repository"
 require "support/test_data_builder"
 
 module PactBroker

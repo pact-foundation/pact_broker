@@ -1,7 +1,6 @@
-require "pact_broker/db/data_migrations/migrate_pact_version_provider_tag_successful_verifications"
 
 module PactBroker
-  module DB
+  module Db
     module DataMigrations
       describe MigratePactVersionProviderTagSuccessfulVerifications do
         describe ".call" do

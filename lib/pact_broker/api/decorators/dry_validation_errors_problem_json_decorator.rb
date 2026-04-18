@@ -1,5 +1,3 @@
-require "pact_broker/api/decorators/base_decorator"
-require "pact_broker/api/decorators/embedded_error_problem_json_decorator"
 # Formats a Dry::Validation::MessageSet into application/problem+json format.
 # according to the spec at https://www.rfc-editor.org/rfc/rfc9457.html
 

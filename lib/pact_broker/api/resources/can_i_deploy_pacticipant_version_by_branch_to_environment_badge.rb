@@ -1,4 +1,3 @@
-require "pact_broker/api/resources/can_i_deploy_pacticipant_version_by_branch_to_environment"
 
 module PactBroker
   module Api

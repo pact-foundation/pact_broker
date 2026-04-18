@@ -1,9 +1,3 @@
-require "pact_broker/api/resources/provider_pacts"
-require "pact_broker/api/decorators/verifiable_pacts_decorator"
-require "pact_broker/api/contracts/pacts_for_verification_query_string_schema"
-require "pact_broker/api/decorators/pacts_for_verification_query_decorator"
-require "pact_broker/api/contracts/pacts_for_verification_json_query_schema"
-require "pact_broker/hash_refinements"
 
 module PactBroker
   module Api

@@ -1,5 +1,3 @@
-require "pact_broker/matrix/repository"
-require "pact_broker/matrix/unresolved_selector"
 
 module PactBroker
   module Matrix

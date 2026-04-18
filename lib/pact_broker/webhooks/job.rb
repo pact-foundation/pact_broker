@@ -1,7 +1,4 @@
 require "sucker_punch"
-require "pact_broker/webhooks/service"
-require "pact_broker/logging"
-require "pact_broker/webhooks/execution_configuration"
 
 module PactBroker
   module Webhooks

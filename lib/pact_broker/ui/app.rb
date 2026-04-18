@@ -1,15 +1,6 @@
-require "pact_broker/ui/controllers/index"
-require "pact_broker/ui/controllers/groups"
-require "pact_broker/ui/controllers/pacts"
-require "pact_broker/ui/controllers/matrix"
-require "pact_broker/ui/controllers/can_i_deploy"
-require "pact_broker/ui/controllers/error_test"
-require "pact_broker/ui/controllers/dashboard"
-require "pact_broker/ui/helpers/haml_helpers"
-require "pact_broker/doc/controllers/app"
 
 module PactBroker
-  module UI
+  module Ui
     class PathInfoFixer
       PATH_INFO = "PATH_INFO".freeze
 
@@ -29,11 +20,11 @@ module PactBroker
         @app = ::Rack::Builder.new do
 
           map "/ui/relationships" do
-            run PactBroker::UI::Controllers::Index
+            run PactBroker::Ui::Controllers::Index
           end
 
           map "/pacticipants" do
-            run PactBroker::UI::Controllers::Groups
+            run PactBroker::Ui::Controllers::Groups
           end
 
           map "/doc" do
@@ -42,32 +33,32 @@ module PactBroker
 
           map "/matrix" do
             use PathInfoFixer
-            run PactBroker::UI::Controllers::Matrix
+            run PactBroker::Ui::Controllers::Matrix
           end
 
           map "/pacticipants/" do
             use PathInfoFixer
-            run PactBroker::UI::Controllers::CanIDeploy
+            run PactBroker::Ui::Controllers::CanIDeploy
           end
 
           map "/pacts/" do
             use PathInfoFixer
-            run PactBroker::UI::Controllers::Pacts
+            run PactBroker::Ui::Controllers::Pacts
           end
 
           map "/test/error" do
             use PathInfoFixer
-            run PactBroker::UI::Controllers::ErrorTest
+            run PactBroker::Ui::Controllers::ErrorTest
           end
 
           map "/dashboard" do
             use PathInfoFixer
-            run PactBroker::UI::Controllers::Dashboard
+            run PactBroker::Ui::Controllers::Dashboard
           end
 
           map "/" do
             use PathInfoFixer
-            run PactBroker::UI::Controllers::Index
+            run PactBroker::Ui::Controllers::Index
           end
         end
       end

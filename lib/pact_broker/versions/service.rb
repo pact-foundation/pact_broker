@@ -1,7 +1,3 @@
-require "pact_broker/logging"
-require "pact_broker/repositories"
-require "pact_broker/messages"
-
 module PactBroker
   module Versions
     class Service
@@ -63,8 +59,8 @@ module PactBroker
 
       def self.use_tag_as_branch?(version)
         version.tags.count == 0 &&
-          PactBroker.configuration.use_first_tag_as_branch &&
-          ((now - version.created_at.to_datetime) * 24 * 60 * 60) <= PactBroker.configuration.use_first_tag_as_branch_time_limit
+          PactBroker::Configuration.configuration.use_first_tag_as_branch &&
+          ((now - version.created_at.to_datetime) * 24 * 60 * 60) <= PactBroker::Configuration.configuration.use_first_tag_as_branch_time_limit
       end
 
       def self.find_by_ids_in_reverse_order version_ids, pagination_options = {}, eager_load_associations = []

@@ -1,4 +1,3 @@
-require "pact_broker/diagnostic/app"
 require "rack/test"
 
 module PactBroker
@@ -25,7 +24,7 @@ module PactBroker
 
           context "when we can connect to the database" do
             before do
-              allow(PactBroker::DB.connection).to receive(:valid_connection?).and_return(true)
+              allow(PactBroker::Db.connection).to receive(:valid_connection?).and_return(true)
             end
 
             it "returns a 200 response" do
@@ -39,7 +38,7 @@ module PactBroker
 
           context "when we can't connect to the database" do
             before do
-              allow(PactBroker::DB.connection).to receive(:valid_connection?).and_return(false)
+              allow(PactBroker::Db.connection).to receive(:valid_connection?).and_return(false)
             end
 
             it "returns a 500 response" do
@@ -56,7 +55,7 @@ module PactBroker
             class TestError < StandardError; end
 
             before do
-              allow(PactBroker::DB.connection).to receive(:valid_connection?).and_raise(TestError.new("a message"))
+              allow(PactBroker::Db.connection).to receive(:valid_connection?).and_raise(TestError.new("a message"))
             end
 
             it "returns a 500 response" do

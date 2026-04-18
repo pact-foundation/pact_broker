@@ -1,4 +1,3 @@
-require "pact_broker/contracts/service"
 
 module PactBroker
   module Contracts
@@ -64,7 +63,7 @@ module PactBroker
 
           context "when no branch is specified but tags are" do
             before do
-              allow(PactBroker.configuration).to receive(:use_first_tag_as_branch).and_return(true)
+              allow(PactBroker::Configuration.configuration).to receive(:use_first_tag_as_branch).and_return(true)
             end
 
             let(:contracts_to_publish) do
@@ -130,7 +129,7 @@ module PactBroker
         before do
           allow(Service).to receive(:pacticipant_service).and_return(pacticipant_service)
           allow(pacticipant_service).to receive(:messages_for_potential_duplicate_pacticipants).and_return(duplicate_pacticipant_messages)
-          allow(PactBroker.configuration).to receive(:check_for_potential_duplicate_pacticipant_names).and_return(true)
+          allow(PactBroker::Configuration.configuration).to receive(:check_for_potential_duplicate_pacticipant_names).and_return(true)
         end
 
         let(:pacticipant_service) { class_double("PactBroker::Pacticipants::Service").as_stubbed_const }
@@ -168,7 +167,7 @@ module PactBroker
 
         context "when a pact already exists" do
           before do
-            allow(PactBroker.configuration).to receive(:allow_dangerous_contract_modification).and_return(allow_dangerous_contract_modification)
+            allow(PactBroker::Configuration.configuration).to receive(:allow_dangerous_contract_modification).and_return(allow_dangerous_contract_modification)
             td.create_pact_with_hierarchy("Foo", "1", "Bar", existing_json_content)
           end
 

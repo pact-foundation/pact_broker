@@ -1,5 +1,3 @@
-require "pact_broker/webhooks/job"
-require "pact_broker/webhooks/execution_configuration"
 
 module PactBroker
   module Webhooks

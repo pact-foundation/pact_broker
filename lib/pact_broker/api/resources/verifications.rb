@@ -1,12 +1,3 @@
-require "pact_broker/api/resources/base_resource"
-require "pact_broker/configuration"
-require "pact_broker/domain/verification"
-require "pact_broker/api/contracts/verification_contract"
-require "pact_broker/api/decorators/verification_decorator"
-require "pact_broker/api/resources/webhook_execution_methods"
-require "pact_broker/api/resources/metadata_resource_methods"
-require "pact_broker/api/resources/event_methods"
-require "pact_broker/integrations/event_listener"
 
 module PactBroker
   module Api

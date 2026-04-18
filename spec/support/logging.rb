@@ -1,5 +1,4 @@
 require "semantic_logger"
-require "pact_broker/logging/default_formatter"
 
 FileUtils.mkdir_p("log")
 SemanticLogger.default_level = :error

@@ -1,6 +1,3 @@
-require "pact_broker/api/decorators/base_decorator"
-require "pact_broker/api/decorators/publish_contract_decorator"
-require "pact_broker/api/decorators/embedded_version_decorator"
 
 module PactBroker
   module Api

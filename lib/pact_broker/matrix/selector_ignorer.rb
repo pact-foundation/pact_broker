@@ -43,17 +43,5 @@ module PactBroker
 
       attr_reader :resolved_ignore_selectors
     end
-
-    # Used when resolving the ignore selecors in the first place - the process for resolving normal selectors
-    # and ignore selectors is almost the same, but it makes no sense to ignore an ignore selector.
-    class NilSelectorIgnorer
-      def ignore_pacticipant?(*)
-        false
-      end
-
-      def ignore_pacticipant_version?(*)
-        false
-      end
-    end
   end
 end

@@ -1,4 +1,3 @@
-require "pact_broker/pacticipants/repository"
 require "support/test_data_builder"
 
 module PactBroker
@@ -134,7 +133,7 @@ module PactBroker
         context "when the name is a different case" do
           context "with case sensitivity turned on" do
             before do
-              allow(PactBroker.configuration).to receive(:use_case_sensitive_resource_names).and_return(true)
+              allow(PactBroker::Configuration.configuration).to receive(:use_case_sensitive_resource_names).and_return(true)
             end
 
             it "returns nil" do
@@ -144,7 +143,7 @@ module PactBroker
 
           context "with case sensitivity turned off" do
             before do
-              allow(PactBroker.configuration).to receive(:use_case_sensitive_resource_names).and_return(false)
+              allow(PactBroker::Configuration.configuration).to receive(:use_case_sensitive_resource_names).and_return(false)
             end
 
             it "returns the pacticipant" do
@@ -157,7 +156,7 @@ module PactBroker
             # Can't be created in MySQL - duplicate record
             before do
               td.create_pacticipant("Foo-bar")
-              allow(PactBroker.configuration).to receive(:use_case_sensitive_resource_names).and_return(false)
+              allow(PactBroker::Configuration.configuration).to receive(:use_case_sensitive_resource_names).and_return(false)
             end
 
             it "raises an error" do
@@ -167,7 +166,7 @@ module PactBroker
 
           context "with case sensitivity turned off and searching for a name with an underscore" do
             before do
-              allow(PactBroker.configuration).to receive(:use_case_sensitive_resource_names).and_return(false)
+              allow(PactBroker::Configuration.configuration).to receive(:use_case_sensitive_resource_names).and_return(false)
             end
 
             subject { Repository.new.find_by_name("foo_bar") }

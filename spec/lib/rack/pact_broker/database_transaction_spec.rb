@@ -20,7 +20,7 @@ module Rack
       end
 
       let(:app) do
-        ::Rack::PactBroker::DatabaseTransaction.new(api, ::PactBroker::DB.connection)
+        ::Rack::PactBroker::DatabaseTransaction.new(api, ::PactBroker::Db.connection)
       end
 
       let(:rack_headers) { {} }

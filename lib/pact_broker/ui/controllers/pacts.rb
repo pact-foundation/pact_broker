@@ -1,7 +1,6 @@
-require "pact_broker/ui/controllers/base"
 
 module PactBroker
-  module UI
+  module Ui
     module Controllers
       class Pacts < Base
         include PactBroker::Services

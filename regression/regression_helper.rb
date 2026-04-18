@@ -2,13 +2,11 @@ raise "Must set DATABASE_ADAPTER=docker_postgres" unless ENV["DATABASE_ADAPTER"]
 raise "Must set RACK_ENV=development" unless ENV["RACK_ENV"] == "development"
 
 $LOAD_PATH  << "."
-
 require "sequel"
-
 require "support/test_database"
 require "pact_broker/db"
-PactBroker::DB.connection = PactBroker::TestDatabase.database = PactBroker::TestDatabase.connection_for_test_database
-PactBroker::DB::Migrate.call(PactBroker::DB.connection)
+PactBroker::Db.connection = PactBroker::TestDatabase.database = PactBroker::TestDatabase.connection_for_test_database
+PactBroker::Db::Migrate.call(PactBroker::Db.connection)
 require "approvals"
 require "rack/test"
 require "pact_broker/api"
@@ -20,8 +18,8 @@ end
 RSpec.configure do | config |
   config.before :each do
     PactBroker.reset_configuration
-    PactBroker.configuration.seed_example_data = false
-    PactBroker.configuration.base_equality_only_on_content_that_affects_verification_results = false
+    PactBroker::Configuration.configuration.seed_example_data = false
+    PactBroker::Configuration.configuration.base_equality_only_on_content_that_affects_verification_results = false
   end
 
   config.include Rack::Test::Methods

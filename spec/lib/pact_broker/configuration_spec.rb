@@ -1,6 +1,3 @@
-require "pact_broker/configuration"
-require "pact_broker/api/renderers/html_pact_renderer"
-require "pact_broker/config/setting"
 
 module PactBroker
   describe Configuration do
@@ -37,12 +34,12 @@ module PactBroker
     describe "override_runtime_configuration!" do
       let(:logger) { double("logger", debug?: true, debug: nil, warn: nil) }
 
-      let(:config) { PactBroker.configuration.dup }
+      let(:config) { PactBroker::Configuration.configuration.dup }
 
       it "overrides the specified runtime configuration attributes" do
         config.override_runtime_configuration!(disable_ssl_verification: "true")
         expect(config.disable_ssl_verification).to eq true
-        expect(PactBroker.configuration.disable_ssl_verification).to eq false
+        expect(PactBroker::Configuration.configuration.disable_ssl_verification).to eq false
       end
 
       it "logs the overrides at debug level" do
@@ -87,45 +84,45 @@ module PactBroker
 
         it "calls the inbuilt HtmlPactRenderer" do
           expect(PactBroker::Api::Renderers::HtmlPactRenderer).to receive(:call).with(pact, options)
-          PactBroker.configuration.html_pact_renderer.call pact, options
+          PactBroker::Configuration.configuration.html_pact_renderer.call pact, options
         end
       end
 
       describe "webhook_http_method_whitelist" do
         it "allows setting the whitelist by a string" do
-          PactBroker.configuration.webhook_http_method_whitelist = "foo"
-          expect(PactBroker.configuration.webhook_http_method_whitelist).to be_a Config::SpaceDelimitedStringList
+          PactBroker::Configuration.configuration.webhook_http_method_whitelist = "foo"
+          expect(PactBroker::Configuration.configuration.webhook_http_method_whitelist).to be_a Config::SpaceDelimitedStringList
         end
 
         it "allows setting the whitelist by an array" do
-          PactBroker.configuration.webhook_http_method_whitelist = ["foo", "/.*/"]
-          expect(PactBroker.configuration.webhook_http_method_whitelist).to eq ["foo", /.*/]
+          PactBroker::Configuration.configuration.webhook_http_method_whitelist = ["foo", "/.*/"]
+          expect(PactBroker::Configuration.configuration.webhook_http_method_whitelist).to eq ["foo", /.*/]
         end
       end
 
       describe "webhook_http_code_success" do
         it "allows setting the 'webhook_http_code_success' by a space-delimited string" do
-          PactBroker.configuration.webhook_http_code_success = "200 201 202"
-          expect(PactBroker.configuration.webhook_http_code_success).to be_a Config::SpaceDelimitedIntegerList
+          PactBroker::Configuration.configuration.webhook_http_code_success = "200 201 202"
+          expect(PactBroker::Configuration.configuration.webhook_http_code_success).to be_a Config::SpaceDelimitedIntegerList
         end
 
         it "allows setting the 'webhook_http_code_success' by an array" do
-          PactBroker.configuration.webhook_http_code_success = [200, 201, 202]
-          expect(PactBroker.configuration.webhook_http_code_success).to eq [200, 201, 202]
+          PactBroker::Configuration.configuration.webhook_http_code_success = [200, 201, 202]
+          expect(PactBroker::Configuration.configuration.webhook_http_code_success).to eq [200, 201, 202]
         end
       end
 
       describe "webhook_scheme_whitelist" do
         it "allows setting the whitelist by a string" do
-          PactBroker.configuration.webhook_scheme_whitelist = "foo"
-          expect(PactBroker.configuration.webhook_scheme_whitelist).to be_a Config::SpaceDelimitedStringList
+          PactBroker::Configuration.configuration.webhook_scheme_whitelist = "foo"
+          expect(PactBroker::Configuration.configuration.webhook_scheme_whitelist).to be_a Config::SpaceDelimitedStringList
         end
       end
 
       describe "webhook_host_whitelist" do
         it "allows setting the whitelist by a string" do
-          PactBroker.configuration.webhook_host_whitelist = "foo"
-          expect(PactBroker.configuration.webhook_host_whitelist).to be_a Config::SpaceDelimitedStringList
+          PactBroker::Configuration.configuration.webhook_host_whitelist = "foo"
+          expect(PactBroker::Configuration.configuration.webhook_host_whitelist).to be_a Config::SpaceDelimitedStringList
         end
       end
 

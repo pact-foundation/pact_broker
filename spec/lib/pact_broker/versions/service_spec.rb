@@ -1,11 +1,10 @@
-require "pact_broker/versions/service"
 
 module PactBroker
   module Versions
     describe Service do
       describe ".maybe_set_version_branch_from_tag" do
         before do
-          allow(PactBroker.configuration).to receive(:use_first_tag_as_branch).and_return(use_first_tag_as_branch)
+          allow(PactBroker::Configuration.configuration).to receive(:use_first_tag_as_branch).and_return(use_first_tag_as_branch)
         end
 
         let(:pacticipant_name) { "test_pacticipant" }
@@ -62,7 +61,7 @@ module PactBroker
                 .and_return(:consumer_version)
 
               version.update(created_at: created_at)
-              allow(PactBroker.configuration).to receive(:use_first_tag_as_branch_time_limit).and_return(10)
+              allow(PactBroker::Configuration.configuration).to receive(:use_first_tag_as_branch_time_limit).and_return(10)
               allow(Time).to receive(:now).and_return(td.in_utc { Time.new(2021, 1, 2, 10, 10, 11) } )
             end
 
@@ -83,7 +82,7 @@ module PactBroker
                 .and_return(:consumer_version)
 
               version.update(created_at: created_at)
-              allow(PactBroker.configuration).to receive(:use_first_tag_as_branch_time_limit).and_return(10)
+              allow(PactBroker::Configuration.configuration).to receive(:use_first_tag_as_branch_time_limit).and_return(10)
               allow(Time).to receive(:now).and_return(td.in_utc { Time.new(2021, 1, 2, 10, 10, 10) } )
             end
 

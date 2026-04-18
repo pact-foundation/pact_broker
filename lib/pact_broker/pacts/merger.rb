@@ -7,7 +7,7 @@ module PactBroker
       extend self
 
       def conflict? original_json, additional_json
-        original, additional = [original_json, additional_json].map{|str| JSON.parse(str, PACT_PARSING_OPTIONS) }
+        original, additional = [original_json, additional_json].map{|str| JSON.parse(str, PactBroker::Json::PACT_PARSING_OPTIONS) }
 
         if original["interactions"].nil? || additional["interactions"].nil?
           true
@@ -27,7 +27,7 @@ module PactBroker
       # TODO: is not checking response for equality!
       # TODO: should have separate tests!
       def merge_pacts original_json, additional_json
-        original, additional = [original_json, additional_json].map{|str| JSON.parse(str, PACT_PARSING_OPTIONS) }
+        original, additional = [original_json, additional_json].map{|str| JSON.parse(str, PactBroker::Json::PACT_PARSING_OPTIONS) }
 
         new_pact = original
 

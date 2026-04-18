@@ -7,7 +7,7 @@ describe "retrieving the latest pact for a branch" do
   subject { get(path)  }
 
   before do
-    seed_example_data = PactBroker::DB::SeedExampleData.new
+    seed_example_data = PactBroker::Db::SeedExampleData.new
     
     td.create_consumer("Consumer")
       .create_provider("Provider")

@@ -8,7 +8,7 @@ RSpec.describe "base_equality_only_on_content_that_affects_verification_results"
   let(:base_equality_only_on_content_that_affects_verification_results) { true }
 
   before do
-    PactBroker.configuration.base_equality_only_on_content_that_affects_verification_results = base_equality_only_on_content_that_affects_verification_results
+    PactBroker::Configuration.configuration.base_equality_only_on_content_that_affects_verification_results = base_equality_only_on_content_that_affects_verification_results
     td.publish_pact(consumer_name: "Foo", consumer_version_number: "1", provider_name: "Bar", json_content: json_content_1)
       .publish_pact(consumer_name: "Foo", consumer_version_number: "2", provider_name: "Bar", json_content: json_content_2)
   end

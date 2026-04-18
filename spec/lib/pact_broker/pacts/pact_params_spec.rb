@@ -1,4 +1,3 @@
-require "pact_broker/pacts/pact_params"
 require "webmachine/request"
 
 module PactBroker

@@ -1,9 +1,7 @@
 require "rack/test"
-require "pact_broker/ui/controllers/index"
-require "pact_broker/index/service"
 
 module PactBroker
-  module UI
+  module Ui
     module Controllers
       describe Index do
 

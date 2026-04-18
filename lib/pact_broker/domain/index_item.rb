@@ -1,5 +1,3 @@
-require "pact_broker/verifications/pseudo_branch_status"
-require "pact_broker/webhooks/status"
 
 module PactBroker
   module Domain

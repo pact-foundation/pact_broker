@@ -1,5 +1,3 @@
-require "pact_broker/configuration"
-require "pact_broker/versions/sequence"
 
 module PactBroker
   module Domain
@@ -9,7 +7,7 @@ module PactBroker
       def self.call new_version
         new_version.lock!
 
-        if PactBroker.configuration.order_versions_by_date
+        if PactBroker::Configuration.configuration.order_versions_by_date
           set_sequential_order(new_version)
         else
           set_semantic_order(new_version)
@@ -52,7 +50,7 @@ module PactBroker
       end
 
       def self.new_version_after_existing_version? new_version, existing_version
-        return true if PactBroker.configuration.order_versions_by_date
+        return true if PactBroker::Configuration.configuration.order_versions_by_date
         return OrderableVersion.new(new_version).after?(OrderableVersion.new(existing_version))
       end
 
@@ -62,7 +60,7 @@ module PactBroker
 
         def initialize version_model
           @version_model = version_model
-          @sortable_number = PactBroker.configuration.version_parser.call version_model.number
+          @sortable_number = PactBroker::Configuration.configuration.version_parser.call version_model.number
         end
 
         # Incoming version numbers are rejected if they can't be parsed by the version parser,

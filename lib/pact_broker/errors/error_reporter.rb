@@ -1,5 +1,3 @@
-require "pact_broker/logging"
-require "pact_broker/errors"
 
 module PactBroker
   module Errors

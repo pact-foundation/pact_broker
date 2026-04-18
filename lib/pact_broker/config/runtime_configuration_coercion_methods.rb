@@ -1,7 +1,3 @@
-require "pact_broker/config/space_delimited_string_list"
-require "pact_broker/config/space_delimited_integer_list"
-require "pact_broker/hash_refinements"
-require "pact_broker/error"
 
 module PactBroker
   module Config

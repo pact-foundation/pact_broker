@@ -1,9 +1,3 @@
-require "pact_broker/configuration"
-require "pact_broker/db"
-require "pact_broker/initializers/database_connection"
-require "pact_broker/project_root"
-require "pact_broker/logging/default_formatter"
-require "pact_broker/policies"
 require "rack-protection"
 require "rack/hal_browser"
 require "rack/pact_broker/set_base_url"
@@ -21,12 +15,6 @@ require "rack/pact_broker/add_vary_header"
 require "rack/pact_broker/use_when"
 require "rack/pact_broker/application_context"
 require "sucker_punch"
-require "pact_broker/api/middleware/configuration"
-require "pact_broker/api/middleware/basic_auth"
-require "pact_broker/api/authorization/resource_access_policy"
-require "pact_broker/api/middleware/http_debug_logs"
-require "pact_broker/application_context"
-require "pact_broker/db/advisory_lock"
 
 module PactBroker
 
@@ -43,8 +31,8 @@ module PactBroker
       @make_it_later_api_auth = ::Rack::PactBroker::ConfigurableMakeItLater.new(Rack::PactBroker::NoAuth)
       @make_it_later_ui_auth = ::Rack::PactBroker::ConfigurableMakeItLater.new(Rack::PactBroker::NoAuth)
       # Can only be required after database connection has been made because the decorators rely on the Sequel models
-      @create_pact_broker_api_block = ->() { require "pact_broker/api"; PactBroker.build_api(application_context) }
-      @configuration = PactBroker.configuration
+      @create_pact_broker_api_block = ->() { PactBroker.build_api(application_context) }
+      @configuration = PactBroker::Configuration.configuration
       yield configuration if block_given?
       post_configure
       prepare_database
@@ -100,8 +88,8 @@ module PactBroker
     end
 
     def prepare_database
-      logger.info "Database schema version is #{PactBroker::DB.version(configuration.database_connection)}"
-      lock = PactBroker::DB::AdvisoryLock.new(configuration.database_connection, :migrate, :pg_advisory_lock)
+      logger.info "Database schema version is #{PactBroker::Db.version(configuration.database_connection)}"
+      lock = PactBroker::Db::AdvisoryLock.new(configuration.database_connection, :migrate, :pg_advisory_lock)
       if configuration.auto_migrate_db
         lock.with_lock do
           ensure_all_database_migrations_are_applied
@@ -118,25 +106,24 @@ module PactBroker
         logger.info "Skipping data migrations"
       end
 
-      require "pact_broker/webhooks/service"
       PactBroker::Webhooks::Service.fail_retrying_triggered_webhooks
     end
 
     def ensure_all_database_migrations_are_applied
       migration_options = { allow_missing_migration_files: configuration.allow_missing_migration_files }
 
-      if PactBroker::DB.is_current?(configuration.database_connection, migration_options)
+      if PactBroker::Db.is_current?(configuration.database_connection, migration_options)
         logger.info "Skipping database migrations as the latest migration has already been applied"
       else
         logger.info "Migrating database schema"
-        PactBroker::DB.run_migrations(configuration.database_connection, migration_options)
-        logger.info "Database schema version is now #{PactBroker::DB.version(configuration.database_connection)}"
+       PactBroker::Db.run_migrations(configuration.database_connection, migration_options)
+        logger.info "Database schema version is now #{PactBroker::Db.version(configuration.database_connection)}"
       end
     end
 
     def run_data_migrations
       logger.info "Migrating data"
-      PactBroker::DB.run_data_migrations(configuration.database_connection)
+     PactBroker::Db.run_data_migrations(configuration.database_connection)
     end
 
     def load_configuration_from_database
@@ -145,14 +132,14 @@ module PactBroker
 
     def configure_database_connection
       # Keep this configuration in sync with lib/db.rb
-      configuration.database_connection ||= PactBroker.create_database_connection(configuration.database_configuration, configuration.logger)
-      PactBroker::DB.connection = configuration.database_connection
-      PactBroker::DB.validate_connection_config if configuration.validate_database_connection_config
-      PactBroker::DB.set_mysql_strict_mode_if_mysql
-      PactBroker::DB.connection.extension(:pagination)
-      PactBroker::DB.connection.extension(:statement_timeout)
-      PactBroker::DB.connection.extension(:any_not_empty)
-      PactBroker::DB.connection.timezone = :utc
+      configuration.database_connection ||= PactBroker::Initializers::DatabaseConnection.create_database_connection(configuration.database_configuration, configuration.logger)
+     PactBroker::Db.connection = configuration.database_connection
+     PactBroker::Db.validate_connection_config if configuration.validate_database_connection_config
+     PactBroker::Db.set_mysql_strict_mode_if_mysql
+     PactBroker::Db.connection.extension(:pagination)
+     PactBroker::Db.connection.extension(:statement_timeout)
+     PactBroker::Db.connection.extension(:any_not_empty)
+     PactBroker::Db.connection.timezone = :utc
       Sequel.datetime_class = DateTime
       Sequel.database_timezone = :utc # Store all dates in UTC, assume any date without a TZ is UTC
       Sequel.application_timezone = :local # Convert dates to localtime when retrieving from database
@@ -164,7 +151,6 @@ module PactBroker
         logger.info "Seeding example data"
         configuration.example_data_seeder.call
         logger.info "Marking seed as done"
-        require "pact_broker/config/repository"
         PactBroker::Config::Repository.new.create_or_update_setting(:seed_example_data, false)
       else
         logger.info "Not seeding example data"
@@ -195,8 +181,8 @@ module PactBroker
       @app_builder.use Rack::PactBroker::ResetThreadData
       @app_builder.use Rack::PactBroker::AddPactBrokerVersionHeader
       @app_builder.use Rack::PactBroker::AddVaryHeader
-      @app_builder.use Rack::Static, :urls => ["/stylesheets", "/css", "/fonts", "/js", "/javascripts", "/images"], :root => PactBroker.project_root.join("public")
-      @app_builder.use Rack::Static, :urls => ["/favicon.ico"], :root => PactBroker.project_root.join("public/images"), header_rules: [[:all, {"content-type" => "image/x-icon"}]]
+      @app_builder.use Rack::Static, :urls => ["/stylesheets", "/css", "/fonts", "/js", "/javascripts", "/images"], :root => PactBroker::ProjectRoot.path.join("public")
+      @app_builder.use Rack::Static, :urls => ["/favicon.ico"], :root => PactBroker::ProjectRoot.path.join("public/images"), header_rules: [[:all, {"content-type" => "image/x-icon"}]]
       @app_builder.use Rack::PactBroker::AddCacheHeader
       @app_builder.use Rack::PactBroker::ConvertFileExtensionToAcceptHeader
       # Rack::PactBroker::SetBaseUrl needs to be before the Rack::PactBroker::HalBrowserRedirect
@@ -253,13 +239,12 @@ module PactBroker
 
     def build_ui
       logger.info "Mounting UI"
-      require "pact_broker/ui"
-      ui_apps = [PactBroker::UI::App.new]
+      ui_apps = [PactBroker::Ui::App.new]
       ui_apps.unshift(@custom_ui) if @custom_ui
       builder = ::Rack::Builder.new
-      builder.use Rack::PactBroker::UIRequestFilter
+      builder.use Rack::PactBroker::UiRequestFilter
       builder.use @make_it_later_ui_auth
-      builder.use Rack::PactBroker::UIAuthentication # deprecate?
+      builder.use Rack::PactBroker::UiAuthentication # deprecate?
       builder.run Rack::Cascade.new(ui_apps)
       builder
     end
@@ -276,7 +261,6 @@ module PactBroker
     end
 
     def build_diagnostic
-      require "pact_broker/diagnostic/app"
       builder = ::Rack::Builder.new
       builder.use @make_it_later_api_auth
       builder.run PactBroker::Diagnostic::App.new

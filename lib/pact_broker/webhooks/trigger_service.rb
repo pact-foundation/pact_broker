@@ -1,5 +1,3 @@
-require "pact_broker/services"
-require "pact_broker/hash_refinements"
 
 module PactBroker
   module Webhooks
@@ -105,7 +103,7 @@ module PactBroker
       private :expand_events_for_verification_of_multiple_selected_pacts
 
       def expand_events_for_currently_deployed_environments(webhook, pact, event_context)
-        if PactBroker.feature_enabled?(:expand_currently_deployed_provider_versions) && webhook.expand_currently_deployed_provider_versions?
+        if PactBroker::FeatureToggle.feature_enabled?(:expand_currently_deployed_provider_versions) && webhook.expand_currently_deployed_provider_versions?
           deployed_version_service.find_currently_deployed_versions_for_pacticipant(pact.provider).collect(&:version_number).uniq.collect do | version_number |
             event_context.merge(currently_deployed_provider_version_number: version_number)
           end

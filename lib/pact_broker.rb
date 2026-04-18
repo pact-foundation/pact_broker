@@ -1,4 +1,11 @@
-require "pact_broker/version"
-require "pact_broker/logging"
-require "pact_broker/app"
-require "pact_broker/db/log_quietener"
+
+require "zeitwerk"
+Zeitwerk::Loader.for_gem(warn_on_extra_files: false)
+loader = Zeitwerk::Loader.for_gem
+loader.ignore("#{__dir__}/pact_broker/webmachine.rb")
+loader.ignore("#{__dir__}/pact_broker/ui/helpers/haml_helpers.rb")  
+loader.ignore("#{__dir__}/webmachine/application_monkey_patch.rb")  
+loader.ignore("#{__dir__}/webmachine/render_error_monkey_patch.rb")
+loader.setup
+
+require "pact_broker/webmachine"

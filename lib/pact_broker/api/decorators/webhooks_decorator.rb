@@ -1,5 +1,3 @@
-require_relative "base_decorator"
-require "pact_broker/api/decorators/webhook_decorator"
 
 module PactBroker
   module Api

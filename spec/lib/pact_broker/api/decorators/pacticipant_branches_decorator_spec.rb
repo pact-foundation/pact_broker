@@ -1,4 +1,3 @@
-require "pact_broker/api/decorators/pacticipant_branches_decorator"
 
 module PactBroker
   module Api

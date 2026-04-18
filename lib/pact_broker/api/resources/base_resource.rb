@@ -1,18 +1,5 @@
 # frozen_string_literal: true
-require "pact_broker/configuration"
 require "webmachine"
-require "pact_broker/services"
-require "pact_broker/api/decorators"
-require "pact_broker/logging"
-require "pact_broker/api/pact_broker_urls"
-require "pact_broker/json"
-require "pact_broker/pacts/pact_params"
-require "pact_broker/api/resources/authentication"
-require "pact_broker/api/resources/authorization"
-require "pact_broker/errors"
-require "pact_broker/messages"
-require "pact_broker/api/resources/error_handling_methods"
-require "pact_broker/api/contracts/utf_8_validation"
 
 module PactBroker
   module Api
@@ -26,14 +13,14 @@ module PactBroker
         include PactBroker::Api::Resources::Authentication
         include PactBroker::Api::Resources::Authorization
         include PactBroker::Api::Resources::ErrorHandlingMethods
-        include PactBroker::Api::Contracts::UTF8Validation
+        include PactBroker::Api::Contracts::Utf8Validation
         include PactBroker::Messages
         include PactBroker::Logging
 
         attr_accessor :user
 
         def initialize
-          PactBroker.configuration.before_resource.call(self)
+          PactBroker::Configuration.configuration.before_resource.call(self)
           application_context.before_resource&.call(self)
         end
 
@@ -51,7 +38,7 @@ module PactBroker
 
         def finish_request
           application_context.after_resource&.call(self)
-          PactBroker.configuration.after_resource.call(self)
+          PactBroker::Configuration.configuration.after_resource.call(self)
         end
 
         def is_authorized?(authorization_header)
@@ -61,8 +48,8 @@ module PactBroker
         def forbidden?
           if application_context.resource_authorizer
             !application_context.resource_authorizer.call(self)
-          elsif PactBroker.configuration.authorize
-            !PactBroker.configuration.authorize.call(self, {})
+          elsif PactBroker::Configuration.configuration.authorize
+            !PactBroker::Configuration.configuration.authorize.call(self, {})
           else
             false
           end
@@ -121,9 +108,9 @@ module PactBroker
 
           symbolize_names = !options.key?(:symbolize_names) || options[:symbolize_names]
           parsed_params = if symbolize_names
-                            @params_with_symbol_keys ||= JSON.parse(request_body, { symbolize_names: true }.merge(PACT_PARSING_OPTIONS)) #Not load! Otherwise it will try to load Ruby classes.
+                            @params_with_symbol_keys ||= JSON.parse(request_body, { symbolize_names: true }.merge(PactBroker::Json::PACT_PARSING_OPTIONS)) #Not load! Otherwise it will try to load Ruby classes.
                           else
-                            @params_with_string_keys ||= JSON.parse(request_body, { symbolize_names: false }.merge(PACT_PARSING_OPTIONS)) #Not load! Otherwise it will try to load Ruby classes.
+                            @params_with_string_keys ||= JSON.parse(request_body, { symbolize_names: false }.merge(PactBroker::Json::PACT_PARSING_OPTIONS)) #Not load! Otherwise it will try to load Ruby classes.
                           end
 
           if !parsed_params.is_a?(Hash) && !parsed_params.is_a?(Array)
