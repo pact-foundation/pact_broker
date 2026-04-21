@@ -217,7 +217,7 @@ module PactBroker
             end
           end
 
-          context "when keep_branches is nil (disabled)" do
+          context "when keep_branches is nil" do
             let(:options) { { keep: keep_all_versions, keep_branches: nil } }
 
             it "does not delete any branches" do
@@ -225,7 +225,7 @@ module PactBroker
             end
           end
 
-          context "when keep_branches is an empty array (disabled)" do
+          context "when keep_branches is an empty array" do
             let(:options) { { keep: keep_all_versions, keep_branches: [] } }
 
             it "does not delete any branches" do
