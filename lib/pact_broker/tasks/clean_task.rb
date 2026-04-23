@@ -10,6 +10,7 @@ module PactBroker
 
       attr_accessor :database_connection
       attr_reader :keep_version_selectors
+      attr_reader :keep_branch_selectors
       attr_accessor :version_deletion_limit
       attr_accessor :logger
       attr_accessor :dry_run
@@ -21,6 +22,7 @@ module PactBroker
         @dry_run = false
         @use_lock = true
         @keep_version_selectors = PactBroker::DB::CleanIncremental::DEFAULT_KEEP_SELECTORS
+        @keep_branch_selectors = PactBroker::DB::CleanIncremental::DEFAULT_KEEP_BRANCH_SELECTORS
         rake_task(&block)
       end
 
@@ -28,6 +30,13 @@ module PactBroker
         require "pact_broker/db/clean/selector"
         @keep_version_selectors = [*keep_version_selectors].collect do | hash |
           PactBroker::DB::Clean::Selector.from_hash(hash)
+        end
+      end
+
+      def keep_branch_selectors=(keep_branch_selectors)
+        require "pact_broker/db/clean/branch_selector"
+        @keep_branch_selectors = keep_branch_selectors.nil? ? nil : [*keep_branch_selectors].collect do | hash |
+          PactBroker::DB::Clean::BranchSelector.from_hash(hash)
         end
       end
 
@@ -64,6 +73,7 @@ module PactBroker
         start_time = Time.now
         results = PactBroker::DB::CleanIncremental.call(database_connection,
           keep: keep_version_selectors,
+          keep_branches: keep_branch_selectors,
           limit: version_deletion_limit,
           logger: logger,
           dry_run: dry_run
