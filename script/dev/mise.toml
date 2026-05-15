@@ -1,0 +1,37 @@
+[tasks.console]
+description = "Open an interactive pry console connected to a database (arg: DB connection string, e.g. sqlite:////tmp/pact_broker.sqlite3)"
+dir = "{{config_root}}/../.."
+run = "ruby script/dev/console.rb"
+
+[tasks."scaffold:migration"]
+description = "Create a timestamped empty migration file in db/migrations/"
+dir = "{{config_root}}/../.."
+run = '''
+#!/usr/bin/env bash
+migration_path="db/migrations/$(date '+%Y%m%d')_rename_this.rb"
+cat > "$migration_path" <<'EOF'
+Sequel.migration do
+  up do
+
+  end
+
+  down do
+
+  end
+end
+EOF
+echo "Created ${migration_path}"
+'''
+
+[tasks."generate:erd"]
+description = "Generate an ERD diagram as erd.pdf (requires graphviz and a running Docker Postgres — run db:start and db:container:migrate first)"
+depends = ["//:bundle:install:pg"]
+file = "generate-erd"
+
+[tasks.serve]
+description = "Start the development Rack server. Run with 'mise watch serve' to auto-reload on lib/ changes (mise watch kills and restarts the process on each change)."
+depends = ["//:bundle:install:example"]
+sources = ["lib/**/*"]
+dir = "{{config_root}}/../.."
+usage = 'flag "--dir -d <dir>" default="example" help="App directory to serve"'
+run = 'cd "${usage_dir:-example}" && bundle exec rackup'

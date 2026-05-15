@@ -1,4 +1,4 @@
-#! /usr/bin/env ruby
+#! /usr/bin/env -S bundle exec ruby
 
 require "sequel"
 Sequel::Model.plugin :subclasses
@@ -35,7 +35,7 @@ def generate_erd_graphviz()
   }
 
   graph = "digraph G {\n"
-  graph += associations.uniq.map{|c, t, ac| "  \"#{c}\" -> \"#{ac}\" [style=#{styles[t]}];"}.sort.join("\n")
+  graph += associations.uniq.filter_map{|c, t, ac| "  \"#{c}\" -> \"#{ac}\" [style=#{styles[t]}];" if styles[t]}.sort.join("\n")
   graph += "\n}"
 
   graph

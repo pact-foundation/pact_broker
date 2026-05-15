@@ -1,0 +1,300 @@
+experimental_monorepo_root = true
+
+[monorepo]
+config_roots = ["script/dev"]
+
+[settings]
+experimental = true
+
+[tools]
+prek = "0.4.0"
+ruby = "3.4"
+
+# Mise adds .bin/ to PATH so rake, rubocop, rspec etc. resolve without bundle exec.
+# BUNDLE_BIN tells Bundler to generate binstubs in .bin/ on every bundle install.
+# This is analogous to activating a Python venv.
+[env]
+BUNDLE_BIN = ".bin"
+_.path = [".bin"]
+
+# Common entry points for CI and developer workflows.
+# Root task — no depends; all other tasks depend on this.
+[tasks."bundle:install"]
+description = "Install gem dependencies and generate binstubs in .bin/"
+sources = ["Gemfile", "Gemfile.lock"]
+outputs = [".bin/*"]
+run = [
+  "bundle install",
+  "bundle binstubs --all --force",
+]
+
+[tasks."bundle:install:pg"]
+description = "Install gems with pg adapter included (prerequisite for db:annotate and generate:erd)"
+depends = ["bundle:install"]
+sources = ["Gemfile", "Gemfile.lock"]
+outputs = [".bin/*", ".bundle/config"]
+run = [
+  "bundle config set --local with pg",
+  "bundle install",
+  "bundle binstubs --all --force",
+]
+
+[tasks."bundle:install:example"]
+description = "Install gem dependencies for the example app"
+dir = "example"
+sources = ["Gemfile", "Gemfile.lock"]
+outputs = [".bin/*"]
+run = [
+  "bundle install",
+  "bundle binstubs --all --force",
+]
+
+[tasks."db:prepare"]
+description = "Prepare the test database"
+depends = ["bundle:install"]
+run = "rake db:prepare:test"
+
+# Note: rake ci also runs :boot (require config/boot), which spec_helper loads
+# independently. These tasks omit :boot for a faster feedback loop; behaviour
+# matches rake ci in practice.
+[tasks."spec:quick"]
+description = "Run fast specs (excludes @migration and @no_db_clean tagged specs)"
+depends = ["bundle:install"]
+run = "rake db:prepare:test spec:quick"
+
+[tasks."spec:slow"]
+description = "Run slow specs (@migration and @no_db_clean tagged specs)"
+depends = ["bundle:install"]
+run = "rake db:prepare:test spec:slow"
+
+[tasks.spec]
+description = "Run full test suite (quick + slow) via rake ci"
+depends = ["bundle:install"]
+run = "rake ci"
+
+[tasks.rubocop]
+description = "Run Ruby linter"
+depends = ["bundle:install"]
+run = "rubocop"
+
+[tasks."pact:verify"]
+description = "Verify pact contracts (requires PACT_BROKER_TOKEN and PACT_BROKER_BASE_URL)"
+depends = ["bundle:install"]
+run = "rake pact:verify"
+
+[tasks."pact:v2:verify"]
+description = "Verify v2 pact contracts (requires PACT_URL)"
+depends = ["bundle:install"]
+run = "rake pact:v2:verify"
+
+[tasks."bundle:audit"]
+description = "Run gem security audit"
+depends = ["bundle:install"]
+run = "rake bundle:audit"
+
+[tasks."db:migrate"]
+description = "Migrate the database (uses RACK_ENV, defaults to development)"
+depends = ["bundle:install"]
+run = "rake db:migrate"
+
+[tasks."db:rollback"]
+description = "Rollback the database to a target version (arg: version number, defaults to 0)"
+depends = ["bundle:install"]
+run = "rake db:rollback"
+
+[tasks."db:annotate"]
+description = "Annotate Sequel domain classes with schema info (requires a running Docker Postgres — run db:start and db:container:migrate first)"
+depends = ["bundle:install:pg"]
+run = "rake db:annotate"
+
+[tasks."pact_broker:routes"]
+description = "List Pact Broker API routes (optional arg: search term)"
+depends = ["bundle:install"]
+run = "rake pact_broker:routes"
+
+[tasks."generate:changelog"]
+description = "Generate CHANGELOG.md entry for the current version"
+depends = ["bundle:install"]
+run = "rake generate_changelog"
+
+[tasks."pact_broker:dev:setup"]
+description = "Set up a local dev instance of the Pact Broker in dev/"
+depends = ["bundle:install"]
+run = "rake pact_broker:dev:setup"
+
+# Re-exports: short root aliases for the most useful subdirectory tasks.
+# To pass arguments use the canonical form: mise run //script/dev:console -- <db-url>
+
+[tasks.console]
+description = "Open an interactive pry console — alias for //script/dev:console"
+depends = ["//script/dev:console"]
+
+[tasks.serve]
+description = "Start the development Rack server — alias for //script/dev:serve. For a custom app dir: mise run //script/dev:serve -- --dir <path>"
+depends = ["//script/dev:serve"]
+
+# ── Docker database tasks ──────────────────────────────────────────────────
+# Active backend is tracked in tmp/.db-backend (gitignored).
+# db:start writes it; db:stop removes it. Other tasks read it automatically.
+
+[tasks."db:start"]
+description = "Start a local database container (default: postgres)"
+usage = '''
+flag "--backend -b <backend>" default="postgres" help="Backend to start (postgres, mysql, mariadb)"
+flag "--version -v <version>" help="Image version tag (default: 18 / 9 / 12)"
+'''
+run = '''
+#!/usr/bin/env bash
+set -e
+backend="${usage_backend:-postgres}"
+mkdir -p tmp
+if [ -f tmp/.db-backend ]; then
+  echo "Error: $(cat tmp/.db-backend) is already running. Run 'mise run db:stop' first." >&2
+  exit 1
+fi
+case "$backend" in
+  postgres)
+    version="${usage_version:-18}"
+    docker run --name pact-broker-postgres \
+      -e POSTGRES_PASSWORD=postgres \
+      -p 5432:5432 -v "$PWD:/data" -d "postgres:$version"
+    ;;
+  mysql)
+    version="${usage_version:-9}"
+    docker run --name pact-broker-mysql \
+      -e MYSQL_ROOT_PASSWORD=pact_broker \
+      -e MYSQL_USER=pact_broker -e MYSQL_PASSWORD=pact_broker \
+      -e MYSQL_DATABASE=pact_broker \
+      -p 3306:3306 -d "mysql:$version"
+    ;;
+  mariadb)
+    version="${usage_version:-11}"
+    docker run --name pact-broker-mariadb \
+      -e MARIADB_ROOT_PASSWORD=pact_broker \
+      -e MARIADB_USER=pact_broker -e MARIADB_PASSWORD=pact_broker \
+      -e MARIADB_DATABASE=pact_broker \
+      -p 3306:3306 -d "mariadb:$version"
+    ;;
+  *)
+    echo "Unknown backend: $backend. Valid: postgres, mysql, mariadb" >&2; exit 1 ;;
+esac
+echo "$backend" > tmp/.db-backend
+'''
+
+[tasks."db:stop"]
+description = "Stop and remove the local database container"
+usage = 'flag "--backend -b <backend>" help="Override backend (reads state file if omitted)"'
+run = '''
+#!/usr/bin/env bash
+backend="${usage_backend:-$(cat tmp/.db-backend 2>/dev/null)}"
+[ -z "$backend" ] && { echo "No backend running." >&2; exit 1; }
+case "$backend" in
+  postgres) docker rm -f pact-broker-postgres ;;
+  mysql)    docker rm -f pact-broker-mysql ;;
+  mariadb)  docker rm -f pact-broker-mariadb ;;
+  *)        echo "Unknown backend in state file: $backend" >&2; exit 1 ;;
+esac
+rm -f tmp/.db-backend
+'''
+
+[tasks."db:shell"]
+description = "Open an interactive shell on the running database container"
+run = '''
+#!/usr/bin/env bash
+backend=$(cat tmp/.db-backend 2>/dev/null)
+[ -z "$backend" ] && { echo "No backend running. Start one with 'mise run db:start'." >&2; exit 1; }
+case "$backend" in
+  postgres) docker exec -it pact-broker-postgres psql -U postgres postgres ;;
+  mysql)    docker exec -it pact-broker-mysql mysql -u pact_broker -ppact_broker pact_broker ;;
+  mariadb)  docker exec -it pact-broker-mariadb mariadb -u pact_broker -ppact_broker pact_broker ;;
+  *)        echo "Unknown backend in state file: $backend" >&2; exit 1 ;;
+esac
+'''
+
+[tasks."db:restore"]
+description = "Restore a pg_restore dump into the Postgres container"
+usage = 'arg "<file>" help="pg_restore dump file relative to repo root"'
+run = '''
+#!/usr/bin/env bash
+backend=$(cat tmp/.db-backend 2>/dev/null)
+[ -z "$backend" ] && { echo "No backend running. Start one with 'mise run db:start'." >&2; exit 1; }
+[ "$backend" != "postgres" ] && { echo "db:restore requires postgres (pg_restore format). Running: $backend" >&2; exit 1; }
+docker exec pact-broker-postgres pg_restore -h localhost -U postgres -d postgres --clean --if-exists "/data/$usage_file"
+'''
+
+[tasks."db:reload"]
+description = "Full reload: remove container, start fresh Postgres, restore a dump"
+usage = '''
+flag "--version -v <version>" default="14" help="Postgres image version tag"
+arg "<file>" help="pg_restore dump file relative to repo root"
+'''
+run = '''
+#!/usr/bin/env bash
+set -e
+version="${usage_version:-14}"
+docker rm -f pact-broker-postgres 2>/dev/null || true
+rm -f tmp/.db-backend
+mkdir -p tmp
+docker run --name pact-broker-postgres \
+  -e POSTGRES_PASSWORD=postgres \
+  -p 5432:5432 -v "$PWD:/data" -d "postgres:$version"
+echo "Waiting for Postgres to be ready..."
+i=0
+until docker exec pact-broker-postgres pg_isready -U postgres >/dev/null 2>&1; do
+  i=$((i+1))
+  [ $i -ge 60 ] && { echo "Postgres did not become ready after 60s." >&2; exit 1; }
+  sleep 1
+done
+echo "postgres" > tmp/.db-backend
+docker exec pact-broker-postgres \
+  pg_restore -h localhost -U postgres -d postgres --clean --if-exists "/data/$usage_file"
+'''
+
+[tasks."db:execute-sql-file"]
+description = "Execute a SQL file inside the Postgres container"
+hide = true
+usage = 'arg "<file>" help="SQL file relative to repo root"'
+run = '''
+#!/usr/bin/env bash
+backend=$(cat tmp/.db-backend 2>/dev/null)
+[ -z "$backend" ] && { echo "No backend running. Start one with 'mise run db:start'." >&2; exit 1; }
+[ "$backend" != "postgres" ] && { echo "db:execute-sql-file requires postgres. Running: $backend" >&2; exit 1; }
+docker exec pact-broker-postgres psql -U postgres -f "/data/$usage_file"
+'''
+
+[tasks."db:container:migrate"]
+description = "Run pact_broker DB migrations against the running Docker container"
+hide = true
+depends = ["bundle:install"]
+run = '''
+#!/usr/bin/env bash
+backend=$(cat tmp/.db-backend 2>/dev/null)
+[ -z "$backend" ] && { echo "No backend running. Start one with 'mise run db:start'." >&2; exit 1; }
+[ "$backend" != "postgres" ] && { echo "db:container:migrate requires postgres. Running: $backend" >&2; exit 1; }
+PACT_BROKER_TEST_DATABASE_URL=postgres://postgres:postgres@localhost/postgres bundle exec rake pact_broker:db:migrate
+'''
+
+# ── CI tasks (hidden) ─────────────────────────────────────────────────────
+# Hidden from 'mise tasks' but accessible locally to reproduce CI failures.
+
+[tasks."test:postgres"]
+description = "Run the full test suite against a Docker Postgres container"
+hide = true
+run = '''
+#!/usr/bin/env bash
+cleanup() { docker compose -f docker-compose-ci-postgres.yml down; }
+trap cleanup EXIT
+docker compose -f docker-compose-ci-postgres.yml up \
+  --exit-code-from tests --abort-on-container-exit --remove-orphans
+'''
+
+[tasks."test:mysql"]
+description = "Run the full test suite against a Docker MySQL container"
+hide = true
+run = '''
+#!/usr/bin/env bash
+cleanup() { docker compose -f docker-compose-ci-mysql.yml down; }
+trap cleanup EXIT
+docker compose -f docker-compose-ci-mysql.yml up \
+  --exit-code-from tests --abort-on-container-exit --remove-orphans
+'''
