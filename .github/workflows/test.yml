@@ -17,12 +17,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # Generic
   FORCE_COLOR: "1"
   CLICOLOR: "1"
-  # Python
-  PYTHONUNBUFFERED: "1"
-  STABLE_PYTHON_VERSION: "3.13"
 
 jobs:
   complete:
@@ -145,9 +141,6 @@ jobs:
     name: Pre-commit
 
     runs-on: ubuntu-latest
-
-    env:
-      PRE_COMMIT_HOME: ${{ github.workspace }}/.pre-commit
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2

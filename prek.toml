@@ -1,0 +1,7 @@
+#:schema https://raw.githubusercontent.com/j178/prek/refs/heads/master/prek.schema.json
+#:tombi toml-version = "v1.1.0"
+
+[[repos]]
+repo  = "https://github.com/scop/pre-commit-shfmt"
+rev   = "v3.11.0-1"
+hooks = [{ id = "shfmt" }]
