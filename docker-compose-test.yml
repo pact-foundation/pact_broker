@@ -3,7 +3,7 @@ version: "3"
 
 services:
   postgres:
-    image: postgres@sha256:52e6ffd11fddd081ae63880b635b2a61c14008c17fc98cdc7ce5472265516dd0
+    image: postgres@sha256:7aba8c66107ee218ddbaacb30eae46d774bf5e34ab77a917be819b4e227493c4
     healthcheck:
       test: psql postgres --command "select 1" -U postgres
     # ports:
