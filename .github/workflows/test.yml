@@ -17,12 +17,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # Generic
   FORCE_COLOR: "1"
   CLICOLOR: "1"
-  # Python
-  PYTHONUNBUFFERED: "1"
-  STABLE_PYTHON_VERSION: "3.13"
 
 jobs:
   complete:
@@ -51,65 +47,86 @@ jobs:
           || contains(needs.*.result, 'skipped')
 
   sqlite:
+    name: SQLite - Ruby ${{ matrix.ruby_version }}
     runs-on: "ubuntu-latest"
     strategy:
       fail-fast: false
       matrix:
-        ruby_version: ["3.2", "3.3", "3.4"]
+        ruby_version: ["3.3", "3.4", "4.0"]
     env:
       OAS_COVERAGE_CHECK_ENABLED: "true"
+      BUNDLE_PATH: ".bundle"
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - uses: ruby/setup-ruby@v1
+      - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151  # v4.0.1
+      - run: mise use ruby@${{ matrix.ruby_version }}
+      - uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae  # v5.0.5
         with:
-          ruby-version: ${{ matrix.ruby_version }}
-      - run: "bundle install"
-      - name: Tests
-        run: "bundle exec rake ci"
+          path: .bundle
+          key: ${{ runner.os }}-gems-ruby${{ matrix.ruby_version }}-${{ hashFiles('Gemfile', 'mise.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-ruby${{ matrix.ruby_version }}-
+      - run: mise run spec
 
   postgres:
+    name: PostgreSQL - Ruby ${{ matrix.ruby_version }} - Postgres ${{ matrix.postgres_docker_image_tag }}
     runs-on: "ubuntu-latest"
     strategy:
       fail-fast: false
       matrix:
         postgres_docker_image_tag:
           - "13"
-          - "14"
-          - "15"
-          - "16"
-          - "17"
           - "18"
+        ruby_version: ["3.3", "3.4", "4.0"]
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - run: script/test/run-rake-on-docker-compose-postgres.sh
+      - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151  # v4.0.1
+      - run: mise use ruby@${{ matrix.ruby_version }}
+      - run: mise run test:postgres
         env:
           POSTGRES_DOCKER_IMAGE_TAG: ${{ matrix.postgres_docker_image_tag }}
 
   mysql:
+    name: MySQL - Ruby ${{ matrix.ruby_version }}
     runs-on: "ubuntu-latest"
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby_version: ["3.3", "3.4", "4.0"]
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - run: script/test/run-rake-on-docker-compose-mysql.sh
+      - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151  # v4.0.1
+      - run: mise use ruby@${{ matrix.ruby_version }}
+      - run: mise run test:mysql
 
   rubocop:
     runs-on: "ubuntu-latest"
+    env:
+      BUNDLE_PATH: ".bundle"
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - uses: ruby/setup-ruby@v1
+      - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151  # v4.0.1
+      - &gem-cache
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae  # v5.0.5
         with:
-          bundler-cache: true
-      - run: "bundle exec rubocop"
+          path: .bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('Gemfile', 'mise.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-
+      - run: mise run rubocop
 
   pact-verify:
     runs-on: "ubuntu-latest"
+    env:
+      BUNDLE_PATH: ".bundle"
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
+      - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151  # v4.0.1
+      - *gem-cache
       - name: Verify pacts
-        run: "GIT_SHA=${GITHUB_SHA} bundle exec rake pact:verify"
+        run: mise run pact:verify
         env:
+          GIT_SHA: ${{ github.sha }}
           PACT_BROKER_TOKEN: ${{ secrets.PACTFLOW_PACT_FOUNDATION_TOKEN }}
           PACT_BROKER_BASE_URL: https://pact-foundation.pactflow.io
 
@@ -120,54 +137,32 @@ jobs:
         pact_url:
           - "https://raw.githubusercontent.com/pact-foundation/pact_broker-client/refs/heads/master/spec/pacts/Pact%20Broker%20Client%20V2-Pact%20Broker.json"
           - "https://raw.githubusercontent.com/pact-foundation/pact_broker-client/refs/heads/master/spec/pacts/pact_broker_client-pact_broker.json"
+    env:
+      BUNDLE_PATH: ".bundle"
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
-      - uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
-      - run: bundle install
-      - name: Verify pacts
+      - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151  # v4.0.1
+      - *gem-cache
+      - run: mise run pact:v2:verify
         env:
           PACT_URL: ${{ matrix.pact_url }}
-        run: "PACT_URL=${PACT_URL} bundle exec rake pact:v2:verify"
 
   bundle-audit:
     runs-on: "ubuntu-latest"
+    env:
+      BUNDLE_PATH: ".bundle"
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
-      - name: Audit
-        run: "bundle exec rake bundle:audit"
+      - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151  # v4.0.1
+      - *gem-cache
+      - run: mise run bundle:audit
 
   pre-commit:
     name: Pre-commit
 
     runs-on: ubuntu-latest
 
-    env:
-      PRE_COMMIT_HOME: ${{ github.workspace }}/.pre-commit
-
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-
-      - name: Cache pre-commit
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
-        with:
-          path: |
-            ${{ env.PRE_COMMIT_HOME }}
-          key: |
-            ${{ runner.os }}-pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
-      - name: Set up uv
-        uses: astral-sh/setup-uv@cec208311dfd045dd5311c1add060b2062131d57 # v8.0.0
-        with:
-          enable-cache: true
-          cache-suffix: pre-commit
-          cache-dependency-glob: ""
-
-      - name: Install pre-commit
-        run: uv tool install pre-commit
-
-      - name: Run pre-commit
-        run: pre-commit run --show-diff-on-failure --color=always --all-files
+      - uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151  # v4.0.1
+      - uses: j178/prek-action@6ad80277337ad479fe43bd70701c3f7f8aa74db3  # v2.0.3

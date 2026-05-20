@@ -1,3 +1,4 @@
+require "delegate"
 require "pact_broker/domain/webhook_request"
 
 module PactBroker
