@@ -201,6 +201,32 @@ module PactBroker
             end
           end
 
+          context "when two pacticipants have a branch with the same name but only one declares it as main_branch" do
+            before do
+              Timecop.freeze(Date.today - 100) do
+                td.publish_pact(consumer_name: "ConsumerA", provider_name: "ProviderX", consumer_version_number: "1", branch: "shared-main")
+                td.publish_pact(consumer_name: "ConsumerB", provider_name: "ProviderX", consumer_version_number: "1", branch: "shared-main")
+              end
+              PactBroker::Domain::Pacticipant.where(name: "ConsumerA").update(main_branch: "shared-main")
+              # ConsumerB intentionally has no main_branch set
+            end
+
+            let(:options) { { keep: keep_all_versions, keep_branches: [PactBroker::DB::Clean::BranchSelector.new(max_age: 90)] } }
+
+            def branch_count_for(pacticipant_name, branch_name)
+              pacticipant_id = PactBroker::Domain::Pacticipant.where(name: pacticipant_name).get(:id)
+              PactBroker::Versions::Branch.where(pacticipant_id: pacticipant_id, name: branch_name).count
+            end
+
+            it "keeps the stale 'shared-main' branch belonging to the pacticipant that declares it as main_branch" do
+              expect { subject }.to_not change { branch_count_for("ConsumerA", "shared-main") }.from(1)
+            end
+
+            it "deletes the stale 'shared-main' branch belonging to the pacticipant that does not declare it as main_branch" do
+              expect { subject }.to change { branch_count_for("ConsumerB", "shared-main") }.from(1).to(0)
+            end
+          end
+
           context "when a branch name is listed in keep_branches selectors" do
             let(:options) do
               {
