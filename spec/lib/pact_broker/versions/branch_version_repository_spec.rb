@@ -1,4 +1,5 @@
 require "pact_broker/versions/branch_version_repository"
+require "timecop"
 
 module PactBroker
   module Versions
@@ -44,6 +45,13 @@ module PactBroker
             expect(branch_head.version.id).to eq subject.refresh.id
           end
 
+          it "sets the branch updated_at" do
+            now = Time.new(2025, 1, 1, 12, 0, 0)
+            Timecop.freeze(now) { subject }
+            branch = PactBroker::Versions::Branch.where(name: "new-branch").single_record
+            expect(branch.updated_at.to_time.to_i).to eq(now.to_i)
+          end
+
           context "when auto_created is true" do
             subject { repository.add_branch(version, new_branch_name, auto_created: true) }
 
@@ -73,6 +81,15 @@ module PactBroker
           it "does not change the branch head" do
             branch_head = subject.pacticipant.branch_head_for("original-branch")
             expect(branch_head.version).to eq subject
+          end
+
+          it "updates the branch updated_at" do
+            branch = PactBroker::Versions::Branch.where(name: "original-branch").single_record
+            original_updated_at = branch.updated_at
+            now = Time.now + 3600
+            Timecop.freeze(now) { subject }
+            expect(branch.refresh.updated_at.to_time.to_i).to eq(now.to_i)
+            expect(branch.updated_at).to be > original_updated_at
           end
         end
       end

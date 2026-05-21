@@ -1,5 +1,6 @@
 require "pact_broker/db/clean"
 require "pact_broker/matrix/unresolved_selector"
+require "timecop"
 
 module PactBroker
   module DB
@@ -145,6 +146,100 @@ module PactBroker
 
           it "deletes the ones associated with the deleted pacts" do
             expect { subject }.to change { PactBroker::Webhooks::TriggeredWebhook.count }.by(-1)
+          end
+        end
+
+        context "stale branch cleanup" do
+          before do
+            Timecop.freeze(Date.today - 100) do
+              td.publish_pact(consumer_name: "Foo", provider_name: "Bar", consumer_version_number: "1", branch: "feat/old")
+            end
+            Timecop.freeze(Date.today - 50) do
+              td.publish_pact(consumer_name: "Foo", provider_name: "Bar", consumer_version_number: "2", branch: "feat/fresh")
+              td.publish_pact(consumer_name: "Foo", provider_name: "Bar", consumer_version_number: "3", branch: "main")
+            end
+          end
+
+          # Keep all versions so branch deletion is what's observable
+          let(:keep_all_versions) { [{ max_age: 999 }] }
+
+          context "when keep_branches is configured with a max_age" do
+            let(:options) { { keep: keep_all_versions, keep_branches: [PactBroker::DB::Clean::BranchSelector.new(max_age: 90)] } }
+
+            it "deletes branches whose updated_at is older than max_age" do
+              expect { subject }.to change { PactBroker::Versions::Branch.where(name: "feat/old").count }.from(1).to(0)
+            end
+
+            it "keeps branches updated within max_age" do
+              expect { subject }.to_not change { PactBroker::Versions::Branch.where(name: "feat/fresh").count }
+            end
+
+            it "returns the number of deleted branches in the deleted counts" do
+              expect(subject[:deleted][:stale_branches]).to eq 1
+            end
+          end
+
+          context "when the pacticipant has a main_branch set" do
+            before do
+              Timecop.freeze(Date.today - 100) do
+                td.publish_pact(consumer_name: "Foo", provider_name: "Bar", consumer_version_number: "4", branch: "main-protected")
+              end
+              PactBroker::Domain::Pacticipant.where(name: "Foo").update(main_branch: "main-protected")
+            end
+
+            let(:options) { { keep: keep_all_versions, keep_branches: [PactBroker::DB::Clean::BranchSelector.new(max_age: 90)] } }
+
+            it "never deletes the main branch even when stale" do
+              expect { subject }.to_not change { PactBroker::Versions::Branch.where(name: "main-protected").count }
+            end
+          end
+
+          context "when a branch name is listed in keep_branches selectors" do
+            let(:options) do
+              {
+                keep: keep_all_versions,
+                keep_branches: [
+                  PactBroker::DB::Clean::BranchSelector.new(max_age: 90),
+                  PactBroker::DB::Clean::BranchSelector.new(branch: ["feat/old"])
+                ]
+              }
+            end
+
+            it "keeps explicitly named branches even when stale" do
+              expect { subject }.to_not change { PactBroker::Versions::Branch.where(name: "feat/old").count }
+            end
+          end
+
+          context "when keep_branches is nil" do
+            let(:options) { { keep: keep_all_versions, keep_branches: nil } }
+
+            it "does not delete any branches" do
+              expect { subject }.to_not change { PactBroker::Versions::Branch.count }
+            end
+
+            it "reports zero stale branches deleted" do
+              expect(subject[:deleted][:stale_branches]).to eq 0
+            end
+          end
+
+          context "when keep_branches is an empty array" do
+            let(:options) { { keep: keep_all_versions, keep_branches: [] } }
+
+            it "does not delete any branches" do
+              expect { subject }.to_not change { PactBroker::Versions::Branch.count }
+            end
+
+            it "reports zero stale branches deleted" do
+              expect(subject[:deleted][:stale_branches]).to eq 0
+            end
+          end
+
+          context "when keep_branches is not specified in the options" do
+            let(:options) { { keep: keep_all_versions } }
+
+            it "does not delete any branches" do
+              expect { subject }.to_not change { PactBroker::Versions::Branch.count }
+            end
           end
         end
       end
