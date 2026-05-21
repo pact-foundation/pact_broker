@@ -112,7 +112,7 @@ module PactBroker
       def delete_stale_branches
         return unless keep_branches && !keep_branches.empty?
 
-        PactBroker::Versions::Branch.where(id: stale_branch_ids_to_delete.from_self.select_map(:id)).delete
+        PactBroker::Versions::Branch.where(id: stale_branch_ids_to_delete).delete
       end
 
       def stale_branch_ids_to_delete

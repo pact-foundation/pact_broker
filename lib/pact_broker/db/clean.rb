@@ -132,7 +132,7 @@ module PactBroker
         delete_orphan_versions
 
         deleted_counts[:stale_branches] = delete_stale_branches
-        kept_counts[:stale_branches] = PactBroker::Domain::Pacticipant.db[:branches].count
+        kept_counts[:branches] = PactBroker::Domain::Pacticipant.db[:branches].count
 
         { kept: kept_counts, deleted: deleted_counts }
       end
@@ -189,7 +189,7 @@ module PactBroker
 
         ids_to_delete = stale_branch_ids_to_delete
         count = ids_to_delete.count
-        PactBroker::Domain::Pacticipant.db[:branches].where(id: ids_to_delete).delete
+        db[:branches].where(id: ids_to_delete).delete
         count
       end
 
