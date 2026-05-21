@@ -114,7 +114,6 @@ module PactBroker
 
         # A direct subquery here fails in MySQL, so wrap the dataset in a
         # derived table with `from_self` before selecting the ids for deletion.
-        # PactBroker::Versions::Branch.where(id: stale_branch_ids_to_delete).delete
         PactBroker::Versions::Branch.where(id: stale_branch_ids_to_delete.from_self.select(:id)).delete
       end
 
