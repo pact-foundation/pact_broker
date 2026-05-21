@@ -208,11 +208,11 @@ module PactBroker
       def stale_branch_ids_to_keep
         queries = []
 
-        main_branch_names = db[:pacticipants]
-          .exclude(main_branch: nil)
-          .select_map(:main_branch)
-          .uniq
-        queries << db[:branches].where(name: main_branch_names).select(:id) unless main_branch_names.empty?
+        queries << db[:branches]
+                     .join(:pacticipants, id: Sequel[:branches][:pacticipant_id])
+                     .exclude(Sequel[:pacticipants][:main_branch] => nil)
+                     .where(Sequel[:branches][:name] => Sequel[:pacticipants][:main_branch])
+                     .select(Sequel[:branches][:id])
 
         keep_branches.each do | selector |
           if selector.max_age

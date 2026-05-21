@@ -131,11 +131,11 @@ module PactBroker
         queries = []
 
         # Always keep main branches for each pacticipant
-        main_branch_names = PactBroker::Domain::Pacticipant
-          .exclude(main_branch: nil)
-          .select_map(:main_branch)
-          .uniq
-        queries << PactBroker::Versions::Branch.where(name: main_branch_names).select(Sequel[:branches][:id]) unless main_branch_names.empty?
+        queries << PactBroker::Versions::Branch
+                     .join(:pacticipants, id: Sequel[:branches][:pacticipant_id])
+                     .exclude(Sequel[:pacticipants][:main_branch] => nil)
+                     .where(Sequel[:branches][:name] => Sequel[:pacticipants][:main_branch])
+                     .select(Sequel[:branches][:id])
 
         keep_branches.each do | selector |
           if selector.max_age
