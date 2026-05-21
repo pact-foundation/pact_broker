@@ -189,7 +189,7 @@ module PactBroker
 
         ids_to_delete = stale_branch_ids_to_delete
         count = ids_to_delete.count
-        db[:branches].where(id: ids_to_delete).delete
+        db[:branches].where(id: ids_to_delete.from_self.select(:id)).delete
         count
       end
 
