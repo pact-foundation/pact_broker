@@ -187,32 +187,18 @@ module PactBroker
       def delete_stale_branches
         return 0 unless keep_branches && !keep_branches.empty?
 
-        ids_to_delete = stale_branch_ids_to_delete
-        count = ids_to_delete.count
-        db[:branches].where(id: ids_to_delete.from_self.select(:id)).delete
-        count
+        db[:branches].where(id: stale_branch_ids_to_delete.from_self.select(:id)).delete
       end
 
       def stale_branch_ids_to_delete
-        ids_to_keep = stale_branch_ids_to_keep
-        if ids_to_keep.nil?
-          db[:branches].where(false).select(:id)
-        else
-          db[:branches]
-            .select(Sequel[:branches][:id])
-            .left_outer_join(ids_to_keep, { Sequel[:branches][:id] => Sequel[:keep_branches][:id] }, table_alias: :keep_branches)
-            .where(Sequel[:keep_branches][:id] => nil)
-        end
+        db[:branches]
+          .select(Sequel[:branches][:id])
+          .left_outer_join(stale_branch_ids_to_keep, { Sequel[:branches][:id] => Sequel[:keep_branches][:id] }, table_alias: :keep_branches)
+          .where(Sequel[:keep_branches][:id] => nil)
       end
 
       def stale_branch_ids_to_keep
-        queries = []
-
-        queries << db[:branches]
-                     .join(:pacticipants, id: Sequel[:branches][:pacticipant_id])
-                     .exclude(Sequel[:pacticipants][:main_branch] => nil)
-                     .where(Sequel[:branches][:name] => Sequel[:pacticipants][:main_branch])
-                     .select(Sequel[:branches][:id])
+        queries = [main_branch_ids_to_keep]
 
         keep_branches.each do | selector |
           if selector.max_age
@@ -224,7 +210,15 @@ module PactBroker
           end
         end
 
-        queries.empty? ? nil : queries.reduce(:union)
+        queries.reduce(:union)
+      end
+
+      def main_branch_ids_to_keep
+        db[:branches]
+          .join(:pacticipants, id: Sequel[:branches][:pacticipant_id])
+          .exclude(Sequel[:pacticipants][:main_branch] => nil)
+          .where(Sequel[:branches][:name] => Sequel[:pacticipants][:main_branch])
+          .select(Sequel[:branches][:id])
       end
 
       def keep_branches
