@@ -118,26 +118,15 @@ module PactBroker
       end
 
       def stale_branch_ids_to_delete
-        ids_to_keep = stale_branch_ids_to_keep
-        if ids_to_keep.nil?
-          PactBroker::Versions::Branch.where(false).select(:id)
-        else
-          PactBroker::Versions::Branch
-            .select(Sequel[:branches][:id])
-            .left_outer_join(ids_to_keep, { Sequel[:branches][:id] => Sequel[:keep_branches][:id] }, table_alias: :keep_branches)
-            .where(Sequel[:keep_branches][:id] => nil)
-        end
+        PactBroker::Versions::Branch
+          .select(Sequel[:branches][:id])
+          .left_outer_join(stale_branch_ids_to_keep, { Sequel[:branches][:id] => Sequel[:keep_branches][:id] }, table_alias: :keep_branches)
+          .where(Sequel[:keep_branches][:id] => nil)
       end
 
       def stale_branch_ids_to_keep
-        queries = []
-
         # Always keep main branches for each pacticipant
-        queries << PactBroker::Versions::Branch
-                     .join(:pacticipants, id: Sequel[:branches][:pacticipant_id])
-                     .exclude(Sequel[:pacticipants][:main_branch] => nil)
-                     .where(Sequel[:branches][:name] => Sequel[:pacticipants][:main_branch])
-                     .select(Sequel[:branches][:id])
+        queries = [main_branch_ids_to_keep]
 
         keep_branches.each do | selector |
           if selector.max_age
@@ -149,7 +138,15 @@ module PactBroker
           end
         end
 
-        queries.empty? ? nil : queries.reduce(&:union)
+        queries.reduce(&:union)
+      end
+
+      def main_branch_ids_to_keep
+        PactBroker::Versions::Branch
+          .join(:pacticipants, id: Sequel[:branches][:pacticipant_id])
+          .exclude(Sequel[:pacticipants][:main_branch] => nil)
+          .where(Sequel[:branches][:name] => Sequel[:pacticipants][:main_branch])
+          .select(Sequel[:branches][:id])
       end
 
       def delete_orphan_pact_versions

@@ -46,7 +46,7 @@ module PactBroker
           end
 
           it "sets the branch updated_at" do
-            now = Time.new(2025, 1, 1, 12, 0, 0)
+            now = Time.utc(2025, 1, 1, 12, 0, 0)
             Timecop.freeze(now) { subject }
             branch = PactBroker::Versions::Branch.where(name: "new-branch").single_record
             expect(branch.updated_at.to_time.to_i).to eq(now.to_i)
@@ -86,7 +86,7 @@ module PactBroker
           it "updates the branch updated_at" do
             branch = PactBroker::Versions::Branch.where(name: "original-branch").single_record
             original_updated_at = branch.updated_at
-            now = Time.now + 3600
+            now = (original_updated_at.to_time.utc + 3600)
             Timecop.freeze(now) { subject }
             expect(branch.refresh.updated_at.to_time.to_i).to eq(now.to_i)
             expect(branch.updated_at).to be > original_updated_at

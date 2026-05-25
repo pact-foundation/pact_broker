@@ -43,7 +43,7 @@ module PactBroker
       def rake_task &block
         namespace :pact_broker do
           namespace :db do
-            desc "Clean unnecessary pacts and verifications from database"
+            desc "Clean unnecessary pacts, verifications and stale branches from database"
             task :clean do | _t, _args |
               instance_eval(&block)
 
@@ -69,6 +69,8 @@ module PactBroker
           add_defaults_to_keep_selectors
           output "Deleting oldest #{version_deletion_limit} versions, keeping versions that match the configured selectors", keep_version_selectors.collect(&:to_hash)
         end
+
+        output_keep_branch_selectors
 
         start_time = Time.now
         results = PactBroker::DB::CleanIncremental.call(database_connection,
@@ -117,6 +119,14 @@ module PactBroker
       def output(string, payload = {})
         prefix = dry_run ? "[DRY RUN] " : ""
         logger ? logger.info("#{prefix}#{string}", payload) : puts("#{prefix}#{string} #{payload.to_json}")
+      end
+
+      def output_keep_branch_selectors
+        if keep_branch_selectors.nil? || keep_branch_selectors.empty?
+          output "Stale branch cleanup is disabled (no keep_branch_selectors configured)"
+        else
+          output "Deleting stale branches that do not match the configured selectors (main branches are always kept)", keep_branch_selectors.collect(&:to_hash)
+        end
       end
 
       def add_defaults_to_keep_selectors
