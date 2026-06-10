@@ -13,7 +13,7 @@ module PactBroker
         query = scope_for(Branch).where(pacticipant_id: pacticipant.id).select_all_qualified
         query = query.filter(:name, filter_options[:query_string]) if filter_options[:query_string]
         query
-          .order(Sequel.desc(:created_at), Sequel.desc(:id))
+          .order(Sequel.desc(:updated_at), Sequel.desc(:id))
           .eager(*eager_load_associations)
           .all_with_pagination_options(pagination_options)
       end

@@ -98,8 +98,8 @@ module PactBroker
         let(:branch_repository) { instance_double(PactBroker::Versions::BranchRepository, count_branches_to_delete: 3, remaining_branches_after_future_deletion: remaining_branches) }
         let(:remaining_branches) do
           [
-            instance_double(PactBroker::Versions::Branch, name: "foo", created_at: DateTime.now - 10),
-            instance_double(PactBroker::Versions::Branch, name: "bar", created_at: DateTime.now - 20)
+            instance_double(PactBroker::Versions::Branch, name: "foo", updated_at: DateTime.now - 10),
+            instance_double(PactBroker::Versions::Branch, name: "bar", updated_at: DateTime.now - 20)
           ]
         end
 

@@ -21,7 +21,7 @@ module PactBroker
         # @return [Array<PactBroker::Contracts::Notice>]
         def branch_deletion_notices(pacticipant, exclude:)
           count = branch_repository.count_branches_to_delete(pacticipant, exclude: exclude)
-          remaining = branch_repository.remaining_branches_after_future_deletion(pacticipant, exclude: exclude).sort_by(&:created_at).collect(&:name).join(", ")
+          remaining = branch_repository.remaining_branches_after_future_deletion(pacticipant, exclude: exclude).sort_by(&:updated_at).collect(&:name).join(", ")
           [PactBroker::Contracts::Notice.success(message("messages.branch.bulk_delete", count: count, pacticipant_name: pacticipant.name, remaining: remaining))]
         end
       end

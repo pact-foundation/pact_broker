@@ -30,10 +30,21 @@ module PactBroker
         end
 
         context "with no options" do
-          it "returns all the branches for the pacticipant starting with the most recent" do
+          it "returns all the branches for the pacticipant ordered by updated_at descending" do
             expect(subject.size).to eq 3
             expect(subject.first.name).to eq "feat/bar"
             expect(subject.last.name).to eq "main"
+          end
+        end
+
+        context "when a branch with an older created_at has a newer updated_at" do
+          before do
+            # Add a new version to "main" (created earliest), making its updated_at the most recent
+            td.create_consumer_version("5", branch: "main")
+          end
+
+          it "returns the branch with the most recent updated_at first" do
+            expect(subject.first.name).to eq "main"
           end
         end
 
