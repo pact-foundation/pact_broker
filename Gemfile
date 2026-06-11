@@ -13,7 +13,7 @@ gem "thor", "~> 1.4" # thor is secondary dependency but bumping here to avoid CV
 
 group :development do
   gem "pry-byebug"
-  gem "rubocop", "~>1.7"
+  gem "rubocop", "~>1.80"
   gem "rubocop-performance", "~> 1.23"
   gem "sequel-annotate", "~>1.3"
   gem "yard", "~> 0.9"
