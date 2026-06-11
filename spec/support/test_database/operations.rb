@@ -47,7 +47,7 @@ module PactBroker
     def drop_views
       database.views.each do | view_name |
         begin
-          # checking for existance using table_exists? doesn't work in sqlite
+          # checking for existence using table_exists? doesn't work in sqlite
           database.drop_view(view_name, cascade: psql?)
         rescue Sequel::DatabaseError => e
           # Cascade will have deleted some views already with pg

@@ -12,7 +12,7 @@ module PactBroker
     # Those columns exist in the integrations table because the integrations table used to be an integrations view based on the
     # pact_publications table, and those columns existed in the view.
     # When the view was migrated to be a table (in db/migrations/20211102_create_table_temp_integrations.rb and the following migrations)
-    # the columns had to be maintained for backwards compatiblity.
+    # the columns had to be maintained for backwards compatibility.
     # They are not used by the current code, however.
     class Integration < Sequel::Model
       INTEGRATION_COLUMNS = Sequel::Model.db.schema(:integrations).collect(&:first) - [:consumer_name, :provider_name]

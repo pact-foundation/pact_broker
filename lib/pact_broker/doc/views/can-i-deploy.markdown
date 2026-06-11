@@ -9,7 +9,7 @@ A simplified resource that accepts the same parameters as the basic usage of the
 * _pacticipant_: The name of the pacticipant (application) you want to deploy (required).
 * _version_: The version of the pacticipant (application) you want to deploy (required).
 * _environment_: The name of the environment into which the pacticipant (application) is to be deployed. 
-* _to_: The tag used to identify the environment into which you wish to deploy the application (eg. `test` or `prod`). Deprecated - use the `environment=ENVIRONMENT` parameter in preference to the `to=TAG` parameter as deployments and environments are now explictly supported.
+* _to_: The tag used to identify the environment into which you wish to deploy the application (eg. `test` or `prod`). Deprecated - use the `environment=ENVIRONMENT` parameter in preference to the `to=TAG` parameter as deployments and environments are now explicitly supported.
 * _ignore[]_: The name of the pacticipant to ignore when determining if it is safe to deploy (optional). May be used multiple times. eg `ignore[]=foo&ignore[]=bar`
 * _ignore[][pacticipant]_ and _ignore[][version]_: When ignoring a specific pacticipant version, the name and version of the application to ignore may be specified using "nested" param names syntax. eg. `ignore[][pacticipant]=foo&ignore[][version]=2ac5a946&ignore[][pacticipant]=bar`
 

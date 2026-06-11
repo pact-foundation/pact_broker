@@ -61,7 +61,7 @@ module PactBroker
             end
 
             # I'd prefer this to be "is missing". Isn't the whole point of dry validation
-            # that you can distingush between keys being missing and values being missing? FFS.
+            # that you can distinguish between keys being missing and values being missing? FFS.
             it "contains an error" do
               expect(subject[:'consumer.name']).to eq ["cannot be blank"]
             end
@@ -132,7 +132,7 @@ module PactBroker
             end
 
             # I'd prefer this to be "is missing". Isn't the whole point of dry validation
-            # that you can distingush between keys being missing and values being missing? FFS.
+            # that you can distinguish between keys being missing and values being missing? FFS.
             it "contains an error" do
               expect(subject[:'provider.name']).to eq ["cannot be blank"]
             end

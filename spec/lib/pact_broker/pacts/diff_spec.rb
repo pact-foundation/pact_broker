@@ -63,7 +63,7 @@ module PactBroker
           end
 
           it "includes a link to the comparison pact", pending: true do
-            expect(subject).to include "comparision-pact-version:"
+            expect(subject).to include "comparison-pact-version:"
           end
         end
 

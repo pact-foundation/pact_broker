@@ -29,7 +29,7 @@ module PactBroker
       context "with a database URL with no password" do
         let(:initial_values) { { database_password: "foo", database_url: "sqlite:///pact_broker.sqlite3" } }
 
-        it "maintians the specified value" do
+        it "maintains the specified value" do
           expect(subject).to include "database_url=sqlite:///pact_broker.sqlite3"
         end
       end

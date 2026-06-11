@@ -33,7 +33,7 @@ The UI in this repo is used for the OSS pact-broker.
     and render the response bodies.
   * Contracts - [lib/pact_broker/api/contracts](lib/pact_broker/api/contracts) These validate incoming API
     requests.
-* Domain - Domain classes were intially created in [lib/pact_broker/domain](lib/pact_broker/domain) but are now put
+* Domain - Domain classes were initially created in [lib/pact_broker/domain](lib/pact_broker/domain) but are now put
   in their own modules. The ones left here just haven't been migrated yet. The module name is the plural of the
   domain class name. eg `lib/pact_broker/widgets/widget.rb`.
 * Services and Repositories - in the module with the name of their domain concept.
@@ -208,7 +208,7 @@ If you write a schema migration that then requires a data migration to populate 
 
 * Create a data migrations class in `lib/pact_broker/db/data_migrations`, copying the existing pattern.
 * Add a call to the new class at the end of `lib/pact_broker/db/migrate_data.rb`
-* Make sure you check for the existance of the required columns, because you don't know which version of the database
+* Make sure you check for the existence of the required columns, because you don't know which version of the database
   might be running with this code.
 * Add a null check (eg. `db[:my_table].where(my_column: nil).update(...)`) where appropriate to make sure that the data
   migration doesn't run more than once.

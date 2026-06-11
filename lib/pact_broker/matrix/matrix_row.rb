@@ -13,7 +13,7 @@ require "pact_broker/matrix/matrix_row_verification_dataset_module"
 # The PactBroker::Matrix::MatrixRow represents a row in the table that is created when
 # the consumer versions are joined to the provider versions via the pacts and verifications tables,
 # aka "The Matrix". The difference between this class and the EveryRow class is that
-# the EveryRow class includes results for overridden pact verisons and verifications (used only when there is no latestby
+# the EveryRow class includes results for overridden pact versions and verifications (used only when there is no latestby
 # set in the matrix query), where as the MatrixRow class only includes the latest pact for each consumer version,
 # and the latest verification for each provider version.
 

@@ -160,7 +160,7 @@ module PactBroker
         end
 
         context "when not inferring integrations" do
-          it "only returns integrations between the spefied selectors" do
+          it "only returns integrations between the specified selectors" do
             is_expected.to eq [
               Integration.new(foo.id, foo.name, bar.id, bar.name, true)
             ]

@@ -162,7 +162,7 @@ module PactBroker
           its(:inclusion_reason) { is_expected.to include "a consumer version in environment test (1234)"}
         end
 
-        context "when the verison of a specific consumer is currently released/deployed in single environment" do
+        context "when the version of a specific consumer is currently released/deployed in single environment" do
           let(:selectors) { Selectors.new(Selector.for_environment_and_consumer("test", "Foo")).resolve_for_environment(consumer_version, environment) }
 
           its(:inclusion_reason) { is_expected.to include "Foo version in environment test (1234)"}

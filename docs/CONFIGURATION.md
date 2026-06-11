@@ -125,7 +125,7 @@ The database host
 
 ### database_port
 
-The database port. If ommited, the default port for the adapter will be used.
+The database port. If omitted, the default port for the adapter will be used.
 
 **Environment variable name:** `PACT_BROKER_DATABASE_PORT`<br/>
 **YAML configuration key name:** `database_port`<br/>

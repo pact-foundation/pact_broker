@@ -446,7 +446,7 @@ module PactBroker
           end
         end
 
-        context "when compability is required with all versions with a given tag" do
+        context "when compatibility is required with all versions with a given tag" do
           before do
             td.create_pact_with_hierarchy("android app", "1", "BFF")
               .create_consumer_version_tag("prod")

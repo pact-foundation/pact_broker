@@ -37,7 +37,7 @@ module PactBroker
           end
 
           context "when a pact does not exist for the main tag and pact exists for the fallback tag" do
-            let(:tag) { "no-existy" }
+            let(:tag) { "no-exist" }
 
             it "returns the pact with the fallback tag" do
               expect(find_by_consumer_version_number("1")).to_not be nil
@@ -71,8 +71,8 @@ module PactBroker
           end
 
           context "when a pact does not exist for either tag or fallback_tag" do
-            let(:tag) { "no-existy" }
-            let(:fallback_tag) { "also-no-existy" }
+            let(:tag) { "no-exist" }
+            let(:fallback_tag) { "also-no-exist" }
 
             it "returns an empty list" do
               expect(subject).to be_empty

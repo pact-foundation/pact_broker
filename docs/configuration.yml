@@ -72,7 +72,7 @@ groups:
       database_host:
         description: "The database host"
       database_port:
-        description: "The database port. If ommited, the default port for the adapter will be used."
+        description: "The database port. If omitted, the default port for the adapter will be used."
       database_url:
         description: |-
           The full database URL may be specified instead of the separate adapter, username, password, name, host and port.

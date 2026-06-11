@@ -47,7 +47,7 @@ module Rack
 
       end
 
-      context "when clent uses non GET verb" do
+      context "when client uses non GET verb" do
 
         it "passes requests to the excluded path straight through" do
           post "/foo", {}, "HTTP_ACCEPT" => "text/html"

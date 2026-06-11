@@ -36,7 +36,7 @@ module PactBroker
           end
         end
 
-        # For this endoint, the POST is a "read" action (used for Pactflow)
+        # For this endpoint, the POST is a "read" action (used for Pactflow)
         def read_methods
           super + %w{POST}
         end

@@ -2,7 +2,7 @@ require "pact_broker/matrix/integration_row"
 # A "find only" repository for the PactBroker::Matrix::Integration object.
 # The PactBroker::Matrix::Integration object is not a Sequel Model like the PactBroker::Integrations::Integration - it is built from the
 # matrix data specifically for a given matrix query, and as well as the consumer/provider attributes, it also
-# knows whether or not that particular depdency is required in the context of the specific matrix query.
+# knows whether or not that particular dependency is required in the context of the specific matrix query.
 # eg. a HTTP consumer will always require that a provider is deployed, but a provider can be deployed if the consumer does not exist
 # in the given environment yet.
 # The "integrations for selectors" query is used to work out what what integrations are involved for a can-i-deploy query.
@@ -32,7 +32,7 @@ module PactBroker
       # @return [Array<PactBroker::Matrix::Integration>]
       def find_integrations_for_specified_selectors(resolved_specified_selectors, infer_selectors_for_integrations)
         if infer_selectors_for_integrations || resolved_specified_selectors.size == 1
-          find_integrations_involving_any_specfied_selectors(resolved_specified_selectors).sort_by(&:pacticipant_names)
+          find_integrations_involving_any_specified_selectors(resolved_specified_selectors).sort_by(&:pacticipant_names)
         else
           find_integrations_between_specified_selectors(resolved_specified_selectors).sort_by(&:pacticipant_names)
         end
@@ -40,7 +40,7 @@ module PactBroker
 
       private
 
-      # Find the Integrations that only involve the versions from the selectors specifed in the query.
+      # Find the Integrations that only involve the versions from the selectors specified in the query.
       # @param [Array<PactBroker::Matrix::ResolvedSelector>] resolved_specified_selectors
       # @return [Array<PactBroker::Matrix::Integration>]
       def find_integrations_between_specified_selectors(resolved_specified_selectors)
@@ -58,7 +58,7 @@ module PactBroker
       # Find all Integrations where any of the specified selectors are involved.
       # @param [Array<PactBroker::Matrix::ResolvedSelector>] resolved_specified_selectors
       # @return [Array<PactBroker::Matrix::Integration>]
-      def find_integrations_involving_any_specfied_selectors(resolved_specified_selectors)
+      def find_integrations_involving_any_specified_selectors(resolved_specified_selectors)
         integrations = integrations_where_specified_selector_is_consumer(resolved_specified_selectors) +
                         integrations_where_specified_selector_is_provider(resolved_specified_selectors)
         deduplicate_integrations(integrations)

@@ -81,7 +81,7 @@ module PactBroker
       def delete_by_consumer_and_provider consumer, provider
         webhooks_to_delete = deliberately_unscoped(Webhook).where(consumer: consumer, provider: provider)
         TriggeredWebhook.where(webhook: webhooks_to_delete).delete
-        # Delete the orphaned triggerred webhooks
+        # Delete the orphaned triggered webhooks
         TriggeredWebhook.where(consumer: consumer, provider: provider).delete
         webhooks_to_delete.delete
       end

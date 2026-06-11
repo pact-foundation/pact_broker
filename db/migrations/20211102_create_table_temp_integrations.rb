@@ -13,7 +13,7 @@ Sequel.migration do
     end
 
     # TODO drop these columns
-    # They are just for backwards compatiblity during schema migrations
+    # They are just for backwards compatibility during schema migrations
     # alter_table(:integrations) do
     #   drop_column(:consumer_name)
     #   drop_column(:provider_name)

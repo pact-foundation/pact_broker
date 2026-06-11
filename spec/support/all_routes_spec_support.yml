@@ -1,4 +1,4 @@
-requests_which_are_exected_to_have_no_policy_record_or_pacticipant:
+requests_which_are_expected_to_have_no_policy_record_or_pacticipant:
   - index GET
   - can_i_deploy GET
   - dashboard GET

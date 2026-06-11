@@ -72,13 +72,13 @@ module PactBroker
         def latest_verifications_for_all_consumer_version_tags
           verif_pact_join = { Sequel[:v][:pact_version_id] => Sequel[:lpp][:pact_version_id] }
           tag_join = { Sequel[:lpp][:consumer_version_id] => Sequel[:cvt][:version_id] }
-          verisons_join = { Sequel[:v][:provider_version_id] => Sequel[:pv][:id] }
+          versions_join = { Sequel[:v][:provider_version_id] => Sequel[:pv][:id] }
 
           base_query = db[Sequel.as(:latest_verification_id_for_pact_version_and_provider_version, :v)]
             .select(:v[:verification_id], :pv[:pacticipant_id].as(:provider_id), :lpp[:consumer_id], :cvt[:name].as(:consumer_version_tag_name))
             .join(:latest_pact_publication_ids_for_consumer_versions, verif_pact_join, { table_alias: :lpp } )
             .join(:tags, tag_join, { table_alias: :cvt })
-            .join(:versions, verisons_join, { table_alias: :pv })
+            .join(:versions, versions_join, { table_alias: :pv })
 
 
           base_join = {

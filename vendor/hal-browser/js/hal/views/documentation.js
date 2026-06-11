@@ -1,4 +1,4 @@
-HAL.Views.Documenation = Backbone.View.extend({
+HAL.Views.Documentation = Backbone.View.extend({
   className: 'documentation',
 
   render: function(url) {

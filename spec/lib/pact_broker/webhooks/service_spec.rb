@@ -62,7 +62,7 @@ module PactBroker
         context "when the webhook has a password and the incoming parameters do not contain a password" do
           let(:existing_password) { "password" }
 
-          it "does not overwite the password" do
+          it "does not overwrite the password" do
             updated_webhook = nil
             allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:update_by_uuid) do | _instance, _uuid, webhook |
               updated_webhook = webhook
@@ -84,7 +84,7 @@ module PactBroker
             }
           end
 
-          it "does not overwite the password" do
+          it "does not overwrite the password" do
             updated_webhook = nil
             allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:update_by_uuid) do | _instance, _uuid, webhook |
               updated_webhook = webhook
@@ -108,7 +108,7 @@ module PactBroker
             }
           end
 
-          it "does not overwite the authorization header" do
+          it "does not overwrite the authorization header" do
             updated_webhook = nil
             allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:update_by_uuid) do | _instance, _uuid, webhook |
               updated_webhook = webhook

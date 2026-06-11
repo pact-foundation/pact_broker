@@ -68,7 +68,7 @@ module PactBroker
       all.each{ | row | row.allow_lazy_load if row.respond_to?(:allow_lazy_load) }
     end
 
-    # @param [Symbol] max_column the name of the column of which to calculate the maxiumum
+    # @param [Symbol] max_column the name of the column of which to calculate the maximum
     # @param [Array<Symbol>] group_by_columns the names of the columns by which to group
     def max_group_by(max_column, group_by_columns, &extra_criteria_block)
       maximums_base_query = extra_criteria_block ? extra_criteria_block.call(self) : self

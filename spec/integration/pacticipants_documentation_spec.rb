@@ -5,7 +5,7 @@ require "pact_broker/api"
 PACTICIPANT_TESTED_DOCUMENTATION_PATHS = []
 PACTICIPANTS_NO_DOCUMENTATION = %w[
 ]
-PACTICIPANT_ROUTES_REQURING_A_DOCUMENTATION_TEST = PactBroker.routes
+PACTICIPANT_ROUTES_REQUIRING_A_DOCUMENTATION_TEST = PactBroker.routes
       .select { | route | route.path_include?("pacticipant") }
       .reject { | route | PACTICIPANTS_NO_DOCUMENTATION.include?(route.path) }
 
@@ -34,7 +34,7 @@ RSpec.describe "pacticipant routes" do
   end
 
   after(:all) do
-    missed_routes = PACTICIPANT_ROUTES_REQURING_A_DOCUMENTATION_TEST.reject { | route | PACTICIPANT_TESTED_DOCUMENTATION_PATHS.include?(route.path) }
+    missed_routes = PACTICIPANT_ROUTES_REQUIRING_A_DOCUMENTATION_TEST.reject { | route | PACTICIPANT_TESTED_DOCUMENTATION_PATHS.include?(route.path) }
 
     if missed_routes.any? && ENV["DEBUG"] != "true"
       #puts "PACTICIPANT ROUTES MISSING DOCUMENTATION COVERAGE:"

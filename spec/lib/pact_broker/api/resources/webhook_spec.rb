@@ -88,7 +88,7 @@ module PactBroker::Api
 
           its(:status) { is_expected.to eq 201 }
 
-          it "returns the JSON respresentation of the webhook" do
+          it "returns the JSON representation of the webhook" do
             expect(subject.body).to eq json
           end
         end
@@ -106,7 +106,7 @@ module PactBroker::Api
             subject
           end
 
-          it "returns the JSON respresentation of the webhook" do
+          it "returns the JSON representation of the webhook" do
             expect(subject.body).to eq json
           end
         end

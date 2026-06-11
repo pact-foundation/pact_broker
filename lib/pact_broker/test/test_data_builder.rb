@@ -91,7 +91,7 @@ module PactBroker
       # Does NOT rely on previous state.
       # @param [String] consumer_name
       # @param [String] consumer_version_number
-      # @param [Strig] provider_name
+      # @param [String] provider_name
       # @param [String] json_content
       def create_pact_with_hierarchy consumer_name = "Consumer", consumer_version_number = "1.2.3", provider_name = "Provider", json_content = nil
         use_consumer(consumer_name)
@@ -109,7 +109,7 @@ module PactBroker
       # @param [String] consumer_name
       # @param [String] consumer_version_number
       # @param [String] consumer_version_tag_name
-      # @param [Strig] provider_name
+      # @param [String] provider_name
       def create_pact_with_consumer_version_tag consumer_name, consumer_version_number, consumer_version_tag_name, provider_name
         create_pact_with_hierarchy(consumer_name, consumer_version_number, provider_name)
         create_consumer_version_tag(consumer_version_tag_name)

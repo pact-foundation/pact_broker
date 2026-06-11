@@ -30,7 +30,7 @@ module PactBroker
           expect(CheckHostWhitelist.call("a.foo.bar", whitelist)).to eq whitelist
         end
 
-        it "does not matche host a.b.foo.bar" do
+        it "does not match host a.b.foo.bar" do
           expect(CheckHostWhitelist.call("a.b.foo.bar", whitelist)).to eq []
         end
 
