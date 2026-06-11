@@ -11,6 +11,7 @@ test:
   postgres:
     <<: *default
     adapter: postgres
+    search_path: public
   docker_postgres:
     adapter: postgres
     database: postgres
