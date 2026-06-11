@@ -33,7 +33,7 @@ describe "Deleting a branch (removing all versions from a branch)" do
   end
 
   context "when there is some flag to indicate that the versions should be deleted too" do
-    subject { delete(path, { deletedAssociatedVersions: true }, headers) }
+    subject { delete(path, { deleteVersions: true }, headers) }
 
     it "deletes the branch" do
       expect { subject }.to change { PactBroker::Versions::Branch.count }.by(-1)

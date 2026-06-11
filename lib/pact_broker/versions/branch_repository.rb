@@ -39,6 +39,11 @@ module PactBroker
         branch.delete
       end
 
+      def delete_branch_and_associated_versions(branch)
+        # TODO
+        branch.delete
+      end
+      
       # @param [PactBroker::Domain::Pacticipant] pacticipant
       # @params [Array<String>] exclude the names of the branches to NOT delete
       # @param [Integer] the number of branches that will be deleted
