@@ -272,6 +272,42 @@ module PactBroker
             end
           end
         end
+
+        context "when a version is only retained because it is the head of a stale branch" do
+          before do
+            Timecop.freeze(Date.today - 100) do
+              td.publish_pact(consumer_name: "Widget", provider_name: "Gadget", consumer_version_number: "1", branch: "feat/old")
+            end
+            Timecop.freeze(Date.today - 5) do
+              td.publish_pact(consumer_name: "Widget", provider_name: "Gadget", consumer_version_number: "2", branch: "main")
+            end
+          end
+
+          let(:options) do
+            {
+              keep: [
+                PactBroker::DB::Clean::Selector.new(branch: true, latest: true),
+                PactBroker::DB::Clean::Selector.new(latest: true),
+                PactBroker::DB::Clean::Selector.new(max_age: 30)
+              ],
+              keep_branches: [PactBroker::DB::Clean::BranchSelector.new(max_age: 90)]
+            }
+          end
+
+          it "deletes the stale branch first and the now-unprotected version in the same run" do
+            expect(PactBroker::Versions::Branch.where(name: "feat/old").count).to be 1
+            expect(PactBroker::Domain::Version.where(number: "1").count).to be 1
+
+            subject
+
+            expect(PactBroker::Versions::Branch.where(name: "feat/old").count).to be 0
+            expect(PactBroker::Domain::Version.where(number: "1").count).to be 0
+          end
+
+          it "keeps the version on the fresh branch (latest / within max_age)" do
+            expect { subject }.to_not change { PactBroker::Domain::Version.where(number: "2").count }
+          end
+        end
       end
     end
   end

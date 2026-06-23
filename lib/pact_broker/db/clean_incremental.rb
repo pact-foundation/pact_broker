@@ -46,9 +46,9 @@ module PactBroker
       def execute_clean
         db.transaction do
           before_counts = current_counts
+          delete_stale_branches
           PactBroker::Domain::Version.where(id: versions_to_delete.from_self.select_map(:id)).delete
           delete_orphan_pact_versions
-          delete_stale_branches
           after_counts = current_counts
 
           TABLES.each_with_object({}) do | table_name, comparison_counts |
