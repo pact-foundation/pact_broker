@@ -1,4 +1,5 @@
 require "pact_broker/api/resources/can_i_deploy_pacticipant_version_by_branch_to_environment_badge"
+require "pact_broker/matrix/service"
 
 module PactBroker
   module Api
@@ -35,6 +36,20 @@ module PactBroker
           it "return the badge URL" do
             expect(badge_service). to receive(:can_i_deploy_badge_url).with("main", "dev", "custom-label", true)
             expect(subject.headers["Location"]).to eq "http://badge_url"
+          end
+        end
+
+        context "the matrix query (inherited from the non-badge resource)" do
+          before do
+            # Use the real #results/#options instead of the stub so we can observe the latestby that
+            # is passed through to the matrix service. Guards that the badge path is also fixed (#903).
+            allow_any_instance_of(described_class).to receive(:results).and_call_original
+            allow(PactBroker::Matrix::Service).to receive(:can_i_deploy).and_return(results)
+          end
+
+          it "uses the cvpv latestby so all versions released/deployed to the environment are evaluated" do
+            expect(PactBroker::Matrix::Service).to receive(:can_i_deploy).with(anything, hash_including(latestby: "cvpv"))
+            subject
           end
         end
 

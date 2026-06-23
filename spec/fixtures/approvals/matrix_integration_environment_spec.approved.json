@@ -58,5 +58,35 @@
     "reasons": [
       "PactBroker::Matrix::Successful"
     ]
+  },
+  "PactBroker::Matrix::Service find with environments when deploying a consumer with multiple versions of a provider released to production (latestby cvpv) when an older released provider version has a failing verification does not allow the consumer to be deployed": {
+    "deployable": false,
+    "reasons": [
+      "PactBroker::Matrix::VerificationFailed"
+    ]
+  },
+  "PactBroker::Matrix::Service find with environments when deploying a consumer with multiple versions of a provider released to production (latestby cvpv) when every released provider version has a successful verification allows the consumer to be deployed": {
+    "deployable": true,
+    "reasons": [
+      "PactBroker::Matrix::Successful"
+    ]
+  },
+  "PactBroker::Matrix::Service find with environments when deploying a consumer with multiple versions of a provider deployed to production on different targets (latestby cvpv) when an older targeted deployment has a failing verification does not allow the consumer to be deployed": {
+    "deployable": false,
+    "reasons": [
+      "PactBroker::Matrix::VerificationFailed"
+    ]
+  },
+  "PactBroker::Matrix::Service find with environments when deploying a consumer with multiple versions of a provider deployed to production on different targets (latestby cvpv) when every targeted deployment has a successful verification allows the consumer to be deployed": {
+    "deployable": true,
+    "reasons": [
+      "PactBroker::Matrix::Successful"
+    ]
+  },
+  "PactBroker::Matrix::Service find with environments when a version is deployed without a target and then replaced by a redeployment (latestby cvpv) only considers the currently deployed version and allows the consumer to be deployed": {
+    "deployable": true,
+    "reasons": [
+      "PactBroker::Matrix::Successful"
+    ]
   }
 }

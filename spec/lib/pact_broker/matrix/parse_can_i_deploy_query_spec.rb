@@ -20,7 +20,7 @@ module PactBroker
         describe "parsed_options" do
           subject { parsed_options }
 
-          its([:latestby]) { is_expected.to eq "cvp" }
+          its([:latestby]) { is_expected.to eq "cvpv" }
           its([:latest]) { is_expected.to eq nil }
           its([:environment_name]) { is_expected.to eq "prod" }
           its([:ignore_selectors]) { is_expected.to eq [] }
@@ -63,6 +63,21 @@ module PactBroker
             its([:latestby]) { is_expected.to eq "cvp" }
             its([:latest]) { is_expected.to eq true }
             its([:tag]) { is_expected.to eq "prod" }
+          end
+
+          context "with neither a tag nor an environment" do
+            # Pins that the cvpv override is scoped to environment queries only - the
+            # default grouping is unchanged. See issue #903.
+            let(:params) do
+              {
+                pacticipant: "foo",
+                version: "1"
+              }
+            end
+
+            its([:latestby]) { is_expected.to eq "cvp" }
+            its([:environment_name]) { is_expected.to eq nil }
+            its([:tag]) { is_expected.to eq nil }
           end
         end
 
