@@ -85,6 +85,10 @@ module PactBroker
         options[:limit] || 1000
       end
 
+      def branch_limit
+        options[:branch_limit] || limit
+      end
+
       def versions_to_delete(columns = [:id])
         fully_qualified_columns = columns.collect { |col| Sequel[:versions][col] }
         PactBroker::Domain::Version
@@ -122,6 +126,7 @@ module PactBroker
           .select(Sequel[:branches][:id])
           .left_outer_join(stale_branch_ids_to_keep, { Sequel[:branches][:id] => Sequel[:keep_branches][:id] }, table_alias: :keep_branches)
           .where(Sequel[:keep_branches][:id] => nil)
+          .limit(branch_limit)
       end
 
       def stale_branch_ids_to_keep
