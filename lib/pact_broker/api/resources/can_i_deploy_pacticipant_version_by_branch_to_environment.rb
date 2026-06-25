@@ -37,8 +37,11 @@ module PactBroker
         end
 
         def options
+          # "cvpv" (not "cvp") so that every version of an integrated application that is currently
+          # released/deployed to the environment is evaluated independently, rather than collapsing
+          # to just the latest provider version (which hides still-live incompatible versions). See issue #903.
           @options ||=  {
-                          latestby: "cvp",
+                          latestby: "cvpv",
                           environment_name: identifier_from_path[:environment_name]
                         }
         end

@@ -1,4 +1,4 @@
-require "pact_broker/api/resources/can_i_deploy_pacticipant_version_by_tag_to_tag"
+require "pact_broker/api/resources/can_i_deploy_pacticipant_version_by_branch_to_environment"
 require "pact_broker/matrix/service"
 
 module PactBroker
@@ -33,6 +33,11 @@ module PactBroker
 
         it "checks if the version can be deployed to the environment" do
           expect(PactBroker::Matrix::Service).to receive(:can_i_deploy).with(anything, hash_including(environment_name: "dev"))
+          subject
+        end
+
+        it "uses the cvpv latestby so all versions released/deployed to the environment are evaluated" do
+          expect(PactBroker::Matrix::Service).to receive(:can_i_deploy).with(anything, hash_including(latestby: "cvpv"))
           subject
         end
 
