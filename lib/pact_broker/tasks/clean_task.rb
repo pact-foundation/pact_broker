@@ -12,6 +12,7 @@ module PactBroker
       attr_reader :keep_version_selectors
       attr_reader :keep_branch_selectors
       attr_accessor :version_deletion_limit
+      attr_accessor :branch_deletion_limit
       attr_accessor :logger
       attr_accessor :dry_run
       attr_accessor :use_lock # allow disabling of postgres lock if it is causing problems
@@ -77,6 +78,7 @@ module PactBroker
           keep: keep_version_selectors,
           keep_branches: keep_branch_selectors,
           limit: version_deletion_limit,
+          branch_limit: branch_deletion_limit,
           logger: logger,
           dry_run: dry_run
         )
