@@ -213,6 +213,16 @@ module PactBroker
           end
         end
       end
+
+      describe "#url_for_triggered_webhook" do
+        let(:triggered_webhook) { instance_double("PactBroker::Webhooks::TriggeredWebhook", uuid: "the-triggered-webhook-uuid") }
+
+        subject { Service.send(:url_for_triggered_webhook, triggered_webhook, "http://example.org") }
+
+        it "returns the URL for the triggered webhook logs" do
+          expect(subject).to eq "http://example.org/triggered-webhooks/the-triggered-webhook-uuid/logs"
+        end
+      end
     end
   end
 end
