@@ -41,7 +41,7 @@ module PactBroker
         return [] if query.empty?
 
         query = query.select_all_qualified
-        query = query.filter(:name, options[:query_string]) if options[:query_string]
+        query = query.filter(Sequel[:pacticipants][:name], options[:query_string]) if options[:query_string]
         query = query.label(options[:label_name]) if options[:label_name]
         query.order_ignore_case(Sequel[:pacticipants][:name]).eager(*eager_load_associations).all_with_pagination_options(pagination_options)
       end
