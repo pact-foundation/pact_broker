@@ -7,7 +7,7 @@ Sequel.migration do
       foreign_key :consumer_id, :pacticipants
       foreign_key :provider_id, :pacticipants
       String :sha, null: false
-      String :content, type: PactBroker::MigrationHelper.large_text_type
+      column :content, PactBroker::MigrationHelper.large_text_type
       index [:consumer_id, :provider_id, :sha], unique: true, name: "unq_pvc_con_prov_sha"
       DateTime :created_at, null: false
     end
