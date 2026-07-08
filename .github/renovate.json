@@ -3,6 +3,17 @@
 	"extends": ["config:best-practices"],
 	"prHourlyLimit": 0,
 	"prConcurrentLimit": 0,
+	"customManagers": [
+		{
+			"customType": "regex",
+			"managerFilePatterns": ["/\\.gemspec$/"],
+			"datasourceTemplate": "rubygems",
+			"versioningTemplate": "ruby",
+			"matchStrings": [
+				"add_(?:runtime|development)_dependency\\s+[\"'](?<depName>[^\"']+)[\"']\\s*,\\s*[\"'](?<currentValue>[^\"']+)[\"']"
+			]
+		}
+	],
 	"packageRules": [
 		{
 			"groupName": "Ruby 3.2",
