@@ -111,6 +111,14 @@ module PactBroker
           end
         end
 
+        context "with label_name and search query" do
+          subject { Repository.new.find label_name: "in", query_string: "oo" }
+
+          it "returns only the pacticipants matching both the label and the query string" do
+            expect(subject.collect(&:name)).to eq ["Foo"]
+          end
+        end
+
         context "when scope applied" do
           it "returns the pacticipants if scope allows" do 
             allow_any_instance_of(Repository).to receive(:scope_for).and_return(PactBroker::Domain::Pacticipant) # default, with no scope applied
