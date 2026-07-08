@@ -49,7 +49,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.license       = "MIT"
 
-  gem.add_runtime_dependency "json", "~> 2.3"
+  gem.add_runtime_dependency "json", ">= 2.19.9"
   gem.add_runtime_dependency "psych", "~> 5.0"
   gem.add_runtime_dependency "roar", "~> 1.1"
   gem.add_runtime_dependency "dry-validation", "~> 1.8"
