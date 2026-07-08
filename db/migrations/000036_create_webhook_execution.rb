@@ -9,7 +9,7 @@ Sequel.migration do
       foreign_key :consumer_id, :pacticipants, null: false
       foreign_key :provider_id, :pacticipants, null: false
       Boolean :success, null: false
-      String :logs, type: PactBroker::MigrationHelper.large_text_type
+      column :logs, PactBroker::MigrationHelper.large_text_type
       DateTime :created_at, null: false
     end
   end
