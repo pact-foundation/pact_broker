@@ -10,7 +10,7 @@ module PactBroker
     end
 
     def large_text_type
-      if postgres?
+      if postgres? || sqlite?
         :text
       else
         # Assume mysql
@@ -30,6 +30,10 @@ module PactBroker
 
     def postgres?
       adapter =~ /postgres/
+    end
+
+    def sqlite?
+      adapter =~ /sqlite/
     end
 
     def adapter
