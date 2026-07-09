@@ -11,7 +11,7 @@ module PactBroker
         PactBroker::Db::Clean::Selector.new(max_age: 90)
       ]
       DEFAULT_KEEP_BRANCH_SELECTORS = [
-        PactBroker::DB::Clean::BranchSelector.new(max_age: 90)
+        PactBroker::Db::Clean::BranchSelector.new(max_age: 90)
       ]
       TABLES = [:versions, :pact_publications, :pact_versions, :verifications, :triggered_webhooks, :webhook_executions, :branches]
 
@@ -70,7 +70,7 @@ module PactBroker
 
       def keep_branches
         @keep_branches ||= if options.key?(:keep_branches)
-                             options[:keep_branches]&.collect { | selector_hash | PactBroker::DB::Clean::BranchSelector.from_hash(selector_hash.to_hash) }
+                             options[:keep_branches]&.collect { | selector_hash | PactBroker::Db::Clean::BranchSelector.from_hash(selector_hash.to_hash) }
                            else
                              DEFAULT_KEEP_BRANCH_SELECTORS
                            end

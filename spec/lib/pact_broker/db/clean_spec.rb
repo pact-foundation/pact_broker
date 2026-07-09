@@ -162,7 +162,7 @@ module PactBroker
           let(:keep_all_versions) { [{ max_age: 999 }] }
 
           context "when keep_branches is configured with a max_age" do
-            let(:options) { { keep: keep_all_versions, keep_branches: [PactBroker::DB::Clean::BranchSelector.new(max_age: 90)] } }
+            let(:options) { { keep: keep_all_versions, keep_branches: [PactBroker::Db::Clean::BranchSelector.new(max_age: 90)] } }
 
             it "deletes branches whose updated_at is older than max_age" do
               expect { subject }.to change { PactBroker::Versions::Branch.where(name: "feat/old").count }.from(1).to(0)
@@ -185,7 +185,7 @@ module PactBroker
               PactBroker::Domain::Pacticipant.where(name: "Foo").update(main_branch: "main-protected")
             end
 
-            let(:options) { { keep: keep_all_versions, keep_branches: [PactBroker::DB::Clean::BranchSelector.new(max_age: 90)] } }
+            let(:options) { { keep: keep_all_versions, keep_branches: [PactBroker::Db::Clean::BranchSelector.new(max_age: 90)] } }
 
             it "never deletes the main branch even when stale" do
               expect { subject }.to_not change { PactBroker::Versions::Branch.where(name: "main-protected").count }
@@ -202,7 +202,7 @@ module PactBroker
               # ConsumerB intentionally has no main_branch set
             end
 
-            let(:options) { { keep: keep_all_versions, keep_branches: [PactBroker::DB::Clean::BranchSelector.new(max_age: 90)] } }
+            let(:options) { { keep: keep_all_versions, keep_branches: [PactBroker::Db::Clean::BranchSelector.new(max_age: 90)] } }
 
             def branch_count_for(pacticipant_name, branch_name)
               pacticipant_id = PactBroker::Domain::Pacticipant.where(name: pacticipant_name).get(:id)
@@ -223,8 +223,8 @@ module PactBroker
               {
                 keep: keep_all_versions,
                 keep_branches: [
-                  PactBroker::DB::Clean::BranchSelector.new(max_age: 90),
-                  PactBroker::DB::Clean::BranchSelector.new(branch: ["feat/old"])
+                  PactBroker::Db::Clean::BranchSelector.new(max_age: 90),
+                  PactBroker::Db::Clean::BranchSelector.new(branch: ["feat/old"])
                 ]
               }
             end

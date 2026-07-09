@@ -35,7 +35,7 @@ module PactBroker
       def keep_branch_selectors=(keep_branch_selectors)
         require "pact_broker/db/clean/branch_selector"
         @keep_branch_selectors = keep_branch_selectors.nil? ? nil : [*keep_branch_selectors].collect do | hash |
-          PactBroker::DB::Clean::BranchSelector.from_hash(hash)
+          PactBroker::Db::Clean::BranchSelector.from_hash(hash)
         end
       end
 
