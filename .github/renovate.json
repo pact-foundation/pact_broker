@@ -3,30 +3,12 @@
 	"extends": ["config:best-practices"],
 	"prHourlyLimit": 0,
 	"prConcurrentLimit": 0,
-	"customManagers": [
-		{
-			"customType": "regex",
-			"managerFilePatterns": ["/\\.gemspec$/"],
-			"datasourceTemplate": "rubygems",
-			"versioningTemplate": "ruby",
-			"matchStrings": [
-				"add_(?<depType>runtime|development)_dependency\\s+[\"'](?<depName>[^\"']+)[\"']\\s*,\\s*[\"']~>\\s*(?<currentValue>[0-9][0-9.]*)[\"']"
-			],
-			"autoReplaceStringTemplate": "add_{{{depType}}}_dependency \"{{{depName}}}\", \"~> {{{newMajor}}}.{{{newMinor}}}\""
-		}
-	],
 	"packageRules": [
 		{
 			"groupName": "Ruby 3.2",
 			"groupSlug": "ruby-3.2",
 			"matchPackageNames": ["ruby"],
 			"allowedVersions": "<=3.2"
-		},
-		{
-			"matchManagers": ["custom.regex"],
-			"matchFileNames": ["**/*.gemspec"],
-			"matchUpdateTypes": ["minor", "patch"],
-			"enabled": false
 		}
 	]
 }
