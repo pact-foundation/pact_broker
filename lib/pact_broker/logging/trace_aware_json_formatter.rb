@@ -14,7 +14,7 @@ module PactBroker
         return json if context.empty?
 
         # `hash` was populated by Raw#call during `super`; reuse it.
-        hash.merge(context).to_json
+        SemanticLogger::Utils.to_json(hash.merge(context))
       end
 
       private
