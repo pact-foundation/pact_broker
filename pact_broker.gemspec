@@ -60,7 +60,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency "rack", "~> 3.2"
   gem.add_runtime_dependency "redcarpet", "~> 3.5"
   gem.add_runtime_dependency "pact-support", "~> 1.21"
-  gem.add_runtime_dependency "haml", "~>5.0"
+  gem.add_runtime_dependency "haml", "~>7.0"
   gem.add_runtime_dependency "sucker_punch", "~>3.0"
   gem.add_runtime_dependency "rack-protection", "~> 4.1"
   gem.add_runtime_dependency "table_print", "~> 1.5"
