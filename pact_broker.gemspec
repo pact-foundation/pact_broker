@@ -64,7 +64,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency "sucker_punch", "~>3.0"
   gem.add_runtime_dependency "rack-protection", "~> 4.1"
   gem.add_runtime_dependency "table_print", "~> 1.5"
-  gem.add_runtime_dependency "semantic_logger", "~> 4.11"
+  gem.add_runtime_dependency "semantic_logger", "~> 5.0"
   gem.add_runtime_dependency "sanitize", "~> 6.0"
   gem.add_runtime_dependency "wisper", "~> 2.0"
   gem.add_runtime_dependency "anyway_config", "~> 2.1"
