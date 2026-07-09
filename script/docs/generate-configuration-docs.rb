@@ -11,6 +11,7 @@ variable `PACT_BROKER_CONF` to the full path to the configuration file.
 EOM
 
 require "yaml"
+require "stringio"
 $stream = StringIO.new
 
 def write string
