@@ -3,6 +3,8 @@ require "pact_broker/error"
 require "semantic_logger"
 require "forwardable"
 require "pact_broker/config/runtime_configuration"
+require "pact_broker/logging/open_telemetry_appender_setup"
+require "pact_broker/logging/trace_aware_json_formatter"
 require "anyway/auto_cast"
 require "request_store"
 
@@ -98,16 +100,27 @@ module PactBroker
     def logger_from_runtime_configuration
       @logger_from_runtime_configuration ||= begin
         SemanticLogger.default_level = runtime_configuration.log_level
+        formatter = resolve_log_formatter(runtime_configuration.log_format)
         if runtime_configuration.log_stream == :file
           path = runtime_configuration.log_dir + "/pact_broker.log"
           FileUtils.mkdir_p(runtime_configuration.log_dir)
-          @default_appender = SemanticLogger.add_appender(file_name: path, formatter: runtime_configuration.log_format)
+          @default_appender = SemanticLogger.add_appender(file_name: path, formatter: formatter)
         else
-          @default_appender = SemanticLogger.add_appender(io: $stdout, formatter: runtime_configuration.log_format)
+          @default_appender = SemanticLogger.add_appender(io: $stdout, formatter: formatter)
         end
+        PactBroker::Logging::OpenTelemetryAppenderSetup.call(runtime_configuration)
         @logger_from_runtime_configuration = SemanticLogger["pact-broker"]
       end
     end
+
+    def resolve_log_formatter(log_format)
+      if log_format == :json
+        PactBroker::Logging::TraceAwareJsonFormatter.new
+      else
+        log_format
+      end
+    end
+    private :resolve_log_formatter
 
     def logger
       custom_logger || logger_from_runtime_configuration

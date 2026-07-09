@@ -160,5 +160,47 @@ module PactBroker
         end
       end
     end
+
+    describe "#logger_from_runtime_configuration" do
+      let(:config) { PactBroker::Configuration.default_configuration }
+
+      before do
+        allow(SemanticLogger).to receive(:add_appender)
+        allow(PactBroker::Logging::OpenTelemetryAppenderSetup).to receive(:call)
+      end
+
+      it "invokes the OpenTelemetry appender setup" do
+        expect(PactBroker::Logging::OpenTelemetryAppenderSetup).to receive(:call).with(config.runtime_configuration)
+        config.logger_from_runtime_configuration
+      end
+
+      context "when log_format is :json" do
+        before do
+          config.runtime_configuration.log_stream = :stdout
+          config.runtime_configuration.log_format = :json
+        end
+
+        it "uses the trace-aware JSON formatter" do
+          expect(SemanticLogger).to receive(:add_appender) do |args|
+            expect(args[:formatter]).to be_a(PactBroker::Logging::TraceAwareJsonFormatter)
+          end
+          config.logger_from_runtime_configuration
+        end
+      end
+
+      context "when log_format is not :json" do
+        before do
+          config.runtime_configuration.log_stream = :stdout
+          config.runtime_configuration.log_format = :default
+        end
+
+        it "passes the format symbol through unchanged" do
+          expect(SemanticLogger).to receive(:add_appender) do |args|
+            expect(args[:formatter]).to eq :default
+          end
+          config.logger_from_runtime_configuration
+        end
+      end
+    end
   end
 end
