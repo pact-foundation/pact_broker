@@ -40,6 +40,7 @@ module PactBroker
         log_stream: :file,
         log_level: :info,
         log_format: nil,
+        log_otel_enabled: :auto,
         warning_error_class_names: ["Sequel::ForeignKeyConstraintViolation"],
         hide_pactflow_messages: false,
         log_configuration_on_startup: true,
@@ -129,6 +130,10 @@ module PactBroker
         super(log_format&.to_sym)
       end
 
+      def log_otel_enabled= value
+        super(coerce_log_otel_enabled(value))
+      end
+
       def custom_log_formatters= custom_log_formatters
         super(custom_log_formatters&.symbolize_keys)
       end
@@ -215,11 +220,25 @@ module PactBroker
         if log_stream == :file && log_dir.blank?
           raise_validation_error("Must specify log_dir if log_stream is set to file")
         end
+
+        unless [:auto, true, false].include?(log_otel_enabled)
+          raise_validation_error("log_otel_enabled must be one of: auto, true, false")
+        end
       end
 
       def raise_validation_error(msg)
         raise PactBroker::ConfigurationError, msg
       end
+
+      def coerce_log_otel_enabled(value)
+        case value
+        when nil, "", "auto", :auto then :auto
+        when true, "true", "1", 1 then true
+        when false, "false", "0", 0 then false
+        else value
+        end
+      end
+      private :coerce_log_otel_enabled
 
       def set_webhook_attribute_defaults
         # can't set a default on this, or anyway config blows up when trying to merge the

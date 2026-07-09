@@ -161,6 +161,46 @@ module PactBroker
           end
         end
       end
+
+      describe "log_otel_enabled" do
+        subject { RuntimeConfiguration.new }
+
+        it "defaults to :auto" do
+          expect(subject.log_otel_enabled).to eq :auto
+        end
+
+        it "coerces nil and blank to :auto" do
+          subject.log_otel_enabled = nil
+          expect(subject.log_otel_enabled).to eq :auto
+          subject.log_otel_enabled = ""
+          expect(subject.log_otel_enabled).to eq :auto
+        end
+
+        it "coerces the string 'auto' to :auto" do
+          subject.log_otel_enabled = "auto"
+          expect(subject.log_otel_enabled).to eq :auto
+        end
+
+        it "coerces truthy strings to true" do
+          subject.log_otel_enabled = "true"
+          expect(subject.log_otel_enabled).to eq true
+          subject.log_otel_enabled = "1"
+          expect(subject.log_otel_enabled).to eq true
+        end
+
+        it "coerces falsey strings to false" do
+          subject.log_otel_enabled = "false"
+          expect(subject.log_otel_enabled).to eq false
+          subject.log_otel_enabled = "0"
+          expect(subject.log_otel_enabled).to eq false
+        end
+
+        it "raises a ConfigurationError for invalid values on load" do
+          config = RuntimeConfiguration.new
+          config.log_otel_enabled = "sometimes"
+          expect { config.send(:validate_logging_attributes!) }.to raise_error(PactBroker::ConfigurationError, /log_otel_enabled/)
+        end
+      end
     end
   end
 end
