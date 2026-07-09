@@ -70,9 +70,8 @@ module PactBroker
 
       context "idempotency" do
         it "does not add a second appender when one already exists" do
-          stub_const("SemanticLogger::Appender::OpenTelemetry", Class.new)
-          existing = SemanticLogger::Appender::OpenTelemetry.new
-          allow(SemanticLogger).to receive(:appenders).and_return([existing])
+          existing = double("existing otel appender")
+          allow(setup).to receive(:existing_otel_appender).and_return(existing)
           expect(SemanticLogger).to_not receive(:add_appender)
           expect(setup.call).to eq existing
         end
