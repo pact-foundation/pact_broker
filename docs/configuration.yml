@@ -18,6 +18,24 @@ groups:
           - json
           - color
         more_info: https://github.com/rocketjob/semantic_logger/tree/master/lib/semantic_logger/formatters
+      log_otel_enabled:
+        description: |-
+          Controls whether logs are also emitted to the OpenTelemetry logs pipeline.
+
+          `auto` (the default) adds the OpenTelemetry appender only when the
+          `opentelemetry-logs-sdk` gem is installed and an OpenTelemetry logger provider
+          is configured. `true` forces the appender on and raises an error if the gem is
+          not available. `false` disables it entirely.
+
+          The `opentelemetry-logs-sdk` gem is an optional, runtime-detected dependency and
+          is not bundled with the Pact Broker. When `log_format` is set to `json`, active
+          trace and span IDs are also embedded in the JSON log output.
+        default_value: auto
+        allowed_values:
+          - auto
+          - true
+          - false
+        supported_versions: From v2.120.0
       log_dir:
         description: "The log file directory"
         default_value: "./logs"
