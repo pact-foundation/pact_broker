@@ -34,6 +34,25 @@ The application log format. Can be any value supported by Semantic Logger.
 **Allowed values:** `default`, `json`, `color`<br/>
 **More information:** https://github.com/rocketjob/semantic_logger/tree/master/lib/semantic_logger/formatters<br/>
 
+### log_otel_enabled
+
+Controls whether logs are also emitted to the OpenTelemetry logs pipeline.
+
+`auto` (the default) adds the OpenTelemetry appender only when the
+`opentelemetry-logs-sdk` gem is installed and an OpenTelemetry logger provider
+is configured. `true` forces the appender on and raises an error if the gem is
+not available. `false` disables it entirely.
+
+The `opentelemetry-logs-sdk` gem is an optional, runtime-detected dependency and
+is not bundled with the Pact Broker. When `log_format` is set to `json`, active
+trace and span IDs are also embedded in the JSON log output.
+
+**Supported versions:** From v2.120.0<br/>
+**Environment variable name:** `PACT_BROKER_LOG_OTEL_ENABLED`<br/>
+**YAML configuration key name:** `log_otel_enabled`<br/>
+**Default:** `auto`<br/>
+**Allowed values:** `auto`, `true`, `false`<br/>
+
 ### log_dir
 
 The log file directory
@@ -248,8 +267,8 @@ The number of seconds after which an SQL query will be aborted. Only supported f
 
 **Environment variable name:** `PACT_BROKER_DATABASE_STATEMENT_TIMEOUT`<br/>
 **YAML configuration key name:** `database_statement_timeout`<br/>
-**Default:** `15000`<br/>
-**Allowed values:** A positive integer in milliseconds<br/>
+**Default:** `15`<br/>
+**Allowed values:** A positive integer or float.<br/>
 **More information:** https://www.postgresql.org/docs/9.3/runtime-config-client.html<br/>
 
 ### metrics_sql_statement_timeout
@@ -532,6 +551,14 @@ The URL of the shields.io server used to generate the README badges.
 **YAML configuration key name:** `shields_io_base_url`<br/>
 **Default:** `https://img.shields.io`<br/>
 **More information:** https://shields.io<br/>
+
+### badge_default_cache_setting
+
+Cache Control header value for the badge, this  sets the cache-control header for the badge image, for more information on header formats see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/cache-control
+
+**Environment variable name:** `PACT_BROKER_BADGE_DEFAULT_CACHE_SETTING`<br/>
+**YAML configuration key name:** `badge_default_cache_setting`<br/>
+**Default:** `max-age=30`<br/>
 
 ### badge_provider_mode
 
