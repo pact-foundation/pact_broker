@@ -11,6 +11,10 @@ module PactBroker
         end
 
 
+        property :event_name, as: :eventName
+        property :consumer_name, as: :consumerName
+        property :provider_name, as: :providerName
+
         nested :triggeredWebhook, embedded: true do
           property :uuid
         end

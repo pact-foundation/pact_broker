@@ -7,6 +7,9 @@ module PactBroker
         let(:triggered_webhook) do
           double("PactBroker::Webhooks::TriggeredWebhook",
             uuid: "1234",
+            event_name: "contract_requiring_verification_published",
+            consumer_name: "Example Consumer",
+            provider_name: "Example Provider",
             webhook_executions: [webhook_execution],
             webhook: webhook
           )
