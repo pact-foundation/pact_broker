@@ -1,4 +1,7 @@
 {
+  "eventName": "contract_requiring_verification_published",
+  "consumerName": "Example Consumer",
+  "providerName": "Example Provider",
   "executions": [
     {
       "success": true,
