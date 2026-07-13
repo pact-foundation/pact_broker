@@ -58,6 +58,48 @@ module PactBroker
           end
         end
       end
+
+      describe ".find_released_versions_for_version" do
+        before do
+          td.create_environment("test")
+            .create_environment("prod")
+            .create_consumer("foo")
+            .create_consumer_version("1")
+            .create_released_version_for_consumer_version(environment_name: "test")
+            .create_released_version_for_consumer_version(environment_name: "prod")
+            .create_consumer_version("2")
+            .create_released_version_for_consumer_version(environment_name: "test")
+        end
+
+        let(:version) { PactBroker::Domain::Version.where(number: "1").single_record }
+
+        it "returns all the released versions for the given version, with the environment eager loaded" do
+          released_versions = ReleasedVersionService.find_released_versions_for_version(version)
+          expect(released_versions.size).to eq 2
+          expect(released_versions.collect { |rv| rv.environment.name }).to contain_exactly("test", "prod")
+        end
+      end
+
+      describe ".find_released_versions_for_versions" do
+        before do
+          td.create_environment("test")
+            .create_consumer("foo")
+            .create_consumer_version("1")
+            .create_released_version_for_consumer_version(environment_name: "test")
+            .create_consumer_version("2")
+            .create_released_version_for_consumer_version(environment_name: "test")
+        end
+
+        let(:version_1) { PactBroker::Domain::Version.where(number: "1").single_record }
+        let(:version_2) { PactBroker::Domain::Version.where(number: "2").single_record }
+
+        it "returns a hash of released versions grouped by version_id" do
+          released_versions = ReleasedVersionService.find_released_versions_for_versions([version_1, version_2])
+          expect(released_versions).to be_a(Hash)
+          expect(released_versions[version_1.id].size).to eq 1
+          expect(released_versions[version_2.id].size).to eq 1
+        end
+      end
     end
   end
 end

@@ -74,9 +74,12 @@ module PactBroker
         end
 
         links :'pb:deployed-environments' do | context |
-          # I couldn't another way to check if call is from a collection or a single item 🤷‍♂️
-          # Also not sure why the heck .to_a?(Hash) doesn't work, I mean what...
-          deployed_versions = context[:deployed_versions].class.to_s == "Hash" ? context[:deployed_versions][represented.id] : context[:deployed_versions]
+          # NB: use fully-qualified ::Hash. The tins gem shadows the bare `Hash`
+          # constant in this scope, so `is_a?(Hash)` returns false even for a real
+          # Hash (this is the collection-vs-single-item branch: the collection
+          # resource passes a version_id-keyed Hash, the single resource an Array).
+          deployed_versions = context.dig(:deployed_versions)
+          deployed_versions = deployed_versions[represented.id] if deployed_versions.is_a?(::Hash)
           deployed_versions&.collect do | deployed_version |
             {
               title: "Version deployed to #{deployed_version.environment.display_name}",
@@ -86,6 +89,23 @@ module PactBroker
             }.tap do |hash|
               hash[:application_instance] = deployed_version.application_instance unless deployed_version.application_instance.nil?
             end
+          end
+        end
+
+        links :'pb:released-environments' do | context |
+          # NB: use fully-qualified ::Hash. The tins gem shadows the bare `Hash`
+          # constant in this scope, so `is_a?(Hash)` returns false even for a real
+          # Hash (this is the collection-vs-single-item branch: the collection
+          # resource passes a version_id-keyed Hash, the single resource an Array).
+          released_versions = context.dig(:released_versions)
+          released_versions = released_versions[represented.id] if released_versions.is_a?(::Hash)
+          released_versions&.collect do | released_version |
+            {
+              title: "Version released to #{released_version.environment.display_name}",
+              name: released_version.environment.display_name,
+              href: released_version_url(released_version, context.fetch(:base_url)),
+              currently_supported: released_version.currently_supported
+            }
           end
         end
 

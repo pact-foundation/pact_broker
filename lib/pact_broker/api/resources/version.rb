@@ -54,7 +54,7 @@ module PactBroker
         end
 
         def to_json
-          decorator_class(:version_decorator).new(version).to_json(**decorator_options(environments: environments, deployed_versions: deployed_versions))
+          decorator_class(:version_decorator).new(version).to_json(**decorator_options(environments: environments, deployed_versions: deployed_versions, released_versions: released_versions))
         end
 
         def delete_resource
@@ -85,6 +85,10 @@ module PactBroker
 
         def deployed_versions
           @deployed_versions ||= deployed_version_service.find_deployed_versions_for_version(version)
+        end
+
+        def released_versions
+          @released_versions ||= released_version_service.find_released_versions_for_version(version)
         end
 
         def version
