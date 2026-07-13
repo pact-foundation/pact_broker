@@ -32,6 +32,11 @@ module PactBroker
                 uuid: "5678", currently_deployed: true, version: version, environment_name: prod_environment.name,
                 created_at: DateTime.now - 1)
           end
+          let(:released_version) do
+            td.use_consumer_version(version.number)
+              .create_released_version_for_consumer_version(uuid: "9012", environment_name: test_environment.name)
+              .create_released_version_for_consumer_version(uuid: "3456", environment_name: prod_environment.name)
+          end
 
           context "when the pacticipant and version do not exist" do
             subject { get(path, nil, { "HTTP_ACCEPT" => "application/hal+json" }) }
@@ -44,6 +49,7 @@ module PactBroker
             before do
               # Create a version on a pacticipant
               deployed_version
+              released_version
             end
             subject { get(path, nil, { "HTTP_ACCEPT" => "application/hal+json" }) }
 
@@ -61,6 +67,9 @@ module PactBroker
                 expect(response_body_hash[:_links][:"pb:deployed-environments"]).to be_a(Array)
                 expect(response_body_hash[:_links][:"pb:deployed-environments"].size).to eq 2
                 expect(response_body_hash[:_links][:"pb:deployed-environments"].first).to include(:title, :name, :href)
+                expect(response_body_hash.dig(:_links, :"pb:released-environments")).to be_a(Array)
+                expect(response_body_hash.dig(:_links, :"pb:released-environments").size).to eq 2
+                expect(response_body_hash.dig(:_links, :"pb:released-environments").first).to include(:title, :name, :href)
               end
             end
           end

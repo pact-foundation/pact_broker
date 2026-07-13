@@ -46,6 +46,20 @@ module PactBroker
           .single_record
       end
 
+      def self.find_released_versions_for_version(version)
+        scope_for(ReleasedVersion)
+          .where(version_id: version.id)
+          .eager(:environment)
+          .all
+      end
+
+      def self.find_released_versions_for_versions(versions_array)
+        scope_for(ReleasedVersion)
+          .where(version_id: versions_array.map(&:id))
+          .eager(:environment)
+          .to_hash_groups(:version_id)
+      end
+
       def self.record_version_support_ended(released_version)
         released_version.record_support_ended
       end

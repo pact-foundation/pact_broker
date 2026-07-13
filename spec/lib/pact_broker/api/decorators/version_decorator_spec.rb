@@ -51,8 +51,14 @@ module PactBroker
 
           let(:target) { nil }
 
+          let(:released_versions) do
+            [
+              td.create_released_version_for_consumer_version(uuid: "5678", environment_name: "test").and_return(:released_version)
+            ]
+          end
+
           let(:base_url) { "http://example.org" }
-          let(:options) { { user_options: { base_url: base_url, resource_url: "resource_url", environments: environments, deployed_versions: deployed_versions } } }
+          let(:options) { { user_options: { base_url: base_url, resource_url: "resource_url", environments: environments, deployed_versions: deployed_versions, released_versions: released_versions } } }
           let(:decorator) { VersionDecorator.new(version) }
 
           subject { JSON.parse(decorator.to_json(options), symbolize_names: true) }
@@ -133,6 +139,19 @@ module PactBroker
                                                                                  application_instance: "instance-1",
                                                                                  )
               end
+            end
+          end
+
+          context "when application is released to an env" do
+            it "includes a link to the released environments for this version" do
+              expect(subject[:_links][:'pb:released-environments']).to be_instance_of(Array)
+              expect(subject[:_links][:'pb:released-environments'].first).to eq(
+                                                                               title: "Version released to Test",
+                                                                               name: "Test",
+                                                                               href: "http://example.org/released-versions/5678",
+                                                                               currently_supported: true,
+                                                                               )
+              expect(subject[:_links][:'pb:released-environments'].first).to_not include(:application_instance)
             end
           end
 

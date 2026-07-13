@@ -27,7 +27,7 @@ module PactBroker
         end
 
         def to_json
-          decorator_class(:versions_decorator).new(versions).to_json(**decorator_options(identifier_from_path.merge(deployed_versions: deployed_versions)))
+          decorator_class(:versions_decorator).new(versions).to_json(**decorator_options(identifier_from_path.merge(deployed_versions: deployed_versions, released_versions: released_versions)))
         end
 
         def versions
@@ -36,6 +36,10 @@ module PactBroker
 
         def deployed_versions
           @deployed_versions ||= deployed_version_service.find_deployed_versions_for_versions(versions)
+        end
+
+        def released_versions
+          @released_versions ||= released_version_service.find_released_versions_for_versions(versions)
         end
 
         def policy_name
