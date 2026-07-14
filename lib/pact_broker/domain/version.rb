@@ -274,7 +274,7 @@ module PactBroker
       end
 
       # Isn't called on upsert when the record is updated with Sqlite
-      # Is called with Postgres/MySQL
+      # Is called with Postgres
       # Haven't had time to dig into why
       def after_create
         super

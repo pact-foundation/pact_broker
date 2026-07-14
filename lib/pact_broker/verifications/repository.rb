@@ -10,7 +10,7 @@ module PactBroker
       include PactBroker::Repositories
       include PactBroker::Repositories::Scopes
 
-      # Ideally this would just be a sequence, but Sqlite and MySQL don't support sequences
+      # Ideally this would just be a sequence, but Sqlite doesn't support sequences
       # in the way we need to use them ie. determining what the next number will be before we
       # create the record, because Webmachine wants to set the URL of the resource that is about
       # to be created *before* we actually create it.

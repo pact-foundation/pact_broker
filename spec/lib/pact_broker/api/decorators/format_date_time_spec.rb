@@ -21,7 +21,7 @@ module PactBroker
             end
           end
 
-          context "with a String - MySQL and Sqlite (as of the upgrade to Ruby 2.7.5) return date columns as strings. Postgres returns them as dates." do
+          context "with a String - Sqlite (as of the upgrade to Ruby 2.7.5) returns date columns as strings. Postgres returns them as dates." do
             let(:date_time) { "2022-02-14T15:18:00+14:00" }
 
             it "converts the date to a string in utc" do

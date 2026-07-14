@@ -2,7 +2,7 @@ require "pact_broker/db/delete_overwritten_data"
 
 module PactBroker
   module DB
-    describe DeleteOverwrittenData, skip: !!DB.mysql? do
+    describe DeleteOverwrittenData do
       describe ".call" do
         let(:db) { PactBroker::DB.connection }
         let(:max_age) { nil }
