@@ -36,10 +36,6 @@ module PactBroker
       !!(configuration_for_test_database["adapter"] =~ /sqlite/)
     end
 
-    def self.mysql?
-      !!(configuration_for_test_database["adapter"] =~ /mysql/)
-    end
-
     def self.postgres?
       !!(configuration_for_test_database["adapter"] =~ /postgres/)
     end
@@ -61,7 +57,6 @@ module PactBroker
       con.extension(:any_not_empty)
       #con.extension(:caller_logging)
       con.timezone = :utc
-      con.run("SET sql_mode='STRICT_TRANS_TABLES';") if db_credentials[:adapter].to_s =~ /mysql/
       con
     end
 
