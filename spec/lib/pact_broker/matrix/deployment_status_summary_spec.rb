@@ -213,6 +213,10 @@ module PactBroker
           its(:deployable?) { is_expected.to be true }
           its(:reasons) { is_expected.to eq [NoDependenciesMissing.new] }
           its(:counts) { is_expected.to eq success: 0, failed: 0, unknown: 0 }
+
+          it "sets the type of the reason to :success (rendered as the JSON type field)" do
+            expect(subject.reasons.first.type).to eq :success
+          end
         end
 
         context "when there is a provider integration that does not have a matching row and only the consumer was specified in the query" do
