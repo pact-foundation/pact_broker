@@ -87,6 +87,34 @@ module PactBroker
             expect(subject.last.consumer_version_number).to eq "1"
           end
         end
+
+        context "when the row comes from the database" do
+          before do
+            td.create_pact_with_verification("Foo", "1", "Bar", "2")
+          end
+
+          it "returns a real date/time object, not a String, for last_action_date" do
+            expect(subject.first.last_action_date).to be_a(Date).or be_a(Time).or be_a(DateTime)
+          end
+        end
+      end
+
+      describe "#verification_id" do
+        context "when the verification table has not been joined" do
+          subject { MatrixRow.new }
+
+          it "raises an error" do
+            expect { subject.verification_id }.to raise_error("Required table not joined")
+          end
+        end
+      end
+
+      describe "matching_one_selector_for_either_consumer_or_provider" do
+        context "when the number of selectors provided is not 1" do
+          it "raises an ArgumentError" do
+            expect { MatrixRow.default_scope.send(:matching_one_selector_for_either_consumer_or_provider, [], limit: 1) }.to raise_error(ArgumentError, "Expected one selector to be provided, but received 0:  []")
+          end
+        end
       end
     end
   end
