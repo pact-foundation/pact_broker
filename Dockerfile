@@ -13,8 +13,6 @@ RUN apk update \
     "sqlite-dev>=3.36" \
     "sqlite>=3.36" \
     "tzdata>=2019" \
-    "mariadb-dev>=10.3" \
-    "mysql-client>=10.3.25" \
     "postgresql15-client" \
     "yaml-dev" \
     "gcompat" \
@@ -35,7 +33,7 @@ COPY lib/pact_broker/version.rb /home/lib/pact_broker/version.rb
 COPY .gitignore /home/.gitignore
 
 RUN gem install bundler -v '~>2.0.0' \
-    && bundle config set --local with pg mysql \
+    && bundle config set --local with pg \
     && bundle install --jobs 3 --retry 3
 
 RUN echo '#!/bin/sh' >> /usr/local/bin/start
