@@ -49,10 +49,6 @@ group :pg, optional: true do
   gem "pg", "~>1.6"
 end
 
-group :mysql, optional: true do
-  gem "mysql2", "~>0.5"
-end
-
 if ENV["X_PACT_DEVELOPMENT"] == "true"
   gem "pact-support", path: "../pact-support"
 end
