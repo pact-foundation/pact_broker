@@ -1,5 +1,7 @@
 require "pact_broker/matrix/service"
 require "pact_broker/matrix/unresolved_selector"
+require "pact_broker/pacticipants/service"
+require "pact_broker/versions/service"
 
 module PactBroker
   module Matrix
@@ -40,6 +42,17 @@ module PactBroker
           it "calls the can_i_deploy method" do
             expect(Service).to receive(:can_i_deploy).with(unresolved_selectors, options).and_call_original
             subject
+          end
+        end
+
+        context "when a pacticipant object (rather than a pacticipant_name) is passed in" do
+          let(:pacticipant) { PactBroker::Pacticipants::Service.find_pacticipant_by_name("B") }
+          let(:latest_main_branch_version) { PactBroker::Versions::Service.find_latest_version_from_main_branch(pacticipant) }
+
+          subject { Service.can_i_merge(pacticipant: pacticipant, latest_main_branch_version: latest_main_branch_version) }
+
+          it "returns true because the mergeable status is true" do
+            expect(subject).to be true
           end
         end
       end
@@ -222,6 +235,20 @@ module PactBroker
 
           it "returns an error message" do
             expect(subject.last).to include "The limit"
+          end
+        end
+
+        context "when an ignore selector has both a version and latest specified" do
+          let(:selectors) { [] }
+
+          let(:options) do
+            {
+              ignore_selectors: [{ pacticipant_name: "Foo", pacticipant_version_number: "1", latest: true }]
+            }
+          end
+
+          it "returns an error message" do
+            expect(subject).to include "A version number and latest flag cannot both be specified for Foo to ignore"
           end
         end
       end
