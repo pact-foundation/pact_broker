@@ -25,17 +25,6 @@ test:
     password: postgres
     host: postgres
     port: "5432"
-  mysql:
-    <<: *default
-    adapter: mysql2
-  docker_compose_mysql:
-    <<: *default
-    adapter: mysql2
-    host: mysql
-  docker_mysql:
-    <<: *default
-    adapter: mysql2
-    host: "192.168.0.9"
   github_actions_postgres:
     adapter: postgres
     database: postgres
@@ -43,13 +32,6 @@ test:
     password: postgres
     host: localhost
     port: "5432"
-  github_actions_mysql:
-    adapter: mysql2
-    database: pact_broker
-    username: pact_broker
-    password: pact_broker
-    host: localhost
-    port: 3306
 
 development:
   default:
@@ -65,13 +47,6 @@ development:
     password: postgres
     host: localhost
     port: "5432"
-  mysql:
-    <<: *default
-    adapter: mysql2
-  docker_mysql:
-    <<: *default
-    adapter: mysql2
-    host: localhost
 
 production:
   default:

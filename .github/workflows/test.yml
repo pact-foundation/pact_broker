@@ -36,7 +36,6 @@ jobs:
     needs:
       - sqlite
       - postgres
-      - mysql
       - rubocop
       - pact-verify
       - bundle-audit
@@ -119,31 +118,6 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           flags: postgres
-          files: tmp/rspec/quick.xml,tmp/rspec/slow.xml
-          disable_search: true
-          report_type: test_results
-
-  mysql:
-    runs-on: "ubuntu-latest"
-    steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-      - run: script/test/run-rake-on-docker-compose-mysql.sh
-
-      - name: Upload coverage to Codecov
-        if: ${{ !cancelled() }}
-        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          flags: mysql
-          files: coverage/coverage.xml
-          disable_search: true
-
-      - name: Upload test results to Codecov
-        if: ${{ !cancelled() }}
-        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          flags: mysql
           files: tmp/rspec/quick.xml,tmp/rspec/slow.xml
           disable_search: true
           report_type: test_results
