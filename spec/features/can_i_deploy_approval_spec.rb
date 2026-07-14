@@ -34,4 +34,27 @@ describe "GET /can-i-deploy approval" do
     subject { get("/can-i-deploy", {}, { "HTTP_ACCEPT" => "application/hal+json" }) }
     it("snapshots") { subject }
   end
+
+  # A second, failing integration for Foo v1, added only for these two examples, to pin the
+  # `ignore` selector decision path. Baz has not been deployed to "production", so without
+  # ignoring it, Foo v1 is not deployable to "production"; ignoring Baz restores the
+  # already-deployable result from the shared Foo/Bar fixture above, confirming the ignore
+  # selector actually alters the decision.
+  describe "can-i-deploy Foo v1 to the production environment with a failing integration" do
+    before do
+      td.create_provider("Baz")
+        .create_pact
+        .create_verification(provider_version: "99", success: false)
+    end
+
+    describe "without ignoring the failing integration" do
+      subject { get("/can-i-deploy", { pacticipant: "Foo", version: "1", environment: "production" }, { "HTTP_ACCEPT" => "application/hal+json" }) }
+      it("snapshots") { subject }
+    end
+
+    describe "ignoring the failing integration" do
+      subject { get("/can-i-deploy", { pacticipant: "Foo", version: "1", environment: "production", ignore: ["Baz"] }, { "HTTP_ACCEPT" => "application/hal+json" }) }
+      it("snapshots") { subject }
+    end
+  end
 end
