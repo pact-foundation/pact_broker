@@ -83,20 +83,25 @@ module PactBroker
       end
 
       describe "success filter runs after latestby" do
-        # Two verifications for the SAME (consumer_version, provider_version) pair
-        # (Foo v1 / Bar v5): an earlier one that succeeded, and a later one that failed.
-        # Because apply_latestby (via the DB's per-pact_version/provider_version "latest
-        # verification" view - see the NOTE above) keeps only the actual latest
-        # verification for this pair BEFORE apply_success_filter runs, the earlier
-        # successful verification is never in the running for the success filter at all.
+        # Two verifications for Foo v1 / Bar against DISTINCT provider versions (5 and 6),
+        # where the HIGHER provider_version_order verification (6) FAILS and the LOWER one
+        # (5) SUCCEEDS. Because the two provider versions are distinct, the SQL materialized
+        # table `latest_verification_id_for_pact_version_and_provider_version` (see the NOTE
+        # above) does not collapse them - BOTH rows survive to reach Ruby.
         #
-        # If success filtering ran BEFORE latestby instead, the successful verification
-        # would survive a success:[true] filter, and there would be a row left for
-        # latestby to dedup - so the pair WOULD appear in the result.
+        # With latestby: "cvp" (group by consumer+provider, ignoring provider_version), the
+        # Ruby-level apply_latestby step is what picks a single row per integration, and it
+        # is the discriminating operation here:
+        #   - Real order (apply_latestby then apply_success_filter): apply_latestby picks
+        #     the row with the highest provider_version_order - pv 6, which failed. Then
+        #     apply_success_filter([true]) drops that row because it did not succeed.
+        #   - Reversed order (apply_success_filter then apply_latestby): apply_success_filter
+        #     would first drop the failing pv 6 row, leaving only the successful pv 5 row,
+        #     which apply_latestby would then keep - producing 1 row instead of 0.
         before do
           td.create_pact_with_hierarchy("Foo", "1", "Bar")
             .create_verification(provider_version: "5", success: true, number: 1)
-            .create_verification(provider_version: "5", success: false, number: 2)
+            .create_verification(provider_version: "6", success: false, number: 2)
         end
 
         let(:selectors) do
@@ -108,15 +113,15 @@ module PactBroker
 
         subject { Repository.new.find(selectors, options) }
 
-        context "latestby cvpv with success:[true]" do
-          let(:options) { { latestby: "cvpv", success: [true] } }
+        context "latestby cvp with success:[true]" do
+          let(:options) { { latestby: "cvp", success: [true] } }
 
-          it "does not resurrect the earlier successful verification once latestby has picked the (failing) latest row for the pair" do
-            # Pinning the ACTUAL observed behaviour: latestby keeps the truly latest
-            # verification for this pair (number 2, success: false). apply_success_filter
-            # then runs on that single row and drops it, because success:[true] excludes
-            # it. The pair is NOT resurrected via the earlier successful verification -
-            # the result is empty.
+          it "does not resurrect the earlier successful verification once latestby has picked the (failing) highest provider_version_order row for the pair" do
+            # Pinning the ACTUAL observed behaviour: apply_latestby picks the row with the
+            # highest provider_version_order for the pair (pv 6, success: false).
+            # apply_success_filter then runs on that single row and drops it, because
+            # success:[true] excludes it. The pair is NOT resurrected via the earlier
+            # successful (pv 5) verification - the result is empty.
             expect(subject.rows.size).to eq 0
           end
         end
