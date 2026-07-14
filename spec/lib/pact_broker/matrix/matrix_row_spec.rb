@@ -68,6 +68,25 @@ module PactBroker
             expect(subject.last.consumer_version_number).to eq "1"
           end
         end
+
+        context "when two different pacts share the same last action date (pact_order/verification_id tie-break)" do
+          before do
+            # Two pacts published and verified on the same simulated day, so last_action_date
+            # ties and the query falls through to ordering by pact_order desc, then verification_id desc.
+            td.create_pact_with_hierarchy("Foo", "1", "Bar")
+              .create_verification(provider_version: "10", created_at: day_1)
+              .create_pact_with_hierarchy("Foo", "2", "Baz")
+              .create_verification(provider_version: "20", created_at: day_1)
+          end
+
+          let(:day_1) { DateTime.now + 1 }
+
+          it "orders the most recently created pact first (documents current pact_order tie-break)" do
+            expect(subject.first.last_action_date).to eq subject.last.last_action_date
+            expect(subject.first.consumer_version_number).to eq "2"
+            expect(subject.last.consumer_version_number).to eq "1"
+          end
+        end
       end
     end
   end
