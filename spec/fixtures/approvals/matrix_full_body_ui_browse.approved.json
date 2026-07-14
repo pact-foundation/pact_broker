@@ -8,9 +8,9 @@
     "headers": {
       "content-type": "application/hal+json;charset=utf-8",
       "vary": "Accept",
-      "content-length": "3523",
+      "content-length": "<timestamps>",
       "date": "<timestamps>",
-      "server": "Webmachine-Ruby/2.0.1 Rack/3.2"
+      "server": "<timestamps>"
     },
     "body": {
       "summary": {
