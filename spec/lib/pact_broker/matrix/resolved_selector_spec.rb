@@ -123,6 +123,8 @@ module PactBroker
             its(:description) { is_expected.to eq "any version of Foo" }
             its(:only_pacticipant_name_specified?) { is_expected.to be true }
           end
+
+          its(:version_does_not_exist_description) { is_expected.to eq "" }
         end
 
         context "for non existing version" do
@@ -213,6 +215,26 @@ module PactBroker
             its(:description) { is_expected.to eq "the latest version of Foo from the main branch (no versions exist for this branch)" }
             its(:version_does_not_exist_description) { is_expected.to eq "No version of Foo from the main branch exists" }
           end
+
+          context "when it was specified by latest only, with no matching version" do
+            let(:latest) { true }
+
+            its(:description) { is_expected.to eq "the latest version of Foo (no such version exists)" }
+          end
+        end
+
+        context "for a non existing pacticipant" do
+          let(:subject) do
+            PactBroker::Matrix::ResolvedSelector.for_non_existing_pacticipant(original_selector, :specified, true)
+          end
+
+          let(:original_selector) do
+            {
+              pacticipant_name: "Foo"
+            }
+          end
+
+          its(:description) { is_expected.to eq "any version of Foo (no such pacticipant exists)" }
         end
       end
     end
