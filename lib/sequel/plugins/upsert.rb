@@ -19,7 +19,7 @@ module Sequel
 
         def upsert(opts = {})
           @upsert_plugin_upserting = true
-          if postgres? || mysql?
+          if postgres?
             save(opts)
           else
             manual_upsert(opts)
@@ -92,19 +92,12 @@ module Sequel
           if upsert_plugin_upserting
             if postgres?
               super.insert_conflict(update: values_to_update, target: self.class.upsert_plugin_identifying_columns)
-            elsif mysql?
-              columns_to_update = values_to_update.keys - self.class.upsert_plugin_identifying_columns
-              super.on_duplicate_key_update(*columns_to_update)
             else
               super
             end
           else
             super
           end
-        end
-
-        def mysql?
-          model.db.adapter_scheme.to_s =~ /mysql/
         end
 
         def postgres?
