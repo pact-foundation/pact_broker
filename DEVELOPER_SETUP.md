@@ -53,7 +53,7 @@ Remember to rebuild the image if you change any of the gems or gem versions.
 * Check out the pact_broker repository and cd into it.
 * Run `bundle install`. If you have any gem conflict issues, run `bundle update`.
 
-To make the barrier to entry as low as possible, the mysql2 and pg gems are not installed by default, as they require mysql and postgres to be installed on your local machine. If you want to install them, run `bundle config set --local with pg mysql` before running `bundle install`.
+To make the barrier to entry as low as possible, the pg gem is not installed by default, as it requires postgres to be installed on your local machine. If you want to install it, run `bundle config set --local with pg` before running `bundle install`.
 
 ## Running a local application
 
@@ -61,7 +61,7 @@ To make the barrier to entry as low as possible, the mysql2 and pg gems are not 
 * Run `bundle exec rackup`.
 * The application will be available on `http://localhost:9292`. It uses a sqlite database that is stored in the `./tmp` directory.
 
-You can set the `PACT_BROKER_DATABASE_URL` environment variable to use a postgres/mysql database using the format `driver://username:password@host:port/database` eg. `postgres://pact_broker:password@localhost/pact_broker`. Ensure you have run `bundle config set --local with pg mysql` and run `bundle install` to make sure the required gems are present.
+You can set the `PACT_BROKER_DATABASE_URL` environment variable to use a postgres database using the format `driver://username:password@host:port/database` eg. `postgres://pact_broker:password@localhost/pact_broker`. Ensure you have run `bundle config set --local with pg` and run `bundle install` to make sure the required gems are present.
 
 ## Listing the routes
 
@@ -69,7 +69,7 @@ You can set the `PACT_BROKER_DATABASE_URL` environment variable to use a postgre
 bundle exec rake pact_broker:routes
 ```
 
-## Running the tests with postgres and mysql
+## Running the tests with postgres
 
 ```
 docker-compose -f docker-compose-test.yml up --build --remove-orphans
@@ -77,20 +77,11 @@ docker-compose -f docker-compose-test.yml up --build --remove-orphans
 # in separate console window...
 docker-compose -f docker-compose-test.yml run --rm postgres-tests bash
 
-# in separate console window...
-docker-compose -f docker-compose-test.yml run --rm mysql-tests bash
-
 # inside the tests container
 bundle exec rake
 
 # if you don't want to run the whole rake test suite, init the db first
 /home/init-db.sh
-```
-
-Running a mysql client in the mysql-tests container:
-
-```
-mysql -hmysql -upact_broker -ppact_broker
 ```
 
 Running a postgresql client in the postgres-tests container:
