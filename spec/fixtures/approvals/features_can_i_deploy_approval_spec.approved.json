@@ -22,5 +22,26 @@
   "GET /can-i-deploy approval can-i-deploy with missing required params returns a validation error snapshots": {
     "status": 400,
     "summary": null
+  },
+  "GET /can-i-deploy approval can-i-deploy Foo v1 to the production environment with a failing integration without ignoring the failing integration snapshots": {
+    "status": 200,
+    "summary": {
+      "deployable": null,
+      "reason": "There is no verified pact between version 1 of Foo and a version of Baz currently in production (no version is currently recorded as deployed/released in this environment)",
+      "success": 1,
+      "failed": 0,
+      "unknown": 1
+    }
+  },
+  "GET /can-i-deploy approval can-i-deploy Foo v1 to the production environment with a failing integration ignoring the failing integration snapshots": {
+    "status": 200,
+    "summary": {
+      "deployable": true,
+      "reason": "All required verification results are published and successful",
+      "success": 1,
+      "failed": 0,
+      "unknown": 0,
+      "ignored": 1
+    }
   }
 }

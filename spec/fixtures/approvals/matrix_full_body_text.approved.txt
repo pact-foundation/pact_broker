@@ -1,0 +1,9 @@
+CONSUMER | C_VERSION | REVISION | PROVIDER | P_VERSION | NUMBER | SUCCESS
+---------|-----------|----------|----------|-----------|--------|--------
+Foo      | 3         | 1        | Bar      |           |        |        
+Foo      | 2         | 1        | Bar      | 20        | 1      | false  
+Foo      | 1         | 1        | Bar      | 10        | 1      | true   
+
+Deployable: nil
+Reason: The verification for the pact between any version of Foo and any version of Bar failed
+There is no verified pact between any version of Foo and any version of Bar

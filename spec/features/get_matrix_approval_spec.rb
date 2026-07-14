@@ -129,5 +129,30 @@ describe "GET /matrix approval" do
     it "matches the expected body", skip: !PactBroker::TestDatabase.sqlite? do
       Approvals.verify(fixture, name: "matrix_full_body_ui_browse", format: :json)
     end
+
+    after do
+      Approvals.configure { |config| config.excluded_json_keys = {} }
+    end
+  end
+
+  # --- text/plain response body (public contract consumed by the can-i-deploy CLI) ---
+  # Pinned under sqlite only, over the same shared fixture graph as the hal+json full-body snapshot.
+  describe "full response body, text/plain (public contract)" do
+    before { build_matrix_fixture_graph }
+
+    subject { get("/matrix?q[][pacticipant]=Foo&q[][pacticipant]=Bar&latestby=cvpv", nil, { "HTTP_ACCEPT" => "text/plain" }) }
+
+    # Unlike the hal+json body, the plain-text table (consumed by the can-i-deploy CLI) renders no
+    # dates, timestamps, or raw DB ids for this query, so a full-body snapshot is deterministic
+    # here. Confirmed by running this example twice and diffing the .received.txt output
+    # byte-for-byte before approving.
+    it "matches the expected body", skip: !PactBroker::TestDatabase.sqlite? do
+      Approvals.verify(subject.body, name: "matrix_full_body_text", format: :txt)
+    end
+
+    it "returns the expected status and content type" do
+      expect(subject.status).to eq 200
+      expect(subject.headers["Content-Type"]).to eq "text/plain;charset=utf-8"
+    end
   end
 end
