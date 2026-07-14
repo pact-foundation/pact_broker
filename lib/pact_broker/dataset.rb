@@ -8,10 +8,6 @@ module PactBroker
     module Helpers
       extend self
 
-      def mysql?
-        Sequel::Model.db.adapter_scheme.to_s =~ /mysql/
-      end
-
       def postgres?
         Sequel::Model.db.adapter_scheme.to_s =~ /postgres/
       end
@@ -32,12 +28,7 @@ module PactBroker
 
     def name_like column_name, value
       if PactBroker.configuration.use_case_sensitive_resource_names
-        if mysql?
-          # sigh, mysql, this is the only way to perform a case sensitive search
-          Sequel.like(column_name, value.gsub("_", "\\_"), { case_insensitive: false })
-        else
-          { column_name => value }
-        end
+        { column_name => value }
       else
         Sequel.like(column_name, value.gsub("_", "\\_"), { case_insensitive: true })
       end
@@ -82,12 +73,7 @@ module PactBroker
     end
 
     def select_for_subquery column
-      if mysql? #stoopid mysql doesn't allow you to modify datasets with subqueries
-        column_name = column.respond_to?(:alias) ? column.alias : column
-        select(column).collect{ | it | it[column_name] }
-      else
-        select(column)
-      end
+      select(column)
     end
 
     def no_columns_selected?
@@ -109,12 +95,7 @@ module Sequel
   # This has been used inconsistently, and in the next major version, support for case insensitive names will be dropped.
   def self.name_like(column_name, value)
     if PactBroker.configuration.use_case_sensitive_resource_names
-      if PactBroker::Dataset::Helpers.mysql?
-        # sigh, mysql, this is the only way to perform a case sensitive search
-        Sequel.like(column_name, PactBroker::Dataset::Helpers.escape_wildcards(value), { case_insensitive: false })
-      else
-        { column_name => value }
-      end
+      { column_name => value }
     else
       Sequel.like(column_name, PactBroker::Dataset::Helpers.escape_wildcards(value), { case_insensitive: true })
     end

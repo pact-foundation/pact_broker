@@ -156,11 +156,6 @@ module PactBroker
 
       def delete_orphan_pact_versions
         db[:pact_versions].where(id: orphan_pact_versions).delete
-      rescue Sequel::DatabaseError => e
-        raise unless e.cause.class.name == "Mysql2::Error"
-
-        ids = orphan_pact_versions.map { |row| row[:id] }
-        db[:pact_versions].where(id: ids).delete
       end
 
       def orphan_pact_versions
