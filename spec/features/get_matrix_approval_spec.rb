@@ -108,10 +108,11 @@ describe "GET /matrix approval" do
       build_matrix_fixture_graph
       Approvals.configure do |config|
         # determinate_headers strips "Date"/"Server"/"Content-Length" by capitalized
-        # key, but Rack 3 returns lowercase header keys, so the "date" header still
-        # varies run-to-run. Scrub it here, alongside the two date-bearing decorator
-        # keys, following the pattern in get_provider_pacts_for_verification_spec.rb.
-        config.excluded_json_keys = { timestamps: /createdAt|verifiedAt|^date$/ }
+        # key, but Rack 3 returns lowercase header keys, so the "date", "server" and
+        # "content-length" headers still vary run-to-run. Scrub them here, alongside
+        # the two date-bearing decorator keys, following the pattern in
+        # get_provider_pacts_for_verification_spec.rb.
+        config.excluded_json_keys = { timestamps: /createdAt|verifiedAt|^date$|^content-length$|^server$/ }
       end
     end
 
