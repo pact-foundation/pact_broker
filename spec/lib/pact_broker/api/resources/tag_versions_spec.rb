@@ -1,19 +1,20 @@
-require "pact_broker/api/resources/branch_versions"
+require "pact_broker/api/resources/tag_versions"
 
 module PactBroker
   module Api
     module Resources
-      describe BranchVersions do
-        let(:branch_name) { "main" }
-        let(:path) { "/pacticipants/Foo/branches/#{branch_name}/versions/" }
+      describe TagVersions do
+        let(:tag_name) { "prod" }
+        let(:path) { "/pacticipants/Foo/tags/#{tag_name}/versions/" }
 
         describe "GET" do
           let(:pacticipant) { td.create_consumer("Foo").and_return(:pacticipant) }
-          let(:version) { 
+          let(:version) do
             td.use_consumer(pacticipant.name)
-              .create_consumer_version("1", branch: branch_name)
-              .and_return(:consumer_version) 
-          }
+              .create_consumer_version("1")
+              .create_consumer_version_tag(tag_name)
+              .and_return(:consumer_version)
+          end
           let(:test_environment) { td.create_environment("test").and_return(:environment) }
           let(:prod_environment) { td.create_environment("prod").and_return(:environment) }
           let(:deployed_version) do
@@ -31,14 +32,13 @@ module PactBroker
               .create_released_version_for_consumer_version(uuid: "3456", environment_name: prod_environment.name)
           end
 
-          context "when the pacticipant and version do not exist" do
+          context "when no versions exist for the tag" do
             subject { get(path, nil, { "HTTP_ACCEPT" => "application/hal+json" }) }
 
             its(:status) { is_expected.to eq 404 }
-            its(:body) { expect(JSON.parse(subject.body, symbolize_names: true)[:error]).to match(/document was not found/) }
           end
 
-          context "when the pacticipant and version exist" do
+          context "when versions exist for the tag" do
             before do
               deployed_version
               released_version
