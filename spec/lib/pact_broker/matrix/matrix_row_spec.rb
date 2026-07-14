@@ -71,11 +71,13 @@ module PactBroker
 
         context "when two different pacts share the same last action date (pact_order tie-break)" do
           before do
-            # Two pacts published and verified on the same simulated day, so last_action_date
-            # ties and the query falls through to ordering by pact_order desc. The query has a
-            # further verification_id desc tie-break, but it is not exercised here: pact_order is
-            # the pact_publication_id, which is unique per pact, so it always disambiguates first.
-            # The verification_id tie-break is not reachable via the public test-data builder.
+            # Two DIFFERENT pacts published and verified on the same simulated day, so
+            # last_action_date ties and the query falls through to ordering by pact_order desc.
+            # pact_order is the pact_publication_id, which is unique per pact, so it always
+            # disambiguates two different pacts before the query would need to reach the
+            # further verification_id desc tie-break. See the "verification_id tie-break"
+            # context below for a fixture where pact_order also ties, forcing the ordering
+            # through to verification_id.
             td.create_pact_with_hierarchy("Foo", "1", "Bar")
               .create_verification(provider_version: "10", created_at: day_1)
               .create_pact_with_hierarchy("Foo", "2", "Baz")
@@ -88,6 +90,31 @@ module PactBroker
             expect(subject.first.last_action_date).to eq subject.last.last_action_date
             expect(subject.first.consumer_version_number).to eq "2"
             expect(subject.last.consumer_version_number).to eq "1"
+          end
+        end
+
+        context "when the same pact is verified by two provider versions on the same last action date (verification_id tie-break)" do
+          before do
+            # ONE pact (one pact_publication_id) verified by TWO provider versions, both created
+            # at the same simulated instant. Because it's the same pact, both rows share the same
+            # pact_order (pact_publication_id), so the first tie-break (pact_order) also ties.
+            # Because both provider versions share the same created_at, and last_action_date is
+            # the max of consumer_version_created_at/provider_version_created_at for a single
+            # shared consumer version, both rows' last_action_date ties too. This forces the
+            # ordering through to the third tie-break, verification_id desc.
+            td.create_pact_with_hierarchy("Foo", "1", "Bar")
+              .create_verification(provider_version: "10", created_at: day_1)
+              .create_verification(provider_version: "20", number: 2, created_at: day_1)
+          end
+
+          let(:day_1) { DateTime.now + 1 }
+
+          it "orders the most recently created verification first (documents current verification_id tie-break)" do
+            expect(subject.first.last_action_date).to eq subject.last.last_action_date
+            expect(subject.first.values[:pact_order]).to eq subject.last.values[:pact_order]
+            expect(subject.first.consumer_version_number).to eq subject.last.consumer_version_number
+            expect(subject.first.provider_version_number).to eq "20"
+            expect(subject.last.provider_version_number).to eq "10"
           end
         end
 
