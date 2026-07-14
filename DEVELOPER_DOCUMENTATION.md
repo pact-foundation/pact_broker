@@ -131,11 +131,10 @@ In the beginning, I made a lot of Sequel models based on views that pulled in th
 
 ### Useful to know stuff
 
-* The supported database types are Postgres (recommended), MySQL (but not officially) and Sqlite (just for testing, not recommended
-  for production). Check the travis.yml file for the supported database versions.
+* The supported database types are Postgres (recommended for production) and Sqlite (just for testing, not recommended
+  for production). Check the .github/workflows/test.yml file for the supported database versions.
 * Any migration that uses the "order" column has to be defined using the Sequel DSL rather than pure SQL, because the
-  word "order" is a key word, and it has to be escaped correctly and differently on each database (Postgres, MySQL,
-  Sqlite).
+  word "order" is a key word, and it has to be escaped correctly and differently on each database (Postgres, Sqlite).
 
 ## Adding a Resource
 
