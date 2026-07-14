@@ -35,6 +35,16 @@ module PactBroker
             expect(json_response_body[:errors]).to eq ["foo"]
           end
         end
+
+        context "when the request is valid" do
+          let(:selectors) { [PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: "Foo")] }
+          let(:options) { { latestby: "cvpv", limit: "100", ignore_selectors: [] } }
+
+          it "passes the parsed selectors and options straight through to the service" do
+            expect(PactBroker::Matrix::Service).to receive(:can_i_deploy).with(selectors, options).and_return([])
+            subject
+          end
+        end
       end
     end
   end
