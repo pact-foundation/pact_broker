@@ -4,8 +4,7 @@ require "timecop"
 
 module PactBroker
   module DB
-    # Inner queries don't work on MySQL. Seriously, MySQL???
-    describe Clean, pending: !!DB.mysql?  do
+    describe Clean do
 
       def pact_publication_count_for(consumer_name, version_number)
         PactBroker::Pacts::PactPublication.where(consumer_version: PactBroker::Domain::Version.where_pacticipant_name(consumer_name).where(number: version_number)).count

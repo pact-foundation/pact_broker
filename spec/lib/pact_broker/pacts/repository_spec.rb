@@ -388,7 +388,7 @@ module PactBroker
               allow(repository).to receive(:next_revision_number) { | existing_pact | existing_pact.revision_number }
             end
 
-            it "updates the existing row - yes this is destructive, by MySQL not supporting inner queries stops us doing a SELECT revision_number + 1" do
+            it "updates the existing row - yes this is destructive, but SQLite not supporting inner queries stops us doing a SELECT revision_number + 1" do
               # And if we're conflicting the time between the two publications is so small that nobody
               # can have depended on the content of the first pact
               expect { subject }.to_not change{ PactBroker::Pacts::PactPublication.count }

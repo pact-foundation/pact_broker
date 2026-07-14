@@ -55,9 +55,7 @@ module PactBroker
             model.truncate(cascade: true)
           else
             logger.info("Deleting all from ", model.table_name)
-            # Mysql adapter needs to support cascade truncate
-            # https://travis-ci.org/pact-foundation/pact_broker/jobs/633050220#L841
-            # https://travis-ci.org/pact-foundation/pact_broker/jobs/633053228#L849
+            # SQLite does not support cascade truncate, so delete instead
             model.dataset.delete
           end
         end

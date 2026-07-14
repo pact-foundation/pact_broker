@@ -10,7 +10,7 @@ RSpec::Matchers.define :be_datey do |_expected|
   end
 end
 
-# Need this because dates get loaded into models as strings when using MySQL
+# Need this because dates get loaded into models as strings when using SQLite
 RSpec::Matchers.define :be_date_time do |expected|
   match do |actual|
     PactBroker::Api::Decorators::FormatDateTime.call(expected) == PactBroker::Api::Decorators::FormatDateTime.call(actual)

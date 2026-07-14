@@ -74,7 +74,7 @@ module PactBroker
       def set_contract_data_updated_at_for_multiple_integrations(objects_with_consumer_and_provider)
         consumer_and_provider_ids = objects_with_consumer_and_provider.collect{ | object | { consumer_id: object.consumer&.id, provider_id: object.provider.id }.compact }.uniq
 
-        # MySQL doesn't support an UPDATE with a subquery. FFS. Really need to do a major version release and delete the support code.
+        # Not all supported databases handle an UPDATE with a subquery, so branch on SKIP LOCKED support.
         criteria =  if Integration.dataset.supports_skip_locked?
                       integration_ids_to_update = Integration
                                                   .select(:id)
