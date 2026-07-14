@@ -57,12 +57,5 @@ module PactBroker
       PactBroker::DB::ValidateEncoding.(connection)
     end
 
-    def self.set_mysql_strict_mode_if_mysql
-      connection.run("SET sql_mode='STRICT_TRANS_TABLES';") if mysql?
-    end
-
-    def self.mysql?
-      connection.adapter_scheme =~ /mysql/
-    end
   end
 end
