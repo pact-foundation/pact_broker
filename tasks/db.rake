@@ -37,10 +37,6 @@ namespace :db do
       puts `psql postgres -c "GRANT ALL PRIVILEGES ON DATABASE pact_broker TO pact_broker;"`
     end
 
-    task :mysql do
-      puts `mysql -h localhost -u root -e "CREATE DATABASE IF NOT EXISTS pact_broker"`
-      puts `mysql -h localhost -u root -e "GRANT ALL PRIVILEGES ON pact_broker.* TO 'pact_broker'@'localhost' identified by 'pact_broker';"`
-    end
   end
 
   task :drop do
@@ -57,9 +53,6 @@ namespace :db do
       puts `psql postgres -c "drop DATABASE pact_broker;"`
     end
 
-    task :mysql do
-      puts `mysql -h localhost -u root -e "DROP DATABASE IF EXISTS pact_broker"`
-    end
   end
 
   desc "Print current schema version"
