@@ -1,9 +1,14 @@
 require "sequel"
 require "pact_broker/db/log_quietener"
 require "fileutils"
+require "pact_broker/error"
 
 module PactBroker
   def self.create_database_connection(config, logger = nil)
+    if config[:adapter].to_s =~ /mysql/
+      raise PactBroker::Error.new("MySQL is no longer supported. Please use PostgreSQL.")
+    end
+
     logger&.info("Connecting to database:", config.merge(password: "*****"))
 
     sequel_config = config.dup
