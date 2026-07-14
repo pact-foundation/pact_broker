@@ -171,9 +171,25 @@ module PactBroker
           end
 
           context "all pacticipants then all versions (KNOWN FRAGILITY)" do
-            # Rack groups the flat encoding by its repeated-key heuristic, which is
-            # order-dependent. When a client sends all pacticipants before all versions,
-            # the selectors mis-group. Pinned as-is; flagged for the optimisation phase.
+            # This query string is parsed by Rack::Utils.parse_nested_query, which builds
+            # the params hash key-by-key as it scans the query left to right:
+            #   - `q[]=` appends the value to the array at `q`
+            #   - `q[key]=` sets `key` on the hash at `q`
+            #   - `q[][key]=` appends a new hash to the array at `q`, then sets `key` on it
+            #     (a fresh hash is started only when a `q[]key=` pair repeats a key that the
+            #     "current" (last) hash in the array already has)
+            # This spec uses the flat `q[]key=` encoding (no `[]` around the sub-key), which
+            # is not one of Rack's documented forms above but is accepted by parse_nested_query
+            # as shorthand for `q[][key]=`: each `q[]pacticipant=` / `q[]version=` pair is
+            # merged into the last hash in the `q` array, and only starts a new hash when the
+            # key it's setting is already present on that last hash. Because this query sends
+            # pacticipant, pacticipant, version, version (rather than interleaving
+            # pacticipant/version pairs per selector), the repeated `pacticipant` key forces a
+            # new hash after "Foo", but the two `version` keys then land on the two most
+            # recently started hashes ("Bar" and a new empty one) instead of pairing back up
+            # with "Foo" and "Bar" as separate selectors. The grouping is an artifact of key
+            # order in the query string, not of selector intent — hence "mis-groups" below.
+            # Pinned as-is; flagged for the optimisation phase.
             let(:query) { "q[]pacticipant=Foo&q[]pacticipant=Bar&q[]version=1&q[]version=2" }
 
             it "mis-groups the selectors (documents current behaviour)" do
