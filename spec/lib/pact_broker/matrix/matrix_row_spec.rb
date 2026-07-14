@@ -69,10 +69,13 @@ module PactBroker
           end
         end
 
-        context "when two different pacts share the same last action date (pact_order/verification_id tie-break)" do
+        context "when two different pacts share the same last action date (pact_order tie-break)" do
           before do
             # Two pacts published and verified on the same simulated day, so last_action_date
-            # ties and the query falls through to ordering by pact_order desc, then verification_id desc.
+            # ties and the query falls through to ordering by pact_order desc. The query has a
+            # further verification_id desc tie-break, but it is not exercised here: pact_order is
+            # the pact_publication_id, which is unique per pact, so it always disambiguates first.
+            # The verification_id tie-break is not reachable via the public test-data builder.
             td.create_pact_with_hierarchy("Foo", "1", "Bar")
               .create_verification(provider_version: "10", created_at: day_1)
               .create_pact_with_hierarchy("Foo", "2", "Baz")
