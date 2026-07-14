@@ -5,13 +5,8 @@ module PactBroker
     module Decorators
       class ReasonDecorator
         def initialize(reason)
-          if reason.is_a?(PactBroker::Matrix::IgnoredReason)
-            @reason = reason.root_reason
-            @ignored = true
-          else
-            @reason = reason
-            @ignored = false
-          end
+          @reason = reason
+          @ignored = false
         end
 
         def to_s
