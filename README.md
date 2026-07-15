@@ -170,7 +170,7 @@ Please read the [UPGRADING.md](UPGRADING.md) documentation before upgrading your
 
 The Pact Broker follows the [semantic versioning](https://semver.org/) scheme.
 
-[decouple]: https://www.rea-group.com/blog/enter-the-pact-matrix-or-how-to-decouple-the-release-cycles-of-your-microservices/
+[decouple]: https://docs.pact.io/pact_broker/can_i_deploy
 [pact]: https://github.com/pact-foundation/pact-ruby
 [nerf]: https://github.com/pact-foundation/pact_broker/wiki/pact-broker-ci-nerf-gun
 [different-teams]: https://github.com/pact-foundation/pact-ruby/wiki/Using-pact-where-the-consumer-team-is-different-from-the-provider-team
