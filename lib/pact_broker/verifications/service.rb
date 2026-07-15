@@ -1,13 +1,4 @@
 require "delegate"
-require "pact_broker/repositories"
-require "pact_broker/api/decorators/verification_decorator"
-require "pact_broker/verifications/summary_for_consumer_version"
-require "pact_broker/logging"
-require "pact_broker/hash_refinements"
-require "pact_broker/events/publisher"
-require "pact_broker/verifications/required_verification"
-require "pact_broker/versions/selector"
-require "pact_broker/versions/selectors"
 
 module PactBroker
   module Verifications

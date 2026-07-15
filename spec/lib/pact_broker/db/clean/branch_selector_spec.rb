@@ -1,7 +1,7 @@
 require "pact_broker/db/clean/branch_selector"
 
 module PactBroker
-  module DB
+  module Db
     class Clean
       describe BranchSelector do
         describe ".from_hash" do

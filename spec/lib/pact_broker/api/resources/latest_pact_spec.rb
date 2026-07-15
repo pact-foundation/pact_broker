@@ -1,4 +1,3 @@
-require "pact_broker/api/resources/latest_pact"
 require "rack/test"
 
 module PactBroker::Api
@@ -19,7 +18,7 @@ module PactBroker::Api
 
           before do
             allow(PactBroker::Pacts::Service).to receive(:find_latest_pact).and_return(pact)
-            allow(PactBroker.configuration.html_pact_renderer).to receive(:call).and_return(html)
+            allow(PactBroker::Configuration.configuration.html_pact_renderer).to receive(:call).and_return(html)
             allow_any_instance_of(LatestPact).to receive(:ui_base_url).and_return("http://example.org")
           end
 
@@ -31,7 +30,7 @@ module PactBroker::Api
           end
 
           it "uses the configured HTML renderer" do
-            expect(PactBroker.configuration.html_pact_renderer).to receive(:call).with(pact, hash_including(html_options))
+            expect(PactBroker::Configuration.configuration.html_pact_renderer).to receive(:call).with(pact, hash_including(html_options))
             subject
           end
 

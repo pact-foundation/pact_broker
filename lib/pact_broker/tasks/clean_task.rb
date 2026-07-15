@@ -5,7 +5,7 @@
 require "rake/tasklib"
 
 module PactBroker
-  module DB
+  module Db
     class CleanTask < ::Rake::TaskLib
 
       attr_accessor :database_connection
@@ -18,26 +18,24 @@ module PactBroker
       attr_accessor :use_lock # allow disabling of postgres lock if it is causing problems
 
       def initialize &block
-        require "pact_broker/db/clean_incremental"
         @version_deletion_limit = 1000
         @dry_run = false
         @use_lock = true
-        @keep_version_selectors = PactBroker::DB::CleanIncremental::DEFAULT_KEEP_SELECTORS
-        @keep_branch_selectors = PactBroker::DB::CleanIncremental::DEFAULT_KEEP_BRANCH_SELECTORS
+        @keep_version_selectors = PactBroker::Db::CleanIncremental::DEFAULT_KEEP_SELECTORS
+        @keep_branch_selectors = PactBroker::Db::CleanIncremental::DEFAULT_KEEP_BRANCH_SELECTORS
         rake_task(&block)
       end
 
       def keep_version_selectors=(keep_version_selectors)
-        require "pact_broker/db/clean/selector"
         @keep_version_selectors = [*keep_version_selectors].collect do | hash |
-          PactBroker::DB::Clean::Selector.from_hash(hash)
+          PactBroker::Db::Clean::Selector.from_hash(hash)
         end
       end
 
       def keep_branch_selectors=(keep_branch_selectors)
         require "pact_broker/db/clean/branch_selector"
         @keep_branch_selectors = keep_branch_selectors.nil? ? nil : [*keep_branch_selectors].collect do | hash |
-          PactBroker::DB::Clean::BranchSelector.from_hash(hash)
+          PactBroker::Db::Clean::BranchSelector.from_hash(hash)
         end
       end
 
@@ -57,8 +55,7 @@ module PactBroker
       end
 
       def perform_clean
-        require "pact_broker/db/clean_incremental"
-        require "pact_broker/error"
+        
         require "yaml"
         require "benchmark"
 
@@ -74,7 +71,7 @@ module PactBroker
         output_keep_branch_selectors
 
         start_time = Time.now
-        results = PactBroker::DB::CleanIncremental.call(database_connection,
+        results = PactBroker::Db::CleanIncremental.call(database_connection,
           keep: keep_version_selectors,
           keep_branches: keep_branch_selectors,
           limit: version_deletion_limit,
@@ -102,9 +99,8 @@ module PactBroker
       # There will be 3 messages saying "Clean was not performed" and output from one thread showing the clean is being done.
       def with_lock
         if use_lock
-          require "pact_broker/db/advisory_lock"
 
-          lock = PactBroker::DB::AdvisoryLock.new(database_connection, :clean, :pg_try_advisory_lock)
+          lock = PactBroker::Db::AdvisoryLock.new(database_connection, :clean, :pg_try_advisory_lock)
           results = lock.with_lock do
             yield
           end
@@ -133,13 +129,13 @@ module PactBroker
 
       def add_defaults_to_keep_selectors
         if keep_version_selectors.none?(&:currently_deployed?)
-          selector = PactBroker::DB::Clean::Selector.new(deployed: true)
+          selector = PactBroker::Db::Clean::Selector.new(deployed: true)
           output("Automatically adding #{selector.to_hash} to keep version selectors")
           keep_version_selectors << selector
         end
 
         if keep_version_selectors.none?(&:currently_supported?)
-          selector = PactBroker::DB::Clean::Selector.new(released: true)
+          selector = PactBroker::Db::Clean::Selector.new(released: true)
           output("Automatically adding #{ selector.to_hash } to keep version selectors")
           keep_version_selectors << selector
         end

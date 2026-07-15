@@ -1,5 +1,4 @@
 require "uri"
-require "pact_broker/hash_refinements"
 
 module PactBroker
   module Config

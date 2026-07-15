@@ -1,4 +1,3 @@
-require "pact_broker/api/resources/branch_versions"
 
 module PactBroker
   module Api

@@ -1,4 +1,3 @@
-require "pact_broker/pacts/pact_publication"
 require "sequel/plugins/upsert"
 require "sequel"
 

@@ -1,4 +1,3 @@
-require "pact_broker/error"
 
 module PactBroker
   module Api

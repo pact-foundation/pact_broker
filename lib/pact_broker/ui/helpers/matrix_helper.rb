@@ -1,5 +1,5 @@
 module PactBroker
-  module UI
+  module Ui
     module Helpers
       module MatrixHelper
 

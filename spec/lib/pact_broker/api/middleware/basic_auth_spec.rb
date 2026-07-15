@@ -1,5 +1,3 @@
-require "pact_broker/api/middleware/basic_auth"
-require "pact_broker/api/authorization/resource_access_policy"
 
 module PactBroker
   module Api

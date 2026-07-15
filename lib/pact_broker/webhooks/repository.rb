@@ -1,12 +1,3 @@
-require "pact_broker/domain/webhook"
-require "pact_broker/domain/pacticipant"
-require "pact_broker/db"
-require "pact_broker/webhooks/webhook"
-require "pact_broker/webhooks/webhook_event"
-require "pact_broker/webhooks/triggered_webhook"
-require "pact_broker/webhooks/latest_triggered_webhook"
-require "pact_broker/webhooks/execution"
-require "pact_broker/logging"
 
 module PactBroker
   module Webhooks
@@ -200,7 +191,7 @@ module PactBroker
         if @no_policy
           scope
         else
-          PactBroker.policy_scope!(scope)
+          PactBroker::Policies.policy_scope!(scope)
         end
       end
 

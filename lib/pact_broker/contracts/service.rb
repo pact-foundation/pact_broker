@@ -1,13 +1,3 @@
-require "pact_broker/logging"
-require "pact_broker/repositories"
-require "pact_broker/services"
-require "pact_broker/messages"
-require "pact_broker/contracts/contracts_publication_results"
-require "pact_broker/contracts/notice"
-require "pact_broker/events/subscriber"
-require "pact_broker/api/pact_broker_urls"
-require "pact_broker/pacts/create_formatted_diff"
-require "pact_broker/pacts/pact_params"
 
 module PactBroker
   module Contracts
@@ -78,7 +68,7 @@ module PactBroker
       private :add_pact_conflict_notice
 
       def add_pacticipant_conflict_notices(notices, parsed_contracts, base_url)
-        if PactBroker.configuration.check_for_potential_duplicate_pacticipant_names
+        if PactBroker::Configuration.configuration.check_for_potential_duplicate_pacticipant_names
           duplicate_pacticipant_messages = pacticipant_service.messages_for_potential_duplicate_pacticipants(parsed_contracts.pacticipant_names, base_url)
           duplicate_pacticipant_messages.each do | message_text |
             notices << Notice.error(message_text)
@@ -155,7 +145,7 @@ module PactBroker
       private :create_pact_params
 
       def create_or_merge_pact(merge, existing_pact, pact_params, listener)
-        PactBroker::Events.subscribe(listener) do
+        Events::Subscriber.subscribe(listener) do
           if merge && existing_pact
             pact_service.merge_pact(pact_params)
           else

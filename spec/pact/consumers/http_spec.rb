@@ -1,12 +1,10 @@
 # frozen_string_literal: true
-
 require "pact_broker"
-require "pact_broker/app"
 require "rspec/mocks"
 include RSpec::Mocks::ExampleMethods
 require_relative "../../service_consumers/hal_relation_proxy_app"
 
-PactBroker.configuration.base_urls = ["http://example.org"]
+PactBroker::Configuration.configuration.base_urls = ["http://example.org"]
 
 pact_broker = PactBroker::App.new { |c| c.database_connection = PactBroker::TestDatabase.connection_for_test_database }
 app_to_verify = HalRelationProxyApp.new(pact_broker)

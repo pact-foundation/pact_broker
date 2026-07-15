@@ -8,7 +8,7 @@ require "rack/pact_broker/request_target"
 
 module Rack
   module PactBroker
-    class UIRequestFilter
+    class UiRequestFilter
       include RequestTarget
 
       def initialize app

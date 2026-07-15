@@ -1,9 +1,5 @@
 require_relative "base_decorator"
 require_relative "verifiable_pact_decorator"
-require "pact_broker/api/pact_broker_urls"
-require "pact_broker/hash_refinements"
-require "pact_broker/pacts/selector"
-require "pact_broker/pacts/selectors"
 
 module PactBroker
   module Api

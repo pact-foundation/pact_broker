@@ -1,5 +1,3 @@
-require "pact_broker/certificates/certificate"
-require "pact_broker/logging"
 require "openssl"
 
 module PactBroker
@@ -42,7 +40,7 @@ module PactBroker
       end
 
       def certificates_from_config
-        PactBroker.configuration.webhook_certificates.select{| c| c[:content] || c[:path] }.collect.with_index do | certificate_config, i |
+        PactBroker::Configuration.configuration.webhook_certificates.select{| c| c[:content] || c[:path] }.collect.with_index do | certificate_config, i |
           load_certificate_config(certificate_config, i)
         end.flatten.compact
       end

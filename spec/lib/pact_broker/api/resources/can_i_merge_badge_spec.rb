@@ -1,5 +1,3 @@
-require "pact_broker/api/resources/can_i_merge_badge"
-require "pact_broker/api/resources/base_resource"
 
 module PactBroker
   module Api

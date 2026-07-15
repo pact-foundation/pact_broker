@@ -1,11 +1,9 @@
 require "rackup"
 require "padrino-core"
 require "haml"
-require "pact_broker/services"
-require "pact_broker/string_refinements"
 
 module PactBroker
-  module UI
+  module Ui
     module Controllers
       class Base < Padrino::Application
         using PactBroker::StringRefinements

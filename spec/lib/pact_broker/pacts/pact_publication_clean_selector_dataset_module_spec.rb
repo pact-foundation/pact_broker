@@ -1,4 +1,3 @@
-require "pact_broker/db/clean/selector"
 
 module PactBroker
   module Pacts
@@ -15,7 +14,7 @@ module PactBroker
             .create_consumer_version_tag("prod")
         end
 
-        let(:selector) { PactBroker::DB::Clean::Selector.new(tag: "dev", latest: true) }
+        let(:selector) { PactBroker::Db::Clean::Selector.new(tag: "dev", latest: true) }
 
         it "returns matching rows" do
           expect(subject.count).to eq 1
@@ -33,7 +32,7 @@ module PactBroker
             .create_consumer_version_tag("dev")
         end
 
-        let(:selector) { PactBroker::DB::Clean::Selector.new(tag: "dev", latest: true, pacticipant_name: "Foo") }
+        let(:selector) { PactBroker::Db::Clean::Selector.new(tag: "dev", latest: true, pacticipant_name: "Foo") }
 
         it "returns matching rows" do
           expect(subject.count).to eq 1
@@ -51,7 +50,7 @@ module PactBroker
             .create_consumer_version_tag("prod")
         end
 
-        let(:selector) { PactBroker::DB::Clean::Selector.new(tag: "dev") }
+        let(:selector) { PactBroker::Db::Clean::Selector.new(tag: "dev") }
 
         it "returns matching rows (which are only the latest)" do
           expect(subject.count).to eq 1
@@ -69,7 +68,7 @@ module PactBroker
             .create_consumer_version_tag("prod")
         end
 
-        let(:selector) { PactBroker::DB::Clean::Selector.new(tag: true, latest: true) }
+        let(:selector) { PactBroker::Db::Clean::Selector.new(tag: true, latest: true) }
 
         it "returns matching rows" do
           expect(subject.count).to eq 2
@@ -87,7 +86,7 @@ module PactBroker
             .create_consumer_version_tag("dev")
         end
 
-        let(:selector) { PactBroker::DB::Clean::Selector.new(tag: true, latest: true, max_age: 5) }
+        let(:selector) { PactBroker::Db::Clean::Selector.new(tag: true, latest: true, max_age: 5) }
 
         it "returns matching rows" do
           expect(subject.count).to eq 1

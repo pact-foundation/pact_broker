@@ -1,6 +1,3 @@
-require "pact_broker/services"
-require "pact_broker/string_refinements"
-require "pact_broker/configuration"
 require "uri"
 
 module PactBroker
@@ -59,10 +56,10 @@ module PactBroker
         end
 
         def valid_version_number?(value)
-          if PactBroker.configuration.order_versions_by_date
+          if PactBroker::Configuration.configuration.order_versions_by_date
             true
           else
-            !!PactBroker.configuration.version_parser.call(value)
+            !!PactBroker::Configuration.configuration.version_parser.call(value)
           end
         end
       end

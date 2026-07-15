@@ -1,10 +1,5 @@
-require "pact_broker/project_root"
-require "pact_broker/db/migrate"
-require "pact_broker/db/version"
-require "pact_broker/db"
 require "sequel"
 require "yaml"
-require "pact_broker/db/table_dependency_calculator"
 require_relative "connection"
 
 Sequel.extension :migration
@@ -16,11 +11,11 @@ module PactBroker
 
     def migrate target = nil
       opts = target ? { target: target } : {}
-      PactBroker::DB::Migrate.call(database, opts)
+      PactBroker::Db::Migrate.call(database, opts)
     end
 
     def version
-      PactBroker::DB::Version.call(database)
+      PactBroker::Db::Version.call(database)
     end
 
     def delete_database_file
@@ -106,7 +101,7 @@ module PactBroker
     private
 
     def ordered_tables
-      PactBroker::DB::TableDependencyCalculator.call(database)
+      PactBroker::Db::TableDependencyCalculator.call(database)
     end
 
     def psql?

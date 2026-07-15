@@ -1,4 +1,3 @@
-require "pact_broker/domain/verification"
 
 describe "Publishing a pact verification" do
   let(:path) { "/pacts/provider/Provider/consumer/Consumer/pact-version/#{pact.pact_version_sha}/verification-results" }

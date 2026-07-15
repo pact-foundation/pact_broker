@@ -1,8 +1,6 @@
-require "pact_broker/db/validate_encoding"
-require "pact_broker/db"
 
 module PactBroker
-  module DB
+  module Db
 
     describe ValidateEncoding do
 

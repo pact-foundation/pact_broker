@@ -1,6 +1,4 @@
 require "rack/pact_broker/invalid_uri_protection"
-require "pact_broker/application_context"
-require "pact_broker/api/decorators/custom_error_problem_json_decorator"
 
 module Rack
   module PactBroker

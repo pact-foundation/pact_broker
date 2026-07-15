@@ -1,4 +1,3 @@
-require "pact_broker/doc/controllers/app"
 
 module PactBroker
   module Doc

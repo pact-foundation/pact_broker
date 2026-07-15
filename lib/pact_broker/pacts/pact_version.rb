@@ -1,6 +1,3 @@
-require "pact_broker/dataset"
-require "pact_broker/pacts/content"
-require "pact_broker/pacts/pact_version_association_loaders"
 
 module PactBroker
   module Pacts

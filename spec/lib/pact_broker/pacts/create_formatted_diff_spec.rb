@@ -1,5 +1,3 @@
-require "pact_broker/pacts/create_formatted_diff"
-require "pact_broker/pacts/repository"
 
 module PactBroker
   module Pacts

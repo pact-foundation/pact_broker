@@ -1,4 +1,3 @@
-require "pact_broker/hash_refinements"
 
 # A selector with the pacticipant id, name, version number, and version id set
 # This is created from either specified or inferred data, based on the user's query

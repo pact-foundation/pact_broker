@@ -1,4 +1,3 @@
-require "pact_broker/webhooks/webhook_request_template"
 
 module PactBroker
   module Webhooks

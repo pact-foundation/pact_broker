@@ -1,4 +1,3 @@
-require "pact_broker/pacts/metadata"
 
 module PactBroker
   module Pacts

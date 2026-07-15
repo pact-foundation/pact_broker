@@ -1,6 +1,3 @@
-require "pact_broker/diagnostic/resources/base_resource"
-require "pact_broker/db"
-require "pact_broker/logging"
 
 module PactBroker
   module Diagnostic
@@ -54,7 +51,7 @@ module PactBroker
         end
 
         def valid_database_connection?
-          connection = PactBroker::DB.connection
+          connection =PactBroker::Db.connection
           connection.synchronize do |synchronized_connection|
             connection.valid_connection? synchronized_connection
           end

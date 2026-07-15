@@ -1,5 +1,3 @@
-require "pact_broker/api/resources/latest_verifications_for_consumer_version"
-require "pact_broker/versions/service"
 
 module PactBroker
   module Api

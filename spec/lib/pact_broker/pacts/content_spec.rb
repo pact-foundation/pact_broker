@@ -1,4 +1,3 @@
-require "pact_broker/pacts/content"
 
 module PactBroker
   module Pacts

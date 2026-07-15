@@ -1,6 +1,4 @@
-require "pact_broker/api/decorators/pacticipants_decorator"
-require "pact_broker/domain/pacticipant"
-
+# 
 module PactBroker
   module Api
     module Decorators

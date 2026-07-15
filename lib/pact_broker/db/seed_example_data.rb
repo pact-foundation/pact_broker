@@ -1,8 +1,6 @@
-require "pact_broker/test/test_data_builder"
-require "pact_broker/pacticipants/service"
 
 module PactBroker
-  module DB
+  module Db
     class SeedExampleData
       CONSUMER_NAME = "Example App"
       PROVIDER_NAME = "Example API"

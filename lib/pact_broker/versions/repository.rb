@@ -1,9 +1,3 @@
-require "pact_broker/logging"
-require "pact_broker/domain/version"
-require "pact_broker/tags/repository"
-require "pact_broker/versions/branch"
-require "pact_broker/versions/branch_version"
-require "pact_broker/versions/branch_head"
 
 module PactBroker
   module Versions

@@ -1,16 +1,14 @@
-require "pact_broker/db/clean_incremental"
-require "pact_broker/matrix/unresolved_selector"
 require "timecop"
 
 module PactBroker
-  module DB
+  module Db
     describe CleanIncremental do
       def pact_publication_count_for(consumer_name, version_number)
         PactBroker::Pacts::PactPublication.where(consumer_version: PactBroker::Domain::Version.where_pacticipant_name(consumer_name).where(number: version_number)).count
       end
 
       let(:options) { {} }
-      let(:db) { PactBroker::DB.connection }
+      let(:db) {PactBroker::Db.connection }
 
 
       let(:latest_dev_selector) { PactBroker::Matrix::UnresolvedSelector.new(tag: "dev", latest: true) }
@@ -18,7 +16,7 @@ module PactBroker
       let(:limit) { 3 }
       let(:dry_run) { false }
 
-      subject { CleanIncremental.call(PactBroker::DB.connection, options) }
+      subject { CleanIncremental.call(PactBroker::Db.connection, options) }
 
       describe ".call"do
         context "when there are specified versions to keep" do
@@ -167,10 +165,10 @@ module PactBroker
           end
 
           # Keep all versions so only branch deletions are observable
-          let(:keep_all_versions) { [PactBroker::DB::Clean::Selector.new(max_age: 999)] }
+          let(:keep_all_versions) { [PactBroker::Db::Clean::Selector.new(max_age: 999)] }
 
           context "when keep_branches is configured with a max_age" do
-            let(:options) { { keep: keep_all_versions, keep_branches: [PactBroker::DB::Clean::BranchSelector.new(max_age: 90)] } }
+            let(:options) { { keep: keep_all_versions, keep_branches: [PactBroker::Db::Clean::BranchSelector.new(max_age: 90)] } }
 
             it "deletes branches whose updated_at is older than max_age" do
               expect { subject }.to change { PactBroker::Versions::Branch.where(name: "feat/old").count }.from(1).to(0)
@@ -194,7 +192,7 @@ module PactBroker
               PactBroker::Domain::Pacticipant.where(name: "Foo").update(main_branch: "main-protected")
             end
 
-            let(:options) { { keep: keep_all_versions, keep_branches: [PactBroker::DB::Clean::BranchSelector.new(max_age: 90)] } }
+            let(:options) { { keep: keep_all_versions, keep_branches: [PactBroker::Db::Clean::BranchSelector.new(max_age: 90)] } }
 
             it "never deletes the main branch even when stale" do
               expect { subject }.to_not change { PactBroker::Versions::Branch.where(name: "main-protected").count }
@@ -211,7 +209,7 @@ module PactBroker
               # ConsumerB intentionally has no main_branch set
             end
 
-            let(:options) { { keep: keep_all_versions, keep_branches: [PactBroker::DB::Clean::BranchSelector.new(max_age: 90)] } }
+            let(:options) { { keep: keep_all_versions, keep_branches: [PactBroker::Db::Clean::BranchSelector.new(max_age: 90)] } }
 
             def branch_count_for(pacticipant_name, branch_name)
               pacticipant_id = PactBroker::Domain::Pacticipant.where(name: pacticipant_name).get(:id)
@@ -232,8 +230,8 @@ module PactBroker
               {
                 keep: keep_all_versions,
                 keep_branches: [
-                  PactBroker::DB::Clean::BranchSelector.new(max_age: 90),
-                  PactBroker::DB::Clean::BranchSelector.new(branch: ["feat/old"])
+                  PactBroker::Db::Clean::BranchSelector.new(max_age: 90),
+                  PactBroker::Db::Clean::BranchSelector.new(branch: ["feat/old"])
                 ]
               }
             end

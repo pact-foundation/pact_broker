@@ -1,7 +1,6 @@
-require "pact_broker/ui/app"
 
-describe "UI index" do
-  let(:app) { PactBroker::UI::App.new }
+describe "Ui index" do
+  let(:app) { PactBroker::Ui::App.new }
   let(:params) { {} }
 
   before do

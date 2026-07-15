@@ -1,5 +1,3 @@
-require "pact_broker/pacts/pact_publication_selector_dataset_module"
-require "pact_broker/feature_toggle"
 
 module PactBroker
   module Pacts
@@ -478,7 +476,6 @@ module PactBroker
       end
 
       def delete
-        require "pact_broker/webhooks/triggered_webhook"
         PactBroker::Webhooks::TriggeredWebhook.where(pact_publication: self).delete
         super
       end

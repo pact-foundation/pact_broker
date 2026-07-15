@@ -1,9 +1,9 @@
-require "pact_broker/db/data_migrations/helpers"
+
 require "sequel/extensions/core_refinements"
 require "securerandom"
 
 module PactBroker
-  module DB
+  module Db
     module DataMigrations
       class SetWebhookUuid
         using Sequel::CoreRefinements

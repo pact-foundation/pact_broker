@@ -1,7 +1,3 @@
-require "pact_broker/api/resources/matrix"
-require "pact_broker/api/contracts/can_i_deploy_query_schema"
-require "pact_broker/matrix/parse_can_i_deploy_query"
-require "pact_broker/messages"
 
 module PactBroker
   module Api

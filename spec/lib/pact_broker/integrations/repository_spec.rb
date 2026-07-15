@@ -1,4 +1,3 @@
-require "pact_broker/integrations/repository"
 require "timecop"
 
 module PactBroker

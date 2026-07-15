@@ -1,5 +1,3 @@
-require "pact_broker/json"
-require "pact_broker/pacts/order_hash_keys"
 
 module PactBroker
   module Pacts

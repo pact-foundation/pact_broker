@@ -1,8 +1,3 @@
-require "pact_broker/api/resources/base_resource"
-require "pact_broker/db/clean"
-require "pact_broker/db/clean/branch_selector"
-require "pact_broker/matrix/unresolved_selector"
-
 # Not exposed yet as we'd need to support administrator auth first
 
 module PactBroker
@@ -20,14 +15,14 @@ module PactBroker
         def process_post
           if content_type_json?
             keep_selectors = (params[:keep] || []).collect do | hash |
-              PactBroker::DB::Clean::Selector.new(hash)
+              PactBroker::Db::Clean::Selector.new(hash)
             end
 
             keep_branch_selectors = (params[:keep_branches] || []).collect do | hash |
-              PactBroker::DB::Clean::BranchSelector.from_hash(hash)
+              PactBroker::Db::Clean::BranchSelector.from_hash(hash)
             end
 
-            result = PactBroker::DB::Clean.call(Sequel::Model.db, {
+            result = PactBroker::Db::Clean.call(Sequel::Model.db, {
               keep: keep_selectors,
               keep_branches: keep_branch_selectors.empty? ? nil : keep_branch_selectors
             })

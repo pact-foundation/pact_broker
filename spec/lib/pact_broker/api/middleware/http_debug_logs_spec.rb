@@ -1,4 +1,3 @@
-require "pact_broker/api/middleware/http_debug_logs"
 
 module PactBroker
   module Api

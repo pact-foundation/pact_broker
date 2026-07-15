@@ -1,5 +1,4 @@
-require "pact_broker/api/decorators/webhook_request_template_decorator"
-require "json"
+ require "json"
 
 module PactBroker
   module Api

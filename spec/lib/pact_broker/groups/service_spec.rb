@@ -1,4 +1,3 @@
-require "pact_broker/groups/service"
 
 module PactBroker
   module Groups

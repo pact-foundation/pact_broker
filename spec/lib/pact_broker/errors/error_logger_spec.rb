@@ -1,4 +1,3 @@
-require "pact_broker/errors/error_logger"
 
 module PactBroker
   module Errors
@@ -19,7 +18,7 @@ module PactBroker
 
       context "when the error class is in the warning_error_classes list" do
         before do
-          allow(PactBroker.configuration).to receive(:warning_error_classes).and_return([Sequel::ForeignKeyConstraintViolation])
+          allow(PactBroker::Configuration.configuration).to receive(:warning_error_classes).and_return([Sequel::ForeignKeyConstraintViolation])
         end
         let(:error) { Sequel::ForeignKeyConstraintViolation.new }
 
@@ -33,7 +32,7 @@ module PactBroker
         class TestCauseError < StandardError; end
 
         before do
-          allow(PactBroker.configuration).to receive(:warning_error_classes).and_return([TestCauseError])
+          allow(PactBroker::Configuration.configuration).to receive(:warning_error_classes).and_return([TestCauseError])
           allow(error).to receive(:cause).and_return(TestCauseError.new)
         end
 

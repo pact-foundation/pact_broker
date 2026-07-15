@@ -1,9 +1,3 @@
-require "pact_broker/api/resources/base_resource"
-require "pact_broker/services"
-require "pact_broker/api/decorators/webhook_execution_result_decorator"
-require "pact_broker/constants"
-require "pact_broker/webhooks/execution_configuration"
-require "pact_broker/api/resources/webhook_execution_methods"
 
 module PactBroker
   module Api
@@ -79,7 +73,7 @@ module PactBroker
         def decorator_options
           super(
             webhook: webhook,
-            show_response: PactBroker.configuration.show_webhook_response?
+            show_response: PactBroker::Configuration.configuration.show_webhook_response?
           )
         end
 

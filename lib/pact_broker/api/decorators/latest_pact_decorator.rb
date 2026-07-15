@@ -1,5 +1,4 @@
 require_relative "pact_details_decorator"
-require "pact_broker/api/decorators/timestamps"
 
 module PactBroker
 

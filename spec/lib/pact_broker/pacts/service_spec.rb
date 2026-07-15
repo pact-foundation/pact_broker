@@ -1,6 +1,3 @@
-require "pact_broker/pacts/service"
-require "pact_broker/pacts/pact_params"
-require "pact_broker/webhooks/execution_configuration"
 
 module PactBroker
   module Pacts

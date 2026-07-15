@@ -1,4 +1,3 @@
-require "pact_broker/tags/repository"
 
 module PactBroker
   module Tags
@@ -77,7 +76,7 @@ module PactBroker
 
           context "when case sensitivity is turned off and a name with different case is used" do
             before do
-              allow(PactBroker.configuration).to receive(:use_case_sensitive_resource_names).and_return(false)
+              allow(PactBroker::Configuration.configuration).to receive(:use_case_sensitive_resource_names).and_return(false)
             end
 
             let(:options) { {pacticipant_name: pacticipant_name.upcase, pacticipant_version_number: version_number.upcase, tag_name: tag_name.upcase} }

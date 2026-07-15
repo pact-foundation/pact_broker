@@ -1,8 +1,3 @@
-require "pact_broker/domain/verification"
-require "pact_broker/verifications/sequence"
-require "pact_broker/verifications/latest_verification_id_for_pact_version_and_provider_version"
-require "pact_broker/verifications/pact_version_provider_tag_successful_verification"
-require "pact_broker/repositories/scopes"
 
 module PactBroker
   module Verifications

@@ -1,4 +1,3 @@
-require "pact_broker/string_refinements"
 
 module PactBroker
   module Api

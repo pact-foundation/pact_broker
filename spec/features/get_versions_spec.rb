@@ -86,9 +86,9 @@ describe "Get versions" do
 
       # Setup query counter
       query_count = [0]  # Array so it can be mutated in the closure
-      original_log_method = PactBroker::DB.connection.method(:log_connection_yield)
+      original_log_method = PactBroker::Db.connection.method(:log_connection_yield)
 
-      PactBroker::DB.connection.define_singleton_method(:log_connection_yield) do |sql, conn, args=nil, &block|
+      PactBroker::Db.connection.define_singleton_method(:log_connection_yield) do |sql, conn, args=nil, &block|
         if sql.to_s.upcase.start_with?("SELECT") && !sql.to_s.include?("sqlite_master")
           query_count[0] += 1
         end
@@ -102,7 +102,7 @@ describe "Get versions" do
     after do
       # Restore original database logging method
       if @original_log_method
-        PactBroker::DB.connection.define_singleton_method(:log_connection_yield, @original_log_method)
+        PactBroker::Db.connection.define_singleton_method(:log_connection_yield, @original_log_method)
       end
 
       # Restore original _load_associated_objects method

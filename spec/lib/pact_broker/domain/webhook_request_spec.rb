@@ -1,4 +1,3 @@
-require "pact_broker/domain/webhook_request"
 require "webmock/rspec"
 
 module PactBroker

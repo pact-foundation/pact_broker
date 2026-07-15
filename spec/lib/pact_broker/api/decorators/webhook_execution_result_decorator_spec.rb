@@ -1,4 +1,3 @@
-require "pact_broker/api/decorators/webhook_execution_result_decorator"
 
 module PactBroker
   module Api

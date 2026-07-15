@@ -1,4 +1,3 @@
-require "pact_broker/api/renderers/html_pact_renderer"
 
 module PactBroker
   module Api

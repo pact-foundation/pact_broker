@@ -1,7 +1,6 @@
-require "pact_broker/db/data_migrations/set_pacticipant_main_branch"
 
 module PactBroker
-  module DB
+  module Db
     module DataMigrations
       describe SetPacticipantMainBranch, data_migration: true  do
         describe ".call" do

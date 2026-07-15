@@ -1,4 +1,3 @@
-require "pact_broker/api/contracts/pacticipant_schema"
 
 module PactBroker
   module Api

@@ -1,22 +1,17 @@
-require "pact_broker/logging"
-require "pact_broker/matrix/unresolved_selector"
-require "pact_broker/date_helper"
-require "pact_broker/db/clean/selector"
-require "pact_broker/db/clean/branch_selector"
 
 module PactBroker
-  module DB
+  module Db
     class CleanIncremental
       DEFAULT_KEEP_SELECTORS = [
-        PactBroker::DB::Clean::Selector.new(tag: true, latest: true),
-        PactBroker::DB::Clean::Selector.new(branch: true, latest: true),
-        PactBroker::DB::Clean::Selector.new(latest: true),
-        PactBroker::DB::Clean::Selector.new(deployed: true),
-        PactBroker::DB::Clean::Selector.new(released: true),
-        PactBroker::DB::Clean::Selector.new(max_age: 90)
+        PactBroker::Db::Clean::Selector.new(tag: true, latest: true),
+        PactBroker::Db::Clean::Selector.new(branch: true, latest: true),
+        PactBroker::Db::Clean::Selector.new(latest: true),
+        PactBroker::Db::Clean::Selector.new(deployed: true),
+        PactBroker::Db::Clean::Selector.new(released: true),
+        PactBroker::Db::Clean::Selector.new(max_age: 90)
       ]
       DEFAULT_KEEP_BRANCH_SELECTORS = [
-        PactBroker::DB::Clean::BranchSelector.new(max_age: 90)
+        PactBroker::Db::Clean::BranchSelector.new(max_age: 90)
       ]
       TABLES = [:versions, :pact_publications, :pact_versions, :verifications, :triggered_webhooks, :webhook_executions, :branches]
 
@@ -30,7 +25,7 @@ module PactBroker
       end
 
       def call
-        require "pact_broker/db/models"
+        
 
         if dry_run?
           dry_run_results
@@ -67,7 +62,7 @@ module PactBroker
       def keep
         @keep ||= if options[:keep]
                     # Could be a Matrix::UnresolvedSelector from the docker image, convert it
-                    options[:keep].collect { | unknown_thing | PactBroker::DB::Clean::Selector.from_hash(unknown_thing.to_hash) }
+                    options[:keep].collect { | unknown_thing | PactBroker::Db::Clean::Selector.from_hash(unknown_thing.to_hash) }
                   else
                     DEFAULT_KEEP_SELECTORS
                   end
@@ -75,7 +70,7 @@ module PactBroker
 
       def keep_branches
         @keep_branches ||= if options.key?(:keep_branches)
-                             options[:keep_branches]&.collect { | selector_hash | PactBroker::DB::Clean::BranchSelector.from_hash(selector_hash.to_hash) }
+                             options[:keep_branches]&.collect { | selector_hash | PactBroker::Db::Clean::BranchSelector.from_hash(selector_hash.to_hash) }
                            else
                              DEFAULT_KEEP_BRANCH_SELECTORS
                            end

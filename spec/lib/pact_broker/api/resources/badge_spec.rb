@@ -1,6 +1,3 @@
-require "pact_broker/api/resources/badge"
-require "pact_broker/badges/service"
-require "pact_broker/matrix/service"
 
 module PactBroker
   module Api
@@ -28,7 +25,7 @@ module PactBroker
 
         context "when enable_public_badge_access is false and the request is not authenticated" do
           before do
-            PactBroker.configuration.enable_public_badge_access = false
+            PactBroker::Configuration.configuration.enable_public_badge_access = false
             allow_any_instance_of(Badge).to receive(:authenticated?).and_return(false)
           end
 
@@ -39,7 +36,7 @@ module PactBroker
 
         context "when enable_public_badge_access is false but the request is authenticated" do
           before do
-            PactBroker.configuration.enable_public_badge_access = false
+            PactBroker::Configuration.configuration.enable_public_badge_access = false
             allow_any_instance_of(Badge).to receive(:authenticated?).and_return(true)
           end
 
@@ -50,7 +47,7 @@ module PactBroker
 
         context "when enable_public_badge_access is true" do
           before do
-            PactBroker.configuration.enable_public_badge_access = true
+            PactBroker::Configuration.configuration.enable_public_badge_access = true
           end
 
           it "retrieves the latest pact" do

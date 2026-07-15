@@ -1,5 +1,4 @@
 require "forwardable"
-require "pact_broker/messages"
 
 module PactBroker
   module Pacts

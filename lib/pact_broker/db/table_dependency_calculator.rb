@@ -1,5 +1,5 @@
 module PactBroker
-  module DB
+  module Db
 
     # Returns a list of the tables in the database in the order in which
     # they can be truncated or dropped

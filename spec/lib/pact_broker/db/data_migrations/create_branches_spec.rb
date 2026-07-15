@@ -1,7 +1,6 @@
-require "pact_broker/db/data_migrations/create_branches"
 
 module PactBroker
-  module DB
+  module Db
     module DataMigrations
       describe CreateBranches do
         let(:db) { PactBroker::Domain::Version.db }

@@ -1,7 +1,3 @@
-require "pact_broker/versions/branch_version"
-require "pact_broker/services"
-require "pact_broker/logging"
-
 module PactBroker
   module Versions
     class BranchVersionRepository

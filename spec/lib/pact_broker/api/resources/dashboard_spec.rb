@@ -1,4 +1,3 @@
-require "pact_broker/api/resources/dashboard"
 
 module PactBroker
   module Api

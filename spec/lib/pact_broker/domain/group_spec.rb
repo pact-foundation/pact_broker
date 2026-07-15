@@ -1,5 +1,3 @@
-require "pact_broker/domain/group"
-require "pact_broker/domain/index_item"
 
 module PactBroker
   module Domain
