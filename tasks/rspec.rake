@@ -6,7 +6,7 @@ RSpec::Core::RakeTask.new("spec:focus") do |task|
 end
 
 RSpec::Core::RakeTask.new("spec:quick") do |task|
-  task.rspec_opts = "--tag ~@no_db_clean --tag ~@migration --format progress"
+  task.rspec_opts = "--tag ~@no_db_clean --tag ~@migration --format progress --format RspecJunitFormatter --out tmp/rspec/quick.xml"
 end
 
 RSpec::Core::RakeTask.new("regression") do |task|
@@ -15,7 +15,7 @@ RSpec::Core::RakeTask.new("regression") do |task|
 end
 
 RSpec::Core::RakeTask.new("spec:slow") do |task|
-  task.rspec_opts = "--tag @no_db_clean --tag @migration  --format progress"
+  task.rspec_opts = "--tag @no_db_clean --tag @migration --format progress --format RspecJunitFormatter --out tmp/rspec/slow.xml"
 end
 
 task :set_simplecov_command_to_spec_quick do

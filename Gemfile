@@ -21,6 +21,8 @@ end
 
 group :test do
   gem "simplecov", :require => false
+  gem "simplecov-cobertura", :require => false
+  gem "rspec_junit_formatter", :require => false
   if ENV["X_PACT_DEVELOPMENT"] == "true"
     gem "pact", path: "../pact-ruby"
     gem "pact-ffi", path: "../pact-ruby-ffi"
