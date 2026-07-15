@@ -47,6 +47,14 @@ module PactBroker
           end
         end
 
+        context "with q as an empty string " do
+          let(:query) { "q=#{String.new}" }
+
+          it "raises a custom exception" do
+            expect { subject.last }.to raise_error(PactBroker::Matrix::MalformedMatrixQueryError)
+          end
+        end
+
         context "with just one status specified" do
           let(:query) { "success=true" }
           it "extracts the one status" do
@@ -133,6 +141,16 @@ module PactBroker
 
           it "sets an empty array" do
             expect(subject.last[:ignore_selectors]).to eq []
+          end
+        end
+
+
+      #   q=[{%22pacticipant%22:%20%22bh-api%22,%20%22version%22:%20%22foo%22},{%22pacticipant%22:%20%22mobile_api%22,%20%22version%22:%20%22foo%22}]
+        context "when query is malformed" do
+          let(:query) { 'q=[{"pacticipant":"bh-api","version":"foo"},{"pacticipant":"mobile_api","version":"foo"}]' }
+
+          it "raises a custom exception" do
+            expect { subject.last }.to raise_error(PactBroker::Matrix::MalformedMatrixQueryError)
           end
         end
       end
