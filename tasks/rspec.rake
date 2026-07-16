@@ -38,3 +38,8 @@ task "spec:quick" => ["set_simplecov_command_to_spec_quick", "enable_oas_coverag
 task "spec:slow" => ["set_simplecov_command_to_spec_slow", "disable_oas_coverage_check"]
 task :spec => ["spec:quick", "spec:slow"]
 
+RSpec::Core::RakeTask.new("spec:matrix_baseline") do |task|
+  task.pattern = "spec/benchmarks/matrix_baseline_spec.rb"
+  task.rspec_opts = "--tag matrix_baseline"
+end
+
