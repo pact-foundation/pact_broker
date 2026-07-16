@@ -31,7 +31,7 @@ if ENV["OAS_COVERAGE_CHECK_ENABLED"] == "true"
   end
 end
 
-Dir.glob("./spec/support/**/*.rb") { |file| require file  }
+Dir.glob("./spec/support/**/*.rb").reject { |file| file.end_with?("_spec.rb") }.each { |file| require file }
 
 WebMock.disable_net_connect!(allow_localhost: true)
 
@@ -67,5 +67,8 @@ RSpec.configure do | config |
   config.include_context "app"
   config.example_status_persistence_file_path = "./spec/examples.txt"
   config.filter_run_excluding skip: true
+  # The matrix baseline generator is an on-demand benchmark, not a test.
+  # Run it explicitly with `--tag matrix_baseline` (see tasks/rspec.rake).
+  config.filter_run_excluding matrix_baseline: true
   config.include PactBroker::RackHelpers
 end
