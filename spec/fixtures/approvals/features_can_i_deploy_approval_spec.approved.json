@@ -1,0 +1,47 @@
+{
+  "GET /can-i-deploy approval can-i-deploy Foo v1 to the production environment snapshots": {
+    "status": 200,
+    "summary": {
+      "deployable": true,
+      "reason": "All required verification results are published and successful",
+      "success": 1,
+      "failed": 0,
+      "unknown": 0
+    }
+  },
+  "GET /can-i-deploy approval can-i-deploy Foo's dev tag to Bar's prod tag (tag-to-tag URL format) snapshots": {
+    "status": 200,
+    "summary": {
+      "deployable": true,
+      "reason": "WARN: It is recommended to specify the version number (rather than the tag or branch) of the pacticipant you wish to deploy to avoid race conditions. Without a version number, this result will not be reliable.\nAll required verification results are published and successful",
+      "success": 1,
+      "failed": 0,
+      "unknown": 0
+    }
+  },
+  "GET /can-i-deploy approval can-i-deploy with missing required params returns a validation error snapshots": {
+    "status": 400,
+    "summary": null
+  },
+  "GET /can-i-deploy approval can-i-deploy Foo v1 to the production environment with a failing integration without ignoring the failing integration snapshots": {
+    "status": 200,
+    "summary": {
+      "deployable": null,
+      "reason": "There is no verified pact between version 1 of Foo and a version of Baz currently in production (no version is currently recorded as deployed/released in this environment)",
+      "success": 1,
+      "failed": 0,
+      "unknown": 1
+    }
+  },
+  "GET /can-i-deploy approval can-i-deploy Foo v1 to the production environment with a failing integration ignoring the failing integration snapshots": {
+    "status": 200,
+    "summary": {
+      "deployable": true,
+      "reason": "All required verification results are published and successful",
+      "success": 1,
+      "failed": 0,
+      "unknown": 0,
+      "ignored": 1
+    }
+  }
+}

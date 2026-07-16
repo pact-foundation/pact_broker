@@ -1,0 +1,109 @@
+{
+  "GET /matrix approval distilled decisions single selector to latest (top production shape) snapshots": {
+    "status": 200,
+    "summary": {
+      "deployable": null,
+      "reason": "WARN: It is recommended to specify the environment into which you are deploying. Without the environment, this result will not be reliable.\nThere is no verified pact between version 1 of Foo and the latest version of Bar (20)",
+      "success": 0,
+      "failed": 0,
+      "unknown": 1
+    },
+    "noticeTypes": [
+      "warning",
+      "error"
+    ]
+  },
+  "GET /matrix approval distilled decisions can-i-deploy to environment snapshots": {
+    "status": 200,
+    "summary": {
+      "deployable": null,
+      "reason": "There is no verified pact between version 1 of Foo and a version of Bar currently in production (no version is currently recorded as deployed/released in this environment)",
+      "success": 0,
+      "failed": 0,
+      "unknown": 1
+    },
+    "noticeTypes": [
+      "error"
+    ]
+  },
+  "GET /matrix approval distilled decisions can-i-deploy to mainBranch snapshots": {
+    "status": 200,
+    "summary": {
+      "deployable": null,
+      "reason": "There is no verified pact between version 2 of Foo and any version of Bar from the main branch (no versions exist for this branch)",
+      "success": 0,
+      "failed": 0,
+      "unknown": 1
+    },
+    "noticeTypes": [
+      "error"
+    ]
+  },
+  "GET /matrix approval distilled decisions matrix UI browse (two selectors by name) snapshots": {
+    "status": 200,
+    "summary": {
+      "deployable": null,
+      "reason": "The verification for the pact between any version of Foo and any version of Bar failed\nThere is no verified pact between any version of Foo and any version of Bar",
+      "success": 1,
+      "failed": 1,
+      "unknown": 1
+    },
+    "noticeTypes": [
+      "error",
+      "error"
+    ]
+  },
+  "GET /matrix approval distilled decisions flat encoding, two selectors snapshots": {
+    "status": 200,
+    "summary": {
+      "deployable": true,
+      "reason": "All required verification results are published and successful",
+      "success": 1,
+      "failed": 0,
+      "unknown": 0
+    },
+    "noticeTypes": [
+      "success"
+    ]
+  },
+  "GET /matrix approval distilled decisions success filter true snapshots": {
+    "status": 200,
+    "summary": {
+      "deployable": true,
+      "reason": "All required verification results are published and successful",
+      "success": 1,
+      "failed": 0,
+      "unknown": 0
+    },
+    "noticeTypes": [
+      "success"
+    ]
+  },
+  "GET /matrix approval distilled decisions limit smaller than result set snapshots": {
+    "status": 200,
+    "summary": {
+      "deployable": true,
+      "reason": "All required verification results are published and successful",
+      "success": 1,
+      "failed": 0,
+      "unknown": 0
+    },
+    "noticeTypes": [
+      "success"
+    ]
+  },
+  "GET /matrix approval distilled decisions path endpoint snapshots": {
+    "status": 200,
+    "summary": {
+      "deployable": null,
+      "reason": "The verification for the pact between any version of Foo and any version of Bar failed\nThere is no verified pact between any version of Foo and any version of Bar",
+      "success": 1,
+      "failed": 1,
+      "unknown": 1
+    },
+    "noticeTypes": [
+      "error",
+      "error"
+    ]
+  }
+}

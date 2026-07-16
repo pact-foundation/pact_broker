@@ -1,0 +1,248 @@
+{
+  "request": {
+    "path": "/matrix",
+    "query": "q[][pacticipant]=Foo&q[][pacticipant]=Bar&latestby=cvpv"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/hal+json;charset=utf-8",
+      "vary": "Accept",
+      "content-length": "<timestamps>",
+      "date": "<timestamps>",
+      "server": "<timestamps>"
+    },
+    "body": {
+      "summary": {
+        "deployable": null,
+        "reason": "The verification for the pact between any version of Foo and any version of Bar failed\nThere is no verified pact between any version of Foo and any version of Bar",
+        "success": 1,
+        "failed": 1,
+        "unknown": 1
+      },
+      "notices": [
+        {
+          "type": "error",
+          "text": "The verification for the pact between any version of Foo and any version of Bar failed"
+        },
+        {
+          "type": "error",
+          "text": "There is no verified pact between any version of Foo and any version of Bar"
+        }
+      ],
+      "matrix": [
+        {
+          "consumer": {
+            "name": "Foo",
+            "version": {
+              "number": "3",
+              "branch": "main",
+              "branches": [
+                {
+                  "name": "main",
+                  "latest": true,
+                  "_links": {
+                    "self": {
+                      "title": "Branch version",
+                      "name": "main",
+                      "href": "http://example.org/pacticipants/Foo/branches/main/versions/3"
+                    }
+                  }
+                }
+              ],
+              "branchVersions": [
+                {
+                  "name": "main",
+                  "latest": true,
+                  "_links": {
+                    "self": {
+                      "title": "Branch version",
+                      "name": "main",
+                      "href": "http://example.org/pacticipants/Foo/branches/main/versions/3"
+                    }
+                  }
+                }
+              ],
+              "environments": [],
+              "_links": {
+                "self": {
+                  "href": "http://example.org/pacticipants/Foo/versions/3"
+                }
+              },
+              "tags": []
+            },
+            "_links": {
+              "self": {
+                "href": "http://example.org/pacticipants/Foo"
+              }
+            }
+          },
+          "provider": {
+            "name": "Bar",
+            "version": null,
+            "_links": {
+              "self": {
+                "href": "http://example.org/pacticipants/Bar"
+              }
+            }
+          },
+          "pact": {
+            "createdAt": "<timestamps>",
+            "_links": {
+              "self": {
+                "href": "http://example.org/pacts/provider/Bar/consumer/Foo/version/3"
+              }
+            }
+          },
+          "verificationResult": null
+        },
+        {
+          "consumer": {
+            "name": "Foo",
+            "version": {
+              "number": "2",
+              "branch": "main",
+              "branches": [
+                {
+                  "name": "main",
+                  "latest": false,
+                  "_links": {
+                    "self": {
+                      "title": "Branch version",
+                      "name": "main",
+                      "href": "http://example.org/pacticipants/Foo/branches/main/versions/2"
+                    }
+                  }
+                }
+              ],
+              "branchVersions": [
+                {
+                  "name": "main",
+                  "latest": false,
+                  "_links": {
+                    "self": {
+                      "title": "Branch version",
+                      "name": "main",
+                      "href": "http://example.org/pacticipants/Foo/branches/main/versions/2"
+                    }
+                  }
+                }
+              ],
+              "environments": [],
+              "_links": {
+                "self": {
+                  "href": "http://example.org/pacticipants/Foo/versions/2"
+                }
+              },
+              "tags": []
+            },
+            "_links": {
+              "self": {
+                "href": "http://example.org/pacticipants/Foo"
+              }
+            }
+          },
+          "provider": {
+            "name": "Bar",
+            "version": {
+              "number": "20",
+              "branch": null,
+              "branches": [],
+              "branchVersions": [],
+              "environments": [],
+              "_links": {
+                "self": {
+                  "href": "http://example.org/pacticipants/Bar/versions/20"
+                }
+              },
+              "tags": []
+            },
+            "_links": {
+              "self": {
+                "href": "http://example.org/pacticipants/Bar"
+              }
+            }
+          },
+          "pact": {
+            "createdAt": "<timestamps>",
+            "_links": {
+              "self": {
+                "href": "http://example.org/pacts/provider/Bar/consumer/Foo/version/2"
+              }
+            }
+          },
+          "verificationResult": {
+            "success": false,
+            "verifiedAt": "<timestamps>",
+            "_links": {
+              "self": {
+                "href": "http://example.org/pacts/provider/Bar/consumer/Foo/pact-version/89ebba9b5a902c59f1cc440e9e16abed64b33978/metadata/Y3ZuPTI/verification-results/1"
+              }
+            }
+          }
+        },
+        {
+          "consumer": {
+            "name": "Foo",
+            "version": {
+              "number": "1",
+              "branch": null,
+              "branches": [],
+              "branchVersions": [],
+              "environments": [],
+              "_links": {
+                "self": {
+                  "href": "http://example.org/pacticipants/Foo/versions/1"
+                }
+              },
+              "tags": []
+            },
+            "_links": {
+              "self": {
+                "href": "http://example.org/pacticipants/Foo"
+              }
+            }
+          },
+          "provider": {
+            "name": "Bar",
+            "version": {
+              "number": "10",
+              "branch": null,
+              "branches": [],
+              "branchVersions": [],
+              "environments": [],
+              "_links": {
+                "self": {
+                  "href": "http://example.org/pacticipants/Bar/versions/10"
+                }
+              },
+              "tags": []
+            },
+            "_links": {
+              "self": {
+                "href": "http://example.org/pacticipants/Bar"
+              }
+            }
+          },
+          "pact": {
+            "createdAt": "<timestamps>",
+            "_links": {
+              "self": {
+                "href": "http://example.org/pacts/provider/Bar/consumer/Foo/version/1"
+              }
+            }
+          },
+          "verificationResult": {
+            "success": true,
+            "verifiedAt": "<timestamps>",
+            "_links": {
+              "self": {
+                "href": "http://example.org/pacts/provider/Bar/consumer/Foo/pact-version/b868b7a19b66d0810bd42423beacedaccf25b6fb/metadata/Y3ZuPTE/verification-results/1"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
