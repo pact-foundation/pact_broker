@@ -1,3 +1,33 @@
+<a name="v2.120.0"></a>
+### v2.120.0 (2026-07-14)
+
+#### Features
+
+* expose released environments on branch/tag version list endpoints (#969)	 ([bea68a7d](/../../commit/bea68a7d))
+* expose released environments on version API (#963)	 ([d6f7f17b](/../../commit/d6f7f17b))
+* return more webhooks attributes in logs decorator (#961)	 ([4e2d1b13](/../../commit/4e2d1b13))
+* paginate pacticipants_for_label	 ([088ff444](/../../commit/088ff444))
+* add limit to stale branch delete (#933)	 ([406c20f3](/../../commit/406c20f3))
+* change branch sort order, most recently updated first (#929)	 ([b5215a39](/../../commit/b5215a39))
+
+* **clean**
+  * expose branch_deletion_limit on CleanTask (#938)	 ([540afa3d](/../../commit/540afa3d))
+  * add stale branch lifecycle and automated cleanup (#912)	 ([1ba6354f](/../../commit/1ba6354f))
+
+* **PACT-6253**
+  * add json_schemer as explicit gem dependency (#916)	 ([dc8910ce](/../../commit/dc8910ce))
+
+#### Bug Fixes
+
+* **spec**
+  * rebuild success-after-latestby fixture with distinct provider versions	 ([778d25d2](/../../commit/778d25d2))
+  * rebuild latestby filtering fixtures to genuinely pin the ordering contract	 ([9276aa79](/../../commit/9276aa79))
+
+* broken SQL in pacticipants_for_label resource (#944)	 ([bf37cdfc](/../../commit/bf37cdfc))
+* use cvpv when checking can-i-deploy against an environment (#903) (#934)	 ([7163652d](/../../commit/7163652d))
+* remove deadcode, improve testing with UTC (#924)	 ([76c2407a](/../../commit/76c2407a))
+* join with pacticipant when query main branch (#921)	 ([3dae89be](/../../commit/3dae89be))
+
 <a name="v2.119.0"></a>
 ### v2.119.0 (2026-04-02)
 
