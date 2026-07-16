@@ -216,6 +216,14 @@ module PactBroker
         it { is_expected.to match_route_in_api(PactBroker::API) }
         it { is_expected.to eq "http://example.org/pacticipants/Foo%2FFoo/versions/2%2F4/tags/feat%2Ffoo" }
       end
+
+      describe "environment_versions_url" do
+        let(:environment) { double("environment", uuid: "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee") }
+        subject { PactBrokerUrls.environment_versions_url(consumer, environment, base_url) }
+
+        it { is_expected.to match_route_in_api(PactBroker::API) }
+        it { is_expected.to eq "http://example.org/pacticipants/Foo%2FFoo/environments/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee/versions" }
+      end
     end
   end
 end
