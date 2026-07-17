@@ -30,7 +30,7 @@ module PactBroker
 
         def to_json
           decorator_class(:versions_decorator).new(tag_versions)
-            .to_json(**decorator_options(deployed_versions: deployed_versions, released_versions: released_versions))
+            .to_json(**decorator_options(identifier_from_path.merge(deployed_versions: deployed_versions, released_versions: released_versions)))
         end
 
         private
