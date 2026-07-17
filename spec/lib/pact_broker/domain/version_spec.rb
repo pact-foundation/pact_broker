@@ -495,6 +495,24 @@ module PactBroker
           expect(all.first.associations[:current_deployed_versions].first.environment.name).to eq "prod"
         end
       end
+
+      describe "ids_for_selectors" do
+        def selectors_for(pacticipant_names)
+          pacticipant_names.collect { |name| PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: name, latest: true) }
+        end
+
+        # Each redundant layer is another subquery the database has to plan.
+        def subquery_nesting_depth(dataset)
+          dataset.sql.scan("SELECT * FROM (").count
+        end
+
+        it "does not nest the query more deeply as the number of selectors grows" do
+          two = Version.ids_for_selectors(selectors_for(%w{App1 App2}))
+          ten = Version.ids_for_selectors(selectors_for((1..10).collect { |i| "App#{i}" }))
+
+          expect(subquery_nesting_depth(ten)).to eq subquery_nesting_depth(two)
+        end
+      end
     end
   end
 end
