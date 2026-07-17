@@ -241,9 +241,11 @@ module PactBroker
         # @return Sequel::Dataset<PactBroker::Domain::Version>
         def ids_for_selectors(unresolved_selectors)
           # Need the select at the start and at the end to stop extra columns being returned (eg. branch name, environment name)
+          # from_self: false keeps this a single flat UNION. Sequel's default would wrap the
+          # accumulated dataset in a new subquery for every selector, nesting it N-1 deep.
           unresolved_selectors
             .collect{ |selector| self.select(Sequel[:versions][:id]).for_selector(selector).select(:id) }
-            .reduce(&:union)
+            .reduce { |all_ids, ids| all_ids.union(ids, from_self: false) }
         end
 
         def pacticipants_set
