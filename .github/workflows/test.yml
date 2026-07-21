@@ -58,7 +58,7 @@ jobs:
     env:
       OAS_COVERAGE_CHECK_ENABLED: "true"
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby_version }}
@@ -98,7 +98,7 @@ jobs:
           - "17"
           - "18"
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - run: script/test/run-rake-on-docker-compose-postgres.sh
         env:
           POSTGRES_DOCKER_IMAGE_TAG: ${{ matrix.postgres_docker_image_tag }}
@@ -125,7 +125,7 @@ jobs:
   rubocop:
     runs-on: "ubuntu-latest"
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
@@ -134,7 +134,7 @@ jobs:
   pact-verify:
     runs-on: "ubuntu-latest"
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
@@ -165,7 +165,7 @@ jobs:
   bundle-audit:
     runs-on: "ubuntu-latest"
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
@@ -181,7 +181,7 @@ jobs:
       PRE_COMMIT_HOME: ${{ github.workspace }}/.pre-commit
 
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Cache pre-commit
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
