@@ -10,6 +10,8 @@ module PactBroker
           required(:name_in_pact).maybe(:string)
         end
 
+        rule(:name).validate(:not_blank_if_present)
+
         rule(:name, :name_in_pact) do
           if name_in_pact_does_not_match_name_in_url_path?(values)
             key.failure(validation_message("pact_name_in_path_mismatch_name_in_pact", name_in_pact: values[:name_in_pact], name_in_path: values[:name]))

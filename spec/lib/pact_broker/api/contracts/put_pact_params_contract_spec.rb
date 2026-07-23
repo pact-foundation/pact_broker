@@ -125,6 +125,46 @@ module PactBroker
               expect(subject).to be_empty
             end
           end
+
+          context "when the consumer name from the URL path is an empty string" do
+            let(:attributes) do
+              valid_attributes.merge(consumer_name: "")
+            end
+
+            it "returns a blank error for consumer.name" do
+              expect(subject[:'consumer.name'].first).to include("blank")
+            end
+          end
+
+          context "when the provider name from the URL path is an empty string" do
+            let(:attributes) do
+              valid_attributes.merge(provider_name: "")
+            end
+
+            it "returns a blank error for provider.name" do
+              expect(subject[:'provider.name'].first).to include("blank")
+            end
+          end
+
+          context "when the consumer name from the URL path is a whitespace string" do
+            let(:attributes) do
+              valid_attributes.merge(consumer_name: "  ")
+            end
+
+            it "returns a blank error for consumer.name" do
+              expect(subject[:'consumer.name'].first).to include("blank")
+            end
+          end
+
+          context "when both consumer name and consumer name in pact are nil" do
+            let(:attributes) do
+              valid_attributes.merge(consumer_name: nil, consumer_name_in_pact: nil)
+            end
+
+            it "does not return a blank error (nil is allowed by maybe(:string))" do
+              expect(subject[:'consumer.name']).to be_nil
+            end
+          end
         end
       end
     end

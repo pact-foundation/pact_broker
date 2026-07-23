@@ -278,6 +278,57 @@ module PactBroker
           end
         end
       end
+
+      describe "#find_by_name_or_create" do
+        let(:repository) { Repository.new }
+
+        context "when the pacticipant does not exist" do
+          it "creates and returns a new pacticipant" do
+            result = repository.find_by_name_or_create("NewApp")
+            expect(result).to be_a(PactBroker::Domain::Pacticipant)
+            expect(result.name).to eq "NewApp"
+          end
+        end
+
+        context "when the pacticipant already exists" do
+          before { repository.create(name: "ExistingApp") }
+
+          it "returns the existing pacticipant without creating a duplicate" do
+            expect { repository.find_by_name_or_create("ExistingApp") }.not_to change { PactBroker::Domain::Pacticipant.count }
+          end
+
+          it "returns the correct pacticipant" do
+            result = repository.find_by_name_or_create("ExistingApp")
+            expect(result.name).to eq "ExistingApp"
+          end
+        end
+
+        context "when the name is an empty string" do
+          it "raises a PactBroker::Error" do
+            expect { repository.find_by_name_or_create("") }.to raise_error(PactBroker::Error, /blank/)
+          end
+
+          it "does not create a pacticipant" do
+            expect { repository.find_by_name_or_create("") rescue nil }.not_to change { PactBroker::Domain::Pacticipant.count }
+          end
+        end
+
+        context "when the name is a whitespace string" do
+          it "raises a PactBroker::Error" do
+            expect { repository.find_by_name_or_create("   ") }.to raise_error(PactBroker::Error, /blank/)
+          end
+
+          it "does not create a pacticipant" do
+            expect { repository.find_by_name_or_create("   ") rescue nil }.not_to change { PactBroker::Domain::Pacticipant.count }
+          end
+        end
+
+        context "when the name is nil" do
+          it "raises a PactBroker::Error" do
+            expect { repository.find_by_name_or_create(nil) }.to raise_error(PactBroker::Error, /blank/)
+          end
+        end
+      end
     end
   end
 end

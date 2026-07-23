@@ -47,6 +47,8 @@ module PactBroker
       end
 
       def find_by_name_or_create name
+        raise PactBroker::Error, "Cannot create a pacticipant with a blank name" if name.to_s.strip.empty?
+        
         pacticipant = find_by_name(name)
         pacticipant ? pacticipant : create(name: name)
       end
