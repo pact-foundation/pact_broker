@@ -182,7 +182,7 @@ module PactBroker
       # Modifing pacts is strongly discouraged now, and support for it will be dropped in the next major version of the Pact Broker
       def create_pact_revision params, existing_pact
         logger.info("Updating existing pact publication", params.without(:json_content))
-        logger.debug("Content #{params[:json_content]}")
+        logger.debug { "Content #{params[:json_content]}" }
         pact_version_sha = params.fetch(:pact_version_sha)
         json_content = add_interaction_ids(params[:json_content])
         update_params = { pact_version_sha: pact_version_sha, json_content: json_content }
@@ -211,7 +211,7 @@ module PactBroker
       # When no publication for the given consumer/provider/consumer version number exists
       def create_pact(params, version, provider)
         logger.debug("Creating new pact publication", params.without(:json_content))
-        logger.debug("Content #{params[:json_content]}")
+        logger.debug { "Content #{params[:json_content]}" }
         json_content = add_interaction_ids(params[:json_content])
         pact = pact_repository.create(
           version_id: version.id,

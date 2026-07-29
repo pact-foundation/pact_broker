@@ -38,17 +38,28 @@ module PactBroker
         let(:content) { double("content") }
         let(:content_with_interaction_ids) { double("content_with_interaction_ids", to_json: json_content_with_ids) }
         let(:expected_event_context) { { consumer_version_tags: ["dev"] } }
+        let(:logger) { double("logger").as_null_object }
 
         before do
           allow(Content).to receive(:from_json).and_return(content)
           allow(content).to receive(:with_ids).and_return(content_with_interaction_ids)
           allow(PactBroker::Pacts::GenerateSha).to receive(:call).and_call_original
           allow(Service).to receive(:broadcast)
+          allow(Service).to receive(:logger).and_return(logger)
         end
 
         subject { Service.create_or_update_pact(params) }
 
         context "when no pact exists with the same params" do
+          it "passes json content to the debug logger via a block to defer string interpolation" do
+            block_messages = []
+            allow(logger).to receive(:debug) do |*args, &block|
+              block_messages << block.call if args.empty? && block
+            end
+            subject
+            expect(block_messages.first).to include(json_content)
+          end
+
           it "saves the pact interactions/messages with ids added to them" do
             expect(pact_repository).to receive(:create).with hash_including(json_content: json_content_with_ids)
             subject
@@ -118,6 +129,15 @@ module PactBroker
         end
 
         context "when a pact exists with the same params" do
+          it "passes json content to the debug logger via a block to defer string interpolation" do
+            block_messages = []
+            allow(logger).to receive(:debug) do |*args, &block|
+              block_messages << block.call if args.empty? && block
+            end
+            subject
+            expect(block_messages.first).to include(json_content)
+          end
+
           let(:existing_pact) do
             double("existing_pact",
               id: 4,
