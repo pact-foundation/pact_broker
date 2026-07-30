@@ -16,7 +16,7 @@ module Rack
     # duplicate those records.
     class RequestContext
       RACK_REQUEST_ID_HEADER = "HTTP_X_REQUEST_ID"
-      HTTP_REQUEST_ID_HEADER = "X-Request-Id"
+      HTTP_REQUEST_ID_HEADER = "x-request-id"
 
       # An inbound request id is only trusted if it matches this charset and
       # length. It is echoed verbatim into the response header and into every

@@ -36,7 +36,14 @@ module Rack
       it "echoes the request id on the response" do
         _status, headers, _body = app.call({})
 
-        expect(headers["X-Request-Id"]).to eq captured[:named_tags][:request_id]
+        expect(headers["x-request-id"]).to eq captured[:named_tags][:request_id]
+      end
+
+      it "does not violate Rack::Lint's lowercase header name rule" do
+        env = Rack::MockRequest.env_for("/")
+        linted_app = Rack::Lint.new(RequestContext.new(inner_app))
+
+        expect { linted_app.call(env) }.to_not raise_error
       end
 
       it "returns the inner app's status and body untouched" do
@@ -64,35 +71,35 @@ module Rack
         _status, headers, _body = app.call({ "HTTP_X_REQUEST_ID" => "abc-123_XYZ.789" })
 
         expect(captured[:named_tags][:request_id]).to eq "abc-123_XYZ.789"
-        expect(headers["X-Request-Id"]).to eq "abc-123_XYZ.789"
+        expect(headers["x-request-id"]).to eq "abc-123_XYZ.789"
       end
 
       it "rejects an inbound request id containing CRLF and generates a fresh one instead" do
         _status, headers, _body = app.call({ "HTTP_X_REQUEST_ID" => "abc\r\nX-Injected: evil" })
 
         expect(captured[:named_tags][:request_id]).to match(/\A[0-9a-f]{32}\z/)
-        expect(headers["X-Request-Id"]).to match(/\A[0-9a-f]{32}\z/)
+        expect(headers["x-request-id"]).to match(/\A[0-9a-f]{32}\z/)
       end
 
       it "rejects an inbound request id containing other control characters and generates a fresh one instead" do
         _status, headers, _body = app.call({ "HTTP_X_REQUEST_ID" => "abc\x00def" })
 
         expect(captured[:named_tags][:request_id]).to match(/\A[0-9a-f]{32}\z/)
-        expect(headers["X-Request-Id"]).to match(/\A[0-9a-f]{32}\z/)
+        expect(headers["x-request-id"]).to match(/\A[0-9a-f]{32}\z/)
       end
 
       it "rejects an inbound request id longer than the maximum length and generates a fresh one instead" do
         _status, headers, _body = app.call({ "HTTP_X_REQUEST_ID" => "a" * 100_000 })
 
         expect(captured[:named_tags][:request_id]).to match(/\A[0-9a-f]{32}\z/)
-        expect(headers["X-Request-Id"]).to match(/\A[0-9a-f]{32}\z/)
+        expect(headers["x-request-id"]).to match(/\A[0-9a-f]{32}\z/)
       end
 
       it "treats an empty inbound request id as absent and generates a fresh one instead" do
         _status, headers, _body = app.call({ "HTTP_X_REQUEST_ID" => "" })
 
         expect(captured[:named_tags][:request_id]).to match(/\A[0-9a-f]{32}\z/)
-        expect(headers["X-Request-Id"]).to match(/\A[0-9a-f]{32}\z/)
+        expect(headers["x-request-id"]).to match(/\A[0-9a-f]{32}\z/)
       end
     end
   end
