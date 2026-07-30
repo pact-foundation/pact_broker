@@ -251,6 +251,15 @@ module PactBroker
       def validate_log_appender_entry!(entry, index)
         error = lambda { | message | raise_validation_error("log_appenders entry #{index} #{message}") }
 
+        validate_log_appender_entry_target!(entry, error)
+        validate_log_appender_entry_stream!(entry, error)
+        validate_log_appender_entry_format!(entry, error)
+        validate_log_appender_entry_file_name!(entry, error)
+        validate_log_appender_entry_enabled!(entry, error)
+      end
+      private :validate_log_appender_entry!
+
+      def validate_log_appender_entry_target!(entry, error)
         has_stream = !entry[:stream].nil?
         has_appender = !entry[:appender].nil?
         # io:, file_name: and logger: are the other keys SemanticLogger dispatches on
@@ -261,24 +270,38 @@ module PactBroker
         unless has_stream || has_appender || has_direct_target
           error.call("must specify one of stream or appender")
         end
+      end
+      private :validate_log_appender_entry_target!
 
-        if has_stream && !PactBroker::Logging::AppenderFactory::VALID_STREAMS.include?(entry[:stream])
+      def validate_log_appender_entry_stream!(entry, error)
+        return if entry[:stream].nil?
+
+        if !PactBroker::Logging::AppenderFactory::VALID_STREAMS.include?(entry[:stream])
           error.call("has an invalid stream. Valid values are: #{PactBroker::Logging::AppenderFactory::VALID_STREAMS.join(", ")}")
         end
+      end
+      private :validate_log_appender_entry_stream!
 
+      def validate_log_appender_entry_format!(entry, error)
         if entry[:format] && !PactBroker::Logging::AppenderFactory::VALID_FORMATS.include?(entry[:format])
           error.call("has an invalid format. Valid values are: #{PactBroker::Logging::AppenderFactory::VALID_FORMATS.join(", ")}")
         end
+      end
+      private :validate_log_appender_entry_format!
 
-        if entry[:file_name] && has_stream && entry[:stream] != :file
+      def validate_log_appender_entry_file_name!(entry, error)
+        if entry[:file_name] && !entry[:stream].nil? && entry[:stream] != :file
           error.call("must not specify file_name unless stream is file")
         end
+      end
+      private :validate_log_appender_entry_file_name!
 
+      def validate_log_appender_entry_enabled!(entry, error)
         unless [true, false, :auto].include?(entry.fetch(:enabled, true))
           error.call("has an invalid enabled value. Valid values are: true, false, auto")
         end
       end
-      private :validate_log_appender_entry!
+      private :validate_log_appender_entry_enabled!
 
       def log_appenders_explicitly_set?
         !log_appenders.nil?
