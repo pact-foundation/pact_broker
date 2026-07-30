@@ -135,6 +135,29 @@ module PactBroker
         end
       end
 
+      describe "when a later appender in the list fails to build" do
+        let(:log_appenders) { [{ stream: :stdout }, { appender: :bogus, enabled: true }] }
+        let(:first_appender) { double("first_appender") }
+
+        before do
+          allow(SemanticLogger).to receive(:add_appender).with(hash_including(io: $stdout)).and_return(first_appender)
+          allow(SemanticLogger).to receive(:add_appender).with(hash_including(appender: :bogus)).and_raise(StandardError, "boom")
+        end
+
+        it "still tracks the appender built before the failure, so it remains removable" do
+          expect { Setup.call(runtime_configuration) }.to raise_error(PactBroker::ConfigurationError)
+
+          expect(Setup.added_appenders).to eq [first_appender]
+        end
+
+        it "does not accumulate appenders on a second failed attempt" do
+          expect { Setup.call(runtime_configuration) }.to raise_error(PactBroker::ConfigurationError)
+          expect { Setup.call(runtime_configuration) }.to raise_error(PactBroker::ConfigurationError)
+
+          expect(Setup.added_appenders).to eq [first_appender]
+        end
+      end
+
       describe "shutdown flush" do
         it "registers an at_exit flush only once, because the gem does not provide one" do
           expect(Setup).to receive(:at_exit).once

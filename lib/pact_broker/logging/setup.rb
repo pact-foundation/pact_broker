@@ -87,10 +87,11 @@ module PactBroker
         ensure_log_dir_exists(resolved.entries)
 
         appenders = resolved.entries.each_with_index.collect do | entry, index |
-          AppenderFactory.call(entry, index: index, log_dir: runtime_configuration.log_dir)
+          appender = AppenderFactory.call(entry, index: index, log_dir: runtime_configuration.log_dir)
+          self.class.added_appenders << appender if appender
+          appender
         end.compact
 
-        self.class.added_appenders.concat(appenders)
         appenders
       rescue PactBroker::ConfigurationError
         # No appender to log through, and the operator needs to see any buffered
