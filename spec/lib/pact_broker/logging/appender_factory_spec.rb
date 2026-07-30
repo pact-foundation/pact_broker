@@ -127,7 +127,7 @@ module PactBroker
       describe "when the appender's gem is not available" do
         before do
           allow(SemanticLogger).to receive(:add_appender).and_raise(
-            LoadError.new('Gem opentelemetry-logs-sdk is required for logging to Open Telemetry.')
+            LoadError.new("Gem opentelemetry-logs-sdk is required for logging to Open Telemetry.")
           )
         end
 
