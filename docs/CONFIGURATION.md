@@ -104,7 +104,7 @@ PACT_BROKER_LOG_APPENDERS__1__ENABLED=auto
 **Environment variable format:** Indexed environment variables, for example `PACT_BROKER_LOG_APPENDERS__0__STREAM`.<br/>
 **YAML configuration key name:** `log_appenders`<br/>
 **Default:** a single appender configured by `log_stream` and `log_format`, plus the OpenTelemetry appender when its gem is available<br/>
-**More information:** https://github.com/reidmorrison/semantic_logger/blob/main/docs/appenders.md<br/>
+**More information:** https://github.com/reidmorrison/semantic_logger/blob/main/docs/appenders.md, and see [Extending logging](EXTENDING_LOGGING.md) for writing a custom appender.<br/>
 
 ### log_application
 

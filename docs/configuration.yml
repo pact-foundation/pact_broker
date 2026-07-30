@@ -83,7 +83,7 @@ groups:
           ```
         default_description: "a single appender configured by `log_stream` and `log_format`, plus the OpenTelemetry appender when its gem is available"
         environment_variable_format: "Indexed environment variables, for example `PACT_BROKER_LOG_APPENDERS__0__STREAM`."
-        more_info: https://github.com/reidmorrison/semantic_logger/blob/main/docs/appenders.md
+        more_info: "https://github.com/reidmorrison/semantic_logger/blob/main/docs/appenders.md, and see [Extending logging](EXTENDING_LOGGING.md) for writing a custom appender."
       log_application:
         description: "The application name recorded on every log entry, and reported as the service name to log aggregators."
         default_description: "the value of `OTEL_SERVICE_NAME`, or `pact-broker`"
