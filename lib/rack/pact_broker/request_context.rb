@@ -18,17 +18,36 @@ module Rack
       RACK_REQUEST_ID_HEADER = "HTTP_X_REQUEST_ID"
       HTTP_REQUEST_ID_HEADER = "X-Request-Id"
 
+      # An inbound request id is only trusted if it matches this charset and
+      # length. It is echoed verbatim into the response header and into every
+      # log line for the request, so anything outside a conservative
+      # token-safe charset (in particular CRLF or other control characters,
+      # which could forge log entries or split the response) is rejected in
+      # favour of generating a fresh id.
+      VALID_REQUEST_ID = /\A[a-zA-Z0-9\-_.]+\z/
+      MAX_REQUEST_ID_LENGTH = 128
+
       def initialize(app)
         @app = app
       end
 
       def call(env)
-        request_id = env[RACK_REQUEST_ID_HEADER] || SecureRandom.hex(16)
+        request_id = valid_inbound_request_id(env[RACK_REQUEST_ID_HEADER]) || SecureRandom.hex(16)
 
         SemanticLogger.tagged(request_id: request_id) do
           status, headers, body = @app.call(env.merge(RACK_REQUEST_ID_HEADER => request_id))
           [status, headers.merge(HTTP_REQUEST_ID_HEADER => request_id), body]
         end
+      end
+
+      private
+
+      def valid_inbound_request_id(value)
+        return nil unless value.is_a?(String)
+        return nil if value.empty? || value.length > MAX_REQUEST_ID_LENGTH
+        return nil unless value.match?(VALID_REQUEST_ID)
+
+        value
       end
     end
   end
