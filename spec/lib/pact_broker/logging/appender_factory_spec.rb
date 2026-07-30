@@ -66,6 +66,33 @@ module PactBroker
         end
       end
 
+      describe "resolving format: :short against the real formatter factory" do
+        it "stands on its own, without pact_broker/logging having been loaded" do
+          require "open3"
+
+          script = <<~RUBY
+            require "pact_broker/logging/appender_factory"
+            puts SemanticLogger::Formatters.factory(:short).class
+          RUBY
+          out, status = Open3.capture2e("bundle", "exec", "ruby", "-Ilib", "-e", script)
+
+          expect(status).to be_success, out
+          expect(out.strip).to eq "SemanticLogger::Formatters::Short"
+        end
+      end
+
+      describe "sugar-key precedence over explicit pass-through options" do
+        it "lets stream: win over an explicit io:" do
+          expect(SemanticLogger).to receive(:add_appender).with(io: $stdout)
+          build({ stream: :stdout, io: $stderr })
+        end
+
+        it "lets format: win over an explicit formatter:" do
+          expect(SemanticLogger).to receive(:add_appender).with(io: $stdout, formatter: :json)
+          build({ stream: :stdout, format: :json, formatter: :logfmt })
+        end
+      end
+
       describe "pass-through of unknown options" do
         it "forwards options this class knows nothing about" do
           expect(SemanticLogger).to receive(:add_appender).with(

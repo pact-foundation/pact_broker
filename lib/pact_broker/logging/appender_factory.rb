@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 require "semantic_logger"
+require "semantic_logger/formatters/short"
 require "pact_broker/error"
 
 module PactBroker
