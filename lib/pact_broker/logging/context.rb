@@ -54,15 +54,29 @@ module PactBroker
         providers.keys
       end
 
+      # The maximum level_index (inclusive) considered verbose enough to use
+      # PayloadSanitizer::DEBUG_MAX_DEPTH. Matches SemanticLogger::Levels::LEVELS,
+      # where trace is 0 and debug is 1.
+      DEBUG_LEVEL_INDEX = 1
+
       # The on_log subscriber entry point.
       def call(log)
         apply_provider_tags(log)
-        log.message = PayloadSanitizer.call(log.message) if log.message.is_a?(String)
-        log.payload = PayloadSanitizer.call(log.payload) if log.payload.is_a?(Hash)
+        max_depth = payload_max_depth(log)
+        log.message = PayloadSanitizer.call(log.message, max_depth: max_depth) if log.message.is_a?(String)
+        log.payload = PayloadSanitizer.call(log.payload, max_depth: max_depth) if log.payload.is_a?(Hash)
         nil
       end
 
       private
+
+      def payload_max_depth(log)
+        if log.level_index <= DEBUG_LEVEL_INDEX
+          PayloadSanitizer::DEBUG_MAX_DEPTH
+        else
+          PayloadSanitizer::MAX_DEPTH
+        end
+      end
 
       def apply_provider_tags(log)
         return if providers.empty?

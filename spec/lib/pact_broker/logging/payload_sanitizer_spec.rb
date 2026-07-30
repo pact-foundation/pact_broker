@@ -86,6 +86,59 @@ module PactBroker
           time = Time.now
           expect(PayloadSanitizer.call(time)).to eq time
         end
+
+        it "honours an explicit max_depth argument" do
+          nested = { a: { b: { c: "leaf" } } }
+
+          expect(PayloadSanitizer.call(nested, max_depth: 2)[:a][:b]).to eq PayloadSanitizer::DEPTH_EXCEEDED
+          expect(PayloadSanitizer.call(nested, max_depth: 5)[:a][:b][:c]).to eq "leaf"
+        end
+
+        it "uses MAX_DEPTH by default" do
+          deep = { a: { b: { c: { d: { e: "leaf" } } } } }
+
+          result = PayloadSanitizer.call(deep)
+          deepest = PayloadSanitizer::MAX_DEPTH.times.reduce(result) { |acc, _| acc.is_a?(Hash) ? acc.values.first : acc }
+          expect(deepest).to eq PayloadSanitizer::DEPTH_EXCEEDED
+        end
+
+        it "survives to DEBUG_MAX_DEPTH when given the debug cap" do
+          deep = { a: { b: { c: { d: { e: { f: { g: { h: { i: { j: "leaf" } } } } } } } } } }
+
+          result = PayloadSanitizer.call(deep, max_depth: PayloadSanitizer::DEBUG_MAX_DEPTH)
+          deepest = 10.times.reduce(result) { |acc, _| acc.values.first }
+          expect(deepest).to eq "leaf"
+        end
+
+        it "survives a realistic pact-shaped payload nested ten levels deep at the debug cap" do
+          pact_shaped = {
+            interactions: [
+              {
+                request: {
+                  headers: {
+                    nested: {
+                      level5: {
+                        level6: {
+                          level7: {
+                            level8: {
+                              level9: {
+                                level10: "value"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+
+          result = PayloadSanitizer.call(pact_shaped, max_depth: PayloadSanitizer::DEBUG_MAX_DEPTH)
+          leaf = result[:interactions][0][:request][:headers][:nested][:level5][:level6][:level7][:level8][:level9][:level10]
+          expect(leaf).to eq "value"
+        end
       end
 
       describe "performance of the fast path" do

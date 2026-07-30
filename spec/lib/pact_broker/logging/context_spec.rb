@@ -12,8 +12,8 @@ module PactBroker
         Context.reset
       end
 
-      def log_entry(message: "a message", payload: nil, named_tags: {})
-        log = SemanticLogger::Log.new("Test", :info)
+      def log_entry(message: "a message", payload: nil, named_tags: {}, level: :info)
+        log = SemanticLogger::Log.new("Test", level)
         log.message = message
         log.payload = payload
         log.named_tags = named_tags
@@ -122,6 +122,31 @@ module PactBroker
           Context.call(log)
 
           expect(log.message.valid_encoding?).to be true
+        end
+
+        def deep_payload
+          { l1: { l2: { l3: { l4: { l5: { l6: "leaf" } } } } } }
+        end
+
+        it "truncates a deep payload at MAX_DEPTH when logged at info" do
+          log = log_entry(payload: deep_payload, level: :info)
+          Context.call(log)
+
+          expect(log.payload[:l1][:l2][:l3][:l4]).to eq PayloadSanitizer::DEPTH_EXCEEDED
+        end
+
+        it "lets a deep payload survive to DEBUG_MAX_DEPTH when logged at debug" do
+          log = log_entry(payload: deep_payload, level: :debug)
+          Context.call(log)
+
+          expect(log.payload[:l1][:l2][:l3][:l4][:l5][:l6]).to eq "leaf"
+        end
+
+        it "lets a deep payload survive to DEBUG_MAX_DEPTH when logged at trace" do
+          log = log_entry(payload: deep_payload, level: :trace)
+          Context.call(log)
+
+          expect(log.payload[:l1][:l2][:l3][:l4][:l5][:l6]).to eq "leaf"
         end
 
         it "leaves a non-Hash payload alone, so exception payloads are not mangled" do
