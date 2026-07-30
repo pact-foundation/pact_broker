@@ -39,6 +39,16 @@ module SemanticLogger
         expect(output).to include "branch: main"
       end
 
+      it "accepts a bare symbol rather than requiring an array" do
+        Short.hidden_named_tags = :tenant_id
+
+        expect(Short.hidden_named_tags).to eq [:tenant_id]
+
+        output = formatter.call(log_entry(tenant_id: "t1", branch: "main"), logger)
+        expect(output).to_not include "t1"
+        expect(output).to include "branch: main"
+      end
+
       it "omits the named tags section entirely when everything is hidden" do
         output = formatter.call(log_entry(request_id: "abc"), logger)
 

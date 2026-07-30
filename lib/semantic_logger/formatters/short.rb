@@ -12,7 +12,9 @@ module SemanticLogger
       DEFAULT_HIDDEN_NAMED_TAGS = [:pact_broker_git_sha, :request_id].freeze
 
       class << self
-        attr_writer :hidden_named_tags
+        def hidden_named_tags=(value)
+          @hidden_named_tags = Array(value)
+        end
 
         def hidden_named_tags
           @hidden_named_tags ||= DEFAULT_HIDDEN_NAMED_TAGS.dup
