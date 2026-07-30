@@ -162,43 +162,159 @@ module PactBroker
         end
       end
 
-      describe "log_otel_enabled" do
-        subject { RuntimeConfiguration.new }
-
-        it "defaults to :auto" do
-          expect(subject.log_otel_enabled).to eq :auto
+      describe "log_appenders" do
+        it "is nil by default, so that Logging::AppenderEntries can tell it was not configured" do
+          expect(RuntimeConfiguration.new.log_appenders).to be_nil
         end
 
-        it "coerces nil and blank to :auto" do
-          subject.log_otel_enabled = nil
-          expect(subject.log_otel_enabled).to eq :auto
-          subject.log_otel_enabled = ""
-          expect(subject.log_otel_enabled).to eq :auto
+        context "when set from YAML style data" do
+          it "symbolizes the keys and coerces the known values" do
+            config = RuntimeConfiguration.new
+            config.log_appenders = [
+              { "stream" => "stdout", "format" => "json" },
+              { "appender" => "open_telemetry", "enabled" => "auto" }
+            ]
+
+            expect(config.log_appenders).to eq [
+              { stream: :stdout, format: :json },
+              { appender: :open_telemetry, enabled: :auto }
+            ]
+          end
+
+          it "leaves unknown pass-through options as they are, but symbolizes their keys" do
+            config = RuntimeConfiguration.new
+            config.log_appenders = [{ "appender" => "loki", "url" => "http://loki:3100" }]
+
+            expect(config.log_appenders).to eq [{ appender: :loki, url: "http://loki:3100" }]
+          end
+
+          it "coerces enabled true and false" do
+            config = RuntimeConfiguration.new
+            config.log_appenders = [{ "stream" => "stdout", "enabled" => "false" }]
+            expect(config.log_appenders.first[:enabled]).to eq false
+
+            config.log_appenders = [{ "stream" => "stdout", "enabled" => "true" }]
+            expect(config.log_appenders.first[:enabled]).to eq true
+          end
+
+          it "accepts an explicitly empty list, meaning no appenders" do
+            config = RuntimeConfiguration.new
+            config.log_appenders = []
+
+            expect(config.log_appenders).to eq []
+            expect(config.log_appenders_explicitly_set?).to be true
+          end
         end
 
-        it "coerces the string 'auto' to :auto" do
-          subject.log_otel_enabled = "auto"
-          expect(subject.log_otel_enabled).to eq :auto
+        context "when set using indexed environment variables" do
+          it "converts the numerically indexed hash into an array" do
+            with_env(
+              "PACT_BROKER_LOG_APPENDERS__0__STREAM" => "stdout",
+              "PACT_BROKER_LOG_APPENDERS__0__FORMAT" => "json",
+              "PACT_BROKER_LOG_APPENDERS__1__APPENDER" => "open_telemetry",
+              "PACT_BROKER_LOG_APPENDERS__1__ENABLED" => "auto"
+            ) do
+              expect(RuntimeConfiguration.new.log_appenders).to eq [
+                { stream: :stdout, format: :json },
+                { appender: :open_telemetry, enabled: :auto }
+              ]
+            end
+          end
+
+          it "raises a ConfigurationError when the keys are not numeric" do
+            with_env(
+              "PACT_BROKER_LOG_APPENDERS__a__STREAM" => "stdout"
+            ) do
+              expect { RuntimeConfiguration.new.log_appenders }.to raise_error(PactBroker::ConfigurationError, /log_appenders/)
+            end
+          end
         end
 
-        it "coerces truthy strings to true" do
-          subject.log_otel_enabled = "true"
-          expect(subject.log_otel_enabled).to eq true
-          subject.log_otel_enabled = "1"
-          expect(subject.log_otel_enabled).to eq true
+        describe "validation" do
+          def config_with(appenders)
+            config = RuntimeConfiguration.new
+            config.log_appenders = appenders
+            config
+          end
+
+          it "rejects an entry that specifies neither stream nor appender" do
+            expect { config_with([{ format: :json }]) }
+              .to raise_error(PactBroker::ConfigurationError, /entry 0.*must specify one of/m)
+          end
+
+          it "rejects an entry that specifies both stream and appender" do
+            expect { config_with([{ stream: :stdout, appender: :loki }]) }
+              .to raise_error(PactBroker::ConfigurationError, /entry 0.*both/m)
+          end
+
+          it "rejects an unknown stream, listing the valid values" do
+            expect { config_with([{ stream: :socket }]) }
+              .to raise_error(PactBroker::ConfigurationError, /entry 0.*stdout, stderr, file/m)
+          end
+
+          it "rejects an unknown format, listing the valid values" do
+            expect { config_with([{ stream: :stdout, format: :jsn }]) }
+              .to raise_error(PactBroker::ConfigurationError, /entry 0.*default, color, json/m)
+          end
+
+          it "rejects file_name on a stream that is not file" do
+            expect { config_with([{ stream: :stdout, file_name: "/tmp/x.log" }]) }
+              .to raise_error(PactBroker::ConfigurationError, /entry 0.*file_name/m)
+          end
+
+          it "rejects an invalid enabled value" do
+            expect { config_with([{ stream: :stdout, enabled: :maybe }]) }
+              .to raise_error(PactBroker::ConfigurationError, /entry 0.*enabled/m)
+          end
+
+          it "names the index of the offending entry" do
+            expect { config_with([{ stream: :stdout }, { stream: :nope }]) }
+              .to raise_error(PactBroker::ConfigurationError, /entry 1/)
+          end
+
+          it "accepts a valid list" do
+            expect {
+              config_with([{ stream: :stdout, format: :auto, level: :warn }, { appender: :open_telemetry, enabled: :auto }])
+            }.to_not raise_error
+          end
+        end
+      end
+
+      describe "log_application and log_environment" do
+        it "defaults log_application to pact-broker" do
+          expect(RuntimeConfiguration.new.log_application).to eq "pact-broker"
         end
 
-        it "coerces falsey strings to false" do
-          subject.log_otel_enabled = "false"
-          expect(subject.log_otel_enabled).to eq false
-          subject.log_otel_enabled = "0"
-          expect(subject.log_otel_enabled).to eq false
+        it "defaults log_application to OTEL_SERVICE_NAME when it is set" do
+          with_env("OTEL_SERVICE_NAME" => "my-service") do
+            expect(RuntimeConfiguration.new.log_application).to eq "my-service"
+          end
         end
 
-        it "raises a ConfigurationError for invalid values on load" do
-          config = RuntimeConfiguration.new
-          config.log_otel_enabled = "sometimes"
-          expect { config.send(:validate_logging_attributes!) }.to raise_error(PactBroker::ConfigurationError, /log_otel_enabled/)
+        it "defaults log_environment to nil" do
+          expect(RuntimeConfiguration.new.log_environment).to be_nil
+        end
+      end
+
+      describe "#log_setting_explicitly_set?" do
+        it "is false when the value came from the defaults" do
+          expect(RuntimeConfiguration.new.log_setting_explicitly_set?(:log_stream)).to be false
+        end
+
+        it "is true when the value came from an environment variable" do
+          with_env("PACT_BROKER_LOG_STREAM" => "stdout") do
+            expect(RuntimeConfiguration.new.log_setting_explicitly_set?(:log_stream)).to be true
+          end
+        end
+      end
+
+      describe "removed settings" do
+        it "no longer has log_otel_enabled" do
+          expect(RuntimeConfiguration.new).to_not respond_to(:log_otel_enabled)
+        end
+
+        it "no longer has custom_log_formatters=" do
+          expect(RuntimeConfiguration.new).to_not respond_to(:custom_log_formatters=)
         end
       end
     end

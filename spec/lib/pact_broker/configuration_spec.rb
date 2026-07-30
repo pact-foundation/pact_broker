@@ -39,6 +39,11 @@ module PactBroker
 
       let(:config) { PactBroker.configuration.dup }
 
+      before do
+        allow(SemanticLogger).to receive(:add_appender)
+        allow(PactBroker::Logging::OpenTelemetryAppenderSetup).to receive(:call)
+      end
+
       it "overrides the specified runtime configuration attributes" do
         config.override_runtime_configuration!(disable_ssl_verification: "true")
         expect(config.disable_ssl_verification).to eq true
