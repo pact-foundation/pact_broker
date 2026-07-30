@@ -1,13 +1,3 @@
-### Unreleased
-
-* feat: add `log_appenders` for declarative configuration of multiple log destinations, including stdout, stderr, files, and any Semantic Logger appender
-* feat: add `log_application` and `log_environment` so log entries identify the service and deployment environment
-* feat: include the OpenTelemetry trace and span ids in every log format, not only JSON
-* feat: correlate all log entries emitted while handling a request with an `X-Request-Id`, and carry that context into webhook execution and after-reply callbacks
-* feat: sanitise log payloads so an unserialisable value can no longer cause a log entry to be dropped
-* deprecate: `log_stream` and `log_format` are deprecated in favour of `log_appenders`, and will be removed in a future major version
-* chore: remove the unreleased `log_otel_enabled` setting, superseded by an `open_telemetry` entry in `log_appenders`
-
 <a name="v2.120.0"></a>
 ### v2.120.0 (2026-07-14)
 
