@@ -188,6 +188,14 @@ module PactBroker
             expect(config.log_appenders).to eq [{ appender: :loki, url: "http://loki:3100" }]
           end
 
+          it "passes through an appender instance rather than trying to coerce it to a symbol" do
+            appender_instance = Object.new
+            config = RuntimeConfiguration.new
+            config.log_appenders = [{ "appender" => appender_instance, "enabled" => "auto" }]
+
+            expect(config.log_appenders).to eq [{ appender: appender_instance, enabled: :auto }]
+          end
+
           it "coerces enabled true and false" do
             config = RuntimeConfiguration.new
             config.log_appenders = [{ "stream" => "stdout", "enabled" => "false" }]

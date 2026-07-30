@@ -66,13 +66,21 @@ module PactBroker
 
         entry.each_with_object({}) do | (key, value), new_entry |
           new_key = key.to_sym
-          new_entry[new_key] =
-            case new_key
-            when :stream, :format, :appender then value&.to_sym
-            when :enabled then coerce_log_appender_enabled(value)
-            else value
-            end
+          new_entry[new_key] = coerce_log_appender_entry_value(new_key, value)
         end
+      end
+
+      def self.coerce_log_appender_entry_value(key, value)
+        case key
+        when :stream, :format then value&.to_sym
+        when :appender then coerce_log_appender_value(value)
+        when :enabled then coerce_log_appender_enabled(value)
+        else value
+        end
+      end
+
+      def self.coerce_log_appender_value(value)
+        value.is_a?(String) || value.is_a?(Symbol) ? value.to_sym : value
       end
 
       def self.coerce_log_appender_enabled(value)
