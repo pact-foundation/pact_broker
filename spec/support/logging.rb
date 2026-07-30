@@ -1,16 +1,23 @@
 require "semantic_logger"
-require "pact_broker/logging/default_formatter"
+require "pact_broker/logging/context"
 
 FileUtils.mkdir_p("log")
 SemanticLogger.default_level = :error
 
 if ENV["DEBUG"] == "true"
   SemanticLogger.default_level = :info
-  SemanticLogger.add_appender(io: $stdout)
+  SemanticLogger.add_appender(io: $stdout, formatter: :color)
 end
 
 # Print out the request and response when DEBUG=true
 RSpec.configure do | config |
+  # PactBroker.reset_configuration runs before each example and creates a new
+  # Configuration, so without this the context providers registered by a
+  # previous example leak into the next one.
+  config.before :each do
+    PactBroker::Logging::Context.reset
+  end
+
   config.after(:each) do
     if ENV["DEBUG"] == "true" && defined?(last_response)
       last_request.env["rack.input"]&.rewind
