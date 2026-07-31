@@ -18,6 +18,11 @@ module Rack
       RACK_REQUEST_ID_HEADER = "HTTP_X_REQUEST_ID"
       HTTP_REQUEST_ID_HEADER = "x-request-id"
 
+      # Checked in order, so X-Request-Id wins when a caller sends both.
+      # X-Correlation-Id is the same idea under a different name, and is what
+      # many gateways and non-Ruby stacks send.
+      RACK_INBOUND_ID_HEADERS = [RACK_REQUEST_ID_HEADER, "HTTP_X_CORRELATION_ID"].freeze
+
       # An inbound request id is only trusted if it matches this charset and
       # length. It is echoed verbatim into the response header and into every
       # log line for the request, so anything outside a conservative
@@ -32,7 +37,7 @@ module Rack
       end
 
       def call(env)
-        request_id = valid_inbound_request_id(env[RACK_REQUEST_ID_HEADER]) || SecureRandom.hex(16)
+        request_id = inbound_request_id(env) || SecureRandom.hex(16)
 
         SemanticLogger.tagged(request_id: request_id) do
           status, headers, body = @app.call(env.merge(RACK_REQUEST_ID_HEADER => request_id))
@@ -41,6 +46,14 @@ module Rack
       end
 
       private
+
+      def inbound_request_id(env)
+        RACK_INBOUND_ID_HEADERS.each do | header |
+          valid = valid_inbound_request_id(env[header])
+          return valid if valid
+        end
+        nil
+      end
 
       def valid_inbound_request_id(value)
         return nil unless value.is_a?(String)

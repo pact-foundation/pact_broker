@@ -95,6 +95,38 @@ module Rack
         expect(headers["x-request-id"]).to match(/\A[0-9a-f]{32}\z/)
       end
 
+      it "falls back to an inbound X-Correlation-Id" do
+        _status, headers, _body = app.call({ "HTTP_X_CORRELATION_ID" => "from-gateway" })
+
+        expect(captured[:named_tags][:request_id]).to eq "from-gateway"
+        expect(headers["x-request-id"]).to eq "from-gateway"
+      end
+
+      it "prefers X-Request-Id when both headers are sent" do
+        app.call({ "HTTP_X_REQUEST_ID" => "from-request-id", "HTTP_X_CORRELATION_ID" => "from-gateway" })
+
+        expect(captured[:named_tags][:request_id]).to eq "from-request-id"
+      end
+
+      it "falls back to X-Correlation-Id when the X-Request-Id is invalid" do
+        app.call({ "HTTP_X_REQUEST_ID" => "abc\r\nX-Injected: evil", "HTTP_X_CORRELATION_ID" => "from-gateway" })
+
+        expect(captured[:named_tags][:request_id]).to eq "from-gateway"
+      end
+
+      it "validates the inbound X-Correlation-Id the same way, and generates a fresh id when it is malformed" do
+        _status, headers, _body = app.call({ "HTTP_X_CORRELATION_ID" => "abc\r\nX-Injected: evil" })
+
+        expect(captured[:named_tags][:request_id]).to match(/\A[0-9a-f]{32}\z/)
+        expect(headers["x-request-id"]).to match(/\A[0-9a-f]{32}\z/)
+      end
+
+      it "canonicalises an inbound X-Correlation-Id into the request id rack env key" do
+        app.call({ "HTTP_X_CORRELATION_ID" => "from-gateway" })
+
+        expect(captured[:env]["HTTP_X_REQUEST_ID"]).to eq "from-gateway"
+      end
+
       it "treats an empty inbound request id as absent and generates a fresh one instead" do
         _status, headers, _body = app.call({ "HTTP_X_REQUEST_ID" => "" })
 

@@ -78,3 +78,24 @@ Trace context is deliberately not captured this way. It is contributed by a
 context provider at the moment each entry is logged, so work that runs long after
 the original request reports whatever span is genuinely active instead of
 resurrecting a closed trace.
+
+## Trace correlation and OpenTelemetry
+
+The Pact Broker never starts a trace, and never reads `traceparent` from an
+inbound request. The built-in `:trace` context provider only reads whichever
+span OpenTelemetry reports as currently active, and contributes nothing when the
+OpenTelemetry gems are not loaded.
+
+Distributed tracing - continuing a caller's trace, and parenting spans correctly
+- is therefore the embedding application's responsibility. Install and configure
+`opentelemetry-sdk` along with Rack instrumentation, and the `trace_id`,
+`span_id` and `trace_flags` tags start appearing on log entries with no further
+wiring. This applies to async work too: a background job reports the span that is
+active when it runs.
+
+Request correlation is independent of all of this. The `request_id` tag is always
+present, whether or not OpenTelemetry is in use. It is taken from the inbound
+`X-Request-Id` header, falling back to `X-Correlation-Id`, and is generated when
+neither is present or the supplied value is not a safe token. The resolved value
+is returned in the `x-request-id` response header, and is propagated to
+background jobs and after-reply callbacks.
