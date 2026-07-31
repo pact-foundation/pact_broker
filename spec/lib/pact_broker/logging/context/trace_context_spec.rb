@@ -68,6 +68,33 @@ module PactBroker
             end
           end
         end
+
+        describe ".otel_loaded?" do
+          context "when the OpenTelemetry gems are not loaded" do
+            it "is false" do
+              hide_const("OpenTelemetry")
+
+              expect(TraceContext.otel_loaded?).to be false
+            end
+          end
+
+          context "when the OpenTelemetry gems are loaded" do
+            it "is true" do
+              stub_const("OpenTelemetry::Trace", Module.new)
+
+              expect(TraceContext.otel_loaded?).to be true
+            end
+          end
+        end
+
+        describe ".current_span_context" do
+          it "returns the context of the currently active span" do
+            span_context = double("span context")
+            stub_const("OpenTelemetry::Trace", double("Trace", current_span: double("span", context: span_context)))
+
+            expect(TraceContext.current_span_context).to be span_context
+          end
+        end
       end
     end
   end
