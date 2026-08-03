@@ -73,15 +73,16 @@ describe "Get provider pacts for verification" do
       end
 
       let(:fixture) do
+        body = JSON.parse(subject.body)
+        normalised_body = JSON.parse(body.to_json.gsub(%r{/metadata/[A-Za-z0-9_=-]+}, "/metadata/<normalised>"))
         {
           request: { path: path, headers: rack_env_to_http_headers(request_headers), body: request_body },
-          response: { status: subject.status, headers: determinate_headers(subject.headers), body: JSON.parse(subject.body)}
+          response: { status: subject.status, headers: determinate_headers(subject.headers), body: normalised_body }
         }
       end
 
       subject { post(path, request_body.to_json, request_headers) }
 
-      # The metadata is different when the database IDs are different
       it "matches the expected body", skip: !PactBroker::TestDatabase.sqlite? do
         Approvals.verify(fixture, :name => "get_provider_pacts_for_verification", format: :json)
       end
