@@ -12,6 +12,7 @@ require "pact_broker"
 require "pact_broker/app"
 
 require_relative "hal_relation_proxy_app"
+require "support/pact_broker/middleware/mock_puma"
 
 Dir.glob(File.join(File.dirname(__FILE__), "provider_states_for*.rb")).each do | path |
   require path
@@ -20,7 +21,7 @@ end
 PactBroker.configuration.base_urls = ["http://example.org"]
 
 pact_broker = PactBroker::App.new { |c| c.database_connection = PactBroker::TestDatabase.connection_for_test_database }
-app_to_verify = HalRelationProxyApp.new(pact_broker)
+app_to_verify = HalRelationProxyApp.new(PactBroker::Middleware::MockPuma.new(pact_broker))
 
 module Rack
   module PactBroker
