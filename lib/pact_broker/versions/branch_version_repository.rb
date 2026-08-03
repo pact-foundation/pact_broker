@@ -23,18 +23,20 @@ module PactBroker
 
       def add_branch(version, branch_name, auto_created: false)
         PactBroker.logger.debug("BranchVersionRepository#add_branch method called with version #{version.inspect} and branch_name '#{branch_name}'")
-        branch = find_or_create_branch(version.pacticipant, branch_name)
-        branch_version = version.branch_version_for_branch(branch)
-        if branch_version
-          PactBroker.logger.debug("Branch version already exists #{branch_version.inspect}")
-        else
-          PactBroker.logger.info("Creating branch version time: #{Time.now}")
-          branch_version = PactBroker::Versions::BranchVersion.new(version: version, branch: branch, auto_created: auto_created).insert_ignore
-          PactBroker::Versions::BranchHead.new(branch: branch, branch_version: branch_version).upsert
+        Sequel::Model.db.transaction do
+          branch = find_or_create_branch(version.pacticipant, branch_name)
+          branch_version = version.branch_version_for_branch(branch)
+          if branch_version
+            PactBroker.logger.debug("Branch version already exists #{branch_version.inspect}")
+          else
+            PactBroker.logger.info("Creating branch version time: #{Time.now}")
+            branch_version = PactBroker::Versions::BranchVersion.new(version: version, branch: branch, auto_created: auto_created).insert_ignore
+            PactBroker::Versions::BranchHead.new(branch: branch, branch_version: branch_version).upsert
+          end
+          branch.update(updated_at: Sequel.datetime_class.now)
+          pacticipant_service.maybe_set_main_branch(version.pacticipant, branch_name)
+          branch_version
         end
-        branch.update(updated_at: Sequel.datetime_class.now)
-        pacticipant_service.maybe_set_main_branch(version.pacticipant, branch_name)
-        branch_version
       end
 
       # Deletes a branch version - that is, removes a version from a branch.

@@ -83,9 +83,11 @@ module PactBroker
         after_reply_available? && detected_events.any?
       end
 
+      attr_reader :detected_events
+
       private
 
-      attr_reader :webhook_options, :base_webhook_context, :detected_events, :pending_webhook_events
+      attr_reader :webhook_options, :base_webhook_context, :pending_webhook_events
 
       def after_reply_available?
         webhook_options[:rack_after_reply].is_a?(Array)
