@@ -19,13 +19,15 @@ if ENV["SIMPLECOV_COMMAND_NAME"]
     SimpleCov.minimum_coverage 62
   when "pact:v2:verify"
     SimpleCov.minimum_coverage 62
+  else
+    # noop
   end
 end
 
 SimpleCov.start do
-  add_filter "/db/"
-  add_filter "/example/"
-  add_filter "/spec/"
-  add_filter "/tasks/"
-  add_filter "/script/"
+  skip "/db/"
+  skip "/example/"
+  skip "/spec/"
+  skip "/tasks/"
+  skip "/script/"
 end

@@ -4,7 +4,7 @@
 # This configuration will be replaced by the SemanticLogger later on.
 PADRINO_LOGGER ||= {
   ENV.fetch("RACK_ENV", "production").to_sym =>  { stream: :stdout }
-}
+} unless defined?(PADRINO_LOGGER)
 
 require "padrino-core"
 
