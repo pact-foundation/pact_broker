@@ -288,23 +288,31 @@ module PactBroker
       def triggered_webhook_notices(listener, pact)
         triggered_webhooks = listener.detected_events.flat_map(&:triggered_webhooks)
         if triggered_webhooks.any?
-          triggered_webhooks.collect do | triggered_webhook |
-            base_url = triggered_webhook.event_context[:base_url]
-            triggered_webhooks_notices_url = url_for_triggered_webhook(triggered_webhook, base_url)
-            text_2_params = { webhook_description: triggered_webhook.webhook.description&.inspect || triggered_webhook.webhook_uuid, event_name: triggered_webhook.event_name }
-            text_1 = message("messages.webhooks.webhook_triggered_for_event", text_2_params)
-            text_2 = message("messages.webhooks.triggered_webhook_see_logs", url: triggered_webhooks_notices_url)
-            Notice.debug("  #{text_1}\n    #{text_2}")
-          end
+          triggered_webhook_fired_notices(triggered_webhooks)
         elsif listener.webhooks_deferred?
           [Notice.debug("  " + message("messages.webhooks.webhooks_will_fire_after_response"))]
         else
-          if webhook_service.any_webhooks_configured_for_pact?(pact)
-            # There are some webhooks, just not any for this particular event
-            [Notice.debug("  " + message("messages.webhooks.no_webhooks_enabled_for_event"))]
-          else
-            []
-          end
+          no_triggered_webhook_notices(pact)
+        end
+      end
+
+      def triggered_webhook_fired_notices(triggered_webhooks)
+        triggered_webhooks.collect do | triggered_webhook |
+          base_url = triggered_webhook.event_context[:base_url]
+          triggered_webhooks_notices_url = url_for_triggered_webhook(triggered_webhook, base_url)
+          text_2_params = { webhook_description: triggered_webhook.webhook.description&.inspect || triggered_webhook.webhook_uuid, event_name: triggered_webhook.event_name }
+          text_1 = message("messages.webhooks.webhook_triggered_for_event", text_2_params)
+          text_2 = message("messages.webhooks.triggered_webhook_see_logs", url: triggered_webhooks_notices_url)
+          Notice.debug("  #{text_1}\n    #{text_2}")
+        end
+      end
+
+      def no_triggered_webhook_notices(pact)
+        if webhook_service.any_webhooks_configured_for_pact?(pact)
+          # There are some webhooks, just not any for this particular event
+          [Notice.debug("  " + message("messages.webhooks.no_webhooks_enabled_for_event"))]
+        else
+          []
         end
       end
 
@@ -321,6 +329,8 @@ module PactBroker
       end
 
       private :url_for_triggered_webhook
+      private :triggered_webhook_fired_notices
+      private :no_triggered_webhook_notices
     end
   end
 end
