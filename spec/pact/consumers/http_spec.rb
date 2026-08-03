@@ -5,11 +5,12 @@ require "pact_broker/app"
 require "rspec/mocks"
 include RSpec::Mocks::ExampleMethods
 require_relative "../../service_consumers/hal_relation_proxy_app"
+require_relative "../../support/pact_broker/middleware/mock_puma"
 
 PactBroker.configuration.base_urls = ["http://example.org"]
 
 pact_broker = PactBroker::App.new { |c| c.database_connection = PactBroker::TestDatabase.connection_for_test_database }
-app_to_verify = HalRelationProxyApp.new(pact_broker)
+app_to_verify = HalRelationProxyApp.new(PactBroker::Middleware::MockPuma.new(pact_broker))
 
 require "pact"
 require "pact/v2/rspec"
@@ -24,10 +25,11 @@ RSpec.describe "Verify consumers for Pact Broker", :pact_v2 do
     app: app_to_verify,
     # start rackup with a different port. Useful if you already have something
     # running on the default port *9292*
-    http_port: 9393, 
-    
+    http_port: 9393,
+    provider_setup_port: 9394,
+
     # Set the log level, default is :info
-  
+
     log_level: :info,
     logger: Logger.new(File.expand_path("../../../pact_verification.log", __dir__)),
     
