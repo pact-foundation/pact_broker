@@ -12,18 +12,19 @@
 module PactBroker
   module Async
     class AfterReply
-      def initialize(rack_env)
-        @rack_env = rack_env
-        @database_connector = rack_env.fetch("pactbroker.database_connector")
+      def initialize(rack_after_reply:, database_connector:)
+        @rack_after_reply = rack_after_reply
+        @database_connector = database_connector
       end
 
       def execute(&block)
-        dc = @database_connector
-        @rack_env["rack.after_reply"] << lambda {
-          dc.call do
-            block.call
-          end
-        }
+        if @rack_after_reply.is_a?(Array)
+          dc = @database_connector
+          @rack_after_reply << lambda { dc.call { block.call } }
+        else
+          # Non-Puma server (Passenger, plain Rack): run synchronously
+          @database_connector.call { block.call }
+        end
       end
     end
   end

@@ -28,6 +28,12 @@ module PactBroker
         def triggered_webhooks_created_for_event(params)
           detected_events << params.fetch(:event)
         end
+
+        # True when events were detected but no triggered_webhooks were populated —
+        # meaning webhook creation was deferred to rack.after_reply (PACT-7218).
+        def webhooks_deferred?
+          detected_events.any? && detected_events.flat_map(&:triggered_webhooks).empty?
+        end
       end
 
       def publish(parsed_contracts, base_url: )
@@ -290,6 +296,8 @@ module PactBroker
             text_2 = message("messages.webhooks.triggered_webhook_see_logs", url: triggered_webhooks_notices_url)
             Notice.debug("  #{text_1}\n    #{text_2}")
           end
+        elsif listener.webhooks_deferred?
+          [Notice.debug("  " + message("messages.webhooks.webhooks_will_fire_after_response"))]
         else
           if webhook_service.any_webhooks_configured_for_pact?(pact)
             # There are some webhooks, just not any for this particular event

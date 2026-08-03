@@ -17,7 +17,9 @@ module PactBroker
 
       def call(env)
         after_reply = []
-        response = @app.call({ "rack.after_reply" => after_reply }.merge(env))
+        database_connector = ->(& block) { block.call }
+        merged_env = { "rack.after_reply" => after_reply, "pactbroker.database_connector" => database_connector }.merge(env)
+        response = @app.call(merged_env)
         after_reply.each(&:call)
         response
       end

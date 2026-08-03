@@ -40,6 +40,7 @@ en:
             eventName: The name of the event that triggered the webhook
             buildUrl: The URL of the build that published the resources that have triggered the webhook (currently only supported for contracts published using the 'all in one' endpoint).
         no_webhooks_enabled_for_event: No enabled webhooks found for the detected events
+        webhooks_will_fire_after_response: Webhooks are enabled and will fire after the response is sent.
         webhook_triggered_for_event: Webhook %{webhook_description} triggered for event %{event_name}.
         triggered_webhook_see_logs: View logs at %{url}
       version:

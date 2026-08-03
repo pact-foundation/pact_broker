@@ -30,7 +30,7 @@
     "status": 200,
     "headers": {
       "content-type": "application/hal+json;charset=utf-8",
-      "content-length": "2921",
+      "content-length": "2775",
       "date": "<date>",
       "server": "Webmachine-Ruby/2.0.1 Rack/3.2"
     },
@@ -58,7 +58,7 @@
         },
         {
           "level": "debug",
-          "message": "  Webhook \"foo webhook\" triggered for event contract_content_changed.\n    View logs at http://example.org/triggered-webhooks/1234/logs",
+          "message": "  Webhooks are enabled and will fire after the response is sent.",
           "deprecationWarning": "Replaced by notices"
         },
         {
@@ -91,7 +91,7 @@
         },
         {
           "type": "debug",
-          "text": "  Webhook \"foo webhook\" triggered for event contract_content_changed.\n    View logs at http://example.org/triggered-webhooks/1234/logs"
+          "text": "  Webhooks are enabled and will fire after the response is sent."
         },
         {
           "type": "prompt",

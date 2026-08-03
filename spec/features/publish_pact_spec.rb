@@ -1,3 +1,5 @@
+require "pact_broker/api/decorators/pact_decorator"
+
 describe "Publishing a pact" do
 
   let(:pact_content) { load_fixture("a_consumer-a_provider.json") }

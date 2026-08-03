@@ -30,7 +30,7 @@
     "status": 200,
     "headers": {
       "content-type": "application/hal+json;charset=utf-8",
-      "content-length": "3192",
+      "content-length": "3421",
       "date": "<date>",
       "server": "Webmachine-Ruby/2.0.1 Rack/3.2"
     },
@@ -59,6 +59,11 @@
         {
           "level": "debug",
           "message": "  Events detected: contract_published, contract_content_changed (first time any pact published for this consumer with consumer version tagged a, first time any pact published for this consumer with consumer version tagged b)",
+          "deprecationWarning": "Replaced by notices"
+        },
+        {
+          "level": "debug",
+          "message": "  Webhooks are enabled and will fire after the response is sent.",
           "deprecationWarning": "Replaced by notices"
         },
         {
@@ -97,6 +102,10 @@
         {
           "type": "debug",
           "text": "  Events detected: contract_published, contract_content_changed (first time any pact published for this consumer with consumer version tagged a, first time any pact published for this consumer with consumer version tagged b)"
+        },
+        {
+          "type": "debug",
+          "text": "  Webhooks are enabled and will fire after the response is sent."
         },
         {
           "type": "prompt",

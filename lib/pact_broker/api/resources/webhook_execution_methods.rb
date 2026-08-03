@@ -26,6 +26,7 @@ module PactBroker
 
         def webhook_options(event_context = {})
           {
+            rack_after_reply: request.env["rack.after_reply"],
             database_connector: database_connector,
             webhook_execution_configuration: webhook_execution_configuration.with_webhook_context(event_context)
           }

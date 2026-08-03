@@ -51,6 +51,7 @@ RSpec.describe "publishing a pact using the all in one endpoint" do
     before do
       allow(PactBroker::Webhooks::TriggerService).to receive(:next_uuid).and_return("1234")
       td.create_global_webhook(description: "foo webhook")
+      stub_request(:post, "http://example.org/").to_return(status: 200)
     end
 
     it { Approvals.verify(fixture, :name => "publish_contract_nothing_exists_with_webhook", format: :json) }
