@@ -72,6 +72,26 @@ module PactBroker
           after_reply_callbacks.each(&:call)
           expect(webhook_trigger_service).to have_received(:schedule_webhooks).with(triggered_webhooks, webhook_options)
         end
+
+        context "when an error occurs in the after_reply callback" do
+          before do
+            allow(webhook_trigger_service).to receive(:create_triggered_webhooks_for_event).and_raise(StandardError, "boom")
+            allow(event_listener).to receive(:logger).and_return(double("logger", debug: nil, error: nil))
+          end
+
+          it "logs the error" do
+            event_listener.contract_published(params)
+            event_listener.schedule_triggered_webhooks
+            after_reply_callbacks.each(&:call)
+            expect(event_listener.send(:logger)).to have_received(:error).with("Error creating/scheduling triggered webhooks after reply", instance_of(StandardError))
+          end
+
+          it "does not re-raise the error" do
+            event_listener.contract_published(params)
+            event_listener.schedule_triggered_webhooks
+            expect { after_reply_callbacks.each(&:call) }.not_to raise_error
+          end
+        end
       end
     end
   end
