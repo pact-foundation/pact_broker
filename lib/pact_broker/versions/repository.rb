@@ -93,9 +93,6 @@ module PactBroker
         tags = params.delete(:tags)
         branch_name = params.delete(:branch)
         insert_params = params.merge(pacticipant_id: pacticipant.id, number: version_number).compact
-        # Insert then update to avoid the ON CONFLICT DO UPDATE tuple-lock cycle under concurrent
-        # publishes of the same version (PACT-7218). insert_ignore uses ON CONFLICT DO NOTHING
-        # (no tuple lock on conflict); the update then always applies via a safe row-level lock.
         saved_version = PactBroker::Domain::Version.new(insert_params).insert_ignore
         update_params = params.reject { |k, _| [:created_at, :order].include?(k) }
         saved_version.update(update_params) if update_params.any?
