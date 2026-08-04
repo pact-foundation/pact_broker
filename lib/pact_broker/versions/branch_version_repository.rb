@@ -33,7 +33,8 @@ module PactBroker
             branch_version = PactBroker::Versions::BranchVersion.new(version: version, branch: branch, auto_created: auto_created).insert_ignore
             PactBroker::Versions::BranchHead.new(branch: branch, branch_version: branch_version).upsert
           end
-          branch.update(updated_at: Sequel.datetime_class.now)
+          now = Sequel.datetime_class.now
+          Branch.where(id: branch.id).where(Sequel[:updated_at] < now - Rational(60, 86400)).update(updated_at: now)
           pacticipant_service.maybe_set_main_branch(version.pacticipant, branch_name)
           branch_version
         end

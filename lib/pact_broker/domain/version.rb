@@ -279,6 +279,7 @@ module PactBroker
       # Haven't had time to dig into why
       def after_create
         super
+        return unless id
         OrderVersions.(self) unless self.order
         refresh
       end

@@ -68,11 +68,12 @@ module PactBroker
         if after_reply_available?
           # Deferred work is collected as pending lambdas; push them to after_reply now that
           # finish_request has confirmed the response code is < 400.
+          after_reply = PactBroker::Async::AfterReply.new(
+            rack_after_reply: webhook_options[:rack_after_reply],
+            database_connector: webhook_options[:database_connector]
+          )
           pending_webhook_events.each do |work|
-            PactBroker::Async::AfterReply.new(
-              rack_after_reply: webhook_options[:rack_after_reply],
-              database_connector: webhook_options[:database_connector]
-            ).execute(&work)
+            after_reply.execute(&work)
           end
         else
           webhook_trigger_service.schedule_webhooks(detected_events.flat_map(&:triggered_webhooks), webhook_options)
