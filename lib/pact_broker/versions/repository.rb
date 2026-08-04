@@ -89,22 +89,16 @@ module PactBroker
       end
 
       def create_or_update(pacticipant, version_number, open_struct_version)
-        saved_version = PactBroker::Domain::Version.where(pacticipant_id: pacticipant.id, number: version_number).single_record
         params = open_struct_version.to_h
         tags = params.delete(:tags)
         branch_name = params.delete(:branch)
-        if saved_version
-          saved_version.update(params)
-        else
-          # Upsert is only for race conditions
-          # Upsert blanks out any fields that are not provided
-          saved_version = PactBroker::Domain::Version.new(
-            params.merge(
-              pacticipant_id: pacticipant.id,
-              number: version_number
-            ).compact
-          ).upsert
-        end
+        insert_params = params.merge(pacticipant_id: pacticipant.id, number: version_number).compact
+        # Insert then update to avoid the ON CONFLICT DO UPDATE tuple-lock cycle under concurrent
+        # publishes of the same version (PACT-7218). insert_ignore uses ON CONFLICT DO NOTHING
+        # (no tuple lock on conflict); the update then always applies via a safe row-level lock.
+        saved_version = PactBroker::Domain::Version.new(insert_params).insert_ignore
+        update_params = params.reject { |k, _| [:created_at, :order].include?(k) }
+        saved_version.update(update_params) if update_params.any?
 
         branch_version_repository.add_branch(saved_version, branch_name) if branch_name
         replace_tags(saved_version, tags) if tags

@@ -82,8 +82,8 @@ module PactBroker
             expect{ subject }.to_not change { PactBroker::Versions::BranchVersion.count }
           end
 
-          it "updates the updated_at" do
-            expect{ subject }.to change { PactBroker::Versions::BranchVersion.first.updated_at }
+          it "does not update the updated_at (avoids deadlock under concurrent requests)" do
+            expect{ subject }.to_not change { PactBroker::Versions::BranchVersion.first.updated_at }
           end
 
           it "does not change the created_at" do

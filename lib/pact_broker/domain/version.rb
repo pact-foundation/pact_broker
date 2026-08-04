@@ -12,6 +12,7 @@ module PactBroker
 
       plugin :timestamps, update_on_create: true
       plugin :age
+      plugin :insert_ignore, identifying_columns: [:pacticipant_id, :number]
       plugin :upsert, { identifying_columns: [:pacticipant_id, :number], ignore_columns_on_update: [:id, :created_at, :order] }
 
       one_to_many :pact_publications, order: :revision_number, class: "PactBroker::Pacts::PactPublication", key: :consumer_version_id
@@ -278,6 +279,7 @@ module PactBroker
       # Haven't had time to dig into why
       def after_create
         super
+        return unless id
         OrderVersions.(self) unless self.order
         refresh
       end

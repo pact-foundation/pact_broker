@@ -27,14 +27,14 @@ module PactBroker
           branch = find_or_create_branch(version.pacticipant, branch_name)
           branch_version = version.branch_version_for_branch(branch)
           if branch_version
-            PactBroker.logger.info("Updating branch version #{branch_version.inspect}, time: #{Time.now}")
-            branch_version.update(updated_at: Sequel.datetime_class.now)
+            PactBroker.logger.debug("Branch version already exists #{branch_version.inspect}")
           else
             PactBroker.logger.info("Creating branch version time: #{Time.now}")
             branch_version = PactBroker::Versions::BranchVersion.new(version: version, branch: branch, auto_created: auto_created).insert_ignore
             PactBroker::Versions::BranchHead.new(branch: branch, branch_version: branch_version).upsert
           end
-          branch.update(updated_at: Sequel.datetime_class.now)
+          now = Sequel.datetime_class.now
+          Branch.where(id: branch.id).where(Sequel[:updated_at] < now - Rational(60, 86400)).update(updated_at: now)
           pacticipant_service.maybe_set_main_branch(version.pacticipant, branch_name)
           branch_version
         end
