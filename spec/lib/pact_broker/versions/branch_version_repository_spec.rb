@@ -83,13 +83,25 @@ module PactBroker
             expect(branch_head.version).to eq subject
           end
 
-          it "updates the branch updated_at" do
-            branch = PactBroker::Versions::Branch.where(name: "original-branch").single_record
-            original_updated_at = branch.updated_at
-            now = (original_updated_at.to_time.utc + 3600)
-            Timecop.freeze(now) { subject }
-            expect(branch.refresh.updated_at.to_time.to_i).to eq(now.to_i)
-            expect(branch.updated_at).to be > original_updated_at
+          context "when the branch updated_at is older than 60 seconds" do
+            it "updates the branch updated_at" do
+              branch = PactBroker::Versions::Branch.where(name: "original-branch").single_record
+              original_updated_at = branch.updated_at
+              now = (original_updated_at.to_time.utc + 3600)
+              Timecop.freeze(now) { subject }
+              expect(branch.refresh.updated_at.to_time.to_i).to eq(now.to_i)
+              expect(branch.updated_at).to be > original_updated_at
+            end
+          end
+
+          context "when the branch updated_at is within 60 seconds" do
+            it "does not update the branch updated_at" do
+              branch = PactBroker::Versions::Branch.where(name: "original-branch").single_record
+              original_updated_at = branch.updated_at
+              now = (original_updated_at.to_time.utc + 30)
+              Timecop.freeze(now) { subject }
+              expect(branch.refresh.updated_at.to_time.to_i).to eq(original_updated_at.to_time.to_i)
+            end
           end
         end
       end
