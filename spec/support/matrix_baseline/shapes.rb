@@ -31,6 +31,8 @@ module MatrixBaseline
       provider_version = anchors.fetch(:provider_version)
       downstream = anchors.fetch(:downstream)
       middle_tier = anchors.fetch(:both)
+      wide_consumer = anchors.fetch(:wide_consumer)
+      wide_consumer_version = anchors.fetch(:wide_consumer_version)
 
       sel = ->(**attrs) { PactBroker::Matrix::UnresolvedSelector.new(**attrs) }
 
@@ -69,6 +71,11 @@ module MatrixBaseline
         Shape.new(
           "can_i_deploy_environment", "can-i-deploy --to-environment", :can_i_deploy,
           [sel.(pacticipant_name: consumer, pacticipant_version_number: consumer_version)],
+          { latestby: "cvpv", environment_name: environment }
+        ),
+        Shape.new(
+          "can_i_deploy_environment_large_n", "can-i-deploy --to-environment for a service with many integrations", :can_i_deploy,
+          [sel.(pacticipant_name: wide_consumer, pacticipant_version_number: wide_consumer_version)],
           { latestby: "cvpv", environment_name: environment }
         ),
         Shape.new(

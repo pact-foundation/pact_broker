@@ -2,6 +2,8 @@ require "support/matrix_baseline/seed"
 require "pact_broker/domain/pacticipant"
 require "pact_broker/domain/verification"
 require "pact_broker/pacts/pact_publication"
+require "pact_broker/deployments/environment"
+require "pact_broker/deployments/deployed_version"
 
 module MatrixBaseline
   describe Seed do
@@ -46,6 +48,32 @@ module MatrixBaseline
       latest_results = PactBroker::Domain::Verification.where(number: 2).select_map(:success).uniq
 
       expect(latest_results).to match_array([false, true])
+    end
+
+    # The production shape the baseline exists to profile is a can-i-deploy
+    # against an environment for a service with many integrations: one UNION arm
+    # per integrated pacticipant. The anchor consumer has four dependencies,
+    # which is not enough arms for the cost to show up.
+    it "builds a wide consumer with enough environment-deployed integrations to profile the large-N shape" do
+      result = Seed.call(td)
+
+      expect(Seed::WIDE_PROVIDER_COUNT).to be >= 30
+      expect(result[:wide_providers].size).to eq(Seed::WIDE_PROVIDER_COUNT)
+      expect(result[:anchors][:wide_consumer]).to eq("wide-consumer-01")
+      expect(result[:anchors][:wide_consumer_version]).to eq("1")
+
+      wide_consumer = PactBroker::Domain::Pacticipant.where(name: "wide-consumer-01").single_record
+      expect(PactBroker::Pacts::PactPublication.where(consumer_id: wide_consumer.id).count).to eq(Seed::WIDE_PROVIDER_COUNT)
+
+      # Every wide provider must have a version in the environment, otherwise the
+      # inferred selectors resolve to NULL_VERSION_ID and the shape profiles a
+      # query that matches nothing.
+      environment = PactBroker::Deployments::Environment.where(name: Seed::ENVIRONMENT).single_record
+      deployed_pacticipant_ids = PactBroker::Deployments::DeployedVersion.where(environment_id: environment.id).select_map(:pacticipant_id)
+      wide_provider_ids = PactBroker::Domain::Pacticipant.where(Sequel.like(:name, "wide-provider-%")).select_map(:id)
+
+      expect(wide_provider_ids.size).to eq(Seed::WIDE_PROVIDER_COUNT)
+      expect(deployed_pacticipant_ids).to include(*wide_provider_ids)
     end
   end
 end

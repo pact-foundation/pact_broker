@@ -17,6 +17,8 @@ module MatrixBaseline
           provider_version: "1",
           both: "gateway-service-01",
           downstream: ["provider-service-01", "gateway-service-01", "provider-service-02", "provider-service-03"],
+          wide_consumer: "wide-consumer-01",
+          wide_consumer_version: "1",
         },
       }
     end
@@ -28,9 +30,9 @@ module MatrixBaseline
     # (can-i-deploy's overall-latest mode), so it cannot separate the two.
     OPTION_KEYS = [:latestby, :limit, :success, :environment_name].freeze
 
-    it "produces the 13 representative shapes with stable ids" do
-      expect(shapes.size).to eq(13)
-      expect(shapes.map(&:id).uniq.size).to eq(13)
+    it "produces the 14 representative shapes with stable ids" do
+      expect(shapes.size).to eq(14)
+      expect(shapes.map(&:id).uniq.size).to eq(14)
       expect(shapes.map(&:id)).to all(match(/\A[a-z0-9_]+\z/))
       expect(shapes.map(&:kind).uniq).to match_array([:matrix, :can_i_deploy])
     end
@@ -45,6 +47,20 @@ module MatrixBaseline
     it "includes a large-N shape with at least 20 selectors" do
       large_n = shapes.find { |s| s.id == "large_n_selectors" }
       expect(large_n.selectors.size).to be >= 20
+    end
+
+    # large_n_selectors uses name-only selectors, which take the
+    # only_pacticipant_name_specified? path and never build the version-
+    # resolution UNION at all. This shape is the one that does.
+    it "includes a large-N environment shape, the production shape this baseline exists to profile" do
+      shape = shapes.find { |s| s.id == "can_i_deploy_environment_large_n" }
+
+      expect(shape).to_not be_nil
+      expect(shape.kind).to eq(:can_i_deploy)
+      expect(shape.selectors.size).to eq(1)
+      expect(shape.selectors.first[:pacticipant_name]).to eq("wide-consumer-01")
+      expect(shape.selectors.first[:pacticipant_version_number]).to eq("1")
+      expect(shape.options[:environment_name]).to eq("production")
     end
 
     it "includes a middle-tier shape selecting the both-service anchor" do

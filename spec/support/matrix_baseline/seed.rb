@@ -26,6 +26,10 @@ module MatrixBaseline
     BRANCH = "main"
     TAG = "prod"
 
+    WIDE_CONSUMER = "wide-consumer-01"
+    WIDE_CONSUMER_VERSION = "1"
+    WIDE_PROVIDER_COUNT = 30
+
     def self.call(td)
       new(td).call
     end
@@ -35,6 +39,7 @@ module MatrixBaseline
       @consumers = Array.new(CONSUMER_COUNT) { |i| format("consumer-app-%02d", i + 1) }
       @providers = Array.new(PROVIDER_COUNT) { |i| format("provider-service-%02d", i + 1) }
       @both = Array.new(BOTH_COUNT) { |i| format("gateway-service-%02d", i + 1) }
+      @wide_providers = Array.new(WIDE_PROVIDER_COUNT) { |i| format("wide-provider-%02d", i + 1) }
       @downstream_pool = @providers + @both
       @verification_counter = 0
       @verify_pact_calls = 0
@@ -46,12 +51,15 @@ module MatrixBaseline
       anchor_downstream = build_anchor_consumer
       build_remaining_consumers
       build_gateway_consumers
+      build_wide_consumer
       deploy_into_environment
+      deploy_wide_providers_into_environment
 
       {
         consumers: @consumers,
         providers: @providers,
         both: @both,
+        wide_providers: @wide_providers,
         environment: ENVIRONMENT,
         branch: BRANCH,
         tag: TAG,
@@ -62,6 +70,8 @@ module MatrixBaseline
           provider_version: ANCHOR_PROVIDER_VERSION,
           both: ANCHOR_BOTH,
           downstream: anchor_downstream,
+          wide_consumer: WIDE_CONSUMER,
+          wide_consumer_version: WIDE_CONSUMER_VERSION,
         },
       }
     end
@@ -128,6 +138,32 @@ module MatrixBaseline
         end
 
         republish_extra_versions(gateway, downstream)
+      end
+    end
+
+    # A consumer with many integrations, all resolvable through the environment.
+    # This is the shape that makes the per-selector cost of the matrix query
+    # visible: can-i-deploy against an environment infers one selector per
+    # integrated pacticipant, and each becomes its own arm of the version-
+    # resolution UNION.
+    def build_wide_consumer
+      td.create_pact_with_hierarchy(WIDE_CONSUMER, WIDE_CONSUMER_VERSION, @wide_providers.first)
+      verify_pact(WIDE_CONSUMER, @wide_providers.first)
+
+      @wide_providers.drop(1).each do |dep|
+        ensure_provider(dep)
+        td.create_pact(json_content: pact_content(WIDE_CONSUMER, dep, WIDE_CONSUMER_VERSION))
+        verify_pact(WIDE_CONSUMER, dep)
+      end
+    end
+
+    # Each wide provider gets a version in the environment so its inferred
+    # selector resolves to a real version rather than to NULL_VERSION_ID.
+    def deploy_wide_providers_into_environment
+      @wide_providers.each do |provider|
+        td.use_provider(provider)
+        td.create_provider_version("deployed")
+        td.create_deployed_version_for_provider_version(environment_name: ENVIRONMENT)
       end
     end
 
