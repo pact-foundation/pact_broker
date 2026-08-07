@@ -90,7 +90,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        postgres_docker_image_tag:
+        postgres_version:
           - "13"
           - "14"
           - "15"
@@ -101,7 +101,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - run: script/test/run-rake-on-docker-compose-postgres.sh
         env:
-          POSTGRES_DOCKER_IMAGE_TAG: ${{ matrix.postgres_docker_image_tag }}
+          POSTGRES_VERSION: ${{ matrix.postgres_version }}
 
       - name: Upload coverage to Codecov
         if: ${{ !cancelled() }}

@@ -10,19 +10,34 @@ locally and diff two runs; they are not committed.
 ## Generate a baseline (Postgres)
 
 Baselines are generated against **Postgres** (the production backend). Start a
-throwaway Postgres in Docker:
+throwaway Postgres with the dev compose file:
 
-    docker run --rm -d --name pact-broker-baseline-pg \
-      -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=pact_broker_test \
-      -p 5433:5432 postgres:15
+    docker compose -f docker-compose-dev-postgres.yml up -d postgres
 
-Point the suite at it and run the generator:
+The Postgres version is controlled by `POSTGRES_VERSION` (default `15`),
+so a baseline can be captured against a specific major version:
 
-    PACT_BROKER_TEST_DATABASE_URL="postgres://postgres:postgres@localhost:5433/pact_broker_test" \
+    POSTGRES_VERSION=14 docker compose -f docker-compose-dev-postgres.yml up -d postgres
+
+The `pg` driver lives in an optional bundle group, so it must be installed and
+enabled explicitly — without `BUNDLE_WITH=pg` the run fails with
+`LoadError: cannot load such file -- pg`:
+
+    BUNDLE_WITH=pg bundle install
+
+Point the suite at the database and run the generator:
+
+    BUNDLE_WITH=pg \
+      PACT_BROKER_TEST_DATABASE_URL="postgres://postgres:postgres@localhost:5432/postgres" \
       bundle exec rspec spec/benchmarks/matrix_baseline_spec.rb --tag matrix_baseline
 
 This writes `docs/matrix-optimisation/baseline-postgres.md`. Tear the container down
-with `docker rm -f pact-broker-baseline-pg` when done.
+with `docker compose -f docker-compose-dev-postgres.yml down -v` when done.
+
+> Postgres 18 and later relocated the data directory, which is incompatible with
+> the `/var/lib/postgresql/data` volume mount in `docker-compose-dev-postgres.yml`;
+> the container exits on startup. Use a tag of `17` or lower until that mount is
+> updated.
 
 The generator is tagged `matrix_baseline` and excluded from the default test run;
 it only executes when invoked with `--tag matrix_baseline`. Against a non-Postgres
