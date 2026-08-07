@@ -21,7 +21,7 @@ module PactBroker
       # @return [Sequel::Dataset<Verification>, nil]
       def matching_selectors_as_provider_for_any_consumer(resolved_selectors)
         select_verification_columns_with_aliases
-          .inner_join_versions_for_selectors_as_provider(resolved_selectors)
+          .where_provider_version_matches_selectors(resolved_selectors)
       end
 
       # Return verifications where the provider is described by any of the resolved_selectors *that only specify the pacticipant NAME*,
@@ -51,32 +51,43 @@ module PactBroker
       # @param [Array<PactBroker::Matrix::ResolvedSelector>] resolved_selectors
       # @return [Sequel::Dataset<Verification>, nil]
       def matching_only_selectors_as_provider_where_not_only_pacticipant_name_in_selector(resolved_selectors)
-        # get the UnresolvedSelector objects back out of the resolved_selectors because the Version.for_selector() method uses the UnresolvedSelector
         all_pacticipant_ids = resolved_selectors.collect(&:pacticipant_id).uniq
         resolved_selectors_with_versions_specified = resolved_selectors.reject(&:only_pacticipant_name_specified?)
 
         if resolved_selectors_with_versions_specified.any?
           select_verification_columns_with_aliases
-            .inner_join_versions_for_selectors_as_provider(resolved_selectors_with_versions_specified)
+            .where_provider_version_matches_selectors(resolved_selectors_with_versions_specified)
             .where(consumer_id: all_pacticipant_ids)
         end
       end
 
-      # Don't think it's worth splitting this into 2 different queries for selectors with only pacticipant name/selectors with version properties,
-      # as it's unlikely for there ever to be a query through the UI or CLI that results in 1 selector which only has a pacticipant name in it.
+      # Name-only selectors carry no version id — matching_selectors_as_provider_for_any_consumer
+      # passes its selectors unfiltered — so they filter on the provider pacticipant instead. That
+      # identifies the same rows, because a verification's provider_id is the
+      # pacticipant_id of its provider_version.
       # @private
       # @param [Array<PactBroker::Matrix::ResolvedSelector>] resolved_selectors
       # @return [Sequel::Dataset<Verification>]
-      def inner_join_versions_for_selectors_as_provider(resolved_selectors)
-        # get the UnresolvedSelector objects back out of the resolved_selectors because the Version.for_selector() method uses the UnresolvedSelector
-        unresolved_selectors = resolved_selectors.collect(&:original_selector).uniq
-        versions = PactBroker::Domain::Version.ids_for_selectors(unresolved_selectors)
-        join_versions_dataset(versions)
+      def where_provider_version_matches_selectors(resolved_selectors)
+        if resolved_selectors.empty?
+          raise ArgumentError.new("resolved_selectors must not be empty")
+        end
+
+        criteria = provider_criteria_for_selectors(resolved_selectors)
+        where(criteria.size > 1 ? Sequel.|(*criteria) : criteria.first)
       end
 
       # @private
-      def join_versions_dataset(versions_dataset)
-        join(versions_dataset, { Sequel[self.model.table_name][:provider_version_id] => Sequel[:versions][:id] }, table_alias: :versions)
+      # @param [Array<PactBroker::Matrix::ResolvedSelector>] resolved_selectors
+      # @return [Array<Hash>]
+      def provider_criteria_for_selectors(resolved_selectors)
+        name_only, with_versions = resolved_selectors.partition(&:only_pacticipant_name_specified?)
+        table = self.model.table_name
+
+        criteria = []
+        criteria << { Sequel[table][:provider_id] => name_only.collect(&:pacticipant_id).uniq } if name_only.any?
+        criteria << { Sequel[table][:provider_version_id] => with_versions.collect(&:pacticipant_version_id).uniq } if with_versions.any?
+        criteria
       end
     end
   end

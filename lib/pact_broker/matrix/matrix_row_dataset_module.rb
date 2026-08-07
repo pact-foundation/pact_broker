@@ -61,8 +61,13 @@ module PactBroker
         end
 
         # consumer
-        pact_publication_matching_consumer = select_pact_columns_with_aliases.most_recent(limit).from_self(alias: :p).inner_join_versions_for_selectors_as_consumer(resolved_selectors)
-        rows_where_selector_matches_consumer = pact_publication_matching_consumer.left_outer_join_verifications.select_all_columns_after_join
+        pact_publication_matching_consumer = select_pact_columns_with_aliases
+          .most_recent(limit)
+          .from_self(alias: :p)
+          .where_consumer_version_matches_selectors(resolved_selectors)
+        rows_where_selector_matches_consumer = pact_publication_matching_consumer
+          .left_outer_join_verifications
+          .select_all_columns_after_join
 
         # provider
         verifications_matching_provider = verification_dataset.matching_selectors_as_provider_for_any_consumer(resolved_selectors)
@@ -143,24 +148,37 @@ module PactBroker
 
         if resolved_selectors_with_versions_specified.any?
           select_pact_columns_with_aliases
-            .inner_join_versions_for_selectors_as_consumer(resolved_selectors_with_versions_specified)
+            .where_consumer_version_matches_selectors(resolved_selectors_with_versions_specified)
             .where(provider_id: all_pacticipant_ids)
             .most_recent(limit)
         end
       end
 
+      # Name-only selectors carry no version ID — matching_one_selector_for_either_consumer_or_provider
+      # passes its selectors unfiltered — so they filter on the pacticipant instead. That
+      # identifies the same rows, because a pact publication's consumer_id is the
+      # pacticipant_id of its consumer_version.
       # @private
-      def inner_join_versions_for_selectors_as_consumer(resolved_selectors)
-        # get the UnresolvedSelector objects back out of the resolved_selectors because the Version.for_selector() method uses the UnresolvedSelector
-        unresolved_selectors = resolved_selectors.collect(&:original_selector).uniq
-        versions = PactBroker::Domain::Version.ids_for_selectors(unresolved_selectors)
-        inner_join_versions_dataset(versions)
+      # @param [Array<PactBroker::Matrix::ResolvedSelector>] resolved_selectors
+      def where_consumer_version_matches_selectors(resolved_selectors)
+        if resolved_selectors.empty?
+          raise ArgumentError.new("resolved_selectors must not be empty")
+        end
+
+        criteria = consumer_criteria_for_selectors(resolved_selectors)
+        where(criteria.size > 1 ? Sequel.|(*criteria) : criteria.first)
       end
 
       # @private
-      def inner_join_versions_dataset(versions)
-        versions_join = { Sequel[:p][:consumer_version_id] => Sequel[:versions][:id] }
-        join(versions, versions_join, table_alias: :versions)
+      # @param [Array<PactBroker::Matrix::ResolvedSelector>] resolved_selectors
+      # @return [Array<Hash>]
+      def consumer_criteria_for_selectors(resolved_selectors)
+        name_only, with_versions = resolved_selectors.partition(&:only_pacticipant_name_specified?)
+
+        criteria = []
+        criteria << { Sequel[:p][:consumer_id] => name_only.collect(&:pacticipant_id).uniq } if name_only.any?
+        criteria << { Sequel[:p][:consumer_version_id] => with_versions.collect(&:pacticipant_version_id).uniq } if with_versions.any?
+        criteria
       end
 
       # @private
