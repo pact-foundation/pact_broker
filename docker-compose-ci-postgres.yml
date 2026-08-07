@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:${POSTGRES_DOCKER_IMAGE_TAG:-latest}
+    image: postgres:${POSTGRES_VERSION:-latest}
     logging:
         driver: none
     healthcheck:
