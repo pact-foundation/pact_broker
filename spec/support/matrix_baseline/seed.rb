@@ -23,6 +23,8 @@ module MatrixBaseline
     ANCHOR_PROVIDER_VERSION = "1"
     ANCHOR_BOTH = "gateway-service-01"
     ENVIRONMENT = "production"
+    BRANCH = "main"
+    TAG = "prod"
 
     def self.call(td)
       new(td).call
@@ -35,6 +37,7 @@ module MatrixBaseline
       @both = Array.new(BOTH_COUNT) { |i| format("gateway-service-%02d", i + 1) }
       @downstream_pool = @providers + @both
       @verification_counter = 0
+      @verify_pact_calls = 0
     end
 
     def call
@@ -50,6 +53,8 @@ module MatrixBaseline
         providers: @providers,
         both: @both,
         environment: ENVIRONMENT,
+        branch: BRANCH,
+        tag: TAG,
         anchors: {
           consumer: ANCHOR_CONSUMER,
           consumer_version: ANCHOR_CONSUMER_VERSION,
@@ -77,7 +82,7 @@ module MatrixBaseline
 
       downstream.drop(1).each do |dep|
         ensure_provider(dep)
-        td.create_pact(json_content: td.random_json_content(ANCHOR_CONSUMER, dep))
+        td.create_pact(json_content: pact_content(ANCHOR_CONSUMER, dep, "1"))
         verify_pact(ANCHOR_CONSUMER, dep)
       end
 
@@ -99,7 +104,7 @@ module MatrixBaseline
 
         downstream.drop(1).each do |dep|
           ensure_provider(dep)
-          td.create_pact(json_content: td.random_json_content(consumer, dep))
+          td.create_pact(json_content: pact_content(consumer, dep, "1"))
           verify_pact(consumer, dep)
         end
 
@@ -118,7 +123,7 @@ module MatrixBaseline
 
         downstream.drop(1).each do |dep|
           ensure_provider(dep)
-          td.create_pact(json_content: td.random_json_content(gateway, dep))
+          td.create_pact(json_content: pact_content(gateway, dep, "1"))
           verify_pact(gateway, dep)
         end
 
@@ -126,24 +131,38 @@ module MatrixBaseline
       end
     end
 
+    # The final version of each consumer is tagged so tag-resolving selectors
+    # have a target; every republished version sits on a branch so
+    # branch-resolving selectors do too. Both resolve through different code
+    # paths to a version-number selector.
     def republish_extra_versions(consumer, downstream)
       (2..VERSIONS_PER_CONSUMER).each do |n|
         td.use_consumer(consumer)
-        td.create_consumer_version(n.to_s, branch: "main")
+        td.create_consumer_version(n.to_s, branch: BRANCH)
+        td.create_consumer_version_tag(TAG) if n == VERSIONS_PER_CONSUMER
         downstream.each do |dep|
           td.use_provider(dep)
-          td.create_pact(json_content: td.random_json_content(consumer, dep))
+          td.create_pact(json_content: pact_content(consumer, dep, n.to_s))
         end
       end
     end
 
     # Verifies the pact that was just created (relies on the builder's
-    # current consumer/provider/pact context), alternating success so the
-    # success filter has both true and false rows to work with.
+    # current consumer/provider/pact context) with two verifications whose
+    # results disagree, alternating which way round on each call.
+    #
+    # The alternation is driven by a per-call counter rather than
+    # @verification_counter, which advances twice per call and so has an
+    # invariant parity. What matters is the *second* verification: latestby
+    # collapses to it, so it decides whether the pact reads as passing. Half
+    # the pacts ending on a failure is what gives the success filter something
+    # to exclude and lets can-i-deploy reach its failure path.
     def verify_pact(_consumer, _provider)
-      success = @verification_counter.even?
-      td.create_verification(provider_version: next_verification_version, number: 1, success: success)
-      td.create_verification(provider_version: next_verification_version, number: 2, success: !success)
+      @verify_pact_calls += 1
+      latest_success = @verify_pact_calls.odd?
+
+      td.create_verification(provider_version: next_verification_version, number: 1, success: !latest_success)
+      td.create_verification(provider_version: next_verification_version, number: 2, success: latest_success)
     end
 
     # Points the builder's current provider at an existing pacticipant, or
@@ -154,6 +173,17 @@ module MatrixBaseline
       else
         td.use_provider(name)
       end
+    end
+
+    # Pact content must be deterministic, not merely unique. The builder's
+    # random_json_content embeds a `rand` in the interaction path, which varies
+    # the stored row's length and so the page count of the tables the matrix
+    # queries scan — enough to move the buffer counts in the captured plans
+    # between runs. Keying the content on the pact's own identity keeps every
+    # pact distinct (they are deduplicated by content hash) while making the
+    # bytes on disk the same on every run.
+    def pact_content(consumer, provider, version)
+      td.fixed_json_content(consumer, provider, "#{consumer}-#{provider}-#{version}")
     end
 
     def next_verification_version

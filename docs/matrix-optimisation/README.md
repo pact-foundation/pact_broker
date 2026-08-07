@@ -52,10 +52,34 @@ records, inside collapsible sections:
 - the exact SQL of each statement;
 - its `EXPLAIN` plan.
 
+Plans are captured with `EXPLAIN (ANALYZE, BUFFERS, TIMING OFF)`. That keeps the
+measures of work done — estimated cost, actual row counts, buffer hit/read
+counts, sort and hash memory usage — and drops the measures of how fast this
+particular machine did it. Wall-clock figures are excluded deliberately: they
+vary with unrelated load and would swamp the diff.
+
 ## Comparing runs
 
-Regenerate and diff two `baseline-postgres.md` files to compare:
+**Two runs against unchanged code produce a byte-identical file.** Any diff at
+all is a real difference in what the query engine did. Regenerate and diff two
+`baseline-postgres.md` files to compare:
 
-- **query count** per shape;
+- **query count** per shape (the `N queries` in each section heading);
 - **plan shape** — sequential vs index scans, sorts, join types, UNION branch count;
-- **estimated cost / actual rows / buffers** from `EXPLAIN (ANALYZE, BUFFERS)`.
+- **estimated cost, actual rows, buffers and memory usage** per plan node.
+
+Determinism depends on the generator resetting the database itself — it
+truncates with `RESTART IDENTITY` so surrogate keys in the captured SQL are
+stable, and runs `VACUUM ANALYZE` so plans are chosen against real statistics
+on an unbloated heap. That is why it is tagged `no_db_clean` and will wipe the
+database it is pointed at. **Point it at a throwaway Postgres, never at a
+database whose contents you want to keep.**
+
+## Limitations
+
+- The seed is a few hundred rows per table. Postgres will often choose a
+  sequential scan at this size regardless of index quality, so a plan-shape
+  change here does not automatically imply the same change in production. Query
+  counts and join structure transfer; scan choice on small tables may not.
+- The success filter and can-i-deploy's `--ignore` are applied in Ruby after
+  the query, so their shapes exercise no extra SQL beyond selector resolution.
