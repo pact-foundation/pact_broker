@@ -35,5 +35,17 @@ module MatrixBaseline
       expect(PactBroker::Pacts::PactPublication.where(provider_id: gateway.id).count).to be >= 1
       expect(PactBroker::Pacts::PactPublication.where(consumer_id: gateway.id).count).to be >= 1
     end
+
+    # A seed where every pact's most recent verification passes gives the
+    # success filter nothing to exclude and never lets can-i-deploy reach its
+    # failure path, so those shapes would profile a filter that filters
+    # nothing.
+    it "leaves some pacts with a failing most-recent verification" do
+      Seed.call(td)
+
+      latest_results = PactBroker::Domain::Verification.where(number: 2).select_map(:success).uniq
+
+      expect(latest_results).to match_array([false, true])
+    end
   end
 end

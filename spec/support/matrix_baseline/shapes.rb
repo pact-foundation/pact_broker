@@ -4,6 +4,15 @@ module MatrixBaseline
   # The representative request catalogue for the matrix seed. Each shape
   # crosses an axis that changes the query plan: selector cardinality,
   # selector type, latestby, limit, and the matrix-vs-can-i-deploy path.
+  #
+  # Two shapes deliberately issue almost no SQL of their own. The success
+  # filter is applied in Ruby over the materialised rows
+  # (Repository#find), and ignore selectors are applied by RowIgnorer after
+  # the query, so `success_filter` currently emits SQL identical to
+  # `single_selector_version` and `can_i_deploy_ignore` adds only the lookup
+  # that resolves the ignored name. They earn their place by pinning that:
+  # if either filter is ever pushed down into the query, these shapes are
+  # where it shows up.
   class Shapes
     Shape = Struct.new(:id, :label, :kind, :selectors, :options)
 
@@ -13,6 +22,8 @@ module MatrixBaseline
       providers = seed.fetch(:providers)
       both = seed.fetch(:both)
       environment = seed.fetch(:environment)
+      branch = seed.fetch(:branch)
+      tag = seed.fetch(:tag)
 
       consumer = anchors.fetch(:consumer)
       consumer_version = anchors.fetch(:consumer_version)
@@ -74,6 +85,21 @@ module MatrixBaseline
           "middle_tier_matrix", "single selector on a service that is both consumer and provider", :matrix,
           [sel.(pacticipant_name: middle_tier)],
           { latestby: "cvpv", limit: "100" }
+        ),
+        Shape.new(
+          "branch_selector", "1 selector, latest from branch", :matrix,
+          [sel.(pacticipant_name: consumer, branch: branch, latest: true)],
+          { latestby: "cvpv", limit: "100" }
+        ),
+        Shape.new(
+          "tag_selector", "1 selector, latest with tag", :matrix,
+          [sel.(pacticipant_name: consumer, tag: tag, latest: true)],
+          { latestby: "cvpv", limit: "100" }
+        ),
+        Shape.new(
+          "can_i_deploy_ignore", "can-i-deploy with an ignored pacticipant", :can_i_deploy,
+          [sel.(pacticipant_name: consumer, pacticipant_version_number: consumer_version)],
+          { latestby: "cvp", latest: true, ignore_selectors: [sel.(pacticipant_name: provider)] }
         ),
       ]
     end

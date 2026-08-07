@@ -8,6 +8,8 @@ module MatrixBaseline
         providers: Array.new(15) { |i| format("provider-service-%02d", i + 1) },
         both: Array.new(8) { |i| format("gateway-service-%02d", i + 1) },
         environment: "production",
+        branch: "main",
+        tag: "prod",
         anchors: {
           consumer: "consumer-app-01",
           consumer_version: "1",
@@ -20,12 +22,15 @@ module MatrixBaseline
     end
     subject(:shapes) { Shapes.call(seed_result) }
 
-    SELECTOR_KEYS = [:pacticipant_name, :pacticipant_version_number].freeze
-    OPTION_KEYS = [:latestby, :limit, :latest, :success, :environment_name].freeze
+    SELECTOR_KEYS = [:pacticipant_name, :pacticipant_version_number, :branch, :tag].freeze
+    # :latest is deliberately absent — it is a legitimate key on both a
+    # selector (latest version of that pacticipant) and the options hash
+    # (can-i-deploy's overall-latest mode), so it cannot separate the two.
+    OPTION_KEYS = [:latestby, :limit, :success, :environment_name].freeze
 
-    it "produces the 10 representative shapes with stable ids" do
-      expect(shapes.size).to eq(10)
-      expect(shapes.map(&:id).uniq.size).to eq(10)
+    it "produces the 13 representative shapes with stable ids" do
+      expect(shapes.size).to eq(13)
+      expect(shapes.map(&:id).uniq.size).to eq(13)
       expect(shapes.map(&:id)).to all(match(/\A[a-z0-9_]+\z/))
       expect(shapes.map(&:kind).uniq).to match_array([:matrix, :can_i_deploy])
     end
@@ -47,6 +52,20 @@ module MatrixBaseline
       expect(middle_tier).not_to be_nil
       expect(middle_tier.selectors.size).to eq(1)
       expect(middle_tier.selectors.first[:pacticipant_name]).to eq(seed_result[:anchors][:both])
+    end
+
+    # Branch, tag and ignore selectors each resolve through a different path in
+    # the query engine, so a baseline without them cannot show a regression there.
+    it "covers branch-resolved, tag-resolved and ignored selectors" do
+      branch_shape = shapes.find { |s| s.id == "branch_selector" }
+      expect(branch_shape.selectors.first[:branch]).to eq("main")
+
+      tag_shape = shapes.find { |s| s.id == "tag_selector" }
+      expect(tag_shape.selectors.first[:tag]).to eq("prod")
+
+      ignore_shape = shapes.find { |s| s.id == "can_i_deploy_ignore" }
+      expect(ignore_shape.options[:ignore_selectors]).to all(be_a(PactBroker::Matrix::UnresolvedSelector))
+      expect(ignore_shape.options[:ignore_selectors].first[:pacticipant_name]).to eq("provider-service-01")
     end
 
     it "keeps engine options out of selectors and selector keys out of options" do
