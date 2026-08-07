@@ -73,14 +73,42 @@ module PactBroker
 
         private :resolve_versions_and_add_ids
 
-        # Return a Hash of the pacticipant names used in the selectors, where the key is the name and the value is the pacticipant
+        # Return a Hash of the pacticipant names used in the selectors, where the key is the name
+        # as specified in the selector (not necessarily the pacticipant's stored name, when
+        # use_case_sensitive_resource_names is false), and the value is the pacticipant.
         # @return [Hash<String, PactBroker::Domain::Pacticipant>]
         def find_pacticipants_for_selectors(unresolved_selectors)
           names = unresolved_selectors.collect(&:pacticipant_name)
-          PactBroker::Domain::Pacticipant.where(name: names).all.group_by(&:name).transform_values(&:first)
+          pacticipants = pacticipants_matching_names(names)
+
+          names.uniq.each_with_object({}) do | name, hash |
+            matching = pacticipants.select { | candidate | pacticipant_name_matches?(candidate.name, name) }
+            pacticipant_repository.handle_multiple_pacticipants_found(name, matching) if matching.size > 1
+            hash[name] = matching.first if matching.any?
+          end
         end
 
         private :find_pacticipants_for_selectors
+
+        # @param [Array<String>] names
+        # @return [Array<PactBroker::Domain::Pacticipant>]
+        def pacticipants_matching_names(names)
+          return [] if names.empty?
+
+          PactBroker::Domain::Pacticipant.where(Sequel.|(*names.collect { | name | Sequel.name_like(:name, name) })).all
+        end
+
+        private :pacticipants_matching_names
+
+        def pacticipant_name_matches?(stored_name, requested_name)
+          if PactBroker.configuration.use_case_sensitive_resource_names
+            stored_name == requested_name
+          else
+            stored_name.casecmp?(requested_name)
+          end
+        end
+
+        private :pacticipant_name_matches?
 
         def build_selectors(pacticipants_hash, unresolved_selector, selector_type, selector_ignorer)
           selector_builder = ResolvedSelectorBuilder.new(unresolved_selector, selector_type, selector_ignorer)
