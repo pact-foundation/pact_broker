@@ -4,9 +4,9 @@ module MatrixBaseline
   describe Shapes do
     let(:seed_result) do
       {
-        consumers: Array.new(50) { |i| format("consumer-app-%02d", i + 1) },
-        providers: Array.new(15) { |i| format("provider-service-%02d", i + 1) },
-        both: Array.new(8) { |i| format("gateway-service-%02d", i + 1) },
+        consumers: 1.upto(50).map { |i| "consumer-app-#{"%02d" % i}" },
+        providers: 1.upto(15).map { |i| "provider-service-#{"%02d" % i}" },
+        both: 1.upto(8).map { |i| "gateway-service-#{"%02d" % i}" },
         environment: "production",
         branch: "main",
         tag: "prod",

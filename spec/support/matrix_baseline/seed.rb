@@ -36,10 +36,10 @@ module MatrixBaseline
 
     def initialize(td)
       @td = td
-      @consumers = Array.new(CONSUMER_COUNT) { |i| format("consumer-app-%02d", i + 1) }
-      @providers = Array.new(PROVIDER_COUNT) { |i| format("provider-service-%02d", i + 1) }
-      @both = Array.new(BOTH_COUNT) { |i| format("gateway-service-%02d", i + 1) }
-      @wide_providers = Array.new(WIDE_PROVIDER_COUNT) { |i| format("wide-provider-%02d", i + 1) }
+      @consumers = 1.upto(CONSUMER_COUNT).map { |i| "consumer-app-#{"%02d" % i}" }
+      @providers = 1.upto(PROVIDER_COUNT).map { |i| "provider-service-#{"%02d" % i}" }
+      @both = 1.upto(BOTH_COUNT).map { |i| "gateway-service-#{"%02d" % i}" }
+      @wide_providers = 1.upto(WIDE_PROVIDER_COUNT).map { |i| "wide-provider-#{"%02d" % i}" }
       @downstream_pool = @providers + @both
       @verification_counter = 0
       @verify_pact_calls = 0
@@ -107,7 +107,7 @@ module MatrixBaseline
       @consumers[1..].each_with_index do |consumer, offset|
         index = offset + 1
         start = (index * DEPS_PER_CONSUMER) % pool_size
-        downstream = Array.new(DEPS_PER_CONSUMER) { |k| @downstream_pool[(start + k) % pool_size] }
+        downstream = (0...DEPS_PER_CONSUMER).map { |k| @downstream_pool[(start + k) % pool_size] }
 
         td.create_pact_with_hierarchy(consumer, "1", downstream.first)
         verify_pact(consumer, downstream.first)
