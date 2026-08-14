@@ -1,6 +1,7 @@
 require "sucker_punch"
 require "pact_broker/webhooks/service"
 require "pact_broker/logging"
+require "pact_broker/logging/tag_propagation"
 require "pact_broker/webhooks/execution_configuration"
 
 module PactBroker
@@ -13,8 +14,10 @@ module PactBroker
       include PactBroker::Logging
 
       def perform data
-        data.fetch(:database_connector).call do
-          perform_with_connection(data)
+        PactBroker::Logging::TagPropagation.with(data[:logging_tags]) do
+          data.fetch(:database_connector).call do
+            perform_with_connection(data)
+          end
         end
       end
 
