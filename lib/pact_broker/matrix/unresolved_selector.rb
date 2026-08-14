@@ -22,14 +22,6 @@ module PactBroker
         self[:pacticipant_version_number]
       end
 
-      def latest?
-        !!latest
-      end
-
-      def overall_latest?
-        latest? && !tag && !branch
-      end
-
       def latest
         self[:latest]
       end
@@ -78,11 +70,6 @@ module PactBroker
 
       def pacticipant_version_number= pacticipant_version_number
         self[:pacticipant_version_number] = pacticipant_version_number
-      end
-
-      # TODO delete this once docker image uses new selector class for clean
-      def max_age= max_age
-        self[:max_age] = max_age
       end
 
       def max_age
