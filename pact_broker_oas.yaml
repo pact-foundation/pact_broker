@@ -4,6 +4,45 @@ info:
   title: Pact Broker API
   description: The API for the Pact Broker application
 paths:
+  /pacticipants/{pacticipantName}/deployed-or-released/versions:
+    get:
+      summary: List all versions that have ever been deployed or released
+      description: >
+        Returns a paginated list of all versions of the specified pacticipant
+        that have ever been deployed to an environment or released. Each version
+        includes links to the environments it was deployed or released to, along
+        with deployment/release timestamps.
+      parameters:
+        - name: pacticipantName
+          in: path
+          required: true
+          description: The name of the pacticipant
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: The page number to return (1-based)
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: size
+          in: query
+          description: The number of results per page
+          schema:
+            type: integer
+            minimum: 1
+            default: 100
+      responses:
+        "200":
+          description: OK
+          content:
+            application/hal+json:
+              schema:
+                $ref: '#/components/schemas/PaginatedVersionsResponse'
+        "404":
+          description: Pacticipant not found
+
   /contracts/publish:
     post:
       description: "Publish consumer contracts with branch, tags and build URL"
@@ -126,6 +165,156 @@ components:
           type: string
         templated:
           type: boolean
+
+    PageMetadata:
+      type: object
+      required:
+        - number
+        - size
+        - totalElements
+        - totalPages
+      properties:
+        number:
+          type: integer
+          description: The current page number (1-based)
+        size:
+          type: integer
+          description: The number of results per page
+        totalElements:
+          type: integer
+          description: The total number of results across all pages
+        totalPages:
+          type: integer
+          description: The total number of pages
+
+    DeployedEnvironmentLink:
+      type: object
+      required:
+        - href
+        - title
+        - name
+        - currently_deployed
+        - deployed_at
+      properties:
+        href:
+          type: string
+        title:
+          type: string
+        name:
+          type: string
+          description: The display name of the environment
+        currently_deployed:
+          type: boolean
+          description: Whether this deployment is still active
+        application_instance:
+          type: string
+          nullable: true
+          description: The application instance identifier, if applicable
+        deployed_at:
+          type: string
+          format: date-time
+          description: When the version was deployed
+        undeployed_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: When the version was undeployed, or null if still deployed
+
+    ReleasedEnvironmentLink:
+      type: object
+      required:
+        - href
+        - title
+        - name
+        - currently_supported
+        - released_at
+      properties:
+        href:
+          type: string
+        title:
+          type: string
+        name:
+          type: string
+          description: The display name of the environment
+        currently_supported:
+          type: boolean
+          description: Whether this release is still supported
+        released_at:
+          type: string
+          format: date-time
+          description: When the version was released
+        support_ended_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: When support for this release ended, or null if still supported
+
+    EmbeddedVersion:
+      type: object
+      required:
+        - number
+        - createdAt
+        - _links
+      properties:
+        number:
+          type: string
+          description: The version number
+        buildUrl:
+          type: string
+          nullable: true
+          description: The URL of the build that produced this version
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        _links:
+          type: object
+          properties:
+            self:
+              $ref: '#/components/schemas/EmbeddedLink'
+            pb:pacticipant:
+              $ref: '#/components/schemas/EmbeddedLink'
+            pb:deployed-environments:
+              type: array
+              items:
+                $ref: '#/components/schemas/DeployedEnvironmentLink'
+            pb:released-environments:
+              type: array
+              items:
+                $ref: '#/components/schemas/ReleasedEnvironmentLink'
+
+    PaginatedVersionsResponse:
+      type: object
+      required:
+        - _embedded
+        - _links
+      properties:
+        page:
+          $ref: '#/components/schemas/PageMetadata'
+        _embedded:
+          type: object
+          required:
+            - versions
+          properties:
+            versions:
+              type: array
+              items:
+                $ref: '#/components/schemas/EmbeddedVersion'
+        _links:
+          type: object
+          required:
+            - self
+          properties:
+            self:
+              $ref: '#/components/schemas/EmbeddedLink'
+            pb:pacticipant:
+              $ref: '#/components/schemas/EmbeddedLink'
+            next:
+              $ref: '#/components/schemas/EmbeddedLink'
+            previous:
+              $ref: '#/components/schemas/EmbeddedLink'
 
     ConsumerContractToPublish:
       type: object
