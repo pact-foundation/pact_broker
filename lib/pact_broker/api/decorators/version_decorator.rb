@@ -1,6 +1,7 @@
 require_relative "base_decorator"
 require_relative "embedded_tag_decorator"
 require_relative "embedded_branch_version_decorator"
+require_relative "format_date_time"
 
 module PactBroker
   module Api
@@ -85,7 +86,9 @@ module PactBroker
               title: "Version deployed to #{deployed_version.environment.display_name}",
               name: deployed_version.environment.display_name,
               href: deployed_version_url(deployed_version, context.fetch(:base_url)),
-              currently_deployed: deployed_version.currently_deployed
+              currently_deployed: deployed_version.currently_deployed,
+              deployed_at: FormatDateTime.call(deployed_version.created_at),
+              undeployed_at: FormatDateTime.call(deployed_version.undeployed_at)
             }.tap do |hash|
               hash[:application_instance] = deployed_version.application_instance unless deployed_version.application_instance.nil?
             end
@@ -104,7 +107,9 @@ module PactBroker
               title: "Version released to #{released_version.environment.display_name}",
               name: released_version.environment.display_name,
               href: released_version_url(released_version, context.fetch(:base_url)),
-              currently_supported: released_version.currently_supported
+              currently_supported: released_version.currently_supported,
+              released_at: FormatDateTime.call(released_version.created_at),
+              support_ended_at: FormatDateTime.call(released_version.support_ended_at)
             }
           end
         end
