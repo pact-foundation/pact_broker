@@ -51,15 +51,14 @@ module PactBroker
         end
 
         def version_ids
-          deployed_ids = PactBroker::Deployments::DeployedVersion
+          PactBroker::Deployments::DeployedVersion
             .for_pacticipant_name(pacticipant_name)
-            .select_map(:version_id)
-
-          released_ids = PactBroker::Deployments::ReleasedVersion
-            .for_pacticipant_name(pacticipant_name)
-            .select_map(:version_id)
-
-          (deployed_ids + released_ids).uniq
+            .select(:version_id)
+            .union(
+              PactBroker::Deployments::ReleasedVersion
+                .for_pacticipant_name(pacticipant_name)
+                .select(:version_id)
+            )
         end
 
         def deployed_versions
