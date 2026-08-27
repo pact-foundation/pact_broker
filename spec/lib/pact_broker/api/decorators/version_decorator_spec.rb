@@ -116,42 +116,51 @@ module PactBroker
 
           context "when application is deployed to an env" do
             it "includes a link to the deployed environments for this version" do
+              entry = subject[:_links][:'pb:deployed-environments'].first
               expect(subject[:_links][:'pb:deployed-environments']).to be_instance_of(Array)
-              expect(subject[:_links][:'pb:deployed-environments'].first).to eq(
-                                                                               title: "Version deployed to Test",
-                                                                               name: "Test",
-                                                                               href: "http://example.org/deployed-versions/1234",
-                                                                               currently_deployed: true,
-                                                                               )
-              expect(subject[:_links][:'pb:deployed-environments'].first).to_not include(:application_instance)
+              expect(entry).to include(
+                title: "Version deployed to Test",
+                name: "Test",
+                href: "http://example.org/deployed-versions/1234",
+                currently_deployed: true,
+              )
+              expect(entry).to_not include(:application_instance)
+              expect(entry[:deployed_at]).to_not be_nil
+              expect(entry[:undeployed_at]).to be_nil
             end
 
             context "when deployed with application instance variable" do
               let(:target) { "instance-1" }
 
               it "includes a link to the deployed environments for this version along with application instance node" do
+                entry = subject[:_links][:'pb:deployed-environments'].first
                 expect(subject[:_links][:'pb:deployed-environments']).to be_instance_of(Array)
-                expect(subject[:_links][:'pb:deployed-environments'].first).to eq(
-                                                                                 title: "Version deployed to Test",
-                                                                                 name: "Test",
-                                                                                 href: "http://example.org/deployed-versions/1234",
-                                                                                 currently_deployed: true,
-                                                                                 application_instance: "instance-1",
-                                                                                 )
+                expect(entry).to include(
+                  title: "Version deployed to Test",
+                  name: "Test",
+                  href: "http://example.org/deployed-versions/1234",
+                  currently_deployed: true,
+                  application_instance: "instance-1",
+                )
+                expect(entry[:deployed_at]).to_not be_nil
+                expect(entry[:undeployed_at]).to be_nil
               end
             end
           end
 
           context "when application is released to an env" do
             it "includes a link to the released environments for this version" do
+              entry = subject[:_links][:'pb:released-environments'].first
               expect(subject[:_links][:'pb:released-environments']).to be_instance_of(Array)
-              expect(subject[:_links][:'pb:released-environments'].first).to eq(
-                                                                               title: "Version released to Test",
-                                                                               name: "Test",
-                                                                               href: "http://example.org/released-versions/5678",
-                                                                               currently_supported: true,
-                                                                               )
-              expect(subject[:_links][:'pb:released-environments'].first).to_not include(:application_instance)
+              expect(entry).to include(
+                title: "Version released to Test",
+                name: "Test",
+                href: "http://example.org/released-versions/5678",
+                currently_supported: true,
+              )
+              expect(entry).to_not include(:application_instance)
+              expect(entry[:released_at]).to_not be_nil
+              expect(entry[:support_ended_at]).to be_nil
             end
           end
 

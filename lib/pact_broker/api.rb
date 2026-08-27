@@ -104,6 +104,7 @@ module PactBroker
 
         # Versions
         add ["pacticipants", :pacticipant_name, "versions"], Api::Resources::Versions, {resource_name: "pacticipant_versions"}
+        add ["pacticipants", :pacticipant_name, "deployed-or-released", "versions"], Api::Resources::DeployedOrReleasedVersions, {resource_name: "pacticipant_deployed_or_released_versions"}
         add ["pacticipants", :pacticipant_name, "branches", :branch_name, "versions"], Api::Resources::BranchVersions, {resource_name: "pacticipant_branch_versions"}
         add ["pacticipants", :pacticipant_name, "environments", :environment_uuid, "versions"], Api::Resources::EnvironmentVersions, {resource_name: "pacticipant_environment_versions"}
         add ["pacticipants", :pacticipant_name, "versions", :pacticipant_version_number], Api::Resources::Version, {resource_name: "pacticipant_version"}
