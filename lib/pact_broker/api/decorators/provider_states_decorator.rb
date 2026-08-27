@@ -26,7 +26,7 @@ module PactBroker
             end
 
             consumers_map.map do |(name, params), consumers|
-              { name: name, params: params, consumers: consumers.uniq }.transform_keys(&:to_sym)
+              { name: name, params: params, consumers: consumers.uniq.sort }.transform_keys(&:to_sym)
             end
           .sort_by { |provider_state| provider_state[:name] }
         }, :extend => PactBroker::Api::Decorators::ProviderStateDecorator
