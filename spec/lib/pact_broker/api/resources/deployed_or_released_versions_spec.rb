@@ -7,6 +7,7 @@ module PactBroker
         let(:path) { "/pacticipants/Foo/deployed-or-released/versions" }
 
         describe "GET" do
+          let(:response_body_hash) { JSON.parse(subject.body, symbolize_names: true) }
           let(:pacticipant) { td.create_consumer("Foo").and_return(:pacticipant) }
           let(:other_pacticipant) { td.create_consumer("Bar").and_return(:pacticipant) }
           let(:environment) { td.create_environment("production").and_return(:environment) }
@@ -37,7 +38,7 @@ module PactBroker
             its(:status) { is_expected.to eq 200 }
 
             it "returns an empty versions array" do
-              versions = JSON.parse(subject.body, symbolize_names: true).dig(:_embedded, :versions)
+              versions = response_body_hash.dig(:_embedded, :versions)
               expect(versions).to eq []
             end
           end
@@ -52,12 +53,12 @@ module PactBroker
             its(:status) { is_expected.to eq 200 }
 
             it "returns all versions that have ever been deployed or released" do
-              versions = JSON.parse(subject.body, symbolize_names: true).dig(:_embedded, :versions)
+              versions = response_body_hash.dig(:_embedded, :versions)
               expect(versions.map { |v| v[:number] }).to match_array(["1", "2"])
             end
 
             it "contains the expected HAL structure" do
-              body = JSON.parse(subject.body, symbolize_names: true)
+              body = response_body_hash
               expect(body).to include(:_links, :_embedded)
               expect(body[:_links]).to include(:self)
             end
@@ -72,7 +73,7 @@ module PactBroker
             subject { get(path, nil, { "HTTP_ACCEPT" => "application/hal+json" }) }
 
             it "returns the version only once" do
-              versions = JSON.parse(subject.body, symbolize_names: true).dig(:_embedded, :versions)
+              versions = response_body_hash.dig(:_embedded, :versions)
               expect(versions.size).to eq 1
               expect(versions.first[:number]).to eq "1"
             end
@@ -89,7 +90,7 @@ module PactBroker
             subject { get(path, nil, { "HTTP_ACCEPT" => "application/hal+json" }) }
 
             it "only returns versions for the requested pacticipant" do
-              versions = JSON.parse(subject.body, symbolize_names: true).dig(:_embedded, :versions)
+              versions = response_body_hash.dig(:_embedded, :versions)
               expect(versions.size).to eq 1
               expect(versions.first[:number]).to eq "1"
             end
@@ -116,12 +117,12 @@ module PactBroker
             its(:status) { is_expected.to eq 200 }
 
             it "paginates the results" do
-              versions = JSON.parse(subject.body, symbolize_names: true).dig(:_embedded, :versions)
+              versions = response_body_hash.dig(:_embedded, :versions)
               expect(versions.size).to eq 2
             end
 
             it "includes page metadata" do
-              body = JSON.parse(subject.body, symbolize_names: true)
+              body = response_body_hash
               expect(body[:page]).to include(number: 1, size: 2, totalElements: 3, totalPages: 2)
             end
           end
