@@ -1,6 +1,7 @@
 require "pact/doc/markdown/interaction_renderer"
 require "pact/doc/sort_interactions"
 require "rack/utils"
+require "pact/doc"
 
 module Pact
   module Doc
@@ -59,10 +60,9 @@ module Pact
           h(markdown_escape consumer_contract.provider.name)
         end
 
-        MARKDOWN_SPECIAL_CHARS_REGEXP = /[\\`*_\[\](){}#+\-.!|]/
-
         def markdown_escape string
-          string.gsub(MARKDOWN_SPECIAL_CHARS_REGEXP) { |char| "\\#{char}" }
+          return nil unless string
+          string.gsub(Pact::Doc::MARKDOWN_SPECIAL_CHARS_REGEXP) { |char| "\\#{char}" }
         end
 
         def h(text)

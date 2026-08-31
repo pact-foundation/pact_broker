@@ -1,6 +1,7 @@
 require "pact/shared/active_support_support"
 require "pact/reification"
 require "cgi"
+require "pact/doc"
 
 module Pact
   module Doc
@@ -147,11 +148,9 @@ module Pact
         string[0].downcase + string[1..-1]
       end
 
-      MARKDOWN_SPECIAL_CHARS_REGEXP = /[\\`*_\[\](){}#+\-.!|]/
-
       def markdown_escape string
         return nil unless string
-        string.gsub(MARKDOWN_SPECIAL_CHARS_REGEXP) { |char| "\\#{char}" }
+        string.gsub(Pact::Doc::MARKDOWN_SPECIAL_CHARS_REGEXP) { |char| "\\#{char}" }
       end
     end
   end
