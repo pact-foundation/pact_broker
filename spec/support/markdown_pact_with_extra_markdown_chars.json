@@ -1,0 +1,9 @@
+{
+  "provider": {
+    "name": "Provider[v1]"
+  },
+  "consumer": {
+    "name": "Consumer#API"
+  },
+  "interactions": []
+}

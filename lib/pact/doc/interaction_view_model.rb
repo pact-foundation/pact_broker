@@ -1,6 +1,7 @@
 require "pact/shared/active_support_support"
 require "pact/reification"
 require "cgi"
+require "pact/doc"
 
 module Pact
   module Doc
@@ -149,7 +150,7 @@ module Pact
 
       def markdown_escape string
         return nil unless string
-        string.gsub("*","\\*").gsub("_","\\_")
+        string.gsub(Pact::Doc::MARKDOWN_SPECIAL_CHARS_REGEXP) { |char| "\\#{char}" }
       end
     end
   end

@@ -30,7 +30,7 @@ module PactBroker
       if PactBroker.configuration.use_case_sensitive_resource_names
         { column_name => value }
       else
-        Sequel.like(column_name, value.gsub("_", "\\_"), { case_insensitive: true })
+        Sequel.like(column_name, escape_wildcards(value), { case_insensitive: true })
       end
     end
 
