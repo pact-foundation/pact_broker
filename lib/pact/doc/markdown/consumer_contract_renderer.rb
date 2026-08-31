@@ -59,8 +59,10 @@ module Pact
           h(markdown_escape consumer_contract.provider.name)
         end
 
+        MARKDOWN_SPECIAL_CHARS_REGEXP = /[\\`*_\[\](){}#+\-.!|]/
+
         def markdown_escape string
-          string.gsub("*","\\*").gsub("_","\\_")
+          string.gsub(MARKDOWN_SPECIAL_CHARS_REGEXP) { |char| "\\#{char}" }
         end
 
         def h(text)

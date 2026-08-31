@@ -3,7 +3,7 @@ require "pact_broker/webhooks/pact_and_verification_parameters"
 module PactBroker
   module Webhooks
     class Render
-      TEMPLATE_PARAMETER_REGEXP = /\$\{pactbroker\.[^\}]+\}/
+      TEMPLATE_PARAMETER_REGEXP = /\$\{pactbroker\.[^\}]++\}/
       DEFAULT_ESCAPER = lambda { |it| it }
 
       def self.includes_parameter?(value)

@@ -41,6 +41,13 @@ module Pact
         end
       end
 
+      describe "markdown_escape" do
+        it "escapes CommonMark special characters beyond * and _" do
+          interaction.description = "name [with] (parens) {braces} #hash !bang |pipe `tick`"
+          expect(subject.description).to eq "name \\[with\\] \\(parens\\) \\{braces\\} \\#hash \\!bang \\|pipe \\`tick\\`"
+        end
+      end
+
       describe "request" do
         let(:interaction) { interaction_with_request_with_body_and_headers }
 

@@ -251,10 +251,15 @@ module PactBroker
             expect(searched_dataset.collect(&:name)).to include(*[consumer_name, provider_name])
           end
 
-          # SQL escape character is '_'
+          # SQL LIKE wildcards are '_' and '%'
           it "escapes the '_' character" do
             searched_dataset =  Repository.new.search_by_name "is_a"
             expect(searched_dataset.collect(&:name)).to eq([consumer_name])
+          end
+
+          it "escapes the '%' character so it does not act as a wildcard" do
+            searched_dataset = Repository.new.search_by_name "%"
+            expect(searched_dataset.collect(&:name)).to eq([])
           end
 
           it "searches case insentively" do

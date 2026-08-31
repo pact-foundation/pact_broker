@@ -31,6 +31,15 @@ module Pact
             end
           end
 
+          context "with additional CommonMark special characters in pacticipant names" do
+            let(:consumer_contract) { Pact::ConsumerContract.from_uri "./spec/support/markdown_pact_with_extra_markdown_chars.json" }
+
+            it "escapes brackets and hash characters" do
+              expect(subject.call).to include "Consumer\\#API"
+              expect(subject.call).to include "Provider\\[v1\\]"
+            end
+          end
+
           context "with ruby's default external encoding is not UTF-8" do
             around do |example|
               back = nil

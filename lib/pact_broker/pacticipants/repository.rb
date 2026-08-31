@@ -1,3 +1,4 @@
+require "pact_broker/dataset"
 require "pact_broker/domain/pacticipant"
 require "pact_broker/error"
 require "pact_broker/repositories/scopes"
@@ -106,7 +107,7 @@ module PactBroker
       end
 
       def search_by_name(pacticipant_name)
-        terms = pacticipant_name.split.map { |v| v.gsub("_", "\\_") }
+        terms = pacticipant_name.split.map { |v| PactBroker::Dataset::Helpers.escape_wildcards(v) }
         columns = [:name, :display_name]
         string_match_query = Sequel.|(
           *terms.map do |term|

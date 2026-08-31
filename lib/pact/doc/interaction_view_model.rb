@@ -147,9 +147,11 @@ module Pact
         string[0].downcase + string[1..-1]
       end
 
+      MARKDOWN_SPECIAL_CHARS_REGEXP = /[\\`*_\[\](){}#+\-.!|]/
+
       def markdown_escape string
         return nil unless string
-        string.gsub("*","\\*").gsub("_","\\_")
+        string.gsub(MARKDOWN_SPECIAL_CHARS_REGEXP) { |char| "\\#{char}" }
       end
     end
   end
