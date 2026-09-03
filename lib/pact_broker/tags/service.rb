@@ -24,17 +24,16 @@ module PactBroker
       end
 
       def delete args
-        version = version_repository.find_by_pacticipant_name_and_number args.fetch(:pacticipant_name), args.fetch(:pacticipant_version_number)
-        connection = PactBroker::Domain::Tag.new.db
-        connection.run("delete from tags where name = '#{args.fetch(:tag_name)}' and version_id = '#{version.id}'")
+        version = version_repository.find_by_pacticipant_name_and_number(args.fetch(:pacticipant_name), args.fetch(:pacticipant_version_number))
+        PactBroker::Domain::Tag.where(name: args.fetch(:tag_name), version_id: version.id).delete
       end
 
       def find_all_tag_names_for_pacticipant pacticipant_name
-        tag_repository.find_all_tag_names_for_pacticipant pacticipant_name
+        tag_repository.find_all_tag_names_for_pacticipant(pacticipant_name)
       end
 
       def find_all_by_pacticipant_name_and_tag pacticipant_name:, tag_name:
-        tag_repository.find_all_by_pacticipant_name_and_tag pacticipant_name, tag_name
+        tag_repository.find_all_by_pacticipant_name_and_tag(pacticipant_name, tag_name)
       end
     end
   end
