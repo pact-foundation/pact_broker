@@ -1,7 +1,7 @@
 <a name="v2.120.0"></a>
-### v2.120.0 (2026-07-14)
+## v2.120.0 (2026-07-14)
 
-#### Features
+### Features
 
 * expose released environments on branch/tag version list endpoints (#969)	 ([bea68a7d](/../../commit/bea68a7d))
 * expose released environments on version API (#963)	 ([d6f7f17b](/../../commit/d6f7f17b))
@@ -17,7 +17,7 @@
 * **PACT-6253**
   * add json_schemer as explicit gem dependency (#916)	 ([dc8910ce](/../../commit/dc8910ce))
 
-#### Bug Fixes
+### Bug Fixes
 
 * **spec**
   * rebuild success-after-latestby fixture with distinct provider versions	 ([778d25d2](/../../commit/778d25d2))
@@ -29,14 +29,14 @@
 * join with pacticipant when query main branch (#921)	 ([3dae89be](/../../commit/3dae89be))
 
 <a name="v2.119.0"></a>
-### v2.119.0 (2026-04-02)
+## v2.119.0 (2026-04-02)
 
-#### Features
+### Features
 
 * support customising webhook requests	 ([d20a8274](/../../commit/d20a8274))
 * Optimize WIP Query Performance to Prevent Timeouts on Large Datasets (#902)	 ([711ac3c6](/../../commit/711ac3c6))
 
-#### Bug Fixes
+### Bug Fixes
 
 * add missing import and small improvement to batch delete (#899)	 ([2e83d012](/../../commit/2e83d012))
 * new unit test failure	 ([6c39e927](/../../commit/6c39e927))
@@ -48,34 +48,34 @@
   * use batch delete to speed up deletion	 ([e908035a](/../../commit/e908035a))
 
 <a name="v2.118.0"></a>
-### v2.118.0 (2026-01-02)
+## v2.118.0 (2026-01-02)
 
-#### Features
+### Features
 
 * added has_messages column to pact_versions table (#880)	 ([34741dae](/../../commit/34741dae))
 
-#### Bug Fixes
+### Bug Fixes
 
 * remove route overlap and add tests for new routes	 ([45a81474](/../../commit/45a81474))
 * restore latest pact for branch endpoint	 ([cb867957](/../../commit/cb867957))
 
 <a name="v2.117.1"></a>
-### v2.117.1 (2025-11-02)
+## v2.117.1 (2025-11-02)
 
-#### Bug Fixes
+### Bug Fixes
 
 * dashboard loading after zeitwerk rename prep	 ([13112e2f](/../../commit/13112e2f))
 
 <a name="v2.117.0"></a>
-### v2.117.0 (2025-10-28)
+## v2.117.0 (2025-10-28)
 
-#### Features
+### Features
 
 * add provider pacts by branch endpoints	 ([0ccff2ec](/../../commit/0ccff2ec))
 * PACT-4511/updated matrix decorator to return app instance for an env if present (#838)	 ([8bc24e72](/../../commit/8bc24e72))
 * support provider states by branch/env	 ([f4db396f](/../../commit/f4db396f))
 
-#### Bug Fixes
+### Bug Fixes
 
 * update hal relations for provider pacts	 ([b6e8e8e3](/../../commit/b6e8e8e3))
 * drop pact-support pin	 ([3c7eb4c5](/../../commit/3c7eb4c5))
@@ -88,9 +88,9 @@
   * add mutex_m/csv/ostruct/pstore	 ([075d2522](/../../commit/075d2522))
 
 <a name="v2.116.0"></a>
-### v2.116.0 (2025-07-04)
+## v2.116.0 (2025-07-04)
 
-#### Features
+### Features
 
 * render sync messages	 ([c0ad9f5b](/../../commit/c0ad9f5b))
 * render async messages mixed v4 and v3	 ([d727d950](/../../commit/d727d950))
@@ -99,7 +99,7 @@
 * add tag_versions endpoint	 ([42bf5203](/../../commit/42bf5203))
 * added deployed-environments to `/parcticipants/$name/versions` abd (#801)	 ([af66f6a3](/../../commit/af66f6a3))
 
-#### Bug Fixes
+### Bug Fixes
 
 * rubocop errors	 ([e311422c](/../../commit/e311422c))
 * refactored long consumer_contract method	 ([7d8af4d5](/../../commit/7d8af4d5))
@@ -108,28 +108,28 @@
 * refactored the query to filter out duplicate integration rows (#806)	 ([7bff0f0d](/../../commit/7bff0f0d))
 
 <a name="v2.115.0"></a>
-### v2.115.0 (2025-03-17)
+## v2.115.0 (2025-03-17)
 
-#### Features
+### Features
 
 * group provider states by consumers	 ([e39860a9](/../../commit/e39860a9))
 
-#### Bug Fixes
+### Bug Fixes
 
 * dedupe non unique provider states #789	 ([3cf22169](/../../commit/3cf22169))
 * explicitly order labels by name	 ([d25746c1](/../../commit/d25746c1))
 
 <a name="v2.114.0"></a>
-### v2.114.0 (2025-03-06)
+## v2.114.0 (2025-03-06)
 
-#### Features
+### Features
 
 * support extended verification results (#778)	 ([18f571c8](/../../commit/18f571c8))
 
 <a name="v2.113.2"></a>
-### v2.113.2 (2025-03-05)
+## v2.113.2 (2025-03-05)
 
-#### Bug Fixes
+### Bug Fixes
 
 * downcase Content-Type header	 ([6eebfbdf](/../../commit/6eebfbdf))
 * downcase X-Pact-Broker-Version header	 ([8dfb3ac2](/../../commit/8dfb3ac2))
@@ -138,54 +138,54 @@
 * add webmachine monkey patch to exclude webrick default load	 ([ef674d37](/../../commit/ef674d37))
 
 <a name="v2.113.1"></a>
-### v2.113.1 (2025-02-20)
+## v2.113.1 (2025-02-20)
 
-#### Bug Fixes
+### Bug Fixes
 
 * Update openapi_first and use it's coverage thing (#783)	 ([b3da850b](/../../commit/b3da850b))
 * incorrect ProviderStates policy name. (#782)	 ([bddfd2d0](/../../commit/bddfd2d0))
 
 <a name="v2.113.0"></a>
-### v2.113.0 (2025-02-13)
+## v2.113.0 (2025-02-13)
 
-#### Features
+### Features
 
 * aggregated provider state endpoint (#734)	 ([108d11a7](/../../commit/108d11a7))
 * add more logging to data migrations	 ([9482d44d](/../../commit/9482d44d))
 
-#### Bug Fixes
+### Bug Fixes
 
 * make sure last_action_date always returns a DateTime object	 ([d60c264e](/../../commit/d60c264e))
 
 <a name="v2.112.0"></a>
-### v2.112.0 (2024-09-09)
+## v2.112.0 (2024-09-09)
 
-#### Features
+### Features
 
 * implemented setting cache for can-i-merge badges based on default configuration	 ([e2bce55e](/../../commit/e2bce55e))
 * add application/hal+json content type for webhook logs (#679)	 ([e84de4f4](/../../commit/e84de4f4))
 
-#### Bug Fixes
+### Bug Fixes
 
 * make clean_task.rb print the payload correctly	 ([10fd69e2](/../../commit/10fd69e2))
 
 <a name="v2.111.0"></a>
-### v2.111.0 (2024-07-26)
+## v2.111.0 (2024-07-26)
 
-#### Features
+### Features
 
 * add new label api (#703)	 ([ff3f84e2](/../../commit/ff3f84e2))
 * search pacticipants by display_name	 ([c5945801](/../../commit/c5945801))
 
-#### Bug Fixes
+### Bug Fixes
 
 * **docs**
   * Update OAS with correct ref to Notice schema	 ([6729b7f8](/../../commit/6729b7f8))
 
 <a name="v2.110.0"></a>
-### v2.110.0 (2024-04-02)
+## v2.110.0 (2024-04-02)
 
-#### Features
+### Features
 
 * reduce contention when updating the contract_data_updated_at field for integrations (#671)	 ([ff72d03c](/../../commit/ff72d03c))
 * support consumer version selector for all branches (#667)	 ([34334ca8](/../../commit/34334ca8))
@@ -193,37 +193,37 @@
 * **clean**
   * use postgres advisory locks to ensure only one process can run a clean at a time (#672)	 ([637c25fa](/../../commit/637c25fa))
 
-#### Bug Fixes
+### Bug Fixes
 
 * use for_all_tag_heads instead of latest_by_consumer_tag when fetching wip by branch	 ([14148a34](/../../commit/14148a34))
 * optimise WIP pacts by using branch/tag heads (#668)	 ([871209e1](/../../commit/871209e1))
 * improve performance of WIP pacts by using branch heads instead of calculating latest pact for branch	 ([f9705583](/../../commit/f9705583))
 
 <a name="v2.109.1"></a>
-### v2.109.1 (2024-02-21)
+## v2.109.1 (2024-02-21)
 
-#### Bug Fixes
+### Bug Fixes
 
 * improve performance for 'pacts for verification' queries	 ([299a6abe](/../../commit/299a6abe))
 * correct spelling in message when pact is modified	 ([ae62ae7a](/../../commit/ae62ae7a))
 
 <a name="v2.109.0"></a>
-### v2.109.0 (2024-02-01)
+## v2.109.0 (2024-02-01)
 
-#### Features
+### Features
 
 * use SemanticLogger for Padrino (#662)	 ([5d9d7002](/../../commit/5d9d7002))
 * improve performance of publication for very large pacts by calculating the content SHA only once per request	 ([a947e409](/../../commit/a947e409))
 
-#### Bug Fixes
+### Bug Fixes
 
 * pass in environment to environment policy when getting an individual environment	 ([5c386a43](/../../commit/5c386a43))
 * Dockerfile to reduce vulnerabilities (#650)	 ([9aaa3484](/../../commit/9aaa3484))
 
 <a name="v2.108.0"></a>
-### v2.108.0 (2024-01-05)
+## v2.108.0 (2024-01-05)
 
-#### Features
+### Features
 
 * bulk delete branches (#652)	 ([14ac33c8](/../../commit/14ac33c8))
 * add latest version for branch endpoint (#644)	 ([c216bec8](/../../commit/c216bec8))
@@ -255,7 +255,7 @@
 * **matrix**
   * optimise identification of the 'latest tag'	 ([824c516a](/../../commit/824c516a))
 
-#### Bug Fixes
+### Bug Fixes
 
 * **metrics**
   * correct the query for pactRevisionsPerConsumerVersion	 ([f76b9935](/../../commit/f76b9935))
@@ -276,19 +276,19 @@
   * return only most recent row missing verification when latestby=cp	 ([b7550e53](/../../commit/b7550e53))
 
 <a name="v2.107.1"></a>
-### v2.107.1 (2023-05-02)
+## v2.107.1 (2023-05-02)
 
-#### Bug Fixes
+### Bug Fixes
 
 * add missing require in migration	 ([6b540235](/../../commit/6b540235))
 
 <a name="v2.107.0"></a>
-### v2.107.0 (2023-05-02)
+## v2.107.0 (2023-05-02)
 
 <a name="v2.107.0.beta.1"></a>
-### v2.107.0.beta.1 (2023-05-01)
+## v2.107.0.beta.1 (2023-05-01)
 
-#### Features
+### Features
 
 * add index to webhook_executions pact_publication_id column	 ([37d1a4cf](/../../commit/37d1a4cf))
 * update webmachine to support ruby 3	 ([9bb014e6](/../../commit/9bb014e6))
@@ -296,7 +296,7 @@
 * restructure logs from DeleteOverwrittenData to match CleanIncremental	 ([f11a9417](/../../commit/f11a9417))
 * add branch_heads_branch_version_id_index	 ([b1b4cefb](/../../commit/b1b4cefb))
 
-#### Bug Fixes
+### Bug Fixes
 
 * **pacts for verification**
   * do not allow empty string for provider version branch when it is required for calculating WIP/pending pacts	 ([412c4289](/../../commit/412c4289))
@@ -307,9 +307,9 @@
   * correct logic for detecting when only the pacticipant name has been specified for a selector	 ([85bcdb35](/../../commit/85bcdb35))
 
 <a name="v2.106.0"></a>
-### v2.106.0 (2023-01-31)
+## v2.106.0 (2023-01-31)
 
-#### Features
+### Features
 
 * add consumer_version_id index to latest_pact_publication_ids_for_consumer_versions	 ([b75ca5ee](/../../commit/b75ca5ee))
 * improve the performance of the incremental clean queries	 ([c3a07c79](/../../commit/c3a07c79))
@@ -324,7 +324,7 @@
 * **clean**
   * log automatically added selectors	 ([135c1c0e](/../../commit/135c1c0e))
 
-#### Bug Fixes
+### Bug Fixes
 
 * check that request body does not contain any invalid UTF-8 characters before JSON parsing	 ([0a08d644](/../../commit/0a08d644))
 
@@ -339,16 +339,16 @@
   * correctly validate HTTP method when the given method is not a valid class name	 ([6da5a4f3](/../../commit/6da5a4f3))
 
 <a name="v2.105.0"></a>
-### v2.105.0 (2022-10-19)
+## v2.105.0 (2022-10-19)
 
-#### Features
+### Features
 
 * update wording of version description for version in environment	 ([d122fa68](/../../commit/d122fa68))
 
 * **webhooks**
   * allow auth headers to be logged for debugging purposes (#575)	 ([102b1930](/../../commit/102b1930))
 
-#### Bug Fixes
+### Bug Fixes
 
 * add validation to ensure an environment or to tag is specified for the /can-i-deploy endpoint	 ([e9d772eb](/../../commit/e9d772eb))
 * implement pending logic for provider branches	 ([7cdf1a7c](/../../commit/7cdf1a7c))
@@ -357,48 +357,48 @@
   * fix performance issue encountered when removing explicitly specified pacts from the list of potential WIP pacts (#573)	 ([757f0301](/../../commit/757f0301))
 
 <a name="v2.104.0"></a>
-### v2.104.0 (2022-09-17)
+## v2.104.0 (2022-09-17)
 
-#### Features
+### Features
 
 * ignore deleted webhooks when calculating the latest triggered webhook status	 ([c3105dcb](/../../commit/c3105dcb))
 
 <a name="v2.103.0"></a>
-### v2.103.0 (2022-09-14)
+## v2.103.0 (2022-09-14)
 
-#### Features
+### Features
 
 * allow rack protection use and except options to be configured	 ([f44db585](/../../commit/f44db585))
 
 * **can-i-deploy**
   * only warn about missing version numbers if there are no selectors with a version number	 ([ac4e1e73](/../../commit/ac4e1e73))
 
-#### Bug Fixes
+### Bug Fixes
 
 * correctly identify database version when schema_migrations table is empty	 ([dcb59203](/../../commit/dcb59203))
 
 <a name="v2.102.2"></a>
-### v2.102.2 (2022-07-14)
+## v2.102.2 (2022-07-14)
 
-#### Bug Fixes
+### Bug Fixes
 
 * add blank? refinement for TrueClass and FalseClass	 ([05bb3bed](/../../commit/05bb3bed))
 
 <a name="v2.102.1"></a>
-### v2.102.1 (2022-07-08)
+## v2.102.1 (2022-07-08)
 
-#### Bug Fixes
+### Bug Fixes
 
 * ensure blank? method is defined where used	 ([b81b5e9b](/../../commit/b81b5e9b))
 
 <a name="v2.102.0"></a>
-### v2.102.0 (2022-07-07)
+## v2.102.0 (2022-07-07)
 
-#### Features
+### Features
 
 * default allow_dangerous_contract_modification to false for new installations	 ([85a89951](/../../commit/85a89951))
 
-#### Bug Fixes
+### Bug Fixes
 
 * add missing provider version branch parameter to webhook requests	 ([262dae44](/../../commit/262dae44))
 * clean up pacticipants with no names	 ([0aff250d](/../../commit/0aff250d))
@@ -406,24 +406,24 @@
 * update validation for creating pacticipants to return a 400 when name is missing	 ([fcb02aa6](/../../commit/fcb02aa6))
 
 <a name="v2.101.0"></a>
-### v2.101.0 (2022-06-07)
+## v2.101.0 (2022-06-07)
 
-#### Features
+### Features
 
 * recalculate the branch head if the deleted branch version was the latest for the branch	 ([db51d4fe](/../../commit/db51d4fe))
 * support deleting branch versions (removing a version from a branch)	 ([661667b3](/../../commit/661667b3))
 * improve error message when request has non UTF-8 characters (#559)	 ([3addc0c8](/../../commit/3addc0c8))
 
-#### Bug Fixes
+### Bug Fixes
 
 * add missing environment policy record for use when recording deployments	 ([09bb02a6](/../../commit/09bb02a6))
 * fix bug where pacticipant with blank name was being created instead of updating existing record	 ([be24a8ad](/../../commit/be24a8ad))
 * ensure pacticipant name is retained when updating with PUT	 ([eeac47c3](/../../commit/eeac47c3))
 
 <a name="v2.100.0"></a>
-### v2.100.0 (2022-05-20)
+## v2.100.0 (2022-05-20)
 
-#### Features
+### Features
 
 * check for potential duplicate pacticipants in publish contracts endpoint (#558)	 ([ed714f03](/../../commit/ed714f03))
 * add support for "can i merge" matrix query	 ([bb108ed2](/../../commit/bb108ed2))
@@ -436,22 +436,22 @@
 * **matrix**
   * add support for selectors specified by branch and environment name when reporting that a version does not exist	 ([07ff8044](/../../commit/07ff8044))
 
-#### Bug Fixes
+### Bug Fixes
 
 * **matrix**
   * identify the correct failed version when a selector resolves to multiple versions	 ([11e7dc1c](/../../commit/11e7dc1c))
 
 <a name="v2.99.0"></a>
-### v2.99.0 (2022-05-13)
+## v2.99.0 (2022-05-13)
 
-#### Features
+### Features
 
 * remove disable_use_branch_heads_for_latest_branch_pacts feature toggle	 ([5c6f1766](/../../commit/5c6f1766))
 * remove new_wip_calculation feature toggle	 ([add6cb08](/../../commit/add6cb08))
 * timeout long running pact content diff requests (#555)	 ([88abb2cf](/../../commit/88abb2cf))
 * change sql_log_level default from debug to none	 ([9f7aed46](/../../commit/9f7aed46))
 
-#### Bug Fixes
+### Bug Fixes
 
 * **ui**
   * fix unescaped pacticipant name and main branch in details and network pages	 ([b8b1d306](/../../commit/b8b1d306))
@@ -466,61 +466,61 @@
   * return the pacts for the branch heads when using the branch selector	 ([6dac495e](/../../commit/6dac495e))
 
 <a name="v2.98.0"></a>
-### v2.98.0 (2022-03-29)
+## v2.98.0 (2022-03-29)
 
-#### Features
+### Features
 
 * support debug logging of entire request and response	 ([42eb4a17](/../../commit/42eb4a17))
 
 <a name="v2.97.0"></a>
-### v2.97.0 (2022-03-29)
+## v2.97.0 (2022-03-29)
 
-#### Features
+### Features
 
 * **webhook certificates**
   * support setting webhook certificates using environment variables	 ([82c7a7e5](/../../commit/82c7a7e5))
 
-#### Bug Fixes
+### Bug Fixes
 
 * do not set postgres connection driver options if database_statement_timeout is nil	 ([adec4b00](/../../commit/adec4b00))
 
 <a name="v2.96.0"></a>
-### v2.96.0 (2022-03-21)
+## v2.96.0 (2022-03-21)
 
-#### Features
+### Features
 
 * print final value of configuration attribute rather than source value	 ([9c0fd3c4](/../../commit/9c0fd3c4))
 
-#### Bug Fixes
+### Bug Fixes
 
 * ensure database and basic auth credentials are not coerced to arrays if they contain commas	 ([5bce7ce4](/../../commit/5bce7ce4))
 * allow lazy loading when finding individual pacts	 ([04e03cb2](/../../commit/04e03cb2))
 
 <a name="v2.95.1"></a>
-### v2.95.1 (2022-03-18)
+## v2.95.1 (2022-03-18)
 
-#### Bug Fixes
+### Bug Fixes
 
 * **can-i-deploy**
   * allow new provider to be introduced to existing consumer without can-i-deploy having circular dependency issues	 ([e43974ca](/../../commit/e43974ca))
 
 <a name="v2.95.0"></a>
-### v2.95.0 (2022-03-16)
+## v2.95.0 (2022-03-16)
 
-#### Features
+### Features
 
 * add relation for can-i-deploy branch to environment badge	 ([6ece8e93](/../../commit/6ece8e93))
 * add badge url for 'can I deploy latest version of branch to envionment' endpoint	 ([086b8c10](/../../commit/086b8c10))
 
-#### Bug Fixes
+### Bug Fixes
 
 * **pacts for verification**
   * do not de-duplicate pacts with the same content but different consumers	 ([ae3bb541](/../../commit/ae3bb541))
 
 <a name="v2.94.0"></a>
-### v2.94.0 (2022-02-22)
+## v2.94.0 (2022-02-22)
 
-#### Features
+### Features
 
 * add can-i-deploy endpoint for checking if the latest version for a branch can be deployed to a particular environment	 ([34b145e8](/../../commit/34b145e8))
 * truncate tags, branches and versions in UI when they are super long (#513)	 ([94bbf915](/../../commit/94bbf915))
@@ -528,7 +528,7 @@
 * **integration dashboard**
   * add copy buttons next to the branch, tag and environment labels	 ([5b86ac88](/../../commit/5b86ac88))
 
-#### Bug Fixes
+### Bug Fixes
 
 * Improve Matrix request performance (#537)	 ([123f8629](/../../commit/123f8629))
 * Eagerly load pact publication fields (#536)	 ([c3f6993b](/../../commit/c3f6993b))
@@ -537,9 +537,9 @@
   * properties accordion should be collapsed by default (#544)	 ([19466121](/../../commit/19466121))
 
 <a name="v2.93.4"></a>
-### v2.93.4 (2022-02-21)
+## v2.93.4 (2022-02-21)
 
-#### Bug Fixes
+### Bug Fixes
 
 * **matrix page**
   * set correct base URL for links when a path is specified in the base URL	 ([8305456b](/../../commit/8305456b))
@@ -547,9 +547,9 @@
 * handle DateTimes that come back from Sqlite as Strings	 ([1312a049](/../../commit/1312a049))
 
 <a name="v2.93.3"></a>
-### v2.93.3 (2022-02-02)
+## v2.93.3 (2022-02-02)
 
-#### Bug Fixes
+### Bug Fixes
 
 * ensure webhook_certificates setting is honoured in webhook	 ([7933a526](/../../commit/7933a526))
 * ensure disable_ssl_verification setting is honoured in webhook	 ([08bc758c](/../../commit/08bc758c))
@@ -560,41 +560,41 @@
   * fixing vulnerability by upgrading HAL browser dependencies	 ([a6b06f66](/../../commit/a6b06f66))
 
 <a name="v2.93.2"></a>
-### v2.93.2 (2021-12-23)
+## v2.93.2 (2021-12-23)
 
-#### Bug Fixes
+### Bug Fixes
 
 * Improve SortContent performance on large contracts (#538)	 ([1914c01f](/../../commit/1914c01f))
 
 <a name="v2.93.1"></a>
-### v2.93.1 (2021-12-21)
+## v2.93.1 (2021-12-21)
 
-#### Bug Fixes
+### Bug Fixes
 
 * optimise query for calculating the latest overall pacts	 ([f44aaa70](/../../commit/f44aaa70))
 
 <a name="v2.93.0"></a>
-### v2.93.0 (2021-12-07)
+## v2.93.0 (2021-12-07)
 
-#### Features
+### Features
 
 * remove feature flag for new_wip_calculations	 ([972ceadd](/../../commit/972ceadd))
 * call the database clean within a transaction	 ([408c84ef](/../../commit/408c84ef))
 
-#### Bug Fixes
+### Bug Fixes
 
 * fix clean performance fix (#530)	 ([6c71e57b](/../../commit/6c71e57b))
 * fix performance issue loading latest version for pacticipant	 ([c575d132](/../../commit/c575d132))
 
 <a name="v2.92.0"></a>
-### v2.92.0 (2021-11-27)
+## v2.92.0 (2021-11-27)
 
-#### Features
+### Features
 
 * allow SQL caller logging to be enabled	 ([861d8f21](/../../commit/861d8f21))
 * use a separate table to track the successful verifications of pact versions for each provider version tag (feature toggled with "new_wip_calculation")	 ([df0acfa3](/../../commit/df0acfa3))
 
-#### Bug Fixes
+### Bug Fixes
 
 * **cleanup**
   * Improve delete orphans SQL query (#527)	 ([853354ea](/../../commit/853354ea))
@@ -602,26 +602,26 @@
 * cast PACT_BROKER_DATABASE_CONNECTION_VALIDATION_TIMEOUT to an integer	 ([8816c61f](/../../commit/8816c61f))
 
 <a name="v2.91.0"></a>
-### v2.91.0 (2021-11-15)
+## v2.91.0 (2021-11-15)
 
-#### Features
+### Features
 
 * add environments to matrix response	 ([fd50f22c](/../../commit/fd50f22c))
 * remove feature toggle around change to return the pact for the latest tagged version, rather than the latest pact that has a version with the tag	 ([fac3fc8a](/../../commit/fac3fc8a))
 
-#### Bug Fixes
+### Bug Fixes
 
 * load images from the correct path when the Pact Broker application is run from a non root context	 ([a268ef25](/../../commit/a268ef25))
 
 <a name="v2.90.0"></a>
-### v2.90.0 (2021-11-12)
+## v2.90.0 (2021-11-12)
 
-#### Features
+### Features
 
 * do not let clean task delete currently deployed or currently released+supported versions	 ([b05f0b67](/../../commit/b05f0b67))
 * allow webhook certificates to be configured in the pact_broker.yml file	 ([7c60c955](/../../commit/7c60c955))
 
-#### Bug Fixes
+### Bug Fixes
 
 * handle conflict check for pacts where the interactions are missing in one or the other	 ([71844f0f](/../../commit/71844f0f))
 * fix error that occurs in some versions of Sqlite when running 20210702_drop_unused_columns_from_deployed_versions.rb	 ([0daa4459](/../../commit/0daa4459))
@@ -632,9 +632,9 @@
   * upgrade to bootstrap v4.6.1	 ([0433107c](/../../commit/0433107c))
 
 <a name="v2.89.1"></a>
-### v2.89.1 (2021-10-28)
+## v2.89.1 (2021-10-28)
 
-#### Bug Fixes
+### Bug Fixes
 
 * **clean**
   * honour max_age when set in clean selector	 ([828420d4](/../../commit/828420d4))
@@ -642,27 +642,27 @@
 * null safe navigation in case a branch head does not exist for a branch version	 ([4b259a81](/../../commit/4b259a81))
 
 <a name="v2.89.0"></a>
-### v2.89.0 (2021-10-15)
+## v2.89.0 (2021-10-15)
 
-#### Features
+### Features
 
 * add applicationInstance to deployed version resource as a replacement for target	 ([9bfafc8a](/../../commit/9bfafc8a))
 * apply allow_dangerous_contract_modification setting when publishing using the /contracts/publish endpoint	 ([956227fe](/../../commit/956227fe))
 * add support for matchingBranch property in consumer version selectors	 ([48068d29](/../../commit/48068d29))
 
-#### Bug Fixes
+### Bug Fixes
 
 * set missing provider branch name parameter for contract_requiring_verification_published webhooks	 ([777ccdd2](/../../commit/777ccdd2))
 * correct misnamed database port configuration property causing the PACT_BROKER_DATABASE_PORT not to be respected	 ([3d14013a](/../../commit/3d14013a))
 
 <a name="v2.88.0"></a>
-### v2.88.0 (2021-10-11)
+## v2.88.0 (2021-10-11)
 
-#### Features
+### Features
 
 * include relations for each consumer version that a pact version belongs to when retrieved using the URL from the 'pacts for verification' response	 ([3458c9e5](/../../commit/3458c9e5))
 
-#### Bug Fixes
+### Bug Fixes
 
 * use the decoded path info rather than the encoded one when creating the pact info	 ([dd30a1a2](/../../commit/dd30a1a2))
 * edge case in webhook description rendering with participants specified by labels (#512)	 ([7e6a78d8](/../../commit/7e6a78d8))
@@ -671,9 +671,9 @@
   * prevent long version names overlfow the table (#511)	 ([3c279556](/../../commit/3c279556))
 
 <a name="v2.87.0"></a>
-### v2.87.0 (2021-10-05)
+## v2.87.0 (2021-10-05)
 
-#### Features
+### Features
 
 * **matrix**
   * preselect the consumer version when clicking through to matrix page from integration dashboard	 ([b550b470](/../../commit/b550b470))
@@ -692,7 +692,7 @@
   * support ${pactbroker.buildUrl} template parameter	 ([9b79b33f](/../../commit/9b79b33f))
   * support $pactbroker.consumerVersionBranch template parameter	 ([b97ba84c](/../../commit/b97ba84c))
 
-#### Bug Fixes
+### Bug Fixes
 
 * **mysql**
   * increase size of event_context column	 ([c1596419](/../../commit/c1596419))
@@ -706,9 +706,9 @@
   * optimise calls to identify overwritten data to delete	 ([aaef9e6d](/../../commit/aaef9e6d))
 
 <a name="v2.86.0"></a>
-### v2.86.0 (2021-09-17)
+## v2.86.0 (2021-09-17)
 
-#### Features
+### Features
 
 * allow webhooks to match pacticipants by label (#501)	 ([f30a9dcc](/../../commit/f30a9dcc))
 * in the webhook body for contract_published and contract_content_changed, use the latest verification from the main branch if present	 ([b45398bd](/../../commit/b45398bd))
@@ -716,16 +716,16 @@
 * add version details of the implementation that verified a Pact (#363)	 ([021a8692](/../../commit/021a8692))
 
 <a name="v2.85.1"></a>
-### v2.85.1 (2021-09-14)
+## v2.85.1 (2021-09-14)
 
-#### Bug Fixes
+### Bug Fixes
 
 * fix bug identifying latest verification for tagged pact	 ([43ac4b03](/../../commit/43ac4b03))
 
 <a name="v2.85.0"></a>
-### v2.85.0 (2021-09-13)
+## v2.85.0 (2021-09-13)
 
-#### Features
+### Features
 
 * show in the UI whether or not a pact was pending when verification failed	 ([326c068e](/../../commit/326c068e))
 * thread safe configuration overrides (#500)	 ([50900231](/../../commit/50900231))
@@ -734,9 +734,9 @@
 * update UI	 ([0ba5eda3](/../../commit/0ba5eda3))
 
 <a name="v2.84.0"></a>
-### v2.84.0 (2021-09-10)
+## v2.84.0 (2021-09-10)
 
-#### Features
+### Features
 
 * use the first tag as the branch when publishing pacts using the contracts/publish endpoint	 ([7b903c1d](/../../commit/7b903c1d))
 * support multiple branches per version (#495)	 ([acff2fcc](/../../commit/acff2fcc))
@@ -746,16 +746,16 @@
 * **pacts for verification**
   * include pending status for responses by default when includePendingStatus is not specified	 ([748d3b87](/../../commit/748d3b87))
 
-#### Bug Fixes
+### Bug Fixes
 
 * when the latest version for a tag does not have a pact, do not return a pact for the 'latest tag' selector	 ([374c77ce](/../../commit/374c77ce))
 * issue-reproduction/Dockerfile-pact-broker to reduce vulnerabilities (#491)	 ([9692b465](/../../commit/9692b465))
 * Dockerfile to reduce vulnerabilities (#496)	 ([57c190ef](/../../commit/57c190ef))
 
 <a name="v2.83.0"></a>
-### v2.83.0 (2021-08-19)
+## v2.83.0 (2021-08-19)
 
-#### Features
+### Features
 
 * **clean**
   * update default selectors for clean task to include deployed, released and branch head versions	 ([aaffe71f](/../../commit/aaffe71f))
@@ -763,15 +763,15 @@
 
 * add index to verifications table to improve performance of 'latest verification' query	 ([02eeb424](/../../commit/02eeb424))
 
-#### Bug Fixes
+### Bug Fixes
 
 * use provider_version_number from webhook context	 ([3cf421ac](/../../commit/3cf421ac))
 * validate matrix query limit	 ([ac5e0890](/../../commit/ac5e0890))
 
 <a name="v2.82.0"></a>
-### v2.82.0 (2021-08-14)
+## v2.82.0 (2021-08-14)
 
-#### Features
+### Features
 
 * do not allow contract content for a consumer version to be modified for all new Broker instances (#484)	 ([b1819749](/../../commit/b1819749))
 * ensure saved configuration is loaded appropriately into the RuntimeConfiguration	 ([c5ab52ad](/../../commit/c5ab52ad))
@@ -788,7 +788,7 @@
 * **metrics**
   * add counts for environment, deployed version, released version, pacticipants and versions with branch set	 ([8272b08b](/../../commit/8272b08b))
 
-#### Bug Fixes
+### Bug Fixes
 
 * lazy load latest verification using select max, and eager load using the skynet query	 ([e6ee6ab5](/../../commit/e6ee6ab5))
 * improve performance of query for latest verification for pact_version	 ([d63081d8](/../../commit/d63081d8))
@@ -799,9 +799,9 @@
   * correctly construct options when environment is used in the can-i-deploy GET endpoint	 ([cb79a404](/../../commit/cb79a404))
 
 <a name="v2.81.0"></a>
-### v2.81.0 (2021-07-17)
+## v2.81.0 (2021-07-17)
 
-#### Features
+### Features
 
 * enable environments, deployed versions and released versions endpoints without a feature toggle required	 ([84a59c10](/../../commit/84a59c10))
 * add detailed debug logging for WIP pact calculations	 ([81290238](/../../commit/81290238))
@@ -815,14 +815,14 @@
 * add interactions_count and messages_count to pact_versions table	 ([c17adbe6](/../../commit/c17adbe6))
 * shorten length of metadata in pact URLs by using the consumer version id instead of number	 ([27b34bc9](/../../commit/27b34bc9))
 
-#### Bug Fixes
+### Bug Fixes
 
 * Display pagination correctly in index page with tag (#469)	 ([cda9c15e](/../../commit/cda9c15e))
 
 <a name="v2.80.0"></a>
-### v2.80.0 (2021-07-06)
+## v2.80.0 (2021-07-06)
 
-#### Features
+### Features
 
 * filter pacticipant name on index page (#446)	 ([fd882da4](/../../commit/fd882da4))
 * add uuid to webhook decorator	 ([3a916064](/../../commit/3a916064))
@@ -875,7 +875,7 @@
 * **deployed versions**
   * add endpoint to list deployed versions for an environment	 ([bd0ca9d6](/../../commit/bd0ca9d6))
 
-#### Bug Fixes
+### Bug Fixes
 
 * add rubocop and fix offenses (#441)	 ([7c1c3044](/../../commit/7c1c3044))
 * gracefully handle an interactions value that is not an array	 ([a9a5df3d](/../../commit/a9a5df3d))
@@ -894,37 +894,37 @@
   * Make long pacticipant versions look nice (#407)	 ([dbb967e3](/../../commit/dbb967e3))
 
 <a name="v2.79.0"></a>
-### v2.79.0 (2021-02-25)
+## v2.79.0 (2021-02-25)
 
-#### Features
+### Features
 
 * allow multiple base URLs to be configured	 ([6d0dc8b3](/../../commit/6d0dc8b3))
 * copy full git sha rather than abbreviated one when clicking the copy button next to an application version	 ([dae9cae5](/../../commit/dae9cae5))
 
-#### Bug Fixes
+### Bug Fixes
 
 * fix missing verification status colours in matrix rows	 ([687d4647](/../../commit/687d4647))
 
 <a name="v2.78.1"></a>
-### v2.78.1 (2021-02-18)
+## v2.78.1 (2021-02-18)
 
-#### Bug Fixes
+### Bug Fixes
 
 * handle nil response when determining webhook success status	 ([20ca9e66](/../../commit/20ca9e66))
 
 <a name="v2.78.0"></a>
-### v2.78.0 (2021-02-15)
+## v2.78.0 (2021-02-15)
 
-#### Features
+### Features
 
 * support create, update and delete of environment resources (#379)	 ([410f2e80](/../../commit/410f2e80))
 * allow version to be created with tags	 ([798afce9](/../../commit/798afce9))
 * Follow up for #239 + adding list of success codes to SAVABLE_SETTING_NAMES variable (#388)	 ([08c0ad09](/../../commit/08c0ad09))
 
 <a name="v2.77.0"></a>
-### v2.77.0 (2021-02-11)
+## v2.77.0 (2021-02-11)
 
-#### Features
+### Features
 
 * **webhooks**
   * allow the http codes to be considered as "successful" to be configured.	 ([a84989b1](/../../commit/a84989b1))
@@ -937,33 +937,33 @@
 * sort consumer version tags by date in dashboard response	 ([f82ba1bc](/../../commit/f82ba1bc))
 
 <a name="v2.76.2"></a>
-### v2.76.2 (2021-01-29)
+## v2.76.2 (2021-01-29)
 
-#### Bug Fixes
+### Bug Fixes
 
 * trigger one webhook for each pact publication that the verified content belongs to when using the 'pacts for verification' API (#378)	 ([114ccad0](/../../commit/114ccad0))
 
 <a name="v2.76.1"></a>
-### v2.76.1 (2021-01-28)
+## v2.76.1 (2021-01-28)
 
-#### Bug Fixes
+### Bug Fixes
 
 * deduplicate wip pacts by content	 ([0af90776](/../../commit/0af90776))
 * message when pending pact is verified successfully for the first time (#376)	 ([4fc69190](/../../commit/4fc69190))
 * use base URL from rack env in UI	 ([5bf21324](/../../commit/5bf21324))
 
 <a name="v2.76.0"></a>
-### v2.76.0 (2021-01-21)
+## v2.76.0 (2021-01-21)
 
-#### Features
+### Features
 
 * **verification results**
   * redirect requests for verification results to the HAL browser if requested in a web browser	 ([0f948de5](/../../commit/0f948de5))
 
 <a name="v2.75.0"></a>
-### v2.75.0 (2021-01-18)
+## v2.75.0 (2021-01-18)
 
-#### Features
+### Features
 
 * upgrade bootstrap (#370)	 ([a457c337](/../../commit/a457c337))
 * add indexes to webhook_executions and triggered_webhooks tables	 ([b05e7dbe](/../../commit/b05e7dbe))
@@ -971,7 +971,7 @@
 * **webhook**
   * set read and open timeouts	 ([8b502c44](/../../commit/8b502c44))
 
-#### Bug Fixes
+### Bug Fixes
 
 * **ui**
   * upgrade to jquery-3.5.1 to address vulnerabilities in jquery-3.3.1	 ([de41b231](/../../commit/de41b231))
@@ -980,29 +980,29 @@
   * upgrade redcarpet for CVE-2020-26298	 ([b57aad32](/../../commit/b57aad32))
 
 <a name="v2.74.1"></a>
-### v2.74.1 (2021-01-05)
+## v2.74.1 (2021-01-05)
 
-#### Bug Fixes
+### Bug Fixes
 
 * **deps**
   * remove manual specification for nokogiri now the fix for CVE-2020-26247 has been released in 1.11	 ([771378a9](/../../commit/771378a9))
 
 <a name="v2.74.0"></a>
-### v2.74.0 (2021-01-04)
+## v2.74.0 (2021-01-04)
 
-#### Features
+### Features
 
 * include the consumer version selectors in the metadata of the 'pact for verification' URL	 ([32bbe1c3](/../../commit/32bbe1c3))
 
-#### Bug Fixes
+### Bug Fixes
 
 * **deps**
   * update nokogiri for CVE-2020-26247	 ([336ec897](/../../commit/336ec897))
 
 <a name="v2.73.0"></a>
-### v2.73.0 (2020-12-16)
+## v2.73.0 (2020-12-16)
 
-#### Features
+### Features
 
 * **wip**
   * permenently enable feature that keeps pacts as WIP when verified via the URL from a webhook triggered by pact publication	 ([70071373](/../../commit/70071373))
@@ -1014,14 +1014,14 @@
 * **metrics**
   * timeout matrix count	 ([43091b57](/../../commit/43091b57))
 
-#### Bug Fixes
+### Bug Fixes
 
 * url encode tag name in tag URL	 ([80df832d](/../../commit/80df832d))
 
 <a name="v2.72.0"></a>
-### v2.72.0 (2020-12-02)
+## v2.72.0 (2020-12-02)
 
-#### Features
+### Features
 
 * allow overwritten data deletion to be configured with extra options	 ([fd809737](/../../commit/fd809737))
 * use the consumer version number in the metadata to select the correct consumer version for a pact version resource	 ([422c87fc](/../../commit/422c87fc))
@@ -1030,16 +1030,16 @@
 * update metrics output	 ([0617e9df](/../../commit/0617e9df))
 
 <a name="v2.71.0"></a>
-### v2.71.0 (2020-11-28)
+## v2.71.0 (2020-11-28)
 
-#### Features
+### Features
 
 * allow clean to be performed in dry run mode	 ([a7a18fde](/../../commit/a7a18fde))
 
 <a name="v2.70.0"></a>
-### v2.70.0 (2020-11-28)
+## v2.70.0 (2020-11-28)
 
-#### Features
+### Features
 
 * allow limit to be applied to clean task	 ([d29e5c62](/../../commit/d29e5c62))
 * optimise the query to load the tags with latest flags	 ([bc47613f](/../../commit/bc47613f))
@@ -1048,14 +1048,14 @@
 * **wip pacts**
   * experimental feature - if no provider versions exist, consider all head pacts wip	 ([a635cc53](/../../commit/a635cc53))
 
-#### Bug Fixes
+### Bug Fixes
 
 * return empty body when group csv is requested for a pacticipant that does not have any integrations	 ([fb4e28ce](/../../commit/fb4e28ce))
 
 <a name="v2.69.0"></a>
-### v2.69.0 (2020-11-24)
+## v2.69.0 (2020-11-24)
 
-#### Features
+### Features
 
 * **wip**
   * keep pacts as WIP when verified via the pactUrl passed though the webhook template parameters - experimental.	 ([a9b3fef0](/../../commit/a9b3fef0))
@@ -1064,22 +1064,22 @@
 * display V3 provider states in HTML (#357)	 ([8e06a7f2](/../../commit/8e06a7f2))
 * optimise query for determining latest verification for consumer and provider	 ([7889b051](/../../commit/7889b051))
 
-#### Bug Fixes
+### Bug Fixes
 
 * return a 404 when the base pact for a pact diff doesn't exist	 ([74d3644d](/../../commit/74d3644d))
 * Add consumer name to inclusion reason log (#358)	 ([82901891](/../../commit/82901891))
 
 <a name="v2.68.1"></a>
-### v2.68.1 (2020-10-24)
+## v2.68.1 (2020-10-24)
 
-#### Bug Fixes
+### Bug Fixes
 
 * set default User-Agent header in webhook requests	 ([caa71f9b](/../../commit/caa71f9b))
 
 <a name="v2.68.0"></a>
-### v2.68.0 (2020-10-23)
+## v2.68.0 (2020-10-23)
 
-#### Features
+### Features
 
 * use a sequence for the version order on postgres	 ([da497a76](/../../commit/da497a76))
 * only cascade apps for 404s (not 405s)	 ([4e1b3083](/../../commit/4e1b3083))
@@ -1087,15 +1087,15 @@
 * optimise query to find latest verification for pact	 ([db17ef5a](/../../commit/db17ef5a))
 
 <a name="v2.67.0"></a>
-### v2.67.0 (2020-10-16)
+## v2.67.0 (2020-10-16)
 
-#### Features
+### Features
 
 * **wip pacts**
   * if a pact was successfully verified because it was included as a WIP pact, keep it as WIP	 ([16cae55d](/../../commit/16cae55d))
   * add 'wip' column to verification results	 ([34f98592](/../../commit/34f98592))
 
-#### Bug Fixes
+### Bug Fixes
 
 * typo when rendering created webhook for old webhooks path	 ([1e6a06a0](/../../commit/1e6a06a0))
 * include can-i-deploy badge in is_badge_path? logic	 ([31ea5f34](/../../commit/31ea5f34))
@@ -1107,56 +1107,56 @@
   * gracefully handle pacticipant not found	 ([f6903b23](/../../commit/f6903b23))
 
 <a name="v2.66.0"></a>
-### v2.66.0 (2020-10-01)
+## v2.66.0 (2020-10-01)
 
-#### Features
+### Features
 
 * paginate pacticipant versions	 ([f489ba7b](/../../commit/f489ba7b))
 
 * **webhooks**
   * add event name to group by clause when selecting latest triggered webhooks	 ([134f12c8](/../../commit/134f12c8))
 
-#### Bug Fixes
+### Bug Fixes
 
 * maintain latest and tag params when submitting page after following link from can-i-deploy debug logs	 ([6e2f1a85](/../../commit/6e2f1a85))
 
 <a name="v2.65.0"></a>
-### v2.65.0 (2020-09-25)
+## v2.65.0 (2020-09-25)
 
-#### Features
+### Features
 
 * **pacts for verification**
   * allow API to be disabled by setting PACT_BROKER_FEATURES=disable_pacts_for_verification	 ([bab116b3](/../../commit/bab116b3))
   * update wording for inclusion notice when selector has a consumer specified	 ([61370d1f](/../../commit/61370d1f))
 
 <a name="v2.64.0"></a>
-### v2.64.0 (2020-09-25)
+## v2.64.0 (2020-09-25)
 
-#### Features
+### Features
 
 * add API endpoint for can-i-deploy for latest tagged pacticipant version	 ([88fdc60a](/../../commit/88fdc60a))
 * render matrix UI page for can-i-deploy endpoint	 ([463e9cfd](/../../commit/463e9cfd))
 * change text on can-i-deploy badge	 ([f9e183e9](/../../commit/f9e183e9))
 
 <a name="v2.63.0"></a>
-### v2.63.0 (2020-09-25)
+## v2.63.0 (2020-09-25)
 
-#### Features
+### Features
 
 * allow label of can-i-deploy badge to be customised by setting the label query parameter	 ([ed544f94](/../../commit/ed544f94))
 * add badges for can-i-deploy	 ([887a9ca3](/../../commit/887a9ca3))
 
 <a name="v2.62.0"></a>
-### v2.62.0 (2020-09-23)
+## v2.62.0 (2020-09-23)
 
-#### Features
+### Features
 
 * **webhooks**
   * remove user-agent and accept-encoding headers which the Ruby HTTP library adds by default	 ([ef25b88c](/../../commit/ef25b88c))
 
 * add event name to triggered webhook	 ([ecce16fd](/../../commit/ecce16fd))
 
-#### Bug Fixes
+### Bug Fixes
 
 * **webhooks**
   * use path to initialise http request, rather than full URL	 ([ecbac9a6](/../../commit/ecbac9a6))
@@ -1164,96 +1164,96 @@
 * gracefully handle corrupt webhook metadata in pact URL	 ([ba94c355](/../../commit/ba94c355))
 
 <a name="v2.61.0"></a>
-### v2.61.0 (2020-09-12)
+## v2.61.0 (2020-09-12)
 
-#### Features
+### Features
 
 * add back support for GET requests to the 'pacts for verification' API with a deprecation notice in the response	 ([8f45cc9f](/../../commit/8f45cc9f))
 
 <a name="v2.60.1"></a>
-### v2.60.1 (2020-09-10)
+## v2.60.1 (2020-09-10)
 
-#### Bug Fixes
+### Bug Fixes
 
 * href for beta:provider-pacts-for-verification	 ([3949fdd1](/../../commit/3949fdd1))
 
 <a name="v2.60.0"></a>
-### v2.60.0 (2020-09-08)
+## v2.60.0 (2020-09-08)
 
-#### Features
+### Features
 
 * **pacts for verification**
   * add deprecation title to beta:provider-pacts-for-verification relation	 ([47a61f69](/../../commit/47a61f69))
   * do not require environment variable feature toggle to enable feature	 ([7d0fe1ea](/../../commit/7d0fe1ea))
   * allow consumer to be specified with fallback tags, and overall latest to be specified with or without a consumer	 ([2d52d173](/../../commit/2d52d173))
 
-#### Bug Fixes
+### Bug Fixes
 
 * correctly handle new test results format when merging test results with pact contents	 ([b35ab71b](/../../commit/b35ab71b))
 
 <a name="v2.59.2"></a>
-### v2.59.2 (2020-08-06)
+## v2.59.2 (2020-08-06)
 
-#### Bug Fixes
+### Bug Fixes
 
 * gracefully handle contracts without interactions or messages in deployment status warnings	 ([6c223e69](/../../commit/6c223e69))
 * add missing info level log for business level errors	 ([80a895bf](/../../commit/80a895bf))
 
 <a name="v2.59.1"></a>
-### v2.59.1 (2020-08-04)
+## v2.59.1 (2020-08-04)
 
-#### Bug Fixes
+### Bug Fixes
 
 * fix error rendering relationships diagram when the number of index items is greater than one page	 ([93a19982](/../../commit/93a19982))
 
 <a name="v2.59.0"></a>
-### v2.59.0 (2020-07-30)
+## v2.59.0 (2020-07-30)
 
-#### Features
+### Features
 
 * add timestamps to version resource	 ([818a0c2c](/../../commit/818a0c2c))
 
 <a name="v2.58.3"></a>
-### v2.58.3 (2020-07-25)
+## v2.58.3 (2020-07-25)
 
-#### Bug Fixes
+### Bug Fixes
 
 * correctly encode user entered data in attributes, Javascript, and HTML	 ([523980e2](/../../commit/523980e2))
 
 <a name="v2.58.2"></a>
-### v2.58.2 (2020-07-17)
+## v2.58.2 (2020-07-17)
 
-#### Bug Fixes
+### Bug Fixes
 
 * update CSP to allow badges to be loaded from shields.io	 ([a87e5274](/../../commit/a87e5274))
 * add missing URL encoding in various URLs	 ([276094bc](/../../commit/276094bc))
 
 <a name="v2.58.0"></a>
-### v2.58.0 (2020-06-19)
+## v2.58.0 (2020-06-19)
 
 
-#### Features
+### Features
 
 * log foreign key constraint errors as warn as 99% of the time they are transitory and unreproducible and should not cause alarms to be raised	 ([71fd0270](/../../commit/71fd0270))
 * use structured logs for logging errors	 ([1e097b37](/../../commit/1e097b37))
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * fix: update sanitize gem for CVE-2020-4054	 ([2af4bf9d](/../../commit/2af4bf9d))
 * do not parse the provider version as a semantic version when order_versions_by_date is true	 ([bf30024f](/../../commit/bf30024f))
 
 
 <a name="v2.57.0"></a>
-### v2.57.0 (2020-06-16)
+## v2.57.0 (2020-06-16)
 
 
-#### Features
+### Features
 
 * add Content Security Policy header	 ([fd2e81fb](/../../commit/fd2e81fb))
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * upgrade Rack for vulnerability CVE-2020-8184	 ([99b78b3c](/../../commit/99b78b3c))
 * fix Home link on pact page	 ([081d1586](/../../commit/081d1586))
@@ -1261,20 +1261,20 @@
 
 
 <a name="v2.56.1"></a>
-### v2.56.1 (2020-06-01)
+## v2.56.1 (2020-06-01)
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * **matrix ui**
   * fix home link	 ([67065b7d](/../../commit/67065b7d))
 
 
 <a name="v2.56.0"></a>
-### v2.56.0 (2020-06-01)
+## v2.56.0 (2020-06-01)
 
 
-#### Features
+### Features
 
 * **database**
   * log schema versions and migration info on startup	 ([b385e535](/../../commit/b385e535))
@@ -1286,32 +1286,32 @@
   * experimental - add a warning message if there are interactions missing verification test results.	 ([f7ab8cc5](/../../commit/f7ab8cc5))
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * use relative URLs when base_url not explictly set to ensure app is not vulnerable to host header attacks	 ([92c45a0a](/../../commit/92c45a0a))
 * raise PactBroker::Error when either pacticipant is not found in the business layer while attempting to delete an integration	 ([3c209a46](/../../commit/3c209a46))
 
 
 <a name="v2.55.0"></a>
-### v2.55.0 (2020-05-22)
+## v2.55.0 (2020-05-22)
 
 
-#### Features
+### Features
 
 * support non root context (#344)	 ([dc480499](/../../commit/dc480499))
 
 
 <a name="v2.54.0"></a>
-### v2.54.0 (2020-05-13)
+## v2.54.0 (2020-05-13)
 
 
-#### Features
+### Features
 
 * **hal browser**
   * update to latest code	 ([a79ad290](/../../commit/a79ad290))
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * update rack for CVE-2020-8161	 ([96c3386a](/../../commit/96c3386a))
 
@@ -1323,16 +1323,16 @@
 
 
 <a name="v2.53.0"></a>
-### v2.53.0 (2020-05-12)
+## v2.53.0 (2020-05-12)
 
 
-#### Features
+### Features
 
 * **badge**
   * include tag names in matrix badge	 ([cce7cd01](/../../commit/cce7cd01))
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * **pacts for verification**
   * ensure a separate pact URL is returned for each consumer when multiple consumers share the same pact json content	 ([13e7b640](/../../commit/13e7b640))
@@ -1342,28 +1342,28 @@
 
 
 <a name="v2.52.2"></a>
-### v2.52.2 (2020-04-16)
+## v2.52.2 (2020-04-16)
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * pact URL in matrix page	 ([5ed046f1](/../../commit/5ed046f1))
 
 
 <a name="v2.52.1"></a>
-### v2.52.1 (2020-03-30)
+## v2.52.1 (2020-03-30)
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * set consumer and provider to nil on the underlying webhook when they are not specified in the incoming webhook JSON	 ([f85b6ea2](/../../commit/f85b6ea2))
 
 
 <a name="v2.52.0"></a>
-### v2.52.0 (2020-03-25)
+## v2.52.0 (2020-03-25)
 
 
-#### Features
+### Features
 
 * **pact ui**
   * update matrix URL to specify the latest provider version	 ([23b02c80](/../../commit/23b02c80))
@@ -1380,16 +1380,16 @@
   * support finding all pacts with a given tag for a specified consumer	 ([749e708d](/../../commit/749e708d))
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * ensure requests for text/plain go to the API rather than the UI	 ([1cf28009](/../../commit/1cf28009))
 
 
 <a name="v2.51.0"></a>
-### v2.51.0 (2020-03-11)
+## v2.51.0 (2020-03-11)
 
 
-#### Features
+### Features
 
 * **clean**
   * all the latest version for all tags to be kept	 ([9ff7bbec](/../../commit/9ff7bbec))
@@ -1397,7 +1397,7 @@
   * support specifying which versions to keep using selectors	 ([a06899eb](/../../commit/a06899eb))
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * set consumer and provider relationships when a webhook is created and consumer/provider are set in the body of the request rather than the URL	 ([5ccdd31c](/../../commit/5ccdd31c))
 * sort matrix rows by last action date	 ([f625c9ad](/../../commit/f625c9ad))
@@ -1405,20 +1405,20 @@
 
 
 <a name="v2.50.1"></a>
-### v2.50.1 (2020-02-27)
+## v2.50.1 (2020-02-27)
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * **webhooks**
   * make consumer_version_tags an array when creating metadata for latest [tagged] pact	 ([59b9e4c5](/../../commit/59b9e4c5))
 
 
 <a name="v2.50.0"></a>
-### v2.50.0 (2020-02-27)
+## v2.50.0 (2020-02-27)
 
 
-#### Features
+### Features
 
 * **deps**
   * upgrade to pact-support 1.14.1	 ([47c23b7d](/../../commit/47c23b7d))
@@ -1435,10 +1435,10 @@
 
 
 <a name="v2.49.0"></a>
-### v2.49.0 (2020-02-13)
+## v2.49.0 (2020-02-13)
 
 
-#### Features
+### Features
 
 * **webhooks**
   * support upsert of webhook via a PUT to /webhooks/{uuid}	 ([f9ba9ab5](/../../commit/f9ba9ab5))
@@ -1449,10 +1449,10 @@
 
 
 <a name="v2.48.0"></a>
-### v2.48.0 (2020-02-07)
+## v2.48.0 (2020-02-07)
 
 
-#### Features
+### Features
 
 * **pacts for verification**
   * include a short description of the pact's selectors in the response	 ([41c6d91f](/../../commit/41c6d91f))
@@ -1463,35 +1463,35 @@
 * support DELETE for verification results	 ([70392e53](/../../commit/70392e53))
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * a url typo (#328)	 ([482264fa](/../../commit/482264fa))
 * correct URL of tag relation in pacticipant version resource	 ([ec24e999](/../../commit/ec24e999))
 
 
 <a name="v2.47.1"></a>
-### v2.47.1 (2020-02-01)
+## v2.47.1 (2020-02-01)
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * ensure latest verification is loaded on pact object before executing webhook	 ([41eb25d8](/../../commit/41eb25d8))
 
 
 <a name="v2.47.0"></a>
-### v2.47.0 (2020-01-31)
+## v2.47.0 (2020-01-31)
 
 
-#### Features
+### Features
 
 * include the webhook context in the execution logs	 ([29f65bef](/../../commit/29f65bef))
 
 
 <a name="v2.46.0"></a>
-### v2.46.0 (2020-01-30)
+## v2.46.0 (2020-01-30)
 
 
-#### Features
+### Features
 
 * allow the base URL of the application to be set for the API	 ([73bd4c44](/../../commit/73bd4c44))
 * correct logs relation to pb:logs in the triggered webhooks resource	 ([89ea1a58](/../../commit/89ea1a58))
@@ -1502,17 +1502,17 @@
   * optimise queries for determining which provider version tags are pending	 ([b4e1461a](/../../commit/b4e1461a))
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * **pacts for verification**
   * set includePendingStatus to false by default	 ([9b3162ac](/../../commit/9b3162ac))
 
 
 <a name="v2.45.0"></a>
-### v2.45.0 (2020-01-30)
+## v2.45.0 (2020-01-30)
 
 
-#### Features
+### Features
 
 * expose the data migrations code as a rake task	 ([00ee00d5](/../../commit/00ee00d5))
 
@@ -1520,17 +1520,17 @@
   * include URL of pact in inclusion message	 ([5a85a5a4](/../../commit/5a85a5a4))
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * **can-i-deploy**
   * when multiple selectors are specified, do not infer integrations unless the "latest" or "tag" are specified	 ([c5819299](/../../commit/c5819299))
 
 
 <a name="v2.44.0"></a>
-### v2.44.0 (2020-01-22)
+## v2.44.0 (2020-01-22)
 
 
-#### Features
+### Features
 
 * **matrix**
   * optimise query to determine integrations, again	 ([44e78ad2](/../../commit/44e78ad2))
@@ -1540,7 +1540,7 @@
 * add hal relation for creating a tag on the pacticipant version resource	 ([dca0ad4f](/../../commit/dca0ad4f))
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * update pact-support to fix bug caused by missing require	 ([416ecdf5](/../../commit/416ecdf5))
 * correct logic for finding pacticipants by name when the name contains an underscore	 ([6d975ebe](/../../commit/6d975ebe))
@@ -1551,10 +1551,10 @@
 
 
 <a name="v2.43.0"></a>
-### v2.43.0 (2020-01-06)
+## v2.43.0 (2020-01-06)
 
 
-#### Features
+### Features
 
 * support DELETE /integrations for deleting all integration related data at once (pacticipants, pacts, verifications and webhooks)	 ([d7e2ef27](/../../commit/d7e2ef27))
 * optimise query to automatically determine integrations	 ([147cbfb6](/../../commit/147cbfb6))
@@ -1564,17 +1564,17 @@
   * optimise the query that determines the integrations	 ([704944b6](/../../commit/704944b6))
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * update rack for https://github.com/advisories/GHSA-hrqr-hxpp-chr3	 ([c9352fde](/../../commit/c9352fde))
 * correctly identify missing verification for bi-directional pacts	 ([3577968a](/../../commit/3577968a))
 
 
 <a name="v2.42.0"></a>
-### v2.42.0 (2019-12-05)
+## v2.42.0 (2019-12-05)
 
 
-#### Features
+### Features
 
 * **pacts for verification**
   * include list of notices to print rather than inclusionReason and pendingReason	 ([eed0120e](/../../commit/eed0120e))
@@ -1585,10 +1585,10 @@
 
 
 <a name="v2.41.0"></a>
-### v2.41.0 (2019-11-21)
+## v2.41.0 (2019-11-21)
 
 
-#### Features
+### Features
 
 * **pacts for verification**
   * make latest flag required and true for now, until the 'all pacts for tag' is implemented	 ([ebbbbec9](/../../commit/ebbbbec9))
@@ -1621,10 +1621,10 @@
 
 
 <a name="v2.40.0"></a>
-### v2.40.0 (2019-10-26)
+## v2.40.0 (2019-10-26)
 
 
-#### Features
+### Features
 
 * **matrix**
   * default page to showing 'latest by consumer version and provider' as it is much quicker and less confusing.	 ([dd879250](/../../commit/dd879250))
@@ -1635,7 +1635,7 @@
   * optimise database query	 ([2b7f8e23](/../../commit/2b7f8e23))
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * **matrix**
   * exceptions on matrix page due to recent query optimisation	 ([3c504ba5](/../../commit/3c504ba5))
@@ -1645,10 +1645,10 @@
 
 
 <a name="v2.39.0"></a>
-### v2.39.0 (2019-10-21)
+## v2.39.0 (2019-10-21)
 
 
-#### Features
+### Features
 
 * **matrix**
   * optimise query for can-i-deploy, again	 ([78b8a5d5](/../../commit/78b8a5d5))
@@ -1676,7 +1676,7 @@
   * add verification status to integrations endpoint	 ([437ba769](/../../commit/437ba769))
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * typos on ISSUE_TEMPLATE (#311)	 ([a10b4792](/../../commit/a10b4792))
 * add endpoints to get latest verification for latest pact	 ([73413727](/../../commit/73413727))
@@ -1690,19 +1690,19 @@
 
 
 <a name="v2.38.1"></a>
-### v2.38.1 (2019-09-23)
+## v2.38.1 (2019-09-23)
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * add missing require	 ([36500e04](/../../commit/36500e04))
 
 
 <a name="v2.38.0"></a>
-### v2.38.0 (2019-09-20)
+## v2.38.0 (2019-09-20)
 
 
-#### Features
+### Features
 
 * add pactflow message to start up and error logs	 ([530dbfe9](/../../commit/530dbfe9))
 * allow interaction ids to be manually set for test data	 ([4e256102](/../../commit/4e256102))
@@ -1711,17 +1711,17 @@
   * use 'refreshable' link for latest verification result so pact can be refreshed and display the latest result	 ([1ab8a5d9](/../../commit/1ab8a5d9))
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * don't drop column from view in down step, because you can't remove a column from a view in posgres	 ([045f3f38](/../../commit/045f3f38))
 * add test results to all verifications views	 ([9bc1eab1](/../../commit/9bc1eab1))
 
 
 <a name="v2.37.0"></a>
-### v2.37.0 (2019-09-02)
+## v2.37.0 (2019-09-02)
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * delete triggered webhook data when deleting pacticipant version	 ([77265c30](/../../commit/77265c30))
 
@@ -1733,19 +1733,19 @@
 
 
 <a name="v2.36.1"></a>
-### v2.36.1 (2019-08-30)
+## v2.36.1 (2019-08-30)
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * do not show clipboard icon if version is blank (#297)	 ([36948fe1](/../../commit/36948fe1))
 
 
 <a name="v2.36.0"></a>
-### v2.36.0 (2019-08-30)
+## v2.36.0 (2019-08-30)
 
 
-#### Features
+### Features
 
 * add resource to get latest verification for a pact	 ([f02a1ca0](/../../commit/f02a1ca0))
 * add /metrics endpoint	 ([9bcbc1bd](/../../commit/9bcbc1bd))
@@ -1754,17 +1754,17 @@
 * remove use of 'stale' for dashboard resource	 ([e173f5cf](/../../commit/e173f5cf))
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * pact broker client issue 53 (#299)	 ([aa27cef3](/../../commit/aa27cef3))
 * version column resize when clipboard icon appears (#292)	 ([5aa668e9](/../../commit/5aa668e9))
 
 
 <a name="v2.35.0"></a>
-### v2.35.0 (2019-08-08)
+## v2.35.0 (2019-08-08)
 
 
-#### Features
+### Features
 
 * **webhooks**
   * do not redact a password with a parameter in it	 ([47c602ef](/../../commit/47c602ef))
@@ -1786,7 +1786,7 @@
 * change logging level from error to info for JSON parsing errors	 ([cc144062](/../../commit/cc144062))
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * inefficient SQL loading latest verification for pact version	 ([301d9a58](/../../commit/301d9a58))
 
@@ -1795,10 +1795,10 @@
 
 
 <a name="v2.34.0"></a>
-### v2.34.0 (2019-06-14)
+## v2.34.0 (2019-06-14)
 
 
-#### Features
+### Features
 
 * **webhooks**
   * provide mapping to bitbucket build status names (#277)	 ([7bdf0c47](/../../commit/7bdf0c47))
@@ -1806,7 +1806,7 @@
 * change log level for webhook triggering logs from debug to info	 ([2dca79c1](/../../commit/2dca79c1))
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * gracefully handle two requests coming in at the same time to create the same pacticipant	 ([78d92ada](/../../commit/78d92ada))
 * gracefully handle pact webhook status when there is no pact yet	 ([ba1f6bc7](/../../commit/ba1f6bc7))
@@ -1814,15 +1814,15 @@
 
 
 <a name="v2.33.0"></a>
-### v2.33.0 (2019-06-07)
+## v2.33.0 (2019-06-07)
 
 
-#### Features
+### Features
 
 * add pb:pacticipant and pb:pacticipant-version-tag relations to the index resource	 ([2c4c258c](/../../commit/2c4c258c))
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * correctly remove webhook consumer/provider when update params do not contain a consumer/provider	 ([118bbee1](/../../commit/118bbee1))
 * duplicate key value violates unique constraint "cv_prov_revision_unq" error when publishing identical pact resources at the same time	 ([6c8e38fb](/../../commit/6c8e38fb))
@@ -1832,10 +1832,10 @@
 
 
 <a name="v2.32.0"></a>
-### v2.32.0 (2019-05-28)
+## v2.32.0 (2019-05-28)
 
 
-#### Features
+### Features
 
 * **webhooks**
   * maintain starred out Authorization header value	 ([cc978582](/../../commit/cc978582))
@@ -1861,7 +1861,7 @@
   * do not default to latestby=cvpv for consumer/provider matrix	 ([742d506c](/../../commit/742d506c))
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * **webhooks**
   * correctly set updated consumer and provider	 ([d865a429](/../../commit/d865a429))
@@ -1872,10 +1872,10 @@
 
 
 <a name="v2.31.0"></a>
-### v2.31.0 (2019-04-30)
+## v2.31.0 (2019-04-30)
 
 
-#### Features
+### Features
 
 * display times in UTC in API responses	 ([a4231117](/../../commit/a4231117))
 * log the reason why a webhook has been triggered	 ([30522c0d](/../../commit/30522c0d))
@@ -1906,7 +1906,7 @@
   * add button to delete all pact versions	 ([b5d15d5d](/../../commit/b5d15d5d))
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * ensure datetime tests run correctly regardless of timezone	 ([0506be30](/../../commit/0506be30))
 * correct logic for filtering ui/api requests	 ([725c6ccb](/../../commit/725c6ccb))
@@ -1923,10 +1923,10 @@
 
 
 <a name="v2.30.0"></a>
-### v2.30.0 (2019-03-29)
+## v2.30.0 (2019-03-29)
 
 
-#### Features
+### Features
 
 * add helper text on index page for getting started	 ([cdeb2cd9](/../../commit/cdeb2cd9))
 * allow rack protection to be turned off so that the headers can be managed in nginx	 ([941371ec](/../../commit/941371ec))
@@ -1946,10 +1946,10 @@
 
 
 <a name="v2.29.0"></a>
-### v2.29.0 (2019-03-15)
+## v2.29.0 (2019-03-15)
 
 
-#### Features
+### Features
 
 * **matrix**
   * improve reasons in response when pacticipant cannot be deployed	 ([e96544f6](/../../commit/e96544f6))
@@ -1962,61 +1962,61 @@
 * allow a custom UI to be configured	 ([23695b08](/../../commit/23695b08))
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * gracefully handle race conditions when publishing a new revision of a pact	 ([012c54f0](/../../commit/012c54f0))
 
 
 <a name="v2.28.0"></a>
-### v2.28.0 (2019-01-15)
+## v2.28.0 (2019-01-15)
 
 
-#### Features
+### Features
 
 * enable file list in gemspec to work without git	 ([6dd27e26](/../../commit/6dd27e26))
 * allow the database connection to be configured for async jobs	 ([6a745d4b](/../../commit/6a745d4b))
 * add error reference to API error response and ensure potentially sensitive details from the exception message are not exposed	 ([e7bb4a01](/../../commit/e7bb4a01))
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * show consumer/provider/global webhooks in webhook column on index page	 ([35f8bfc1](/../../commit/35f8bfc1))
 
 
 <a name="v2.27.6"></a>
-### v2.27.6 (2018-11-23)
+## v2.27.6 (2018-11-23)
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * URL encode consumer version number in pact URL	 ([b58f4fbf](/../../commit/b58f4fbf))
 
 
 <a name="v2.27.5"></a>
-### v2.27.5 (2018-11-15)
+## v2.27.5 (2018-11-15)
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * handle race conditions when creating a pacticipant on postgres	 ([2c83985f](/../../commit/2c83985f))
 * ensure latest version of rack is used to avoid vulnerability CVE-2018-16471	 ([996953f8](/../../commit/996953f8))
 
 
 <a name="v2.27.4"></a>
-### v2.27.4 (2018-11-15)
+## v2.27.4 (2018-11-15)
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * handle race conditions when creating a pacticipant	 ([b3799670](/../../commit/b3799670))
 * correct order of arguments for merging pacts	 ([f6cfb197](/../../commit/f6cfb197))
 
 
 <a name="v2.27.3"></a>
-### v2.27.3 (2018-11-01)
+## v2.27.3 (2018-11-01)
 
 
-#### Features
+### Features
 
 * add LogQuietener to example config.ru	 ([2f014f07](/../../commit/2f014f07))
 * Rename database logger delegate to LogQuietener	 ([34f44bcb](/../../commit/34f44bcb))
@@ -2034,7 +2034,7 @@
   * implement structured logging	 ([a9133bd5](/../../commit/a9133bd5))
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * correct foreign key between AllPactPublications and PactVersion	 ([59f76c74](/../../commit/59f76c74))
 * ensure bundle install for pact_broker:dev:setup uses correct Gemfile	 ([94f3a5f2](/../../commit/94f3a5f2))
@@ -2045,10 +2045,10 @@
 
 
 <a name="v2.27.2"></a>
-### v2.27.2 (2018-09-14)
+## v2.27.2 (2018-09-14)
 
 
-#### Features
+### Features
 
 * use application/yaml instead of application/x-yaml to match Swaggerhub	 ([067d6ac7](/../../commit/067d6ac7))
 * treat .yaml requests as having header Accept: application/x-yaml	 ([1c8e199f](/../../commit/1c8e199f))
@@ -2057,33 +2057,33 @@
   * allow hosts to be whitelisted using * domains	 ([150858a1](/../../commit/150858a1))
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * **content-type**
   * convert 404 content-type to application/hal+json #235	 ([83958db7](/../../commit/83958db7))
 
 
 <a name="v2.27.0"></a>
-### v2.27.0 (2018-09-07)
+## v2.27.0 (2018-09-07)
 
 
-#### Features
+### Features
 
 * add ${pactbroker.consumerLabels} and ${pactbroker.providerLabels} to webhook templates	 ([afebbc5a](/../../commit/afebbc5a))
 
 
 <a name="v2.26.1"></a>
-### v2.26.1 (2018-09-07)
+## v2.26.1 (2018-09-07)
 
 
-#### Features
+### Features
 
 * allow integrations to be exported in dot format (text/vnd.graphviz)	 ([ac609081](/../../commit/ac609081))
 * eager load latest version for /pacticipants resource	 ([9ac2ba9b](/../../commit/9ac2ba9b))
 * eager load pacticipant labels for /pacticipants resource	 ([01dd8669](/../../commit/01dd8669))
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * **matrix**
   * gracefully handle and log when version is unresolved	 ([82fe19f1](/../../commit/82fe19f1))
@@ -2094,20 +2094,20 @@
 
 
 <a name="v2.26.0"></a>
-### v2.26.0 (2018-08-23)
+## v2.26.0 (2018-08-23)
 
 
-#### Features
+### Features
 
 * change default value of base_equality_only_on_content_that_affects_verification_results to true	 ([615f0c90](/../../commit/615f0c90))
 * renamed 'wip pacts' to 'pending pacts'	 ([11a56b5c](/../../commit/11a56b5c))
 
 
 <a name="v2.25.0"></a>
-### v2.25.0 (2018-08-09)
+## v2.25.0 (2018-08-09)
 
 
-#### Features
+### Features
 
 * make contract_content_changed tag aware	 ([8e7d0e47](/../../commit/8e7d0e47))
 * move "latest id" upsert logic into own class	 ([360d236f](/../../commit/360d236f))
@@ -2135,17 +2135,17 @@
   * eager load latest verification for consumer and provider	 ([1bf61afc](/../../commit/1bf61afc))
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * **index page**
   * correct pact URL when showing index with tags	 ([a5bda98f](/../../commit/a5bda98f))
 
 
 <a name="v2.24.0"></a>
-### v2.24.0 (2018-07-08)
+## v2.24.0 (2018-07-08)
 
 
-#### Features
+### Features
 
 * disable wip-provider-pacts in production until the feature is passed alpha testing	 ([3f9a1c7](/../../commit/3f9a1c7))
 * allow HAL docs to specify a context so that two relations with the same name in different resources don't clash	 ([fe85b0b](/../../commit/fe85b0b))
@@ -2157,57 +2157,57 @@
 
 
 <a name="v2.23.4"></a>
-### v2.23.4 (2018-07-04)
+## v2.23.4 (2018-07-04)
 
 
-#### Features
+### Features
 
 * deprecate provider relation in provider pacts resource in preference for pb:provider	 ([eda8cbf](/../../commit/eda8cbf))
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * correct the logic for determining the deployment status in the matrix resource	 ([ad85db4](/../../commit/ad85db4))
 * delete associated verification results when a pacticipant version is deleted	 ([ddec810](/../../commit/ddec810))
 
 
 <a name="v2.23.3"></a>
-### v2.23.3 (2018-06-27)
+## v2.23.3 (2018-06-27)
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * add missing require in triggered_webhooks_decorator.rb	 ([c4adeaf](/../../commit/c4adeaf))
 
 
 <a name="v2.23.2"></a>
-### v2.23.2 (2018-06-25)
+## v2.23.2 (2018-06-25)
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * ensure configured webhook headers are used when making request	 ([50c876f](/../../commit/50c876f))
 
 
 <a name="v2.23.1"></a>
-### v2.23.1 (2018-06-23)
+## v2.23.1 (2018-06-23)
 
 
-#### Features
+### Features
 
 * respond correctly to OPTIONS requests	 ([c5d3937](/../../commit/c5d3937))
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * add missing require to pact_triggered_webhooks	 ([aaf1755](/../../commit/aaf1755))
 
 
 <a name="v2.23.0"></a>
-### v2.23.0 (2018-06-20)
+## v2.23.0 (2018-06-20)
 
 
-#### Features
+### Features
 
 * include test webhook request in execution response body	 ([7518098](/../../commit/7518098))
 * use the latest matching pact or verification to test webhook execution, or a placeholder if either is not found	 ([273078b](/../../commit/273078b))
@@ -2227,26 +2227,26 @@
   * allow a webhook to be defined for either a consumer OR provider	 ([37a62be](/../../commit/37a62be))
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * ensure non utf-8 characters in the webook response do not cause an error in the Pact Broker response body	 ([a5ae5bf](/../../commit/a5ae5bf))
 * update sintra to >= 2.0.2 to fix css vulnerability	 ([3023408](/../../commit/3023408))
 
 
 <a name="v2.22.0"></a>
-### v2.22.0 (2018-06-11)
+## v2.22.0 (2018-06-11)
 
 
-#### Features
+### Features
 
 * allow whitelist configurations to be loaded from database	 ([19cb83f](/../../commit/19cb83f))
 
 
 <a name="v2.21.0"></a>
-### v2.21.0 (2018-06-10)
+## v2.21.0 (2018-06-10)
 
 
-#### Features
+### Features
 
 * add ${pactbroker.consumerVersionTags} and ${pactbroker.providerVersionTags} to webhook templates	 ([e5121b1](/../../commit/e5121b1))
 * add ${pactbroker.verificationResultUrl} to webhook templates	 ([e19c9c9](/../../commit/e19c9c9))
@@ -2255,7 +2255,7 @@
 * add ${pactbroker.providerVersionNumber} to webhook templates	 ([86bc1ec](/../../commit/86bc1ec))
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * correctly trigger contract_content_changed webhooks when first version of a pact is published	 ([73a06ff](/../../commit/73a06ff))
 * correctly handle template parameters in URL when rendering webhook resource	 ([a4b69db](/../../commit/a4b69db))
@@ -2266,10 +2266,10 @@
 
 
 <a name="v2.20.0"></a>
-### v2.20.0 (2018-06-03)
+## v2.20.0 (2018-06-03)
 
 
-#### Features
+### Features
 
 * only log webhook response details when a webhook host whitelist has been configured	 ([3e1c562](/../../commit/3e1c562))
 * validate webhook host against configurable list on creation	 ([077e37f](/../../commit/077e37f))
@@ -2277,16 +2277,16 @@
 * add ${pactbroker.consumerVersionNumber} to webhook templates	 ([d525527](/../../commit/d525527))
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * correct all content types that were application/json to application/hal+json	 ([690e39b](/../../commit/690e39b))
 
 
 <a name="v2.19.2"></a>
-### v2.19.2 (2018-05-29)
+## v2.19.2 (2018-05-29)
 
 
-#### Features
+### Features
 
 * load latest verification for consumer/provider via relationship rather than repository	 ([13b7c6e](/../../commit/13b7c6e))
 * include more columns in latest_verifications_for_consumer_version_tags to avoid having to do extra queries for pact_versions and provider_versions	 ([e366af4](/../../commit/e366af4))
@@ -2296,32 +2296,32 @@
 * allow pact equality to be based only on the content that affects verification results	 ([bf8130f](/../../commit/bf8130f))
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * temporarily redact webhook response body from UI for security purposes	 ([becf20c](/../../commit/becf20c))
 * handle race condition causing unique constraint violation when creating pacticipant versions	 ([6c75ebd](/../../commit/6c75ebd))
 
 
 <a name="v2.19.1"></a>
-### v2.19.1 (2018-05-18)
+## v2.19.1 (2018-05-18)
 
 
-#### Features
+### Features
 
 * rename relations in pact diff view	 ([8c3c62e](/../../commit/8c3c62e))
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * add pact name back into title of deprecated pacts relation of provider pacts resource	 ([f5f002a](/../../commit/f5f002a))
 * set correct content type for verification result resources	 ([c177fdd](/../../commit/c177fdd))
 
 
 <a name="v2.19.0"></a>
-### v2.19.0 (2018-05-03)
+## v2.19.0 (2018-05-03)
 
 
-#### Features
+### Features
 
 * create endpoint to compare arbitrary pact versions, ignoring interaction/message order	 ([15f0688](/../../commit/15f0688))
 * add endpoint to retrieve a pact version by its pact content sha	 ([a519731](/../../commit/a519731))
@@ -2332,24 +2332,24 @@
 * allow matrix to be queried for _all_ versions with a given tag	 ([cac3023](/../../commit/cac3023))
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * correct logic for finding latest verification for revised pacts	 ([8fb28ee](/../../commit/8fb28ee))
 * do not invoke error reporters for validation errors	 ([57eed65](/../../commit/57eed65))
 
 
 <a name="v2.18.0"></a>
-### v2.18.0 (2018-04-05)
+## v2.18.0 (2018-04-05)
 
 
-#### Features
+### Features
 
 * add link to matrix from HTML pact page	 ([f9e3c23](/../../commit/f9e3c23))
 * sort tags in dashboard API response	 ([d2fd090](/../../commit/d2fd090))
 * add rake task to clean unused data to improve performance	 ([fc705a2](/../../commit/fc705a2))
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * show JSON view when *any* error occurs creating the HTML view for a pact.	 ([e4342f0](/../../commit/e4342f0))
 * only show verification matrix number when verification is present	 ([766f7c0](/../../commit/766f7c0))
@@ -2357,19 +2357,19 @@
 
 
 <a name="v2.17.1"></a>
-### v2.17.1 (2018-03-30)
+## v2.17.1 (2018-03-30)
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * refresh matrix and head_matrix tables	 ([bf36c61](/../../commit/bf36c61))
 
 
 <a name="v2.17.0"></a>
-### v2.17.0 (2018-03-30)
+## v2.17.0 (2018-03-30)
 
 
-#### Features
+### Features
 
 * ensure migrations in optimise_head_matrix work on mysql	 ([35874a9](/../../commit/35874a9))
 * show verification number in matrix when viewing all results	 ([5693430](/../../commit/5693430))
@@ -2385,7 +2385,7 @@
   * change default to show all results	 ([f7bea07](/../../commit/f7bea07))
 
 
-#### Bug Fixes
+### Bug Fixes
 
 * ensure publishing a verification does not cause a unique constraint violation	 ([ecfb385](/../../commit/ecfb385))
 * optimize matrix query to speed up lengthy pact publication times	 ([e09d528](/../../commit/e09d528))
@@ -2394,19 +2394,19 @@
 
 
 <a name="v2.16.1"></a>
-### v2.16.1 (2018-03-08)
+## v2.16.1 (2018-03-08)
 
 
-#### Features
+### Features
 
 * turn off sinatra show_exceptions when rack_env is production	 ([e961afe](/../../commit/e961afe))
 * add error testing endpoints	 ([4e01407](/../../commit/4e01407))
 
 
 <a name="v2.16.0"></a>
-### v2.16.0 (2018-03-05)
+## v2.16.0 (2018-03-05)
 
-#### Features
+### Features
 
 * upgrade haml to 5.0	 ([4415686](/../../commit/4415686))
 * upgrade sequel to 5.6	 ([a37c59a](/../../commit/a37c59a))
@@ -2442,7 +2442,7 @@
   * include verification tags	 ([e8d0fae](/../../commit/e8d0fae))
   * add pact tags	 ([0c79440](/../../commit/0c79440))
 
-#### Bug Fixes
+### Bug Fixes
 
 * **matrix**
   * correct logic for selecting matrix rows on MySQL	 ([06f6dd4](/../../commit/06f6dd4))
@@ -2452,9 +2452,9 @@
   * fix provider version sorting	 ([611ab7e](/../../commit/611ab7e))
 
 <a name="v2.15.0"></a>
-### v2.15.0 (2018-02-26)
+## v2.15.0 (2018-02-26)
 
-#### Features
+### Features
 
 * upgrade to latest versions of padrino-core and sinatra to fix CVE-2018-7212	 ([08ba1cb](/../../commit/08ba1cb))
 
@@ -2465,9 +2465,9 @@
   * allow single certificates to be uploaded	 ([9417f10](/../../commit/9417f10))
 
 <a name="v2.14.0"></a>
-### v2.14.0 (2018-02-15)
+## v2.14.0 (2018-02-15)
 
-#### Features
+### Features
 
 * **matrix ui**
   * add home link	 ([3f74e7e](/../../commit/3f74e7e))
@@ -2479,7 +2479,7 @@
 * add endpoints to get latest pacticipant version and latest tagged version	 ([aa60a85](/../../commit/aa60a85))
 * elegantly handle long service names in index.	 ([ad8da50](/../../commit/ad8da50))
 
-#### Bug Fixes
+### Bug Fixes
 
 * return overwritten pact publication as latest if non exists as a latest version when rendering verification	 ([8217209](/../../commit/8217209))
 * #184 Escape username before asigning it to URI userinfo attribute	 ([81bb779](/../../commit/81bb779))
@@ -2490,16 +2490,16 @@
   * correct status of pact when consumer and provider version tags are specified	 ([0eb7429](/../../commit/0eb7429))
 
 <a name="v2.13.1"></a>
-### v2.13.1 (2018-01-12)
+## v2.13.1 (2018-01-12)
 
-#### Features
+### Features
 
 * remove runtime dependency on webrick	 ([1ae7a6e](/../../commit/1ae7a6e))
 
 <a name="v2.13.0"></a>
-### v2.13.0 (2018-01-11)
+## v2.13.0 (2018-01-11)
 
-#### Features
+### Features
 
 * ensure latest pact version is returned when searching by pact version sha	 ([1d2adc6](/../../commit/1d2adc6))
 * rename 'pact_publication' trigger type to 'publication'	 ([9fe0ff0](/../../commit/9fe0ff0))
@@ -2526,24 +2526,24 @@
 * **publish test result**
   * allow json test results to be published with the verification result	 ([528034c](/../../commit/528034c))
 
-#### Bug Fixes
+### Bug Fixes
 
 * create selector objects when viewing matrix URL with consumer and provider	 ([e733bae](/../../commit/e733bae))
 
 <a name="v2.12.0"></a>
-### v2.12.0 (2017-11-29)
+## v2.12.0 (2017-11-29)
 
-#### Features
+### Features
 * changed date published to time ago in words, with full date as mouseover (#145) ([b28f9c3](/../../commit/b28f9c3))
 
-#### Bug Fixes
+### Bug Fixes
 
 * fixed issue that caused uninitialized constant PactBroker::Api::Resources::BaseResource (NameError) when running pact_broker with passenger..	 ([0b21a62](/../../commit/0b21a62))
 
 <a name="v2.10.0"></a>
-### v2.10.0 (2017-11-11)
+## v2.10.0 (2017-11-11)
 
-#### Features
+### Features
 
 * **prod pacts in index**
   * allow all tags to be shown on index	 ([0a1f0ee](/../../commit/0a1f0ee))
@@ -2554,9 +2554,9 @@
   * truncate git shas in table	 ([94da4c7](/../../commit/94da4c7))
 
 <a name="v2.9.0"></a>
-### v2.9.0 (2017-11-09)
+## v2.9.0 (2017-11-09)
 
-#### Features
+### Features
 
 * **webhook templating**
   * add support for ${pactbroker.pactUrl} in query and body	 ([0eed596](/../../commit/0eed596))
@@ -2565,9 +2565,9 @@
   * allow query to determine if a particular pacticipant version is compatible with the latest tagged versions of all its dependencies	 ([ba4a1cc](/../../commit/ba4a1cc))
 
 <a name="v2.8.0.beta.5"></a>
-### v2.8.0.beta.5 (2017-11-06)
+## v2.8.0.beta.5 (2017-11-06)
 
-#### Features
+### Features
 
 * **matrix**
   * fix matrix data types for MySQL	 ([42c5478](/../../commit/42c5478))
@@ -2581,16 +2581,16 @@
   * add matrix view	 ([852324a](/../../commit/852324a))
 
 <a name="v2.8.0.beta.4"></a>
-### v2.8.0.beta.4 (2017-11-03)
+## v2.8.0.beta.4 (2017-11-03)
 
-#### Bug Fixes
+### Bug Fixes
 
 * add missing require	 ([14d7d02](/../../commit/14d7d02))
 
 <a name="v2.7.0.beta.3"></a>
-### v2.7.0.beta.3 (2017-11-01)
+## v2.7.0.beta.3 (2017-11-01)
 
-#### Features
+### Features
 
 * **matrix**
   * implement querying by latest without a tag	 ([3d78f79](/../../commit/3d78f79))
@@ -2603,14 +2603,14 @@
 * **pacticipant**
   * expose repositoryUrl in resource	 ([8f0f16a](/../../commit/8f0f16a))
 
-#### Bug Fixes
+### Bug Fixes
 
 * correct captialization in require	 ([db2e676](/../../commit/db2e676))
 
 <a name="v2.7.0.beta.2"></a>
-### v2.7.0.beta.2 (2017-10-31)
+## v2.7.0.beta.2 (2017-10-31)
 
-#### Features
+### Features
 
 * **matrix**
   * add reason text to summary	 ([f979210](/../../commit/f979210))
@@ -2637,43 +2637,43 @@
 * **verifications**
   * create and link provider version resource when verification is published	 ([3014a8b](/../../commit/3014a8b))
 
-#### Bug Fixes
+### Bug Fixes
 
 * show webhook status as not_run when all triggered webhooks are not_run	 ([2d014b2](/../../commit/2d014b2))
 
 <a name="v2.7.0.beta.1"></a>
-### v2.7.0.beta.1 (2017-10-16)
+## v2.7.0.beta.1 (2017-10-16)
 
-#### Features
+### Features
 
 * **prod pacts in index**
   * show pacts tagged as the 'prod' or 'production' versions on the index page	 ([b58b7a3](/../../commit/b58b7a3))
 
 <a name="v2.6.0"></a>
-### v2.6.0 (2017-10-06)
+## v2.6.0 (2017-10-06)
 
-#### Features
+### Features
 
 * add configuration option for check_for_potential_duplicate_pacticipant_names	 ([6ab3fda](/../../commit/6ab3fda))
 
-#### Bug Fixes
+### Bug Fixes
 
 * add webhook_retry_schedule and semver_formats to list of configuration options that can be saved to the database	 ([5bab062](/../../commit/5bab062))
 * delete related triggered webhooks when webhook is deleted	 ([48f9853](/../../commit/48f9853))
 * use strict mode when using mysql	 ([f991e15](/../../commit/f991e15))
 
 <a name="v2.5.1"></a>
-### v2.5.1 (2017-09-26)
+## v2.5.1 (2017-09-26)
 
-#### Bug Fixes
+### Bug Fixes
 
 * **badges**
   * do not allow caching	 ([d7e73c3](/../../commit/d7e73c3))
 
 <a name="v2.5.0"></a>
-### v2.5.0 (2017-09-25)
+## v2.5.0 (2017-09-25)
 
-#### Features
+### Features
 
 * **heartbeat resource**
   * cache json response body	 ([f2ac0f5](/../../commit/f2ac0f5))
@@ -2718,28 +2718,28 @@
 * **gems**
   * upgrade webmachine to 1.5.0	 ([d23fedc](/../../commit/d23fedc))
 
-#### Bug Fixes
+### Bug Fixes
 
 * return correct "latest" verification when a verification has been published for a pact with a revision	 ([f2b4c9f](/../../commit/f2b4c9f))
 * sequel migration 25 for mysql	 ([920c363](/../../commit/920c363))
 * sequel migration 19 for mysql	 ([0ee48e1](/../../commit/0ee48e1))
 
 <a name="v2.4.2"></a>
-### v2.4.2 (2017-09-07)
+## v2.4.2 (2017-09-07)
 
-#### Bug Fixes
+### Bug Fixes
 
 * add missing require	 ([92bf349](/../../commit/92bf349))
 
 <a name="v2.4.1"></a>
-### v2.4.1 (2017-09-07)
+## v2.4.1 (2017-09-07)
 
-#### Bug Fixes
+### Bug Fixes
 
 * allow resource identifiers to contain escaped forward slashes	 ([d875079](/../../commit/d875079))
 
 <a name="v2.4.0"></a>
-### v2.4.0 (2017-07-31)
+## v2.4.0 (2017-07-31)
 * 3a03f41 - fix(publish verification result): Fix Location header for newly created resource (Beth Skurrie, Mon Jul 31 10:49:37 2017 +1000)
 * 3b0f390 - feat(pacticipant labels): Add HAL link to pacticipants resource to find pacticipants by label. (Beth Skurrie, Mon Jul 24 08:17:36 2017 +1000)
 * 588d2ad - fix(pacticipant and pacticipants resources): Add correctly capitalised and namespaced properties and relations. Added deprecation warnings to existing incorrect properties and relations. (Beth Skurrie, Mon Jul 24 08:14:52 2017 +1000)
@@ -2748,7 +2748,7 @@
 * 4b44331 - feat(pacticipant labels): Adds pacticipant label resource with GET, PUT and DELETE (Beth Skurrie, Fri Jul 21 13:18:18 2017 +1000)
 * c5af7e1 - feat(badges): Allow badge config settings to be saved to/loaded from database (Beth Skurrie, Fri Jul 14 20:50:02 2017 +1000)
 
-#### 2.3.0 (2017-07-14)
+## 2.3.0 (2017-07-14)
 * 3ac4351 - fix(potential duplicate pacticipant names): Make duplicate logic smarter. Fixes https://github.com/pact-foundation/pact_broker/issues/35 (Beth Skurrie, Tue Jul 11 10:30:11 2017 +1000)
 * 81979b1 - add basic auth example to duplicate pacticipant error/help message (Fitzgerald, Andrew, Mon Jul 10 00:11:25 2017 -0400)
 * bc54321 - feat(badges): Add endpoint to retrieve badge for latest untagged pact (Beth Skurrie, Fri Jul 7 10:15:29 2017 +1000)
@@ -2762,7 +2762,7 @@
 * f7a36b7 - feat(badges): Return static badge when there is an error creating a dynamic one (Beth Skurrie, Wed Jul 5 10:14:18 2017 +1000)
 * 24860b3 - feat(badges): Add badge svg endpoint for latest pact (Beth Skurrie, Tue Jul 4 15:28:28 2017 +1000)
 
-#### 2.2.0 (2017-07-04)
+## 2.2.0 (2017-07-04)
 * 788c5d0 - chore(gems): Lock rack and red-carpet gem versions for hakiri (Beth Skurrie, Tue Jul 4 10:28:15 2017 +1000)
 * f1abebe - chore(gems): Upgrade pact gems (Beth Skurrie, Tue Jul 4 10:10:55 2017 +1000)
 * 5bccca2 - chore(gems): Upgrade rack-protection and padrino-core gems (Beth Skurrie, Tue Jul 4 10:07:58 2017 +1000)
@@ -2774,23 +2774,23 @@
 * 1f66b6d - feat(version): Add HAL links to pacts from version resource (Beth Skurrie, Mon Jul 3 16:34:34 2017 +1000)
 * 3f61fb3 - feat(retrieve latest pact): Add HAL links for latest-untagged and latest/{tag} (Beth Skurrie, Mon Jul 3 16:17:54 2017 +1000)
 
-#### 2.1.1 (2017-07-03)
+## 2.1.1 (2017-07-03)
 * f7af21a - fix(gemspec) (Beth Skurrie, Mon Jul 3 09:53:02 2017 +1000)
 
-#### 2.1.0 (2017-07-03)
+## 2.1.0 (2017-07-03)
 * 53f0b5e - feat(get latest untagged pact): Add /latest-untagged endpoint to return the latest untagged pact (Beth Skurrie, Mon Jul 3 08:31:18 2017 +1000)
 * a963fce - Add pact_broker:db:version task. (Beth Skurrie, Thu Jun 29 20:29:55 2017 +1000)
 * 7ee134f - Add basic auth (authentication) to the UI, but no authorization (Beth Skurrie, Mon Jun 26 10:44:07 2017 +1000)
 
-#### 2.0.5 (2017-06-15)
+## 2.0.5 (2017-06-15)
 * e924c96 - Fixed webhook deletion bug (Beth Skurrie, Tue Jun 13 10:04:33 2017 +1000)
 
-#### 2.0.4 (2017-06-02)
+## 2.0.4 (2017-06-02)
 * 99e1c25 - Turn off http_origin checking for https://github.com/pact-foundation/pact_broker/issues/108 (Beth Skurrie, Fri Jun 2 16:27:38 2017 +1000)
 * e58f609 - Add favicon.ico (Beth Skurrie, Mon May 29 15:02:22 2017 +1000)
 * 2780f0a - Add pull request guidelines. (Beth Skurrie, Mon May 29 11:45:04 2017 +1000)
 
-#### 2.0.3 (2017-05-17)
+## 2.0.3 (2017-05-17)
 * c03b871 - Make specs pass for sqlite, postgres and mysql. At the same time. Amazing. (Beth Skurrie, Sun May 28 10:22:20 2017 +1000)
 * ae2b62f - Remove inner query from latest_verifications definition for MySQL (#105) (Beth Skurrie, Sat May 27 15:11:26 2017 +1000)
 * f451d35 - Add mysql build to travis for #106 (Beth Skurrie, Sat May 27 15:09:42 2017 +1000)
@@ -2799,45 +2799,45 @@
 * ba5b60c - Created indexes on pacticipant, version and tag tables. #87 (Beth Skurrie, Sun May 21 16:18:49 2017 +1000)
 * 0ffad10 - Do not validate incoming consumer version number if order_versions_by_date is true. (Beth Skurrie, Sun May 21 15:46:54 2017 +1000)
 
-#### 2.0.2 (2017-05-17)
+## 2.0.2 (2017-05-17)
 * 0e4d4bf - Add missing require for migration_helper (Beth Skurrie, Fri May 19 14:16:38 2017 +1000)
 
-#### 2.0.1 (2017-05-17)
+## 2.0.1 (2017-05-17)
 * 8d105aa - Allow an application version to be deleted via the API. (Beth Skurrie, Fri May 19 10:39:16 2017 +1000)
 * 025b0f7 - Ensure version numbers that don't conform to the semver2 spec don't cause errors when sorting versions. #103 (Beth Skurrie, Fri May 19 09:58:50 2017 +1000)
 * ca6d88e - Corrected hal link rels that had missing curies (prepended "pb:") (Beth Skurrie, Thu May 18 10:20:06 2017 +1000)
 * 1cabd5e - Use Rack::Protection. (Beth Skurrie, Tue May 16 10:13:40 2017 +1000)
 * 2a3bbd1 - Return 404 instead of 500 when Ruby standard URI lib can't parse the URI. https://github.com/pact-foundation/pact_broker/issues/101 (Beth Skurrie, Tue May 16 09:45:37 2017 +1000)
 
-#### 2.0.0 (2017-05-16)
+## 2.0.0 (2017-05-16)
 
-#### 2.0.0.beta.8 (2017-05-15)
+## 2.0.0.beta.8 (2017-05-15)
 * e931b48 - Enable configuration settings to be saved to and loaded from the database. (Beth Skurrie, Mon May 15 12:34:44 2017 +1000)
 * c3976e4 - Set timezones so dates in the UI and API are shown in the configured local time. (Beth Skurrie, Mon May 15 08:53:13 2017 +1000)
 * 4da62e8 - Add publication date of latest pact to UI front page. (Beth Skurrie, Sun May 14 08:38:42 2017 +1000)
 * 8633b08 - Set X-Pact-Broker-Version header in all responses (Beth Skurrie, Fri May 12 16:39:09 2017 +1000)
 
-#### 2.0.0.beta.7 (2017-05-12)
+## 2.0.0.beta.7 (2017-05-12)
 * 741bf96 - Include information about missing verifications in the latest verifications resource. Only set success to be true when all pacts have been successfully verified. (Beth Skurrie, Fri May 12 14:59:48 2017 +1000)
 * 64f20c6 - Allow one, two or three "parts" in the application version number. Eg. 12, 3.4 and 1.2.400 are all valid. (Beth Skurrie, Wed May 10 16:19:07 2017 +1000)
 
-#### 2.0.0.beta.6 (2017-05-09)
+## 2.0.0.beta.6 (2017-05-09)
 * 8f1c911 - Ensure all resources provide application/hal+json. (Beth Skurrie, Tue May 9 18:32:37 2017 +1000)
 
-#### 2.0.0.beta.5 (2017-05-08)
+## 2.0.0.beta.5 (2017-05-08)
 * 4b88c4d - Add success flag to the resource for the latest verifications for a consumer version to indicate the overall success or failure of the verification results for that version. (Beth Skurrie, Mon May 8 10:54:31 2017 +1000)
 
-#### 2.0.0.beta.4 (2017-05-02)
+## 2.0.0.beta.4 (2017-05-02)
 * e5c14d1 - Renamed verification to verification-result in link relations and URLs (Beth Skurrie, Tue May 2 13:04:01 2017 +1000)
 * 803ea44 - Add endpoint to show a verification. (Beth Skurrie, Mon May 1 08:52:12 2017 +1000)
 
-#### 2.0.0.beta.3 (2017-04-29)
+## 2.0.0.beta.3 (2017-04-29)
 * 7059a7e - Insert pact_publications without a specified ID so that the inbuilt sequence is kept in sync. (Beth Skurrie, Sat Apr 29 15:16:12 2017 +1000)
 
-#### 2.0.0.beta.2 (2017-04-29)
+## 2.0.0.beta.2 (2017-04-29)
 * 1dfef17 - Cleaned up migrations and ensured migrations run on postgresql. (Beth Skurrie, Fri Apr 28 21:24:20 2017 +1000)
 
-#### 2.0.0.beta.1 (2017-04-28)
+## 2.0.0.beta.1 (2017-04-28)
 * 049bc5c - Added tooltip to verification date to show provider version. (Beth Skurrie, Fri Apr 28 10:05:13 2017 +1000)
 * 4287c99 - Add tooltip text to last verified date when pact has changed since last verification. (Beth Skurrie, Fri Apr 28 09:02:59 2017 +1000)
 * 7351ec8 - Add restrictions for all gem versions in gemspec. Fix formatting in haml file. (Beth Skurrie, Thu Apr 27 19:55:04 2017 +1000)
@@ -2851,33 +2851,33 @@
 * 77eaf7b - Added pb:latest-verifications link to version resource. (Beth Skurrie, Tue Apr 11 16:25:45 2017 +1000)
 * aaf44d9 - Added endpoint to view the latest verifications for a given consumer version. (Beth Skurrie, Tue Apr 11 11:16:03 2017 +1000)
 
-#### 1.18.0 (2017-05-09)
+## 1.18.0 (2017-05-09)
 * 397060b - Display application versions in reverse order in the Versions resource. (Beth Skurrie, Tue May 9 13:59:54 2017 +1000)
 * 251c878 - Allow application versions to be ordered by creation date where no consistent orderable object can be extracted from the consumer application version. (Beth Skurrie, Tue May 9 13:22:36 2017 +1000)
 * 68bb6d9 - Execute webhooks using sucker punch. (Beth Skurrie, Mon May 8 10:32:45 2017 +1000)
 
-#### 1.17.2 (2017-05-04)
+## 1.17.2 (2017-05-04)
 * b8f45e1 - fix issue with pact document link not displaying #94 (Matt Fellows, Wed May 3 11:23:09 2017 +1000)
 
-#### 1.17.1 (2017-05-02)
+## 1.17.1 (2017-05-02)
 * 7576bc2 - Fix 500 error in webhooks endpoint. (Beth Skurrie, Tue May 2 14:35:06 2017 +1000)
 * 7351ec8 - Add restrictions for all gem versions in gemspec. Fix formatting in haml file. (Beth Skurrie, Thu Apr 27 19:55:04 2017 +1000)
 
-#### 1.17.0 (2017-04-26)
+## 1.17.0 (2017-04-26)
 * 5cbb9da - Added pb:publish-pact to HAL index (Beth Skurrie, Wed Apr 26 08:39:15 2017 +1000)
 * 36842d1 - Set database connection timezone to UTC in example config.ru (Beth Skurrie, Tue Apr 25 16:18:58 2017 +1000)
 * c7589c9 - Use latest ruby-2.3.4 for development. (Tan Le, Mon Apr 24 23:05:27 2017 +1000)
 * 46b87f9 - Use latest ruby patches for CI. (Tan Le, Mon Apr 24 23:00:12 2017 +1000)
 * 7c17c62 - Required at least ruby-2.2.0 as we move along ruby release schedule. (Tan Le, Mon Apr 24 22:54:52 2017 +1000)
 
-#### 1.16.0 (2017-04-10)
+## 1.16.0 (2017-04-10)
 * 990575f - Added HTML content type for request to get a specific version of a pact. As per request in https://github.com/pact-foundation/pact_broker/issues/82 (Beth Skurrie, Mon Apr 10 15:34:28 2017 +1000)
 * b47b8d8 - Use /versions rather than /version in test endpoint. Singular will be deprecated. (Beth Skurrie, Fri Apr 7 16:03:19 2017 +1000)
 * dd4daee - Removed version restriction for pact_broker gem in the example Gemfile. This will avoid a repetition of the twisted dependencies fixed by https://github.com/pact-foundation/pact_broker/pull/84 (Beth Skurrie, Tue Apr 4 09:53:39 2017 +1000)
 * e447b3f - Updated sqlite database. (Beth Skurrie, Mon Apr 3 08:25:41 2017 +1000)
 * 149efc0 - Update REAME to reflect 2.4 support. (Tan Le, Fri Mar 31 21:42:47 2017 +1100)
 
-#### 1.15.0 (2017-03-28)
+## 1.15.0 (2017-03-28)
 * 588c33e - Adds versions decorator spec (Ivan Vojinovic, Wed Feb 22 00:00:46 2017 -0500)
 * c4a7daf - Adds pacticipant versions endpoint (Ivan Vojinovic, Tue Feb 21 21:15:39 2017 -0500)
 * 06bcbc8 - Added ruby 2.4.0 to travis.yml (Beth Skurrie, Tue Mar 28 19:09:06 2017 +1100)
@@ -2888,42 +2888,42 @@
 * 4865948 - Bump reform and friends versions. (Tan Le, Wed Feb 15 09:16:29 2017 +1100)
 * 0920e45 - Add hosted pact broker to usage section in README (Matt Fellows, Sat Feb 4 11:28:36 2017 +1100)
 
-#### 1.14.0 (2017-01-30)
+## 1.14.0 (2017-01-30)
 * 83ac7a5 - Adds ability to delete tags (Ivan Vojinovic, Fri Jan 27 15:19:51 2017 -0500)
 
-#### 1.13.0 (2017-01-18)
+## 1.13.0 (2017-01-18)
 * b9b67b3 - Adds the spec for pact versions endpoint, and corrects the file name for the provider pacts spec (Ivan Vojinovic, Tue Jan 17 23:43:03 2017 -0500)
 * ace427e - Adds the spec for pact versions endpoint, and corrects the file name for the provider pacts spec (Ivan Vojinovic, Tue Jan 17 23:36:33 2017 -0500)
 * 8b14b35 - Adds endpoint for (and fixes) pact_versions (Ivan Vojinovic, Mon Jan 16 21:12:02 2017 -0500)
 
-#### 1.12.0 (2016-12-09)
+## 1.12.0 (2016-12-09)
 * 67779ac - add pb:latest-provider-pacts-with-tag to index.rb (Olga Vasylchenko, Thu Dec 8 16:02:19 2016 +0100)
 * cdfa17b - upgrade default sqlite db to current migration level (Bo Daley, Wed Nov 30 14:37:54 2016 -0500)
 
-#### 1.11.2 (2016-11-25)
+## 1.11.2 (2016-11-25)
 * 43f2373 - Added require to hopefully fix broken build. https://travis-ci.org/pact-foundation/pact_broker/jobs/174397806 (Bethany Skurrie, Thu Nov 24 07:47:07 2016 +1100)
 * f747e09 - Removed ruby 2.1 build as it is failing (Beth Skurrie, Wed Nov 9 13:42:08 2016 +1100)
 * 2dd77a5 - Added extra pact version to example database so that the diff feature could be explored. (Beth, Wed Nov 9 10:07:33 2016 +1100)
 * 5c04c59 - Updated trailblazer gem to ~>0.3.0 and fixed pact diff spec. (Beth, Wed Nov 9 10:05:53 2016 +1100)
 * 8102ac9 - Use respond_to?(:acts_like_time?) instead of acts_like?(:time) as it blows up (Beth, Sun Nov 6 12:00:30 2016 +1100)
 
-#### 1.11.1 (2016-10-13)
+## 1.11.1 (2016-10-13)
 * 14381ac - Fix issue #59 Error when executing web hook with body. (Beth Skurrie, Thu Oct 13 12:50:17 2016 +1100)
 
-#### 1.11.0 (2016-08-13)
+## 1.11.0 (2016-08-13)
 * 18ffc4a - Add conflict guards to pact merger (Steve Pletcher, Fri Aug 5 12:31:30 2016 -0400)
 
-#### 1.10.0 (2016-08-01)
+## 1.10.0 (2016-08-01)
 * efdde13 - Add ability to merge pacts via PATCH requests (Steve Pletcher, Thu Jul 28 16:29:22 2016 -0400)
 
-#### 1.9.3 (2016-06-27)
+## 1.9.3 (2016-06-27)
 * f57db36 - Clarify that pact_broker will only work with ruby >= 2.0 (Sergei Matheson, Mon Jun 27 11:06:40 2016 +1000)
 * a1742b8 - Correct release instructions (Sergei Matheson, Mon Jun 27 11:03:03 2016 +1000)
 * 7d0f362 - Update default dev ruby version to 2.3.1 (Sergei Matheson, Mon Jun 27 11:00:40 2016 +1000)
 * 42dc7fe - Update to ruby 2.3.1 in travis (Sergei Matheson, Tue May 3 10:46:46 2016 +1000)
 * df9a910 - Fix for Webmock 2.0.0 behaviour change. (Sergei Matheson, Fri Apr 29 13:19:57 2016 +1000)
 
-#### 1.9.2 (2016-04-29)
+## 1.9.2 (2016-04-29)
 * 6d4ce4f - Update default dev ruby version to 2.3.0 (Sergei Matheson, Fri Apr 29 11:39:59 2016 +1000)
 * 039fce9 - Add release instructions (Sergei Matheson, Fri Apr 29 10:42:17 2016 +1000)
 * d48a1fa - Append `charset=utf-8` in json error response (Taiki Ono, Tue Mar 15 21:11:59 2016 +0900)
@@ -2933,7 +2933,7 @@
 * 9f02474 - Update Travis CI setting with new Rubies (Taiki Ono, Sun Mar 13 21:19:17 2016 +0900)
 * 5a506dc - Belatedly, updated changelog (Sergei Matheson, Fri Feb 26 09:30:46 2016 +1100)
 
-#### 1.9.1 (2016-02-26)
+## 1.9.1 (2016-02-26)
 * e6e6d49 - Release version 1.9.1 (Sergei Matheson, Fri Feb 26 09:26:52 2016 +1100)
 * 5ea7607 - Merge pull request #44 from sigerber/master (Beth Skurrie, Thu Feb 25 14:39:17 2016 +1100)
 * ade2599 - Fix performance of groupify (Horia Musat and Simon Gerber, Wed Feb 24 14:50:39 2016 +1100)
@@ -2949,11 +2949,11 @@
 * a1fa248 - Updated example with postgres details (Beth, Thu Sep 17 09:25:09 2015 +1000)
 * 383d137 - Create LICENSE.txt (Beth Skurrie, Mon Aug 24 06:29:50 2015 +1000)
 
-#### 1.9.0 (2015-08-19)
+## 1.9.0 (2015-08-19)
 
 * eda171e - Allow pact broker API to be run using Rack map at an arbitrary path. e.g. "/foo/pacts". Note, this does not work for the UI. (Beth, Wed Aug 19 08:44:21 2015 +1000)
 
-#### 1.9.0.rc1 (2015-07-19)
+## 1.9.0.rc1 (2015-07-19)
 
 * c855a2c - Support case insensitive resource names (Beth Skurrie, Sun Jul 19 17:28:55 2015 +1000)
 * 7ea3e61 - Update pact_broker.gemspec (Beth Skurrie, Tue Jul 14 09:02:30 2015 +1000)
@@ -2961,32 +2961,32 @@
 * 67f0edb - Log error when contract cannot be parsed to a Pact (Beth Skurrie, Wed Jul 8 15:54:29 2015 +1000)
 * 57caf63 - Double ensure that tables are created with UTF-8 encoding https://github.com/pact-foundation/pact_broker/issues/24 (Beth Skurrie, Fri Jul 3 15:46:46 2015 +1000)
 
-#### 1.8.1 (2015-06-30)
+## 1.8.1 (2015-06-30)
 
 * d0d466d - Avoid making a query for tags for each pact shown on the Pacts page (Beth Skurrie, Tue Jun 30 06:42:09 2015 +1000)
 
-#### 1.8.0 (2015-05-28)
+## 1.8.0 (2015-05-28)
 
 * 6c40e9c - Added ability to specify a tag when retrieving pacts for a given provider (Beth Skurrie, Thu May 28 09:03:46 2015 +1000)
 * dda9f1d - Added endpoint to retrieve latest pacts by provider (Beth Skurrie, Sun May 10 21:28:33 2015 +1000)
 * 21e676a - Pact broker example for heroku with basic auth (BrunoChauvet, Sat Apr 25 13:04:54 2015 +1000)
 
-#### 1.7.0 (2015-03-20)
+## 1.7.0 (2015-03-20)
 
 * a26402c - Allow configuration of version parsing. (Beth Skurrie, Tue Apr 14 09:39:05 2015 +1000)
 
-#### 1.6.0 (2015-03-20)
+## 1.6.0 (2015-03-20)
 
 * e20e657 - Added support for JSON contracts that are not in the Pact format (e.g. top level is an array) (Beth Skurrie, Fri Mar 20 19:12:46 2015 +1100)
 
-#### 1.5.0 (2015-02-20)
+## 1.5.0 (2015-02-20)
 
 * b848ce3 - Added healthcheck endpoint for database dependency. /diagnostic/status/dependencies (Beth, Fri Feb 20 09:41:16 2015 +1100)
 * 56ea4a6 - Added heartbeat endpoint for monitoring. /diagnostic/status/heartbeat (Beth, Fri Feb 20 08:49:51 2015 +1100)
 * dbdb4fb - Upgraded webmachine gem to 1.3.1 (Beth, Wed Feb 11 21:49:55 2015 +1100)
 * 111f088 - Added validation to ensure that the encoding for the database connection is set to UTF8. This is required to ensure the pact_version_content_sha foreign key works. (Beth, Wed Feb 11 20:03:34 2015 +1100)
 
-#### 1.4.0 (2015-01-20)
+## 1.4.0 (2015-01-20)
 
 * d740fb0 - Removed pact-versions rel from pact resource. Pact versions resource is not implemented yet. (Beth, Tue Jan 20 09:20:52 2015 +1100)
 * bd6e63e - Handle case where there is no previous distinct version when displaying diff (Beth, Tue Jan 20 09:17:21 2015 +1100)
@@ -3007,7 +3007,7 @@
 * 5cc922e - Added script to publish test pact. (Beth, Wed Dec 3 20:26:31 2014 +1100)
 * f468b2c - Changed Padrino to log to stdout. :null creates a StringIO, don't want to hog memory. (Beth, Wed Dec 3 20:25:05 2014 +1100)
 
-#### 1.3.2.rc1 (2014-12-03)
+## 1.3.2.rc1 (2014-12-03)
 
 * a2413f4 - Stop Padrino trying to create a log file in the gem directory https://github.com/pact-foundation/pact_broker/issues/13 (Beth, Wed Dec 3 13:16:06 2014 +1100)
 * abf9459 - Added DELETE endpoint for pact resource (Beth, Wed Nov 19 17:45:34 2014 +1100)
@@ -3018,18 +3018,18 @@
 * 21563c6 - Changed date to use day name and month name instead of numbers (Beth, Wed Nov 12 16:19:19 2014 +1100)
 * 7766b77 - Added count to relationships page. (Beth, Mon Nov 3 11:06:05 2014 +1100)
 
-#### 1.3.1 (2014-10-23)
+## 1.3.1 (2014-10-23)
 
 * e61b40e - Added Travis configuration. (Beth, Fri Oct 17 16:32:26 2014 +1100)
 * b320fe4 - Fixed pact publish validation for ruby 1.9.3 (Beth, Fri Oct 17 16:31:41 2014 +1100)
 * b9b4d2b - Added validation to ensure that the participant names in the path match the participant names in the pact. (Beth, Thu Oct 16 20:21:10 2014 +1100)
 
-#### 1.3.0 (2014-10-14)
+## 1.3.0 (2014-10-14)
 
 * ed08811 - Converted raw SQL create view statements to Sequel so they will run on Postgres (Beth, Sat Oct 11 22:07:37 2014 +1100)
 * 457edf4 - Added syntax highlighting to JSON in autogenerated HTML docs. (Beth, Wed Sep 24 22:12:14 2014 +1000)
 
-#### 1.2.0 (2014-09-22)
+## 1.2.0 (2014-09-22)
 
 * 0ccde50 - Made webhook creation code more Webmachiney. (Beth, Tue Sep 16 10:07:56 2014 +1000)
 * 4c628e5 - Using localtime to display dates. (Beth, Fri Aug 29 13:32:20 2014 +1000)
@@ -3047,7 +3047,7 @@
 * dc4d4aa - Set DB timezone to UTC. (Beth, Thu Aug 21 17:30:41 2014 +1000)
 * 19693fa - Added pact metadata to HTML view (Beth, Thu Aug 21 17:30:23 2014 +1000)
 
-#### 1.1.0 (2014-08-21)
+## 1.1.0 (2014-08-21)
 
 * d25395b - Fixed pacts failing to publish because of too deeply nested JSON (Beth, Tue Aug 19 11:13:02 2014 +1000)
 * 9288c98 - Saving password in Base64 just so it is not plain text. WIP (Beth, Tue Aug 19 09:14:53 2014 +1000)
@@ -3076,7 +3076,7 @@
 * 9824247 - Implemented DELETE for pacticipant resource (Beth, Tue Jun 10 17:32:26 2014 +1000)
 * 1c65600 - Swapped links and properties order in the HAL browser, because the documents are large, and scrolling to the bottom of the page to click around is annoying. (Beth, Fri Jun 6 10:19:47 2014 +1000)
 
-#### 1.0.0 (2014-06-06)
+## 1.0.0 (2014-06-06)
 
 * ed25adb - Sorting relationships by consumer name, then provider name. (Beth, Wed May 21 15:13:39 2014 +1000)
 * 7aae530 - Releasing version 1.0.0.alpha3 (Beth, Mon May 19 15:44:33 2014 +1000)
@@ -3093,7 +3093,7 @@
 * 8001792 - Added HAL browser (Beth, Wed Apr 23 13:31:25 2014 +1000)
 * 8c94d1f - Creating example app (Beth, Wed Apr 23 13:06:40 2014 +1000)
 
-#### 0.0.10 (2014-06-06)
+## 0.0.10 (2014-06-06)
 
   * 24daeea - Added task to delete pacticipant (bethesque Tue May 20 11:59:10 2014 +1000)
   * 53e24cb - Increased json_content size from text to mediumtext (16MB) (bethesque Mon May 19 15:43:32 2014 +1000)
@@ -3108,12 +3108,12 @@
   * 5343019 - Added Relationship UI (bethesque Fri May 9 12:23:30 2014 +1000)
   * f7270a6 - Added HTML rendering of latest pact. (bethesque Thu May 8 16:17:52 2014 +1000)
 
-#### 0.0.10 (2014-03-24)
+## 0.0.10 (2014-03-24)
 
 * 7aee2ae - Implemented version tagging (bethesque 2 days ago)
 * cc78f92 - Added 'latest' pact url to pact representation in the 'latest pacts' response (bethesque 2 days ago)
 
-#### 0.0.9 (2014-02-27)
+## 0.0.9 (2014-02-27)
 
 * d07f4b7 - Using default gem publish tasks (bethesque 4 weeks ago)
 * d60b7ee - Comment (bethesque 7 weeks ago)
@@ -3122,17 +3122,17 @@
 * 9d5f83b - Using the to_json options to pass in the base_url instead of the nasty hack. (bethesque 4 months ago)
 * adb6148 - Changed 'last' to 'latest' (bethesque 4 months ago)
 
-#### 0.0.8 (2013-11-18)
+## 0.0.8 (2013-11-18)
 
 * 6022baa - Changed name to title in list pacticipants response (bethesque 7 hours ago)
 * 13fde52 - Moving resources module under the Api module. (bethesque 8 hours ago)
 * f52c572 - Added HAL index (bethesque 8 hours ago)
 
-#### 0.0.7 (2013-11-15)
+## 0.0.7 (2013-11-15)
 
 * 7984d86 - Added title to each item in the pacts/latest links array (bethesque 83 seconds ago)
 
-#### 0.0.6 (2013-11-15)
+## 0.0.6 (2013-11-15)
 
 * 021faae - Refactoring resources to DRY out code (bethesque 18 hours ago)
 * bab0367 - Cleaning up the base_url setting hack. (bethesque 19 hours ago)
@@ -3146,7 +3146,7 @@
 * 5621e41 - Beginning change from Roar Representor to Decoractor. Updating to new 'latest pact' URL (bethesque 2 days ago)
 * d1bd995 - Adding missing PactBroker::Logging require (bethesque 2 days ago)
 
-#### 0.0.5 (2013-11-13)
+## 0.0.5 (2013-11-13)
 
 * 2cf987c - Added data migration to script which adds order column (bethesque 56 minutes ago)
 * 9c709a9 - Changing queries to use new order column. (bethesque 61 minutes ago)
