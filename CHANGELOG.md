@@ -1,3 +1,73 @@
+## [2.121.0] _2026-09-04_
+
+### 🚀 Features
+
+- Add EnvironmentVersions resource
+- Raise a clear error when a MySQL adapter is configured
+- Add tri-state log_otel_enabled configuration
+- Add OpenTelemetry log appender setup
+- Add trace-aware JSON log formatter
+- Wire OTel appender and trace-aware JSON formatter into config
+- Add endpoint to get versions released or deployed
+
+### 🐛 Bug Fixes
+
+- Require stringio in the configuration docs generator
+- Use semantic_logger JSON helper for trace-enriched log output
+- Defer debug log string interpolation in pact publish
+- _(matrix)_ Honour use_case_sensitive_resource_names when resolving selectors
+- Escaping for the XSS findings, regex safety for the ReDoS findings
+- SQL injection vulnerability
+
+### 🚜 Refactor
+
+- Remove MySQL strict-mode handling from DB connection setup
+- Remove MySQL-specific query and upsert branches
+
+### ⚡️ Performance
+
+- _(matrix)_ Flatten selector union to prevent quadratic query nesting
+- _(matrix)_ Filter matrix rows by the already-resolved version ids
+
+### 🎨 Styling
+
+- _(matrix)_ Build the baseline name lists the idiomatic way
+
+### 📚 Documentation
+
+- Remove MySQL references
+- Document log_otel_enabled configuration
+- Describe the pull request release process
+
+### 🧪 Testing
+
+- Unskip MySQL-only pending tests and drop MySQL comments
+- Fix idempotency spec to avoid loading absent OTel gem
+- _(matrix)_ Add query-profiling baseline tooling
+- _(matrix)_ Make the query baseline reproducible enough to diff
+- _(matrix)_ Add a baseline shape for can-i-deploy at integration scale
+- _(matrix)_ Pin the resolved and SQL-derived version ids as equivalent
+- Cover the tag name as a literal string when deleting a tag
+
+### 📦 Other
+
+- Remove unused triage board workflow
+
+### 🛠️ Miscellaneous Tasks
+
+- Remove mysql2 gem
+- _(ci)_ Remove MySQL job, tooling, and config
+- Remove remaining MySQL references from Dockerfile, comment, and backwards-compat Gemfile
+- Reject blank pacticipant names in pact publish validation
+- Require Ruby 3.2+ for semantic_logger v5
+- Delete stale branches first
+- Select the local Postgres version with a single variable
+- Align changelog heading levels with git-cliff's
+- Add git-cliff config and the release script
+- _(ci)_ Release the gem by merging a pull request
+- _(ci)_ Reduce CI on draft PRs
+- _(ci)_ Rebase when conflicted only
+
 <a name="v2.120.0"></a>
 ## v2.120.0 (2026-07-14)
 
