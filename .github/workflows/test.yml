@@ -7,6 +7,13 @@ on:
   pull_request:
     branches:
       - master
+    types:
+      - opened
+      - synchronize
+      - reopened
+      # Draft pull requests run only the cheap checks, so the full suite has to
+      # be triggered when one is marked ready
+      - ready_for_review
   workflow_dispatch:
 
 permissions:
@@ -50,6 +57,9 @@ jobs:
           || contains(needs.*.result, 'skipped')
 
   sqlite:
+    # Skipped on draft pull requests: the completion check then fails, which is
+    # correct, as a draft is not mergeable
+    if: github.event.pull_request.draft != true
     runs-on: "ubuntu-latest"
     strategy:
       fail-fast: false
@@ -86,6 +96,9 @@ jobs:
           report_type: test_results
 
   postgres:
+    # Skipped on draft pull requests: the completion check then fails, which is
+    # correct, as a draft is not mergeable
+    if: github.event.pull_request.draft != true
     runs-on: "ubuntu-latest"
     strategy:
       fail-fast: false
@@ -132,6 +145,9 @@ jobs:
       - run: "bundle exec rubocop"
 
   pact-verify:
+    # Skipped on draft pull requests: the completion check then fails, which is
+    # correct, as a draft is not mergeable
+    if: github.event.pull_request.draft != true
     runs-on: "ubuntu-latest"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -145,6 +161,9 @@ jobs:
           PACT_BROKER_BASE_URL: https://pact-foundation.pactflow.io
 
   pact-v2-verify:
+    # Skipped on draft pull requests: the completion check then fails, which is
+    # correct, as a draft is not mergeable
+    if: github.event.pull_request.draft != true
     runs-on: "ubuntu-latest"
     strategy:
       matrix:
