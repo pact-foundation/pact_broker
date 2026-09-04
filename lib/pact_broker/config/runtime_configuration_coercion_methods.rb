@@ -35,6 +35,63 @@ module PactBroker
         end
       }
 
+      # log_appenders arrives either as an array (from YAML) or as a hash with
+      # numeric string keys (from PACT_BROKER_LOG_APPENDERS__0__STREAM style
+      # environment variables), exactly like webhook_certificates.
+      #
+      # Keys become symbols. The values of the keys we own are coerced; every
+      # other value is left alone, because it is passed through to the appender.
+      COERCE_LOG_APPENDERS = lambda { | value |
+        entries =
+          if value.nil?
+            nil
+          elsif value.is_a?(Array)
+            value
+          elsif value.is_a?(Hash)
+            if RuntimeConfigurationCoercionMethods.all_keys_are_number_strings?(value)
+              RuntimeConfigurationCoercionMethods.convert_hash_with_number_string_keys_to_array(value)
+            else
+              raise PactBroker::ConfigurationError,
+                "Could not coerce #{value} into a list of log_appenders. Please check the docs for the expected format."
+            end
+          else
+            raise PactBroker::ConfigurationError, "log_appenders cannot be set using a #{value.class}"
+          end
+
+        entries&.collect { | entry | RuntimeConfigurationCoercionMethods.coerce_log_appender_entry(entry) }
+      }
+
+      def self.coerce_log_appender_entry(entry)
+        raise PactBroker::ConfigurationError, "Each log_appenders entry must be a map, got a #{entry.class}" unless entry.is_a?(Hash)
+
+        entry.each_with_object({}) do | (key, value), new_entry |
+          new_key = key.to_sym
+          new_entry[new_key] = coerce_log_appender_entry_value(new_key, value)
+        end
+      end
+
+      def self.coerce_log_appender_entry_value(key, value)
+        case key
+        when :stream, :format then value&.to_sym
+        when :appender then coerce_log_appender_value(value)
+        when :enabled then coerce_log_appender_enabled(value)
+        else value
+        end
+      end
+
+      def self.coerce_log_appender_value(value)
+        value.is_a?(String) || value.is_a?(Symbol) ? value.to_sym : value
+      end
+
+      def self.coerce_log_appender_enabled(value)
+        case value
+        when nil, "", "auto", :auto then :auto
+        when true, "true", "1", 1 then true
+        when false, "false", "0", 0 then false
+        else value
+        end
+      end
+
       def self.all_keys_are_number_strings?(hash)
         hash.keys.all? { | k | k.to_s.to_i.to_s == k } # is an integer as a string
       end

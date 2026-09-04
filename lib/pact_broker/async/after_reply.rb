@@ -9,6 +9,8 @@
 #
 # https://github.com/search?q=repo%3Apuma%2Fpuma%20rack.after_reply&type=code
 
+require "pact_broker/logging/tag_propagation"
+
 module PactBroker
   module Async
     class AfterReply
@@ -19,9 +21,12 @@ module PactBroker
 
       def execute(&block)
         dc = @database_connector
+        logging_tags = PactBroker::Logging::TagPropagation.capture
         @rack_env["rack.after_reply"] << lambda {
-          dc.call do
-            block.call
+          PactBroker::Logging::TagPropagation.with(logging_tags) do
+            dc.call do
+              block.call
+            end
           end
         }
       end
