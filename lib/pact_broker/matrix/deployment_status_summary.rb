@@ -174,10 +174,6 @@ module PactBroker
         end.flatten
       end
 
-      def missing_specified_version_reasons(selectors)
-        selectors.collect(&:version_does_not_exist_description)
-      end
-
       def pact_not_verified_by_required_provider_version(integration)
         PactNotVerifiedByRequiredProviderVersion.new(*selectors_for(integration))
       end
@@ -238,24 +234,6 @@ module PactBroker
             ResolvedSelector.for_pacticipant(row.provider, {}, :inferred, false)
           [dummy_consumer_selector, dummy_provider_selector]
         end.flatten
-      end
-
-      # experimental
-      def warnings_for_missing_interactions
-        considered_rows.select(&:success).collect do | row |
-          begin
-            if row.verification.interactions_missing_test_results.any? && !row.verification.all_interactions_missing_test_results?
-              InteractionsMissingVerifications.new(selector_for(row.consumer_name, row.consumer_version_number), selector_for(row.provider_name, row.provider_version_number), row.verification.interactions_missing_test_results)
-            end
-          rescue StandardError => e
-            logger.warn("Error determining if there were missing interaction verifications", e)
-            nil
-          end
-        end.compact.tap { |it| report_missing_interaction_verifications(it) if it.any? }
-      end
-
-      def report_missing_interaction_verifications(messages)
-        logger.warn("Interactions missing verifications", messages)
       end
     end
   end
