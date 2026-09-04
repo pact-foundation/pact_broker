@@ -196,19 +196,6 @@ jobs:
           echo "version=${version}" >> "$GITHUB_OUTPUT"
           echo "increment=$(ruby script/release.rb increment)" >> "$GITHUB_OUTPUT"
 
-      - name: Notify downstream repositories
-        uses: peter-evans/repository-dispatch@28959ce8df70de7be546dd1250a005dd32156697  # v4.0.1
-        with:
-          token: ${{ secrets.GHTOKENNOTIFYPBRELEASED }}
-          repository: pact-foundation/pact-broker-docker
-          event-type: gem-released
-          client-payload: |
-            {
-              "name": "pact_broker",
-              "version": "${{ steps.released.outputs.version }}",
-              "increment": "${{ steps.released.outputs.increment }}"
-            }
-
       - name: Notify this repository (documentation update)
         uses: peter-evans/repository-dispatch@28959ce8df70de7be546dd1250a005dd32156697  # v4.0.1
         with:
