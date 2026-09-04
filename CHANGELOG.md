@@ -1,3 +1,9 @@
+## [2.121.1] _2026-09-04_
+
+### 🛠️ Miscellaneous Tasks
+
+-   _(ci)_ Remove notification to pact-broker-docker
+
 ## [2.121.0] _2026-09-04_
 
 ### 🚀 Features
