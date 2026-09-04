@@ -59,6 +59,26 @@ module PactBroker
             PactBroker::Domain::Tag.all.count
           }.by(-1)
         end
+
+        context "when the tag name contains SQL" do
+          let(:tag_name_containing_sql) { "prod' OR 1=1 -- " }
+
+          before do
+            Service.create(options.merge(tag_name: tag_name_containing_sql))
+          end
+
+          it "deletes only the tag whose name is the literal string" do
+            expect{ subject.delete(options.merge(tag_name: tag_name_containing_sql)) }.to change{
+              PactBroker::Domain::Tag.all.count
+            }.by(-1)
+            expect(PactBroker::Domain::Tag.select_map(:name)).to eq [tag_name, tag_name]
+          end
+
+          it "does not execute a statement appended to the tag name" do
+            subject.delete(options.merge(tag_name: "prod'; CREATE TABLE sqli_proof (marker text); -- "))
+            expect(PactBroker::Domain::Tag.db.table_exists?(:sqli_proof)).to be false
+          end
+        end
       end
     end
   end
