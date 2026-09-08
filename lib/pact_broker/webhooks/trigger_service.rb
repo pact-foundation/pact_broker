@@ -1,5 +1,6 @@
 require "pact_broker/services"
 require "pact_broker/hash_refinements"
+require "pact_broker/logging/tag_propagation"
 
 module PactBroker
   module Webhooks
@@ -51,7 +52,10 @@ module PactBroker
           logger.info "Scheduling job for webhook with uuid #{triggered_webhook.webhook.uuid}, context: #{triggered_webhook.event_context}"
           logger.debug "Schedule webhook with options #{options}"
 
-          job_data = { triggered_webhook: triggered_webhook }.deep_merge(options)
+          job_data = {
+            triggered_webhook: triggered_webhook,
+            logging_tags: PactBroker::Logging::TagPropagation.capture
+          }.deep_merge(options)
           begin
             # Delay slightly to make sure the request transaction has finished before we execute the webhook
             Job.perform_in(5 + (i * 3), job_data)
