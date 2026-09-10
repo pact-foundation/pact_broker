@@ -16,6 +16,7 @@ module PactBroker
             database_port: nil,
             database_url: nil,
             database_sslmode: nil,
+            database_schema: "public", # Default to public schema
             sql_log_level: :none,
             sql_log_warn_duration: 5,
             sql_enable_caller_logging: false,
@@ -104,7 +105,8 @@ module PactBroker
               password: database_password,
               host: database_host,
               database: database_name,
-              port: database_port
+              port: database_port,
+              search_path: database_schema
             }.compact
           end
           private :database_credentials
@@ -118,6 +120,7 @@ module PactBroker
               host: uri.host,
               database: uri.path.sub(/^\//, ""),
               port: uri.port&.to_i,
+              search_path: database_schema
             }.compact
           end
           private :database_configuration_from_url
