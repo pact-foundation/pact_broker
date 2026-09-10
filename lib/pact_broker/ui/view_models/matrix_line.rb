@@ -112,14 +112,14 @@ module PactBroker
           @line.consumer_version_tags
             .select(&:latest?)
             .sort_by(&:created_at)
-            .collect{ | tag | MatrixTag.new(tag.to_hash.merge(pacticipant_name: consumer_name, version_number: consumer_version_number)) }
+            .collect{ | tag | MatrixTag.new(tag.to_hash.merge(pacticipant_name: consumer_name, version_number: consumer_version_number, base_url: base_url)) }
         end
 
         def other_consumer_version_tags
           @line.consumer_version_tags
             .reject(&:latest?)
             .sort_by(&:created_at)
-            .collect{ | tag | MatrixTag.new(tag.to_hash.merge(pacticipant_name: consumer_name, version_number: consumer_version_number)) }
+            .collect{ | tag | MatrixTag.new(tag.to_hash.merge(pacticipant_name: consumer_name, version_number: consumer_version_number, base_url: base_url)) }
         end
 
         def consumer_versions_in_environments
@@ -140,14 +140,14 @@ module PactBroker
           @line.provider_version_tags
             .select(&:latest?)
             .sort_by(&:created_at)
-            .collect{ | tag | MatrixTag.new(tag.to_hash.merge(pacticipant_name: provider_name, version_number: provider_version_number)) }
+            .collect{ | tag | MatrixTag.new(tag.to_hash.merge(pacticipant_name: provider_name, version_number: provider_version_number, base_url: base_url)) }
         end
 
         def other_provider_version_tags
           @line.provider_version_tags
             .reject(&:latest?)
             .sort_by(&:created_at)
-            .collect{ | tag | MatrixTag.new(tag.to_hash.merge(pacticipant_name: provider_name, version_number: provider_version_number)) }
+            .collect{ | tag | MatrixTag.new(tag.to_hash.merge(pacticipant_name: provider_name, version_number: provider_version_number, base_url: base_url)) }
         end
 
         def orderable_fields
@@ -231,25 +231,25 @@ module PactBroker
 
         def consumer_deployed_versions
           @line.consumer_version.current_deployed_versions.collect do | deployed_version |
-            MatrixDeployedVersion.new(deployed_version)
+            MatrixDeployedVersion.new(deployed_version, base_url)
           end
         end
 
         def consumer_released_versions
           @line.consumer_version.current_supported_released_versions.collect do | released_version |
-            MatrixReleasedVersion.new(released_version)
+            MatrixReleasedVersion.new(released_version, base_url)
           end
         end
 
         def provider_deployed_versions
           (@line.provider_version&.current_deployed_versions || []).collect do | deployed_version |
-            MatrixDeployedVersion.new(deployed_version)
+            MatrixDeployedVersion.new(deployed_version, base_url)
           end
         end
 
         def provider_released_versions
           (@line.provider_version&.current_supported_released_versions || []).collect do | released_version |
-            MatrixReleasedVersion.new(released_version)
+            MatrixReleasedVersion.new(released_version, base_url)
           end
         end
       end
