@@ -1,5 +1,15 @@
 # frozen_string_literal: true
-
+require "webrick"
+PACT_WEBRICK_EMPTY_BODY_PATCH = Module.new do
+  def read_body(socket, block)
+    if self["content-length"].nil? && self["transfer-encoding"].nil? &&
+       WEBrick::HTTPRequest::BODY_CONTAINABLE_METHODS.include?(@request_method)
+      return @body
+    end
+    super
+  end
+end
+WEBrick::HTTPRequest.prepend(PACT_WEBRICK_EMPTY_BODY_PATCH)
 require "pact_broker"
 require "pact_broker/app"
 require "rspec/mocks"
