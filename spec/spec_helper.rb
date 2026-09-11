@@ -10,9 +10,7 @@ require "spec/support/simplecov"
 
 require "support/logging"
 require "support/database"
-require "rack/test"
 require "rspec/its"
-require "rspec/pact/matchers"
 require "sucker_punch/testing/inline"
 require "webmock/rspec"
 require "pact_broker/policies"
@@ -51,7 +49,6 @@ RSpec.configure do | config |
     Pact::Fixture.check_fixtures
   end
 
-  config.include Rack::Test::Methods
   config.include Pact::Fixture
 
   config.mock_with :rspec do |mocks|

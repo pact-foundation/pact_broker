@@ -25,7 +25,7 @@ pact_broker = PactBroker::App.new { |c| c.database_connection = PactBroker::Test
 app_to_verify = HalRelationProxyApp.new(pact_broker)
 
 require "pact"
-require "pact/v2/rspec"
+require "pact/rspec"
 require_relative "../../service_consumers/shared_provider_states"
 
 if ENV.fetch("PACT_BROKER_TOKEN", "") != "" 
@@ -34,7 +34,7 @@ else
   pact_uri = "https://raw.githubusercontent.com/pact-foundation/pact_broker-client/refs/heads/master/spec/pacts/Pact%20Broker%20Client%20V2-Pact%20Broker.json" 
 end
 
-RSpec.describe "Verify consumers for Pact Broker", :pact_v2 do
+RSpec.describe "Verify consumers for Pact Broker", :pact do
 
   http_pact_provider "Pact Broker", opts: { 
 
