@@ -150,22 +150,6 @@ jobs:
     if: github.event.pull_request.draft != true
     runs-on: "ubuntu-latest"
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
-      - name: Verify pacts
-        run: "GIT_SHA=${GITHUB_SHA} bundle exec rake pact:verify"
-        env:
-          PACT_BROKER_TOKEN: ${{ secrets.PACTFLOW_PACT_FOUNDATION_TOKEN }}
-          PACT_BROKER_BASE_URL: https://pact-foundation.pactflow.io
-
-  pact-v2-verify:
-    # Skipped on draft pull requests: the completion check then fails, which is
-    # correct, as a draft is not mergeable
-    if: github.event.pull_request.draft != true
-    runs-on: "ubuntu-latest"
-    steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - uses: ruby/setup-ruby@v1
         with:
