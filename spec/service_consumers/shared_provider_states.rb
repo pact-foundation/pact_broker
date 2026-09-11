@@ -58,6 +58,75 @@
     end
   end
 
+    provider_state "Bar versions 10 (failing) and 11 (passing) are both released to production" do
+      set_up do
+        TestDataBuilder.new
+          .create_environment("production")
+          .create_pact_with_hierarchy("Foo", "1.2.3", "Bar")
+          .revise_pact
+          .create_verification(provider_version: "10", success: false)
+          .create_released_version_for_provider_version(environment_name: "production")
+          .create_verification(provider_version: "11", number: 2)
+          .create_released_version_for_provider_version(environment_name: "production")
+          .create_consumer_version("2.0.0")
+          .create_pact
+          .revise_pact
+          .create_verification(provider_version: "4.5.6")
+      end
+    end
+    provider_state "Bar versions 10 and 11 are both released to production with passing verifications" do
+      set_up do
+        TestDataBuilder.new
+          .create_environment("production")
+          .create_pact_with_hierarchy("Foo", "1.2.3", "Bar")
+          .revise_pact
+          .create_verification(provider_version: "10")
+          .create_released_version_for_provider_version(environment_name: "production")
+          .create_verification(provider_version: "11", number: 2)
+          .create_released_version_for_provider_version(environment_name: "production")
+          .create_consumer_version("2.0.0")
+          .create_pact
+          .revise_pact
+          .create_verification(provider_version: "4.5.6")
+      end
+    end
+    provider_state "the pact for Foo version 1.2.4 has been verified by Bar version 4.5.6 and ignores Baz" do
+      set_up do
+        TestDataBuilder.new
+          .create_pact_with_hierarchy("Foo", "1.2.4", "Bar")
+          .revise_pact
+          .create_verification(provider_version: "4.5.6")
+          .create_pact_with_hierarchy("Foo", "1.2.4", "Baz")
+          .revise_pact
+          .create_verification(provider_version: "9.9.8")
+      end
+    end
+
+    provider_state "the pact for Foo version 1.2.4 has been verified by Bar version 4.5.6 and ignores Baz version 9.9.9" do
+      set_up do
+        TestDataBuilder.new
+          .create_pact_with_hierarchy("Foo", "1.2.4", "Bar")
+          .revise_pact
+          .create_verification(provider_version: "4.5.6")
+          .create_pact_with_hierarchy("Foo", "1.2.4", "Baz")
+          .revise_pact
+          .create_verification(provider_version: "9.9.9")
+      end
+    end
+
+
+  provider_state "the pact for Foo version 1.2.3 has been verified by the versions of Bar in the production environment" do
+    set_up do
+      TestDataBuilder.new
+        .create_environment("production")
+        .create_pact_with_hierarchy("Foo", "1.2.3", "Bar")
+        .revise_pact
+        .create_verification(provider_version: "4.5.6")
+        .create_deployed_version_for_provider_version(environment_name: "production")
+    end
+  end
+
+
   provider_state "the pact for Foo version 1.2.3 and 1.2.4 has been verified by Bar version 4.5.6" do
     set_up do
       TestDataBuilder.new
@@ -193,6 +262,28 @@
      end
    end
 
+  provider_state "a pact between Condor and the Pricing Service exists with branch main" do
+    set_up do
+      TestDataBuilder.new
+        .create_condor
+        .create_consumer_version("1.3.0", branch: "main")
+        .create_pricing_service
+        .create_pact
+    end
+  end
+
+    provider_state "a pact between Condor and the Pricing Service exists with branch feature" do
+      set_up do
+        TestDataBuilder.new
+         .create_consumer("Condor")
+         .create_consumer_version("1.3.0", branch: "feature")
+         .create_provider("Pricing Service")
+         .create_pact  
+
+      end
+    end
+
+
    provider_state "a pacticipant version with production details exists for the Pricing Service" do
      set_up do
        # Your set up code goes here
@@ -274,9 +365,18 @@
   provider_state "version 5556b8149bf8bac76bc30f50a8a2dd4c22c85f30 of pacticipant Foo exists with a test environment available for release" do
     set_up do
       TestDataBuilder.new
-        .create_environment("test", uuid: "cb632df3-0a0d-4227-aac3-60114dd36479")
+        .create_environment("test", uuid: "16926ef3-590f-4e3f-838e-719717aa88c9")
         .create_consumer("Foo")
         .create_consumer_version("5556b8149bf8bac76bc30f50a8a2dd4c22c85f30")
+    end
+  end
+  provider_state "version 5556b8149bf8bac76bc30f50a8a2dd4c22c85f30 of pacticipant Foo exists with a test environment is released with id ff3adecf-cfc5-4653-a4e3-f1861092f8e0" do
+    set_up do
+      TestDataBuilder.new
+        .create_environment("test", uuid: "16926ef3-590f-4e3f-838e-719717aa88c9")
+        .create_consumer("Foo")
+        .create_consumer_version("5556b8149bf8bac76bc30f50a8a2dd4c22c85f30")
+        .create_released_version_for_consumer_version(uuid: "ff3adecf-cfc5-4653-a4e3-f1861092f8e0", environment_name: "test")
     end
   end
 
@@ -287,6 +387,15 @@
     end
   end
 
+  provider_state "a version is deployed to environment with UUID 16926ef3-590f-4e3f-838e-719717aa88c9 with target customer-1" do
+    set_up do
+      TestDataBuilder.new
+        .create_environment("test", uuid: "16926ef3-590f-4e3f-838e-719717aa88c9")
+        .create_consumer("Foo")
+        .create_consumer_version("5556b8149bf8bac76bc30f50a8a2dd4c22c85f30")
+        .create_deployed_version_for_consumer_version(uuid: "ff3adecf-cfc5-4653-a4e3-f1861092f8e0", target: "customer-1")
+    end
+  end
   provider_state "an version is deployed to environment with UUID 16926ef3-590f-4e3f-838e-719717aa88c9 with target customer-1" do
     set_up do
       TestDataBuilder.new
@@ -294,6 +403,28 @@
         .create_consumer("Foo")
         .create_consumer_version("5556b8149bf8bac76bc30f50a8a2dd4c22c85f30")
         .create_deployed_version_for_consumer_version(uuid: "ff3adecf-cfc5-4653-a4e3-f1861092f8e0", target: "customer-1")
+    end
+  end
+
+    provider_state "a version is deployed twice to environment with UUID 16926ef3-590f-4e3f-838e-719717aa88c9 with target customer-1 and target null" do
+      set_up do
+        TestDataBuilder.new
+          .create_environment("test", uuid: "16926ef3-590f-4e3f-838e-719717aa88c9")
+          .create_consumer("Foo")
+          .create_consumer_version("5556b8149bf8bac76bc30f50a8a2dd4c22c85f30")
+          .create_deployed_version_for_consumer_version(uuid: "ff3adecf-cfc5-4653-a4e3-f1861092f8e0")
+          .create_deployed_version_for_consumer_version(uuid: "ff3adecf-cfc5-4653-a4e3-f1861092f8e1", target: "customer-1")
+      end
+    end
+
+  provider_state "a version is deployed twice to environment with UUID 16926ef3-590f-4e3f-838e-719717aa88c9 with target customer-1 and target customer-2" do
+    set_up do
+      TestDataBuilder.new
+        .create_environment("test", uuid: "16926ef3-590f-4e3f-838e-719717aa88c9")
+        .create_consumer("Foo")
+        .create_consumer_version("5556b8149bf8bac76bc30f50a8a2dd4c22c85f30")
+        .create_deployed_version_for_consumer_version(uuid: "ff3adecf-cfc5-4653-a4e3-f1861092f8e0", target: "customer-2")
+        .create_deployed_version_for_consumer_version(uuid: "ff3adecf-cfc5-4653-a4e3-f1861092f8e1", target: "customer-1")
     end
   end
 
@@ -306,6 +437,27 @@
         .create_deployed_version_for_consumer_version(uuid: "ff3adecf-cfc5-4653-a4e3-f1861092f8e0")
     end
   end
+
+    provider_state "a currently deployed version exists with application instance customer-1" do
+      set_up do
+        TestDataBuilder.new
+          .create_environment("test", uuid: "cb632df3-0a0d-4227-aac3-60114dd36479")
+          .create_consumer("Foo")
+          .create_consumer_version("5556b8149bf8bac76bc30f50a8a2dd4c22c85f30")
+          .create_deployed_version_for_consumer_version(uuid: "ff3adecf-cfc5-4653-a4e3-f1861092f8e0", target: "customer-1")
+      end
+    end
+
+
+    provider_state "a currently deployed version exists without application instance" do
+      set_up do
+        TestDataBuilder.new
+          .create_environment("test", uuid: "cb632df3-0a0d-4227-aac3-60114dd36479")
+          .create_consumer("Foo")
+          .create_consumer_version("5556b8149bf8bac76bc30f50a8a2dd4c22c85f30")
+          .create_deployed_version_for_consumer_version(uuid: "58a013bc-31d6-434a-b026-46ecbd9e3a2d")
+      end
+    end
 
   provider_state "a branch named main exists for pacticipant Foo" do
     set_up do
