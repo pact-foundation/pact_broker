@@ -10,6 +10,7 @@ require "spec/support/simplecov"
 
 require "support/logging"
 require "support/database"
+require "rack/test"
 require "rspec/its"
 require "sucker_punch/testing/inline"
 require "webmock/rspec"
@@ -35,6 +36,28 @@ WebMock.disable_net_connect!(allow_localhost: true)
 
 I18n.config.enforce_available_locales = false
 
+RSpec::Matchers.define :match_pact do |expected, options = {}|
+
+  match do |actual|
+    @diff = Pact::Matchers.diff(expected, actual, options)
+    @diff.empty?
+  end
+
+  failure_message do |actual|
+    formatted_diff = Pact::Matchers::UnixDiffFormatter.call(@diff, :colour => true)
+    colorize(formatted_diff)
+  end
+
+  failure_message_when_negated do |actual|
+    "Expected #{actual} to not match #{expected} but it did."
+  end
+
+  def colorize(s)
+    s.split("\n").collect do |line|
+      ::Term::ANSIColor.reset + line
+    end.join("\n")
+  end
+end
 
 RSpec.configure do | config |
   config.before :each do
@@ -49,6 +72,7 @@ RSpec.configure do | config |
     Pact::Fixture.check_fixtures
   end
 
+  config.include Rack::Test::Methods
   config.include Pact::Fixture
 
   config.mock_with :rspec do |mocks|
