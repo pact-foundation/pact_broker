@@ -43,7 +43,7 @@ RSpec::Matchers.define :match_pact do |expected, options = {}|
     @diff.empty?
   end
 
-  failure_message do |actual|
+  failure_message do |_actual|
     formatted_diff = Pact::Matchers::UnixDiffFormatter.call(@diff, :colour => true)
     colorize(formatted_diff)
   end

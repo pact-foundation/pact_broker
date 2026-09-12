@@ -29,7 +29,7 @@ require "pact/rspec"
 require_relative "../../service_consumers/shared_provider_states"
 
 if ENV.fetch("PACT_BROKER_TOKEN", "") != "" 
-  pact_uri = nil 
+  pact_uri = ENV.fetch("PACT_BROKER_BASE_URL", "")
 else 
   pact_uri = "https://raw.githubusercontent.com/pact-foundation/pact_broker-client/refs/heads/master/spec/pacts/Pact%20Broker%20Client%20V2-Pact%20Broker.json" 
 end
