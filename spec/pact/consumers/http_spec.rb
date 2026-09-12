@@ -14,7 +14,7 @@ end
 WEBrick::HTTPRequest.prepend(PACT_WEBRICK_EMPTY_BODY_PATCH)
 
 # rack-proxy 0.7.7 (a transitive dependency of pact) calls body_stream.rewind after assigning a Rackup::Handler::WEBrick::Input
-require 'rackup/handler/webrick'
+require "rackup/handler/webrick"
 Rackup::Handler::WEBrick::Input.class_eval { def rewind; end unless method_defined?(:rewind) }
 
 require "pact_broker"
