@@ -1,22 +1,5 @@
 # frozen_string_literal: true
  
-# workaround for empty body post/put/patch requests
-require "webrick"
-PACT_WEBRICK_EMPTY_BODY_PATCH = Module.new do
-  def read_body(socket, block)
-    if self["content-length"].nil? && self["transfer-encoding"].nil? &&
-       WEBrick::HTTPRequest::BODY_CONTAINABLE_METHODS.include?(@request_method)
-      return @body
-    end
-    super
-  end
-end
-WEBrick::HTTPRequest.prepend(PACT_WEBRICK_EMPTY_BODY_PATCH)
-
-# rack-proxy 0.7.7 (a transitive dependency of pact) calls body_stream.rewind after assigning a Rackup::Handler::WEBrick::Input
-require "rackup/handler/webrick"
-Rackup::Handler::WEBrick::Input.class_eval { def rewind; end unless method_defined?(:rewind) }
-
 require "pact_broker"
 require "pact_broker/app"
 require "rspec/mocks"
@@ -46,7 +29,7 @@ RSpec.describe "Verify consumers for Pact Broker", :pact do
     fail_if_no_pacts_found: true,
    
     enable_pending: true,
-    include_wip_pacts_since: "2021-01-01",
+    # include_wip_pacts_since: "2021-01-01",
 
     publish_verification_results: ENV["PACT_PUBLISH_VERIFICATION_RESULTS"] == "true",
     provider_version: `git rev-parse HEAD`.strip,
