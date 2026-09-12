@@ -13,6 +13,10 @@ PACT_WEBRICK_EMPTY_BODY_PATCH = Module.new do
 end
 WEBrick::HTTPRequest.prepend(PACT_WEBRICK_EMPTY_BODY_PATCH)
 
+# rack-proxy 0.7.7 (a transitive dependency of pact) calls body_stream.rewind after assigning a Rackup::Handler::WEBrick::Input
+require 'rackup/handler/webrick'
+Rackup::Handler::WEBrick::Input.class_eval { def rewind; end unless method_defined?(:rewind) }
+
 require "pact_broker"
 require "pact_broker/app"
 require "rspec/mocks"
@@ -28,11 +32,6 @@ require "pact"
 require "pact/rspec"
 require_relative "../../service_consumers/shared_provider_states"
 
-if ENV.fetch("PACT_BROKER_TOKEN", "") != "" 
-  pact_uri = ENV.fetch("PACT_BROKER_BASE_URL", "")
-else 
-  pact_uri = "https://raw.githubusercontent.com/pact-foundation/pact_broker-client/refs/heads/master/spec/pacts/Pact%20Broker%20Client%20V2-Pact%20Broker.json" 
-end
 
 RSpec.describe "Verify consumers for Pact Broker", :pact do
 
@@ -43,12 +42,9 @@ RSpec.describe "Verify consumers for Pact Broker", :pact do
     http_port: 9393, 
       
     log_level: :info,
-    logger: Logger.new(File.expand_path("../../../pact_verification.log", __dir__)),
     
     fail_if_no_pacts_found: true,
-
-    pact_uri: pact_uri,
-
+   
     enable_pending: true,
     include_wip_pacts_since: "2021-01-01",
 

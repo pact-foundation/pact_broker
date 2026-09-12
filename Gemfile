@@ -29,6 +29,7 @@ group :test do
     gem "pact-ffi", "~>0.4.28"
   end
   gem "rack-test", ">= 0.6.3", "< 3.0.0"
+  gem "rack-proxy", ">= 0.6.3", "< 0.7.8"
   gem "bundler-audit", "~>0.4"
   gem "webmock", "~>3.9"
   gem "rspec", "~>3.0"
