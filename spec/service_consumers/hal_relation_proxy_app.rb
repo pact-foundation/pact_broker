@@ -90,7 +90,11 @@ class HalRelationProxyApp
    "latestby=cvpv&q[][pacticipant]=Foo&q[][pacticipant]=Bar&q[][version]=1%2e2%2e3&q[][version]=4%2e5%2e6" => "q[][pacticipant]=Foo&q[][version]=1%2e2%2e3&q[][pacticipant]=Bar&q[][version]=4%2e5%2e6&latestby=cvpv",
    "latestby=cvpv&q[][latest]=true&q[][pacticipant]=Foo&q[][pacticipant]=Bar&q[][tag]=prod&q[][version]=1%2e2%2e3" => "q[][pacticipant]=Foo&q[][version]=1%2e2%2e3&q[][pacticipant]=Bar&q[][latest]=true&q[][tag]=prod&latestby=cvpv",
    "latestby=cvpv&q[][latest]=true&q[][pacticipant]=Foo&q[][pacticipant]=Bar&q[][version]=1%2e2%2e4" => "q[][pacticipant]=Foo&q[][version]=1%2e2%2e4&q[][pacticipant]=Bar&q[][latest]=true&latestby=cvpv",
-   "latestby=cvpv&q[][pacticipant]=Foo&q[][pacticipant]=Bar&q[][version]=1%2e2%2e3&q[][version]=9%2e9%2e9" => "q[][pacticipant]=Foo&q[][version]=1%2e2%2e3&q[][pacticipant]=Bar&q[][version]=9%2e9%2e9&latestby=cvpv"
+   "latestby=cvpv&q[][pacticipant]=Foo&q[][pacticipant]=Bar&q[][version]=1%2e2%2e3&q[][version]=9%2e9%2e9" => "q[][pacticipant]=Foo&q[][version]=1%2e2%2e3&q[][pacticipant]=Bar&q[][version]=9%2e9%2e9&latestby=cvpv",
+   "ignore[][pacticipant]=Baz&ignore[][version]=9%2e9%2e9&latestby=cvpv&q[][pacticipant]=Foo&q[][pacticipant]=Bar&q[][version]=1%2e2%2e4&q[][version]=4%2e5%2e6" => "q[][pacticipant]=Foo&q[][version]=1%2e2%2e4&q[][pacticipant]=Bar&q[][version]=4%2e5%2e6&ignore[][pacticipant]=Baz&ignore[][version]=9%2e9%2e9&latestby=cvpv",
+   "ignore%5B%5D%5Bpacticipant%5D=Baz&ignore%5B%5D%5Bversion%5D=9.9.9&latestby=cvpv&q%5B%5D%5Bpacticipant%5D=Foo&q%5B%5D%5Bpacticipant%5D=Bar&q%5B%5D%5Bversion%5D=1.2.4&q%5B%5D%5Bversion%5D=4.5.6" => "q[][pacticipant]=Foo&q[][version]=1%2e2%2e4&q[][pacticipant]=Bar&q[][version]=4%2e5%2e6&ignore[][pacticipant]=Baz&ignore[][version]=9%2e9%2e9&latestby=cvpv",
+   "ignore[][pacticipant]=Baz&latestby=cvpv&q[][pacticipant]=Foo&q[][pacticipant]=Bar&q[][version]=1%2e2%2e4&q[][version]=4%2e5%2e6" => "q[][pacticipant]=Foo&q[][version]=1%2e2%2e4&q[][pacticipant]=Bar&q[][version]=4%2e5%2e6&ignore[][pacticipant]=Baz&latestby=cvpv",
+   "ignore%5B%5D%5Bpacticipant%5D=Baz&latestby=cvpv&q%5B%5D%5Bpacticipant%5D=Foo&q%5B%5D%5Bpacticipant%5D=Bar&q%5B%5D%5Bversion%5D=1.2.4&q%5B%5D%5Bversion%5D=4.5.6" => "q[][pacticipant]=Foo&q[][version]=1%2e2%2e4&q[][pacticipant]=Bar&q[][version]=4%2e5%2e6&ignore[][pacticipant]=Baz&latestby=cvpv"
   }
 
   def initialize(app)
