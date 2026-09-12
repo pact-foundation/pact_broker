@@ -44,10 +44,6 @@ module PactBroker
         name1 <=> name2
       end
 
-      def to_s
-        "#{consumer_name} v#{consumer_version_number} #{provider_name} #{provider_version_number} #{success}"
-      end
-
       def compare_number_desc number1, number2
         if number1 && number2
           number2 <=> number1
@@ -60,14 +56,6 @@ module PactBroker
 
       def eql?(obj)
         (obj.class == model) && (obj.values == values)
-      end
-
-      def pacticipant_names
-        [consumer_name, provider_name]
-      end
-
-      def involves_pacticipant_with_name?(pacticipant_name)
-        pacticipant_name.include?(pacticipant_name)
       end
 
       def provider_version_id
