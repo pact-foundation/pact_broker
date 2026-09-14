@@ -156,7 +156,7 @@ jobs:
           bundler-cache: true
       - run: bundle install
       - name: Verify pacts
-        run: "bundle exec rake pact:v2:verify"
+        run: "GIT_SHA=${GITHUB_SHA} bundle exec rake pact:v2:verify"
         env:
           PACT_BROKER_TOKEN: ${{ secrets.PACTFLOW_PACT_FOUNDATION_TOKEN }}
           PACT_BROKER_BASE_URL: https://pact-foundation.pactflow.io

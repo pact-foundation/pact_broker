@@ -15,6 +15,15 @@ require "pact"
 require "pact/rspec"
 require_relative "../../service_consumers/shared_provider_states"
 
+app_version = ENV["GIT_SHA"] if ENV["GIT_SHA"]
+branch = `git rev-parse --abbrev-ref HEAD`.strip
+if branch.start_with?("refs/pull/") || branch.start_with?("HEAD")
+  branch = ENV["GITHUB_HEAD_REF"] || branch.split("/").last
+end
+if branch.nil? || branch.empty?
+  branch = ENV["GIT_BRANCH"]
+end
+app_version_branch = branch
 
 RSpec.describe "Verify consumers for Pact Broker", :pact do
 
@@ -29,12 +38,11 @@ RSpec.describe "Verify consumers for Pact Broker", :pact do
     fail_if_no_pacts_found: true,
    
     enable_pending: true,
-    # include_wip_pacts_since: "2021-01-01",
+    include_wip_pacts_since: "2021-01-01",
 
     publish_verification_results: ENV["PACT_PUBLISH_VERIFICATION_RESULTS"] == "true",
-    provider_version: `git rev-parse HEAD`.strip,
-    provider_version_branch: `git rev-parse --abbrev-ref HEAD`.strip,
-    provider_version_tags: [`git rev-parse --abbrev-ref HEAD`.strip],
+    provider_version: app_version,
+    provider_version_branch: app_version_branch
     
   }
 
