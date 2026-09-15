@@ -52,9 +52,11 @@ RSpec::Matchers.define :match_pact do |expected, options = {}|
     "Expected #{actual} to not match #{expected} but it did."
   end
 
+  # Prefix each line with an ANSI reset so RSpec's indentation of the
+  # failure message is not painted by the previous line's colour.
   def colorize(s)
     s.split("\n").collect do |line|
-      ::Term::ANSIColor.reset + line
+      "\e[0m" + line
     end.join("\n")
   end
 end
