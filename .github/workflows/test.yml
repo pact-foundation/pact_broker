@@ -160,6 +160,7 @@ jobs:
         env:
           PACT_BROKER_TOKEN: ${{ secrets.PACTFLOW_PACT_FOUNDATION_TOKEN }}
           PACT_BROKER_BASE_URL: https://pact-foundation.pactflow.io
+          PACT_PUBLISH_VERIFICATION_RESULTS: "true"
 
   bundle-audit:
     runs-on: "ubuntu-latest"
