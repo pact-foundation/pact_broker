@@ -78,7 +78,7 @@ module PactBroker
       end
 
       def content_hash
-        JSON.parse(json_content, PACT_PARSING_OPTIONS)
+        JSON.parse(json_content, **PACT_PARSING_OPTIONS)
       end
 
       def content_object
