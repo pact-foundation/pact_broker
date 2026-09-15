@@ -195,7 +195,7 @@ module PactBroker
         end
 
         def consumer_contract
-          pact_object = JSON.parse(@json_content, quirks_mode: true)
+          pact_object = JSON.parse(@json_content)
           convert_v3_messages_to_interactions(pact_object)
 
           pact_object["interactions"]&.each do |interaction|
