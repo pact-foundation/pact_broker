@@ -1,3 +1,35 @@
+## [2.121.1] _2026-09-16_
+
+### 🐛 Bug Fixes
+
+-   Pin rack-proxy to 0.7.7 due to failures
+-   _(test)_ Remove pact rack-proxy and webrick fixes, fixed in pact-ruby src
+-   _(test)_ Drop Term::ANSIColor from vendored match_pact matcher
+-   Pass JSON.parse options as keywords for json 3
+
+### 🧪 Testing
+
+-   Add updated provider states for pact-broker-cli
+
+### 📦 Other
+
+-   Publish pact verification results from the v2 job
+-   Align checkout pin comment with the other jobs
+
+### 🛠️ Miscellaneous Tasks
+
+-   _(ci)_ Remove notification to pact-broker-docker
+-   _(test)_ Workaround for empty body request
+-   _(test)_ Pact-ruby v2 use broker
+-   _(test)_ Migrate to pact-ruby v2
+-   _(test)_ Vendor rspec-pact-matcher code
+-   Rubocop
+-   Rubocop
+-   _(test)_ Preserve branch/version logic
+-   _(test)_ Alias pact:verify to pact:v2:verify, drop stub tasks
+-   _(test)_ Remove provider-state files pact-ruby v2 never loads
+-   _(test)_ Remove the unloaded Pact Ruby provider states
+
 ## [2.121.0] _2026-09-04_
 
 ### 🚀 Features
