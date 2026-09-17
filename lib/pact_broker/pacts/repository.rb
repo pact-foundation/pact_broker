@@ -3,7 +3,6 @@ require "pact_broker/logging"
 require "pact_broker/pacts/generate_sha"
 require "pact_broker/pacts/pact_publication"
 require "pact_broker/pacts/pact_version"
-require "pact/shared/json_differ"
 require "pact_broker/domain"
 require "pact_broker/pacts/parse"
 require "pact_broker/pacts/latest_pact_publication_id_for_consumer_version"
@@ -386,7 +385,7 @@ module PactBroker
       end
 
       def different? pact, other_pact
-        Pact::JsonDiffer.(pact.content_hash, other_pact.content_hash, allow_unexpected_keys: false).any?
+        pact.content_hash != other_pact.content_hash
       end
 
       def find_or_create_pact_version consumer_id, provider_id, pact_version_sha, json_content
