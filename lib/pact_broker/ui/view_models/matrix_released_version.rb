@@ -8,8 +8,9 @@ module PactBroker
       class MatrixReleasedVersion
         include PactBroker::Api::PactBrokerUrls
 
-        def initialize released_version
+        def initialize released_version, base_url = nil
           @released_version = released_version
+          @base_url = base_url
         end
 
         def environment_name
@@ -21,7 +22,7 @@ module PactBroker
         end
 
         def url
-          hal_browser_url(released_version_url(released_version))
+          hal_browser_url(released_version_url(released_version, @base_url), @base_url)
         end
 
         private

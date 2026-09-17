@@ -1,18 +1,18 @@
-require "pact_broker/ui/view_models/matrix_deployed_version"
+require "pact_broker/ui/view_models/matrix_released_version"
 
 module PactBroker
   module UI
     module ViewModels
-      describe MatrixDeployedVersion do
+      describe MatrixReleasedVersion do
         before do
-          allow(subject).to receive(:deployed_version_url) do | deployed_version, base_url |
-            base_url ? "#{base_url}/deployed_version" : "/deployed_version"
+          allow(subject).to receive(:released_version_url) do | released_version, base_url |
+            base_url ? "#{base_url}/released_version" : "/released_version"
           end
         end
 
-        subject(:matrix_deployed_version) { MatrixDeployedVersion.new(deployed_version, base_url) }
-        let(:deployed_version) do
-          instance_double("PactBroker::Deployments::DeployedVersion",
+        subject(:matrix_released_version) { MatrixReleasedVersion.new(released_version, base_url) }
+        let(:released_version) do
+          instance_double("PactBroker::Deployments::ReleasedVersion",
             environment: environment,
             created_at: created_at
           )
@@ -22,14 +22,14 @@ module PactBroker
         let(:base_url) { nil }
 
         its(:environment_name) { is_expected.to eq "test" }
-        its(:tooltip) { is_expected.to eq "Currently deployed to Test (1 day ago)" }
+        its(:tooltip) { is_expected.to eq "Currently released and supported in Test (1 day ago)" }
 
         describe "#url" do
           context "without base_url" do
             let(:base_url) { nil }
 
             it "returns a HAL browser URL without base_url prefix" do
-              expect(subject.url).to eq "/hal-browser/browser.html#/deployed_version"
+              expect(subject.url).to eq "/hal-browser/browser.html#/released_version"
             end
           end
 
@@ -37,7 +37,7 @@ module PactBroker
             let(:base_url) { "/pact-broker-api" }
 
             it "returns a HAL browser URL with the base_url prefix" do
-              expect(subject.url).to eq "/pact-broker-api/hal-browser/browser.html#/pact-broker-api/deployed_version"
+              expect(subject.url).to eq "/pact-broker-api/hal-browser/browser.html#/pact-broker-api/released_version"
             end
           end
         end
