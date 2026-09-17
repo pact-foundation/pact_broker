@@ -73,9 +73,9 @@ module PactBroker
           end
 
           it "returns the formatted diff" do
-            expect(subject).to include "interactions"
-            expect(subject).to include "post"
-            expect(subject).to include "get"
+            expect(subject).to match(/^@@ -\d+,\d+ \+\d+,\d+ @@$/)
+            expect(subject).to include "-        \"method\": \"post\""
+            expect(subject).to include "+        \"method\": \"get\""
           end
         end
 
