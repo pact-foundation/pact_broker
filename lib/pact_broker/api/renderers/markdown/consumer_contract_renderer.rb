@@ -1,5 +1,5 @@
 require "pact_broker/api/renderers/markdown/interaction_renderer"
-require "pact_broker/api/renderers/markdown/sort_interactions"
+require "pact_broker/api/renderers/markdown/interaction_view_model"
 require "rack/utils"
 require "pact_broker/api/renderers/markdown"
 
@@ -9,12 +9,18 @@ module PactBroker
       module Markdown
         class ConsumerContractRenderer
 
-          def initialize consumer_contract
-            @consumer_contract = consumer_contract
+          # Raised when the content does not have the shape of a pact.
+          class NotAPactError < StandardError; end
+
+          def initialize pact_hash
+            unless pact_hash.is_a?(Hash) && pact_hash["consumer"].is_a?(Hash) && pact_hash["provider"].is_a?(Hash)
+              raise NotAPactError, "content does not have consumer and provider objects"
+            end
+            @pact_hash = pact_hash
           end
 
-          def self.call consumer_contract
-            new(consumer_contract).call
+          def self.call pact_hash
+            new(pact_hash).call
           end
 
           def call
@@ -23,14 +29,14 @@ module PactBroker
 
           private
 
-          attr_reader :consumer_contract
+          attr_reader :pact_hash
 
           def title
             "# A pact between #{consumer_name} and #{provider_name}\n\n"
           end
 
           def interaction_renderers
-            @interaction_renderers ||= sorted_interactions.collect{|interaction| InteractionRenderer.new interaction, @consumer_contract}
+            @interaction_renderers ||= sorted_interactions.collect { |view_model| InteractionRenderer.new(view_model) }
           end
 
           def summaries_title
@@ -50,20 +56,25 @@ module PactBroker
           end
 
           def sorted_interactions
-            SortInteractions.call(consumer_contract.interactions)
+            interactions.collect { |interaction| InteractionViewModel.new(interaction, pact_hash) }.sort_by(&:sortable_id)
+          end
+
+          # v3 message pacts keep their interactions under "messages"
+          def interactions
+            Array(pact_hash["interactions"] || pact_hash["messages"])
           end
 
           def consumer_name
-            h(markdown_escape consumer_contract.consumer.name)
+            h(markdown_escape pact_hash.dig("consumer", "name"))
           end
 
           def provider_name
-            h(markdown_escape consumer_contract.provider.name)
+            h(markdown_escape pact_hash.dig("provider", "name"))
           end
 
           def markdown_escape string
             return nil unless string
-            string.gsub(PactBroker::Api::Renderers::Markdown::MARKDOWN_SPECIAL_CHARS_REGEXP) { |char| "\\#{char}" }
+            string.gsub(MARKDOWN_SPECIAL_CHARS_REGEXP) { |char| "\\#{char}" }
           end
 
           def h(text)
