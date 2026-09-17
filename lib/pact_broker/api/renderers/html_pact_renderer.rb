@@ -183,7 +183,7 @@ module PactBroker
         end
 
         def markdown
-          Pact::Doc::Markdown::ConsumerContractRenderer.call consumer_contract
+          Markdown::ConsumerContractRenderer.call consumer_contract
         rescue StandardError
           heading = "### A contract between #{@pact.consumer.name} and #{@pact.provider.name}"
           warning = "_Note: this contract could not be parsed to a v1 or v2 Pact, showing raw content instead._"
