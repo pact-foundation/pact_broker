@@ -1,7 +1,7 @@
-require "pact/doc/markdown/interaction_renderer"
-require "pact/doc/sort_interactions"
+require "pact_broker/api/renderers/markdown/interaction_renderer"
+require "pact_broker/api/renderers/markdown/sort_interactions"
 require "rack/utils"
-require "pact/doc"
+require "pact_broker/api/renderers/markdown"
 
 module Pact
   module Doc
