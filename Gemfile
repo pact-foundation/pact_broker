@@ -47,6 +47,3 @@ group :pg, optional: true do
   gem "pg", "~>1.6"
 end
 
-if ENV["X_PACT_DEVELOPMENT"] == "true"
-  gem "pact-support", path: "../pact-support"
-end
