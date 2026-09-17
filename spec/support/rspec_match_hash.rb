@@ -10,17 +10,16 @@ RSpec::Matchers.define :contain_hash do |expected|
   end
 
   def formatted_diffs
-    @diffs.collect{ | diff| Pact::Matchers::UnixDiffFormatter.call(diff) }.join("\n")
+    @diffs.collect { |actual| HashSubset.diff(expected, actual) }.join("\n")
   end
 
   def contains_hash?(expected, actual)
     if actual.is_a?(Array)
-      actual.any? && actual.any?{|actual_item| contains_hash?(expected, actual_item)}
+      actual.any? && actual.any? { |actual_item| contains_hash?(expected, actual_item) }
     else
       @diffs ||= []
-      diff = Pact::Matchers.diff(expected, actual.to_hash)
-      @diffs << diff
-      diff.empty?
+      @diffs << actual.to_hash
+      HashSubset.match?(expected, actual.to_hash)
     end
   end
 end
