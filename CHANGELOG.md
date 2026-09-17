@@ -1,3 +1,13 @@
+## [2.121.2] _2026-09-17_
+
+### 🐛 Bug Fixes
+
+-   Require pact/support/matchers for pact-support 2.0
+
+### 📦 Other
+
+-   Boot the app with runtime dependencies only
+
 ## [2.121.1] _2026-09-16_
 
 ### 🐛 Bug Fixes
