@@ -1,7 +1,7 @@
 require "pact/shared/active_support_support"
 require "pact/reification"
 require "cgi"
-require "pact/doc"
+require "pact_broker/api/renderers/markdown"
 
 module Pact
   module Doc

@@ -1,5 +1,5 @@
 require "erb"
-require "pact/doc/interaction_view_model"
+require "pact_broker/api/renderers/markdown/interaction_view_model"
 require "rack/utils"
 
 module Pact
