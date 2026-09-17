@@ -27,7 +27,17 @@ Some Provider will respond with:
     "alligators": [
       {
         "name": "Bob",
-        "phoneNumber": "12345678"
+        "phoneNumber": {
+          "json_class": "Pact::Term",
+          "data": {
+            "generate": "12345678",
+            "matcher": {
+              "json_class": "Regexp",
+              "o": 0,
+              "s": "\\d+"
+            }
+          }
+        }
       }
     ]
   }
