@@ -1,7 +1,7 @@
 require "pact/consumer_contract"
 require "pact/reification"
 require "redcarpet"
-require "pact/doc/markdown/consumer_contract_renderer"
+require "pact_broker/api/renderers/markdown/consumer_contract_renderer"
 require "pact_broker/api/pact_broker_urls"
 require "pact_broker/logging"
 require "pact_broker/date_helper"

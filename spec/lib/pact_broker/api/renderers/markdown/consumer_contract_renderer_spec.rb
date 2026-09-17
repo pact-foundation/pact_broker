@@ -1,4 +1,4 @@
-require "pact/doc/markdown/consumer_contract_renderer"
+require "pact_broker/api/renderers/markdown/consumer_contract_renderer"
 require "pact/support"
 
 module Pact
