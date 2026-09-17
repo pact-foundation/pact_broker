@@ -47,6 +47,7 @@ jobs:
       - pact-verify
       - bundle-audit
       - pre-commit
+      - runtime-boot
 
     steps:
       - name: Failed
@@ -94,6 +95,20 @@ jobs:
           files: tmp/rspec/quick.xml,tmp/rspec/slow.xml
           disable_search: true
           report_type: test_results
+
+  runtime-boot:
+    # Boots with runtime gems only, as the Docker image does, so a require
+    # satisfied only by a test-group gem fails here
+    if: github.event.pull_request.draft != true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4"
+      - run: bundle config set --local without development test
+      - run: bundle install
+      - run: bundle exec ruby script/runtime_boot_check.rb
 
   postgres:
     # Skipped on draft pull requests: the completion check then fails, which is
