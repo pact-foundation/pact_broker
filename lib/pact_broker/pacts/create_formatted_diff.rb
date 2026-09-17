@@ -1,4 +1,4 @@
-require "pact/matchers"
+require "pact/support/matchers"
 require "pact_broker/json"
 require "pact/matchers/unix_diff_formatter"
 require "pact_broker/pacts/sort_content"
