@@ -2,8 +2,24 @@ require "semantic_logger/formatters/default"
 
 module SemanticLogger
   module Formatters
+    # A compact, human readable formatter for local development.
+    #
+    # Named tags that are useful in aggregated production logs but only noise on
+    # a developer's terminal are hidden. Consumers that add their own tags can
+    # append to hidden_named_tags rather than this list naming concepts that do
+    # not belong to the Pact Broker.
     class Short < SemanticLogger::Formatters::Default
-      TAGS_TO_REMOVE = [:pact_broker_git_sha, :tenant_id, :request_id, :pactflow_git_sha]
+      DEFAULT_HIDDEN_NAMED_TAGS = [:pact_broker_git_sha, :request_id].freeze
+
+      class << self
+        def hidden_named_tags=(value)
+          @hidden_named_tags = Array(value)
+        end
+
+        def hidden_named_tags
+          @hidden_named_tags ||= DEFAULT_HIDDEN_NAMED_TAGS.dup
+        end
+      end
 
       def call(log, logger)
         self.log    = log
@@ -17,11 +33,11 @@ module SemanticLogger
       end
 
       def named_tags
-        named_tags = log.named_tags.reject{ | k, _ | TAGS_TO_REMOVE.include?(k) }
-        return if named_tags.nil? || named_tags.empty?
+        visible_tags = (log.named_tags || {}).reject { | key, _ | self.class.hidden_named_tags.include?(key) }
+        return if visible_tags.empty?
 
         list = []
-        named_tags.each_pair { |name, value| list << "#{name}: #{value}" }
+        visible_tags.each_pair { |name, value| list << "#{name}: #{value}" }
         "{#{list.join(', ')}}"
       end
     end
