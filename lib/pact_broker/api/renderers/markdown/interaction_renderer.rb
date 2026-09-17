@@ -1,5 +1,4 @@
 require "erb"
-require "pact_broker/api/renderers/markdown/interaction_view_model"
 require "rack/utils"
 
 module PactBroker
@@ -9,8 +8,8 @@ module PactBroker
         class InteractionRenderer
           attr_reader :interaction
 
-          def initialize interaction, pact
-            @interaction = InteractionViewModel.new(interaction, pact)
+          def initialize interaction_view_model
+            @interaction = interaction_view_model
           end
 
           def render_summary
@@ -20,7 +19,7 @@ module PactBroker
           end
 
           def render_full_interaction
-            if interaction.request == "ASYNC_REQUEST"
+            if interaction.async?
               render("/interaction_async.erb")
             else
               render("/interaction.erb")
