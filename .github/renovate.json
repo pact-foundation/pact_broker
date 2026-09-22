@@ -1,15 +1,20 @@
 {
-	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
-	"extends": ["config:best-practices"],
-	"rebaseWhen": "conflicted",
-	"prHourlyLimit": 0,
-	"prConcurrentLimit": 0,
-	"packageRules": [
-		{
-			"groupName": "Ruby 3.2",
-			"groupSlug": "ruby-3.2",
-			"matchPackageNames": ["ruby"],
-			"allowedVersions": "<=3.2"
-		}
-	]
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:best-practices"
+  ],
+  "prHourlyLimit": 0,
+  "prConcurrentLimit": 0,
+  "rebaseWhen": "conflicted",
+  "automerge": true,
+  "packageRules": [
+    {
+      "groupName": "Ruby 3.2",
+      "groupSlug": "ruby-3.2",
+      "matchPackageNames": [
+        "ruby"
+      ],
+      "allowedVersions": "<=3.2"
+    }
+  ]
 }
