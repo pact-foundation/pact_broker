@@ -1,3 +1,14 @@
+## [2.121.3] _2026-09-23_
+
+### 🧪 Testing
+
+-   Stop snapshotting non-determinate response headers
+
+### 🛠️ Miscellaneous Tasks
+
+-   _(ci)_ Standardize renovate config
+-   _(ci)_ Remove stale internal workflow
+
 ## [2.121.2] _2026-09-17_
 
 ### 🐛 Bug Fixes
