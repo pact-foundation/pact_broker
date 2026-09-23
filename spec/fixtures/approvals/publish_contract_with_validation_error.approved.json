@@ -28,10 +28,7 @@
   "response": {
     "status": 400,
     "headers": {
-      "content-type": "application/hal+json;charset=utf-8",
-      "content-length": "54",
-      "date": "<date>",
-      "server": "Webmachine-Ruby/2.0.1 Rack/3.2"
+      "content-type": "application/hal+json;charset=utf-8"
     },
     "body": {
       "errors": {

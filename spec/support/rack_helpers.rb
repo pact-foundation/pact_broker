@@ -1,13 +1,14 @@
-require "pact_broker/hash_refinements"
 require "pact_broker/string_refinements"
 
 module PactBroker
   module RackHelpers
-    using PactBroker::HashRefinements
     using PactBroker::StringRefinements
 
+    # Rack 3 emits downcased response header names, so match case insensitively.
+    NON_DETERMINATE_HEADERS = ["date", "server", "content-length"].freeze
+
     def determinate_headers(headers)
-      headers.without("Date", "Server", "Content-Length")
+      headers.reject { |name, _| NON_DETERMINATE_HEADERS.include?(name.downcase) }
     end
 
     def rack_env_to_http_headers(rack_env)
