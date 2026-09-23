@@ -1,5 +1,5 @@
 require "approvals/rspec"
-require "pact/support"
+require "support/hash_subset"
 require "yaml"
 
 class YamlFormat < Approvals::Writers::TextWriter
@@ -23,8 +23,7 @@ def print_diff(exception)
   if File.exist?(received_file) && File.exist?(approved_file) && received_file.end_with?(".json")
     received_hash = JSON.parse(File.read(received_file))
     approved_hash = JSON.parse(File.read(approved_file))
-    diff = Pact::Matchers.diff(approved_hash, received_hash, allow_unexpected_keys: false)
-    puts Pact::Matchers::UnixDiffFormatter.call(diff)
+    puts HashSubset.diff(approved_hash, received_hash)
   end
 end
 

@@ -37,27 +37,16 @@ WebMock.disable_net_connect!(allow_localhost: true)
 I18n.config.enforce_available_locales = false
 
 RSpec::Matchers.define :match_pact do |expected, options = {}|
-
   match do |actual|
-    @diff = Pact::Matchers.diff(expected, actual, options)
-    @diff.empty?
+    HashSubset.match?(expected, actual, allow_unexpected_keys: options.fetch(:allow_unexpected_keys, true))
   end
 
-  failure_message do |_actual|
-    formatted_diff = Pact::Matchers::UnixDiffFormatter.call(@diff, :colour => true)
-    colorize(formatted_diff)
+  failure_message do |actual|
+    HashSubset.diff(expected, actual)
   end
 
   failure_message_when_negated do |actual|
     "Expected #{actual} to not match #{expected} but it did."
-  end
-
-  # Prefix each line with an ANSI reset so RSpec's indentation of the
-  # failure message is not painted by the previous line's colour.
-  def colorize(s)
-    s.split("\n").collect do |line|
-      "\e[0m" + line
-    end.join("\n")
   end
 end
 
