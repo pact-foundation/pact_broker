@@ -13,10 +13,7 @@
   "response": {
     "status": 200,
     "headers": {
-      "content-type": "application/hal+json;charset=utf-8",
-      "content-length": "<id>",
-      "date": "<date>",
-      "server": "Webmachine-Ruby/2.0.1 Rack/3.2"
+      "content-type": "application/hal+json;charset=utf-8"
     },
     "body": {
       "_links": {
@@ -28,9 +25,7 @@
           "title": "POST to create a webhook",
           "href": "http://example.org/webhooks/provider/Bar"
         },
-        "pb:webhooks": [
-
-        ],
+        "pb:webhooks": [],
         "curies": [
           {
             "name": "pb",

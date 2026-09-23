@@ -7,10 +7,7 @@
     "status": 200,
     "headers": {
       "content-type": "application/hal+json;charset=utf-8",
-      "vary": "Accept",
-      "content-length": "<timestamps>",
-      "date": "<timestamps>",
-      "server": "<timestamps>"
+      "vary": "Accept"
     },
     "body": {
       "summary": {
