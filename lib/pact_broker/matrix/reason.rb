@@ -21,24 +21,6 @@ module PactBroker
       end
     end
 
-    class IgnoredReason
-      attr_reader :root_reason
-
-      # todo equals
-
-      def initialize(root_reason)
-        @root_reason = root_reason
-      end
-
-      def == other
-        other.is_a?(IgnoredReason) && other.root_reason == self.root_reason
-      end
-
-      def type
-        :info
-      end
-    end
-
     class ErrorReasonWithTwoSelectors < ErrorReason
       attr_reader :consumer_selector, :provider_selector
 
@@ -51,14 +33,6 @@ module PactBroker
         super(other) &&
           consumer_selector == other.consumer_selector &&
           provider_selector == other.provider_selector
-      end
-
-      def selectors
-        [consumer_selector, provider_selector]
-      end
-
-      def to_s
-        "#{self.class} consumer_selector=#{consumer_selector}, provider_selector=#{provider_selector}"
       end
     end
 
@@ -93,14 +67,6 @@ module PactBroker
       def == other
         super(other) && selector == other.selector
       end
-
-      def selectors
-        [selector]
-      end
-
-      def to_s
-        "#{self.class} selector=#{selector}"
-      end
     end
 
     class Warning < Reason
@@ -123,27 +89,11 @@ module PactBroker
       def == other
         super(other) && selector == other.selector
       end
-
-      def selectors
-        [selector]
-      end
-
-      def to_s
-        "#{self.class} selector=#{selector}"
-      end
     end
 
-    class NoEnvironmentSpecified < Warning
-      def selectors
-        []
-      end
-    end
+    class NoEnvironmentSpecified < Warning; end
 
-    class SelectorWithoutPacticipantVersionNumberSpecified < Warning
-      def selectors
-        []
-      end
-    end
+    class SelectorWithoutPacticipantVersionNumberSpecified < Warning; end
 
     # The pact for the required consumer version has been
     # successfully verified by the required provider version
