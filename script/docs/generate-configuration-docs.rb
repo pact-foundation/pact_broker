@@ -69,6 +69,7 @@ doc["groups"].each do | group |
     write "#{metadata["description"]}\n\n"
 
     write "**Supported versions:** #{metadata["supported_versions"]}<br/>" if metadata["supported_versions"]
+    write "**Deprecated:** #{metadata["deprecated"]}<br/>" if metadata["deprecated"]
     write "**Required:** #{metadata["required"] || "false"}<br/>" if metadata["required"]
     write "**Environment variable name:** `PACT_BROKER_#{name.upcase}`<br/>"
     write "**Environment variable format:** #{metadata["environment_variable_format"]}<br/>" if metadata["environment_variable_format"]
