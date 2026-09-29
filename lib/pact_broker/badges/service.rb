@@ -36,7 +36,13 @@ module PactBroker
       def can_i_deploy_badge_url(tag, environment_tag, label, deployable)
         title = label || "can-i-deploy"
         status = "#{tag} to #{environment_tag}"
-        color = deployable ? "brightgreen" : "red"
+        # rubocop:disable Layout/EndAlignment
+        color = case deployable
+        when nil then "lightgrey"
+        when true then "brightgreen"
+        else "red"
+        end
+        # rubocop:enable Layout/EndAlignment
         build_shield_io_uri(title, status, color)
       end
 
