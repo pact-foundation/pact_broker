@@ -43,12 +43,31 @@ module PactBroker
           let(:deployable) { false }
           it { is_expected.to eq URI("https://img.shields.io/badge/can--i--merge-failed-red.svg") }
         end
+
+        context "when deployable is nil" do
+          let(:deployable) { nil }
+          it { is_expected.to eq URI("https://img.shields.io/badge/can--i--merge-unknown-lightgrey.svg") }
+        end
       end
 
       describe "can_i_deploy_badge_url" do
-        subject { Service.can_i_deploy_badge_url("main", "prod", nil, true) }
+        let(:deployable) { true }
 
-        it { is_expected.to eq URI("https://img.shields.io/badge/can--i--deploy-main%20to%20prod-brightgreen.svg") }
+        subject { Service.can_i_deploy_badge_url("main", "prod", nil, deployable) }
+
+        context "when deployable is true" do
+          it { is_expected.to eq URI("https://img.shields.io/badge/can--i--deploy-main%20to%20prod-brightgreen.svg") }
+        end
+
+        context "when deployable is false" do
+          let(:deployable) { false }
+          it { is_expected.to eq URI("https://img.shields.io/badge/can--i--deploy-main%20to%20prod-red.svg") }
+        end
+
+        context "when deployable is nil" do
+          let(:deployable) { nil }
+          it { is_expected.to eq URI("https://img.shields.io/badge/can--i--deploy-main%20to%20prod-lightgrey.svg") }
+        end
       end
 
       describe "pact_verification_badge_url" do
