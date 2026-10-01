@@ -18,6 +18,9 @@ body = """
         -   {% if commit.scope %}_({{ commit.scope }})_ {% endif -%}
             {% if commit.breaking %}[**breaking**] {% endif -%}
             {{ commit.message | upper_first }}
+        {% for footer in commit.footers | filter(attribute="token", value="Migration-Note") -%}
+            {{ "    " }}> **Migration note:** {{ footer.value | indent(prefix="    > ", blank=true) }}
+        {% endfor -%}
     {% endfor %}
 {% endfor -%}
 """
@@ -30,6 +33,9 @@ sort_commits = "oldest"
 tag_pattern = 'v[0-9]+\.[0-9]+\.[0-9]+'
 
 commit_preprocessors = [
+  # Normalise `Migration Note:` footers (any case, space or hyphen) to the
+  # `Migration-Note` token the changelog template looks for.
+  { pattern = '(?im)^migration[ -]note:', replace = "Migration-Note:" },
   { pattern = '\((\w+\s)?#([0-9]+)\)', replace = "([#${2}](https://github.com/pact-foundation/pact_broker/issues/${2}))" },
 ]
 
