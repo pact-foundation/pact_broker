@@ -26,7 +26,7 @@ group :test do
     gem "pact-ffi", path: "../pact-ruby-ffi"
   else
     gem "pact", ">=2.0.3"
-    gem "pact-ffi", "~>0.4.28"
+    gem "pact-ffi", "~>0.5.0"
   end
   gem "rack-test", ">= 0.6.3", "< 3.0.0"
   gem "bundler-audit", "~>0.4"
