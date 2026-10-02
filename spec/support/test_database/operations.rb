@@ -41,7 +41,9 @@ module PactBroker
       ordered_tables.each do | table_name |
         database.drop_table(table_name, cascade: psql?)
       end
-      database.drop_table(:schema_migrations) if database.table_exists?(:schema_migrations)
+      [:schema_migrations, :pact_broker_schema_migrations, :pactflow_schema_migrations].each do |t|
+        database.drop_table(t) if database.table_exists?(t)
+      end
     end
 
     def drop_views
