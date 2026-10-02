@@ -2,7 +2,6 @@ require "pact_broker/configuration"
 require "pact_broker/db"
 require "pact_broker/initializers/database_connection"
 require "pact_broker/project_root"
-require "pact_broker/logging/default_formatter"
 require "pact_broker/policies"
 require "rack-protection"
 require "rack/hal_browser"
@@ -20,6 +19,7 @@ require "rack/pact_broker/add_cache_header"
 require "rack/pact_broker/add_vary_header"
 require "rack/pact_broker/use_when"
 require "rack/pact_broker/application_context"
+require "rack/pact_broker/request_context"
 require "sucker_punch"
 require "pact_broker/api/middleware/configuration"
 require "pact_broker/api/middleware/basic_auth"
@@ -186,6 +186,7 @@ module PactBroker
     end
 
     def configure_middleware
+      @app_builder.use Rack::PactBroker::RequestContext
       @app_builder.use PactBroker::Api::Middleware::HttpDebugLogs if configuration.http_debug_logging_enabled
       configure_basic_auth
       configure_rack_protection
