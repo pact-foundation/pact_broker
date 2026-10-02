@@ -45,47 +45,8 @@ module PactBroker
         other.is_a?(Integration) && consumer_id == other.consumer_id && provider_id == other.provider_id && other.required? == required?
       end
 
-      def <=> other
-        comparison = consumer_name <=> other.consumer_name
-        return comparison if comparison != 0
-        provider_name <=> other.provider_name
-      end
-
-      def to_hash
-        {
-          consumer_name: consumer_name,
-          consumer_id: consumer_id,
-          provider_name: provider_name,
-          provider_id: provider_id,
-        }
-      end
-
       def pacticipant_names
         [consumer_name, provider_name]
-      end
-
-      def to_s
-        "Integration between #{consumer_name} (id=#{consumer_id}) and #{provider_name} (id=#{provider_id}) required=#{required?}"
-      end
-
-      def involves_consumer_with_id?(consumer_id)
-        self.consumer_id == consumer_id
-      end
-
-      def involves_consumer_with_names?(consumer_names)
-        consumer_names.include?(self.consumer_name)
-      end
-
-      def involves_provider_with_name?(provider_name)
-        self.provider_name == provider_name
-      end
-
-      def involves_consumer_with_name?(consumer_name)
-        self.consumer_name == consumer_name
-      end
-
-      def involves_pacticipant_with_name?(pacticipant_name)
-        pacticipant_names.include?(pacticipant_name)
       end
 
       def matches_pacticipant_ids?(other)
