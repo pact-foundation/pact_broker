@@ -59,6 +59,22 @@ module PactBroker
 
             include_context "with ignore selectors"
             include_examples "without any ignore selectors"
+
+            context "when ignoring the specific provider version" do
+              let(:ignore_selectors) do
+                [ UnresolvedSelector.new(pacticipant_name: "Bar", pacticipant_version_number: "2") ]
+              end
+
+              include_context "with ignore selectors"
+            end
+
+            context "when ignoring a different specific provider version" do
+              let(:ignore_selectors) do
+                [ UnresolvedSelector.new(pacticipant_name: "Bar", pacticipant_version_number: "999") ]
+              end
+
+              its(:deployment_status_summary) { is_expected.to_not be_deployable}
+            end
           end
 
           describe "with a failed verification from a provider" do
