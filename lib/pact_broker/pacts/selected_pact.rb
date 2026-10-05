@@ -57,6 +57,10 @@ module PactBroker
         selectors.latest_for_tag?(potential_tag)
       end
 
+      def latest_for_branch? potential_branch = nil
+        selectors.latest_for_branch?(potential_branch)
+      end
+
       def consumer_version_order
         pact.consumer_version.order
       end
