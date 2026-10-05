@@ -70,6 +70,29 @@ module PactBroker
             end
           end
 
+          context "when one consumer has a pact for the tag and another consumer only has a pact for the fallback tag" do
+            before do
+              td.create_pact_with_consumer_version_tag("Foo2", "3", "master", "Bar")
+            end
+
+            it "returns the tag pact for the first consumer and the fallback pact for the other consumer" do
+              expect(subject.collect { | pact | [pact.consumer.name, pact.consumer_version_number] }).to contain_exactly(["Foo", "2"], ["Foo2", "3"])
+            end
+
+            it "only sets the fallback_tag on the selector for the fallback pact" do
+              expect(find_by_consumer_version_number("2").selectors.first.fallback_tag).to be nil
+              expect(find_by_consumer_version_number("3").selectors.first.fallback_tag).to eq fallback_tag
+            end
+
+            context "when the selector specifies the consumer that has a pact for the fallback tag only" do
+              let(:selector) { Selector.new(tag: tag, fallback_tag: fallback_tag, latest: true, consumer: "Foo2") }
+
+              it "returns the fallback pact" do
+                expect(subject.collect { | pact | [pact.consumer.name, pact.consumer_version_number] }).to eq [["Foo2", "3"]]
+              end
+            end
+          end
+
           context "when a pact does not exist for either tag or fallback_tag" do
             let(:tag) { "no-existy" }
             let(:fallback_tag) { "also-no-existy" }
