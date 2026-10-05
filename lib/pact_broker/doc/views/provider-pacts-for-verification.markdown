@@ -34,6 +34,14 @@ Example: This data structure represents the way a user might specify "I want to 
 
 `consumerVersionSelectors.fallbackBranch`: the name of the branch to fallback to if the specified `branch` does not exist. Use of this property is discouraged as it may allow a pact to pass on a feature branch while breaking backwards compatibility with the main branch, which is generally not desired. It is better to use two separate consumer version selectors, one with the main branch name, and one with the feature branch name, rather than use this property.
 
+`consumerVersionSelectors.fallbackToMainBranch`: if the key is specified, can only be set to `true`. Used with `branch`. For each consumer that has no pact for the specified `branch`, returns the latest pact from that consumer's configured `mainBranch` instead. Consumers without a configured `mainBranch` have no fallback. Use this instead of `fallbackBranch` when the consumers have different main branch names, or when a main branch may be renamed, so the provider does not need to know the name. It cannot be used together with `fallbackBranch`. The same caveat as `fallbackBranch` applies.
+
+    {
+      "consumerVersionSelectors": [
+        { "branch": "feat-x", "fallbackToMainBranch": true }
+      ]
+    }
+
 `consumerVersionSelectors.deployed`: if the key is specified, can only be set to `true`. Returns the pacts for all versions of the consumer that are currently deployed to any environment. Use of this selector requires that the deployment of the consumer application is recorded in the Pact Broker using the `pact-broker record-deployment` CLI.
 
 `consumerVersionSelectors.released`: if the key is specified, can only be set to `true`. Returns the pacts for all versions of the consumer that are released and currently supported in any environment. Use of this selector requires that the deployment of the consumer application is recorded in the Pact Broker using the `pact-broker record-release` CLI.

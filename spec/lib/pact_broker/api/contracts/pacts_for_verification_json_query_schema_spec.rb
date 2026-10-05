@@ -327,6 +327,40 @@ module PactBroker
           its([:consumerVersionSelectors, 0]) { is_expected.to eq "a branch must be specified when a fallbackBranch is specified (at index 0)" }
         end
 
+        context "when fallbackToMainBranch is specified without a branch" do
+          let(:consumer_version_selectors) do
+            [{
+              fallbackToMainBranch: true,
+              tag: "foo"
+            }]
+          end
+
+          its([:consumerVersionSelectors, 0]) { is_expected.to eq "a branch must be specified when fallbackToMainBranch=true is specified (at index 0)" }
+        end
+
+        context "when fallbackToMainBranch and fallbackBranch are both specified" do
+          let(:consumer_version_selectors) do
+            [{
+              branch: "feat-x",
+              fallbackBranch: "main",
+              fallbackToMainBranch: true
+            }]
+          end
+
+          its([:consumerVersionSelectors, 0]) { is_expected.to eq "cannot specify both fallbackBranch and fallbackToMainBranch=true (at index 0)" }
+        end
+
+        context "when fallbackToMainBranch is specified with a branch" do
+          let(:consumer_version_selectors) do
+            [{
+              branch: "feat-x",
+              fallbackToMainBranch: true
+            }]
+          end
+
+          it { is_expected.to be_empty }
+        end
+
         context "when a branch is specified with no latest=true" do
           let(:consumer_version_selectors) do
             [{
