@@ -199,7 +199,7 @@ module PactBroker
       # The fallback is applied per consumer, so a consumer without a pact for the branch
       # still gets its fallback pact when another consumer does have a pact for the branch.
       def find_pacts_for_fallback_branches(selected_pacts, provider_name, consumer_version_selectors)
-        consumer_version_selectors.select(&:fallback_branch?).flat_map do | selector |
+        consumer_version_selectors.select { | selector | selector.fallback_branch? || selector.fallback_to_main_branch? }.flat_map do | selector |
           consumer_names_with_a_pact_for_the_branch = selected_pacts
             .select { | selected_pact | selected_pact.latest_for_branch?(selector.branch) }
             .collect(&:consumer_name)
@@ -275,16 +275,25 @@ module PactBroker
       end
 
       def find_pacts_for_which_the_latest_version_for_the_fallback_branch_is_required(provider_name, selector, consumer_names_to_exclude)
-        query = scope_for(PactPublication).eager_for_domain_with_content.for_provider_name(provider_name).latest_for_consumer_branch(selector.fallback_branch)
+        query = scope_for(PactPublication).eager_for_domain_with_content.for_provider_name(provider_name)
+        query = selector.fallback_to_main_branch? ? query.latest_for_main_branches : query.latest_for_consumer_branch(selector.fallback_branch)
         query = query.for_consumer_name(selector.consumer) if selector.consumer
         query.all
           .reject { | pact_publication | consumer_names_to_exclude.include?(pact_publication.consumer.name) }
           .collect do | pact_publication |
             SelectedPact.new(
               pact_publication.to_domain,
-              Selectors.new(selector.resolve_for_fallback(pact_publication.consumer_version))
+              Selectors.new(resolve_selector_for_fallback_branch(selector, pact_publication))
             )
           end
+      end
+
+      def resolve_selector_for_fallback_branch(selector, pact_publication)
+        if selector.fallback_to_main_branch?
+          selector.resolve_for_fallback_to_main_branch(pact_publication.consumer_version, pact_publication.consumer.main_branch)
+        else
+          selector.resolve_for_fallback(pact_publication.consumer_version)
+        end
       end
 
       def find_provider_tags_for_which_pact_publication_id_is_pending(pact_publication, successfully_verified_head_pact_publication_ids_for_each_provider_tag)

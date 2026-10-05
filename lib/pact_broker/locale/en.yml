@@ -105,6 +105,9 @@ en:
         pacts_for_verification_selector_branch_and_latest_false_disallowed: cannot specify a branch with latest=false
         pacts_for_verification_selector_main_branch_and_latest_false_disallowed: cannot specify mainBranch=true with latest=false
         pacts_for_verification_selector_fallback_branch_and_latest_false_disallowed: fallbackBranch can only be set if latest is true
+        pacts_for_verification_selector_fallback_to_main_branch_requires_branch: "a branch must be specified when fallbackToMainBranch=true is specified"
+        pacts_for_verification_selector_fallback_to_main_branch_and_fallback_branch_disallowed: cannot specify both fallbackBranch and fallbackToMainBranch=true
+        pacts_for_verification_selector_fallback_to_main_branch_and_latest_false_disallowed: fallbackToMainBranch can only be set if latest is true
         pacts_for_verification_selector_required_params_missing: must specify a value for environment or tag or branch, or specify mainBranch=true, matchingBranch=true, latest=true, deployed=true, released=true or deployedOrReleased=true
         pacts_for_verification_selector_main_branch_with_other_param_disallowed: cannot specify mainBranch=true with any other criteria apart from consumer
         pacts_for_verification_selector_matching_branch_with_other_param_disallowed: cannot specify matchingBranch=true with any other criteria apart from consumer

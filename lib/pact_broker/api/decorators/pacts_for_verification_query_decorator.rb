@@ -34,6 +34,7 @@ module PactBroker
             }
           property :fallback_tag
           property :fallback_branch
+          property :fallback_to_main_branch
           property :consumer
           property :environment_name, as: :environment
           property :currently_deployed, as: :deployed

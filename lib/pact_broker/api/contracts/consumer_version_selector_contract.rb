@@ -6,7 +6,7 @@ module PactBroker
       class ConsumerVersionSelectorContract < BaseContract
         option :parent # the parent hash in which the ConsumerVersionSelector is embedded
 
-        BRANCH_KEYS = [:latest, :tag, :fallbackTag, :branch, :fallbackBranch, :matchingBranch, :mainBranch]
+        BRANCH_KEYS = [:latest, :tag, :fallbackTag, :branch, :fallbackBranch, :fallbackToMainBranch, :matchingBranch, :mainBranch]
         ENVIRONMENT_KEYS = [:environment, :deployed, :released, :deployedOrReleased]
         ALL_KEYS = BRANCH_KEYS + ENVIRONMENT_KEYS + [:consumer]
 
@@ -18,6 +18,7 @@ module PactBroker
           optional(:latest).filled(included_in?: [true, false])
           optional(:fallbackTag).filled(:str?)
           optional(:fallbackBranch).filled(:str?)
+          optional(:fallbackToMainBranch).filled(included_in?: [true])
           optional(:consumer).filled(:str?)
           optional(:deployed).filled(included_in?: [true])
           optional(:released).filled(included_in?: [true])
@@ -105,6 +106,21 @@ module PactBroker
 
           if values[:fallbackBranch] && values[:latest] == false
             base.failure(validation_message("pacts_for_verification_selector_fallback_branch_and_latest_false_disallowed"))
+          end
+        end
+
+        # fallbackToMainBranch
+        rule(:fallbackToMainBranch, :fallbackBranch, :branch, :latest) do
+          if values[:fallbackToMainBranch] && !values[:branch]
+            base.failure(validation_message("pacts_for_verification_selector_fallback_to_main_branch_requires_branch"))
+          end
+
+          if values[:fallbackToMainBranch] && values[:fallbackBranch]
+            base.failure(validation_message("pacts_for_verification_selector_fallback_to_main_branch_and_fallback_branch_disallowed"))
+          end
+
+          if values[:fallbackToMainBranch] && values[:latest] == false
+            base.failure(validation_message("pacts_for_verification_selector_fallback_to_main_branch_and_latest_false_disallowed"))
           end
         end
 
