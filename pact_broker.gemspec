@@ -59,7 +59,6 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency "semver2", "~> 3.4.2"
   gem.add_runtime_dependency "rack", "~> 3.2"
   gem.add_runtime_dependency "redcarpet", "~> 3.5"
-  gem.add_runtime_dependency "pact-support", "~> 2.0"
   gem.add_runtime_dependency "haml", "~>5.0"
   gem.add_runtime_dependency "sucker_punch", "~>3.0"
   gem.add_runtime_dependency "rack-protection", "~> 4.1"
@@ -70,6 +69,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency "anyway_config", "~> 2.1"
   gem.add_runtime_dependency "request_store", "~> 1.5"
   gem.add_runtime_dependency "moments", "~> 0.2"
+  gem.add_runtime_dependency "diff-lcs", "~> 1.5"
   # dropped in ruby 3.4 stdlib
   gem.add_runtime_dependency "mutex_m", "~> 0.3" # until as-notifications -> webmachine requires it
   gem.add_runtime_dependency "csv", "~> 3.0" # lib/pact_broker/api/decorators/relationships_csv_decorator.rb

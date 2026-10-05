@@ -1,3 +1,76 @@
+## [2.122.0] _2026-10-01_
+
+### 🚀 Features
+
+-   Add a unified diff renderer
+-   Render pact diffs as unified diffs
+    > **Migration note:** the pact diff endpoints return a standard unified diff.
+    > This covers the `diff/previous-distinct`, `diff/version/{version}` and
+    > `pact-version/{sha}/diff/pact-version/{sha}` resources under
+    > `/pacts/provider/{provider}/consumer/{consumer}`, and the diff notice
+    > that `POST /contracts/publish` returns when a publish would modify an
+    > existing pact. Clients that parse this output must handle `@@` hunk
+    > headers and unchanged context lines. Keys that exist only in the newer
+    > pact now appear as `+` lines.
+    > 
+    > As an example, take an interaction whose request method changes from
+    > post to get and which gains an `Accept` header. The diff was previously:
+    > 
+    > ```diff
+    >    "interactions": [
+    >      {
+    >        "request": {
+    > -        "method": "post"
+    > +        "method": "get"
+    >        }
+    >      }
+    >    ]
+    > ```
+    > 
+    > It is now:
+    > 
+    > ```diff
+    > @@ -6,7 +6,10 @@
+    >      {
+    >        "description": "a request",
+    >        "request": {
+    > -        "method": "post",
+    > +        "headers": {
+    > +          "Accept": "application/json"
+    > +        },
+    > +        "method": "get",
+    >          "path": "/"
+    >        },
+    >        "response": {
+    > ```
+
+### 🐛 Bug Fixes
+
+-   Require date_helper in HtmlPactRenderer
+
+### 🚜 Refactor
+
+-   Remove unused pact/doc generator code
+-   Compare pact content with Hash equality
+-   Move lib/pact/doc under lib/pact_broker/api/renderers
+-   Move the markdown pact renderer under PactBroker
+-   Render pact HTML from the parsed hash
+
+### 🧪 Testing
+
+-   Stop snapshotting non-determinate response headers
+-   Replace Pact::Matchers in spec helpers with a subset matcher
+
+### 🛠️ Miscellaneous Tasks
+
+-   _(ci)_ Standardize renovate config
+-   _(ci)_ Remove stale internal workflow
+-   Remove the pact-support dependency
+    > **Migration note:** pact_broker no longer depends on pact-support, so code
+    > alongside the broker can no longer rely on Pact::* constants. Add
+    > pact-support to your own Gemfile if that code needs them.
+-   _(release)_ Render Migration-Note footers in the changelog
+
 ## [2.121.2] _2026-09-17_
 
 ### 🐛 Bug Fixes

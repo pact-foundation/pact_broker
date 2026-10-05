@@ -129,7 +129,7 @@ module PactBroker
             end
 
             it "logs a warning" do
-              expect(logger).to receive(:info).with(/Could not parse.*Error/)
+              expect(logger).to receive(:info).with(/Could not render.*NotAPactError/)
               subject
             end
           end
