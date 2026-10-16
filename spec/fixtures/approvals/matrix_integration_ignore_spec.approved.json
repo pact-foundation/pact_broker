@@ -11,6 +11,19 @@
       "PactBroker::Matrix::PactNotEverVerifiedByProvider"
     ]
   },
+  "PactBroker::Matrix::Service find when deploying a consumer and ignoring a provider with a missing verification from a provider when ignoring the specific provider version deployment_status_summary is expected to be deployable": {
+    "deployable": true,
+    "reasons": [
+      "PactBroker::Matrix::NoDependenciesMissing"
+    ]
+  },
+  "PactBroker::Matrix::Service find when deploying a consumer and ignoring a provider with a missing verification from a provider when ignoring a different specific provider version deployment_status_summary is expected not to be deployable": {
+    "deployable": null,
+    "reasons": [
+      "PactBroker::Matrix::IgnoreSelectorDoesNotExist",
+      "PactBroker::Matrix::PactNotEverVerifiedByProvider"
+    ]
+  },
   "PactBroker::Matrix::Service find when deploying a consumer and ignoring a provider with a failed verification from a provider deployment_status_summary is expected to be deployable": {
     "deployable": true,
     "reasons": [
