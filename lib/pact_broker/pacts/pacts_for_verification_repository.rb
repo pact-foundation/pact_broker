@@ -178,19 +178,15 @@ module PactBroker
         end
       end
 
+      # The fallback is applied per consumer, so a consumer without a pact for the tag
+      # still gets its fallback pact when another consumer does have a pact for the tag.
       def find_pacts_for_fallback_tags(selected_pacts, provider_name, consumer_version_selectors)
         # TODO at the moment, the validation doesn't stop fallback being used with 'all' selectors
-        selectors_with_fallback_tags = consumer_version_selectors.select(&:fallback_tag?)
-        selectors_missing_a_pact = selectors_with_fallback_tags.reject do | selector |
-          selected_pacts.any? do | selected_pact |
-            selected_pact.latest_for_tag?(selector.tag)
-          end
-        end
-
-        if selectors_missing_a_pact.any?
-          find_pacts_for_which_the_latest_version_for_the_fallback_tag_is_required(provider_name, selectors_missing_a_pact)
-        else
-          []
+        consumer_version_selectors.select(&:fallback_tag?).flat_map do | selector |
+          consumer_names_with_a_pact_for_the_tag = selected_pacts
+            .select { | selected_pact | selected_pact.latest_for_tag?(selector.tag) }
+            .collect(&:consumer_name)
+          find_pacts_for_which_the_latest_version_for_the_fallback_tag_is_required(provider_name, selector, consumer_names_with_a_pact_for_the_tag)
         end
       end
 
@@ -248,17 +244,17 @@ module PactBroker
         selectors
       end
 
-      def find_pacts_for_which_the_latest_version_for_the_fallback_tag_is_required(provider_name, selectors)
-        selectors.collect do | selector |
-          query = scope_for(PactPublication).eager_for_domain_with_content.for_provider_name(provider_name).for_latest_consumer_versions_with_tag(selector.fallback_tag)
-          query = query.for_consumer_name(selector.consumer) if selector.consumer
-          query.all.collect do | pact_publication |
+      def find_pacts_for_which_the_latest_version_for_the_fallback_tag_is_required(provider_name, selector, consumer_names_to_exclude)
+        query = scope_for(PactPublication).eager_for_domain_with_content.for_provider_name(provider_name).for_latest_consumer_versions_with_tag(selector.fallback_tag)
+        query = query.for_consumer_name(selector.consumer) if selector.consumer
+        query.all
+          .reject { | pact_publication | consumer_names_to_exclude.include?(pact_publication.consumer.name) }
+          .collect do | pact_publication |
             SelectedPact.new(
               pact_publication.to_domain,
               Selectors.new(selector.resolve_for_fallback(pact_publication.consumer_version))
             )
           end
-        end.flatten
       end
 
       def find_provider_tags_for_which_pact_publication_id_is_pending(pact_publication, successfully_verified_head_pact_publication_ids_for_each_provider_tag)
