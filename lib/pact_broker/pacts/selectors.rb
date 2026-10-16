@@ -59,6 +59,10 @@ module PactBroker
         any? { | selector | selector.latest_for_tag?(potential_tag) }
       end
 
+      def latest_for_branch? potential_branch = nil
+        any? { | selector | selector.latest_for_branch?(potential_branch) }
+      end
+
       def tag_names_of_selectors_for_all_pacts
         select(&:all_for_tag?).collect(&:tag).uniq
       end
