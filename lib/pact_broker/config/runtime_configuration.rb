@@ -20,6 +20,7 @@ require "pact_broker/config/runtime_configuration_basic_auth_methods"
 require "pact_broker/string_refinements"
 require "pact_broker/hash_refinements"
 require "pact_broker/error"
+require "pact_broker/logging/appender_factory"
 
 module PactBroker
   module Config
@@ -40,12 +41,20 @@ module PactBroker
         log_stream: :file,
         log_level: :info,
         log_format: nil,
-        log_otel_enabled: :auto,
+        log_application: nil,
+        log_environment: nil,
         warning_error_class_names: ["Sequel::ForeignKeyConstraintViolation"],
         hide_pactflow_messages: false,
         log_configuration_on_startup: true,
         http_debug_logging_enabled: false
       )
+
+      # No default. See the comment on webhook_certificates: a default of [] or
+      # nil makes anyway_config fail when merging the numerically indexed hash
+      # from the environment variables. nil therefore means "not configured",
+      # which is what Logging::AppenderEntries uses to decide whether to fall
+      # back to the deprecated log_stream and log_format settings.
+      attr_config :log_appenders
 
       on_load :validate_logging_attributes!
 
@@ -114,7 +123,8 @@ module PactBroker
       coerce_types(
         features: COERCE_FEATURES,
         network_diagram_max_pacticipants: :integer,
-        webhook_certificates: COERCE_WEBHOOKS
+        webhook_certificates: COERCE_WEBHOOKS,
+        log_appenders: COERCE_LOG_APPENDERS
       )
       sensitive_values(:database_url, :database_password)
 
@@ -130,12 +140,17 @@ module PactBroker
         super(log_format&.to_sym)
       end
 
-      def log_otel_enabled= value
-        super(coerce_log_otel_enabled(value))
+      def log_appenders= log_appenders
+        super(COERCE_LOG_APPENDERS.call(log_appenders))
+        validate_log_appenders!
       end
 
-      def custom_log_formatters= custom_log_formatters
-        super(custom_log_formatters&.symbolize_keys)
+      # attr_config defaults are evaluated once, when the class is defined, so a
+      # default of ENV.fetch("OTEL_SERVICE_NAME", ...) would be baked in at load
+      # time and never see a later change to the environment variable. Falling
+      # back in the getter keeps it dynamic.
+      def log_application
+        super || ENV.fetch("OTEL_SERVICE_NAME", "pact-broker")
       end
 
       def base_url= base_url
@@ -221,24 +236,87 @@ module PactBroker
           raise_validation_error("Must specify log_dir if log_stream is set to file")
         end
 
-        unless [:auto, true, false].include?(log_otel_enabled)
-          raise_validation_error("log_otel_enabled must be one of: auto, true, false")
+        validate_log_appenders!
+      end
+
+      def validate_log_appenders!
+        return if log_appenders.nil?
+
+        log_appenders.each_with_index do | entry, index |
+          validate_log_appender_entry!(entry, index)
         end
+      end
+      private :validate_log_appenders!
+
+      def validate_log_appender_entry!(entry, index)
+        error = lambda { | message | raise_validation_error("log_appenders entry #{index} #{message}") }
+
+        validate_log_appender_entry_target!(entry, error)
+        validate_log_appender_entry_stream!(entry, error)
+        validate_log_appender_entry_format!(entry, error)
+        validate_log_appender_entry_file_name!(entry, error)
+        validate_log_appender_entry_enabled!(entry, error)
+      end
+      private :validate_log_appender_entry!
+
+      def validate_log_appender_entry_target!(entry, error)
+        has_stream = !entry[:stream].nil?
+        has_appender = !entry[:appender].nil?
+        # io:, file_name: and logger: are the other keys SemanticLogger dispatches on
+        has_direct_target = [:io, :file_name, :logger].any? { | key | !entry[key].nil? }
+
+        error.call("must not specify both stream and appender") if has_stream && has_appender
+
+        unless has_stream || has_appender || has_direct_target
+          error.call("must specify one of stream or appender")
+        end
+      end
+      private :validate_log_appender_entry_target!
+
+      def validate_log_appender_entry_stream!(entry, error)
+        return if entry[:stream].nil?
+
+        if !PactBroker::Logging::AppenderFactory::VALID_STREAMS.include?(entry[:stream])
+          error.call("has an invalid stream. Valid values are: #{PactBroker::Logging::AppenderFactory::VALID_STREAMS.join(", ")}")
+        end
+      end
+      private :validate_log_appender_entry_stream!
+
+      def validate_log_appender_entry_format!(entry, error)
+        if entry[:format] && !PactBroker::Logging::AppenderFactory::VALID_FORMATS.include?(entry[:format])
+          error.call("has an invalid format. Valid values are: #{PactBroker::Logging::AppenderFactory::VALID_FORMATS.join(", ")}")
+        end
+      end
+      private :validate_log_appender_entry_format!
+
+      def validate_log_appender_entry_file_name!(entry, error)
+        if entry[:file_name] && !entry[:stream].nil? && entry[:stream] != :file
+          error.call("must not specify file_name unless stream is file")
+        end
+      end
+      private :validate_log_appender_entry_file_name!
+
+      def validate_log_appender_entry_enabled!(entry, error)
+        unless [true, false, :auto].include?(entry.fetch(:enabled, true))
+          error.call("has an invalid enabled value. Valid values are: true, false, auto")
+        end
+      end
+      private :validate_log_appender_entry_enabled!
+
+      def log_appenders_explicitly_set?
+        !log_appenders.nil?
+      end
+
+      def log_setting_explicitly_set?(name)
+        trace = to_source_trace[name.to_s]
+        return false unless trace
+
+        trace.dig(:source, :type) != :defaults
       end
 
       def raise_validation_error(msg)
         raise PactBroker::ConfigurationError, msg
       end
-
-      def coerce_log_otel_enabled(value)
-        case value
-        when nil, "", "auto", :auto then :auto
-        when true, "true", "1", 1 then true
-        when false, "false", "0", 0 then false
-        else value
-        end
-      end
-      private :coerce_log_otel_enabled
 
       def set_webhook_attribute_defaults
         # can't set a default on this, or anyway config blows up when trying to merge the
