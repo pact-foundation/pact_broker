@@ -204,6 +204,48 @@ module PactBroker
           subject
         end
       end
+
+      describe "logging context" do
+        context "when tags were captured at schedule time" do
+          let(:job_params) { super().merge(logging_tags: { request_id: "abc" }) }
+
+          it "restores them for the duration of the job" do
+            tags_inside_job = nil
+            allow(PactBroker::Webhooks::TriggerService).to receive(:execute_triggered_webhook_now) do
+              tags_inside_job = SemanticLogger.named_tags
+              result
+            end
+
+            subject
+
+            expect(tags_inside_job).to eq(request_id: "abc")
+          end
+
+          it "does not leak the tags after the job" do
+            subject
+
+            expect(SemanticLogger.named_tags).to eq({})
+          end
+
+          context "when the webhook fails and the job is rescheduled" do
+            let(:success) { false }
+
+            it "carries the tags into the rescheduled job, keeping the retry chain correlated" do
+              expect(Job).to receive(:perform_in) do | _delay, rescheduled_params |
+                expect(rescheduled_params[:logging_tags]).to eq(request_id: "abc")
+              end
+
+              subject
+            end
+          end
+        end
+
+        context "when no tags were captured" do
+          it "runs without error" do
+            expect { subject }.to_not raise_error
+          end
+        end
+      end
     end
   end
 end

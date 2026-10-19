@@ -11,31 +11,19 @@ groups:
           - error
           - fatal
       log_format:
-        description: "The application log format. Can be any value supported by Semantic Logger."
+        description: "The application log format."
+        deprecated: "Use `log_appenders` instead. This setting will be removed in a future major version."
         default_value: "default"
         allowed_values:
           - default
-          - json
           - color
-        more_info: https://github.com/rocketjob/semantic_logger/tree/master/lib/semantic_logger/formatters
-      log_otel_enabled:
-        description: |-
-          Controls whether logs are also emitted to the OpenTelemetry logs pipeline.
-
-          `auto` (the default) adds the OpenTelemetry appender only when the
-          `opentelemetry-logs-sdk` gem is installed and an OpenTelemetry logger provider
-          is configured. `true` forces the appender on and raises an error if the gem is
-          not available. `false` disables it entirely.
-
-          The `opentelemetry-logs-sdk` gem is an optional, runtime-detected dependency and
-          is not bundled with the Pact Broker. When `log_format` is set to `json`, active
-          trace and span IDs are also embedded in the JSON log output.
-        default_value: auto
-        allowed_values:
+          - json
+          - logfmt
+          - one_line
+          - short
+          - raw
           - auto
-          - true
-          - false
-        supported_versions: From v2.120.0
+        more_info: https://github.com/reidmorrison/semantic_logger/blob/main/docs/appenders.md
       log_dir:
         description: "The log file directory"
         default_value: "./logs"
@@ -44,10 +32,63 @@ groups:
           The stream to which the logs will be sent.
 
           While the default is `file` for the Ruby application, it is set to `stdout` on the supported Docker images.
-        default_value: "file"
+        deprecated: "Use `log_appenders` instead. This setting will be removed in a future major version."
+        default_value: file
         allowed_values:
-          - stdout
           - file
+          - stdout
+      log_appenders:
+        description: |-
+          A list of log destinations. Each item configures one appender, and supports
+          the following keys:
+
+          * `stream`: one of `stdout`, `stderr` or `file`.
+          * `appender`: the name of any Semantic Logger appender, for example `open_telemetry`
+            or `loki`. Mutually exclusive with `stream`.
+          * `format`: one of `default`, `color`, `json`, `logfmt`, `one_line`, `short`, `raw`
+            or `auto`. `auto` uses `color` when the output is a terminal, and `json` otherwise.
+          * `level`: the minimum level for this appender. Defaults to `log_level`.
+          * `enabled`: `true` (the default), `false`, or `auto`. Use `auto` for an appender
+            whose gem is optional: the appender is added when the gem is available, and
+            skipped without error when it is not.
+          * `file_name`: only valid when `stream` is `file`. Defaults to `pact_broker.log`
+            inside `log_dir`.
+
+          Any other key is passed straight through to the appender, so appender specific
+          options such as `url` work without further configuration.
+
+          When this setting is omitted, the Pact Broker behaves as it always has: it writes
+          to the location given by `log_stream` and `log_format`, and additionally emits to
+          the OpenTelemetry logs pipeline when the `opentelemetry-logs-sdk` gem is installed.
+
+          Setting this to an empty list disables application logging.
+
+          Example YAML:
+
+          ```
+          log_appenders:
+            - stream: stdout
+              format: auto
+            - appender: open_telemetry
+              enabled: auto
+          ```
+
+          Example environment variables:
+
+          ```
+          PACT_BROKER_LOG_APPENDERS__0__STREAM=stdout
+          PACT_BROKER_LOG_APPENDERS__0__FORMAT=auto
+          PACT_BROKER_LOG_APPENDERS__1__APPENDER=open_telemetry
+          PACT_BROKER_LOG_APPENDERS__1__ENABLED=auto
+          ```
+        default_description: "a single appender configured by `log_stream` and `log_format`, plus the OpenTelemetry appender when its gem is available"
+        environment_variable_format: "Indexed environment variables, for example `PACT_BROKER_LOG_APPENDERS__0__STREAM`."
+        more_info: "https://github.com/reidmorrison/semantic_logger/blob/main/docs/appenders.md, and see [Extending logging](EXTENDING_LOGGING.md) for writing a custom appender."
+      log_application:
+        description: "The application name recorded on every log entry, and reported as the service name to log aggregators."
+        default_description: "the value of `OTEL_SERVICE_NAME`, or `pact-broker`"
+      log_environment:
+        description: "The deployment environment recorded on every log entry, for example `production`. Not set by default."
       http_debug_logging_enabled:
         description: |-
           Enable this setting to print the entire request and response to the logs at debug level. Used for troubleshooting issues.
