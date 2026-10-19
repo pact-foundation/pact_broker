@@ -124,14 +124,6 @@ module PactBroker
         self[:environment_name]
       end
 
-      def most_specific_criterion
-        if pacticipant_version_id
-          { pacticipant_version_id: pacticipant_version_id }
-        else
-          { pacticipant_id: pacticipant_id }
-        end
-      end
-
       def only_pacticipant_name_specified?
         !!pacticipant_name && self[:original_selector].without(:pacticipant_name).none?{ |_key, value| value }
       end
