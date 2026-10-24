@@ -39,7 +39,7 @@ Features:
 * Provides webhooks to trigger actions when pacts change eg. run provider build, notify a Slack channel.
 * View diffs between Pact versions so you can tell what expectations have changed.
 * [Docker Pact Broker][docker]
-* A [CLI][cli] for encorporating the Pact workflow into your continuous integration process.
+* A [CLI][cli] for incorporating the Pact workflow into your continuous integration process.
 
 
 ### How would I use the Pact Broker?
