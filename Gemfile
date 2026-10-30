@@ -33,7 +33,7 @@ group :test do
   gem "webmock", "~>3.9"
   gem "rspec", "~>3.0"
   gem "rspec-its", "~>1.2"
-  gem "database_cleaner", "~>1.8", ">= 1.8.1"
+  gem "database_cleaner", "~>2.0", ">= 2.1.0"
   gem "timecop", "~> 0.9"
   gem "faraday", "~>2.0"
   gem "docker-api", "~>2.0"
