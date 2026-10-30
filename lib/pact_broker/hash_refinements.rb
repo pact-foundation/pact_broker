@@ -80,8 +80,8 @@ module PactBroker
       def symbolize_keys_private(params)
         case params
         when Hash
-          params.inject({}) do |result, (key, value)|
-            result.merge(key.to_sym => symbolize_keys_private(value))
+          params.each_with_object({}) do |(key, value), result|
+            result[key.to_sym] = symbolize_keys_private(value)
           end
         when Array
           params.collect { |value| symbolize_keys_private(value) }

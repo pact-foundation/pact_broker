@@ -59,5 +59,49 @@ module PactBroker
         expect(hash_1.snakecase_keys).to eq expected
       end
     end
+
+    describe "symbolize_keys" do
+      let(:hash_1) do
+        {
+          "foo" => {
+            "bar" => [{ "baz" => 1 }, "string", 2],
+            :already_symbol => nil
+          },
+          "meep" => "moop"
+        }
+      end
+
+      let(:expected) do
+        {
+          foo: {
+            bar: [{ baz: 1 }, "string", 2],
+            already_symbol: nil
+          },
+          meep: "moop"
+        }
+      end
+
+      it "symbolizes the keys of nested hashes, including hashes inside arrays" do
+        expect(hash_1.symbolize_keys).to eq expected
+      end
+
+      it "preserves the order of the keys" do
+        expect(hash_1.symbolize_keys.keys).to eq [:foo, :meep]
+      end
+
+      it "does not modify the original hash" do
+        original = Marshal.load(Marshal.dump(hash_1))
+        hash_1.symbolize_keys
+        expect(hash_1).to eq original
+      end
+
+      context "when a string key and a symbol key have the same name" do
+        let(:hash_1) { { "foo" => 1, :foo => 2 } }
+
+        it "uses the last value" do
+          expect(hash_1.symbolize_keys).to eq(foo: 2)
+        end
+      end
+    end
   end
 end
