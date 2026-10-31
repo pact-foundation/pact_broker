@@ -79,6 +79,98 @@ module PactBroker
             end
           end
         end
+
+        context "when there is a fallback branch specified" do
+          before do
+            td.create_consumer("Foo")
+              .create_provider("Bar")
+              .create_consumer_version("1", branch: "main")
+              .create_pact
+              .create_consumer_version("2", branch: "feat-x")
+              .create_pact
+          end
+
+          let(:branch) { "feat-x" }
+          let(:fallback_branch) { "main" }
+          let(:selector) { Selector.new(branch: branch, fallback_branch: fallback_branch, latest: true) }
+          let(:consumer_version_selectors) { Selectors.new(selector) }
+
+          context "when a pact exists for the branch" do
+            it "returns the pact from the branch" do
+              expect(subject.size).to eq 1
+              expect(find_by_consumer_version_number("2")).to_not be nil
+            end
+
+            it "does not set the fallback_branch on the selector" do
+              expect(find_by_consumer_version_number("2").selectors.first.fallback_branch).to be nil
+            end
+          end
+
+          context "when a pact does not exist for the branch and a pact exists for the fallback branch" do
+            let(:branch) { "no-existy" }
+
+            it "returns the pact from the fallback branch" do
+              expect(subject.size).to eq 1
+              expect(find_by_consumer_version_number("1")).to_not be nil
+            end
+
+            it "sets the branch, fallback_branch and latest on the selector" do
+              selector = find_by_consumer_version_number("1").selectors.first
+              expect(selector.branch).to eq branch
+              expect(selector.fallback_branch).to eq fallback_branch
+              expect(selector.latest).to be true
+            end
+
+            context "when a consumer is specified" do
+              before do
+                td.create_consumer("Foo2")
+                  .create_consumer_version("3", branch: "main")
+                  .create_pact
+              end
+
+              let(:selector) { Selector.new(branch: branch, fallback_branch: fallback_branch, latest: true, consumer: "Foo") }
+
+              it "only returns the pacts for the consumer" do
+                expect(subject.size).to eq 1
+                expect(subject.first.consumer.name).to eq "Foo"
+              end
+            end
+          end
+
+          context "when one consumer has a pact for the branch and another consumer only has a pact for the fallback branch" do
+            before do
+              td.create_consumer("Foo2")
+                .create_consumer_version("3", branch: "main")
+                .create_pact
+            end
+
+            it "returns the branch pact for the first consumer and the fallback pact for the other consumer" do
+              expect(subject.collect { | pact | [pact.consumer.name, pact.consumer_version_number] }).to contain_exactly(["Foo", "2"], ["Foo2", "3"])
+            end
+
+            it "only sets the fallback_branch on the selector for the fallback pact" do
+              expect(find_by_consumer_version_number("2").selectors.first.fallback_branch).to be nil
+              expect(find_by_consumer_version_number("3").selectors.first.fallback_branch).to eq fallback_branch
+            end
+
+            context "when the selector specifies the consumer that has a pact for the fallback branch only" do
+              let(:selector) { Selector.new(branch: branch, fallback_branch: fallback_branch, latest: true, consumer: "Foo2") }
+
+              it "returns the fallback pact" do
+                expect(subject.collect { | pact | [pact.consumer.name, pact.consumer_version_number] }).to eq [["Foo2", "3"]]
+              end
+            end
+          end
+
+          context "when a pact does not exist for either branch or fallback_branch" do
+            let(:branch) { "no-existy" }
+            let(:fallback_branch) { "also-no-existy" }
+
+            it "returns an empty list" do
+              expect(subject).to be_empty
+            end
+          end
+        end
       end
     end
   end
