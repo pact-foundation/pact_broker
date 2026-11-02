@@ -56,16 +56,20 @@ module PactBroker
           @parsed_contracts ||= decorator_class(:publish_contracts_decorator).new(PactBroker::Contracts::ContractsToPublish.new).from_hash(params, { user_options: { sha_generator: PactBroker.configuration.sha_generator } } )
         end
 
+        # Memoized because decoding and parsing very large contracts is expensive,
+        # and this is called multiple times per request (validation, authorization and publication)
         def params
-          p = super(default: {}, symbolize_names: false)
-          if p["contracts"].is_a?(Array)
-            p["contracts"].each do | contract |
-              if contract.is_a?(Hash)
-                decode_and_parse_content(contract)
+          @params_with_decoded_contracts ||= begin
+            p = super(default: {}, symbolize_names: false)
+            if p["contracts"].is_a?(Array)
+              p["contracts"].each do | contract |
+                if contract.is_a?(Hash)
+                  decode_and_parse_content(contract)
+                end
               end
             end
+            p
           end
-          p
         end
 
         def schema

@@ -11,10 +11,11 @@ module PactBroker
         property :provider_name
         property :specification
         property :content_type
-        property :decoded_content, setter: -> (fragment:, represented:, user_options:, **) {
+        property :decoded_content, setter: -> (fragment:, represented:, user_options:, doc:, **) {
           represented.decoded_content = fragment
-          # Set the pact version sha when we set the content
-          represented.pact_version_sha = user_options.fetch(:sha_generator).call(fragment)
+          # Set the pact version sha when we set the content, reusing the content that has already been
+          # parsed in the resource, as parsing very large pacts is expensive
+          represented.pact_version_sha = user_options.fetch(:sha_generator).call(fragment, parsed_content: doc["decodedParsedContent"])
         }
         property :on_conflict, default: "overwrite"
 

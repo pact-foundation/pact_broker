@@ -87,6 +87,71 @@ module PactBroker
           end
         end
       end
+
+      describe ".call with the parsed content" do
+        let(:json_content) do
+          {
+            interactions: [{d: 4, c: 3}, {b: 2, a: 1}],
+            metadata: {
+              pactSpecification: {
+                version: "1"
+              }
+            }
+          }.to_json
+        end
+
+        # Frozen, so that an error is raised if generating the sha modifies it
+        let(:parsed_content) { JSON.parse(json_content, freeze: true) }
+
+        subject { GenerateSha.call(json_content, parsed_content: parsed_content) }
+
+        context "when equality is based on the verifiable content only" do
+          before do
+            PactBroker.configuration.base_equality_only_on_content_that_affects_verification_results = true
+          end
+
+          it "returns the same sha as when the JSON is parsed" do
+            expect(subject).to eq GenerateSha.call(json_content)
+          end
+
+          it "does not modify the parsed content" do
+            expect { subject }.to_not raise_error
+          end
+
+          # This is not a valid way to call it - it is used to show which content the sha is generated from
+          context "when the parsed content is different from the JSON" do
+            let(:parsed_content) { JSON.parse(other_json_content) }
+            let(:other_json_content) do
+              {
+                interactions: [{a: 9999, b: 2}],
+                metadata: {
+                  pactSpecification: {
+                    version: "1"
+                  }
+                }
+              }.to_json
+            end
+
+            it "generates the sha from the parsed content, rather than parsing the JSON again" do
+              expect(subject).to eq GenerateSha.call(other_json_content)
+            end
+          end
+
+          context "when the parsed content is not a Hash" do
+            let(:parsed_content) { nil }
+
+            it "generates the sha from the JSON" do
+              expect(subject).to eq GenerateSha.call(json_content)
+            end
+          end
+        end
+
+        context "when equality is based on the full content" do
+          it "generates the sha from the original JSON, ignoring the parsed content" do
+            expect(subject).to eq Digest::SHA1.hexdigest(json_content)
+          end
+        end
+      end
     end
   end
 end

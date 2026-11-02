@@ -5,7 +5,11 @@ module PactBroker
         extend self
 
         def fragment_before_invalid_utf_8_char(string)
-          string.force_encoding("UTF-8").each_char.with_index do | char, index |
+          # Iterating over each char allocates a String per char, which is very slow for large strings,
+          # so only do it to find the location of the invalid char once we know there is one.
+          return nil if string.force_encoding("UTF-8").valid_encoding?
+
+          string.each_char.with_index do | char, index |
             if !char.valid_encoding?
               fragment = index < 100 ? string[0...index] : string[index-100...index]
               return index + 1, fragment
