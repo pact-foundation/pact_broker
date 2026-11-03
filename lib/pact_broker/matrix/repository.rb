@@ -70,7 +70,7 @@ module PactBroker
         rows = query_matrix(all_resolved_selectors, options)
         rows = apply_latestby(options, rows)
         rows = apply_success_filter(rows, options)
-        considered_rows, ignored_rows = RowIgnorer.split_rows_into_considered_and_ignored(rows, resolved_ignore_selectors)
+        considered_rows, ignored_rows = RowIgnorer.split_rows_into_considered_and_ignored(rows, resolved_ignore_selectors, all_resolved_selectors)
         return considered_rows, ignored_rows
       end
 
