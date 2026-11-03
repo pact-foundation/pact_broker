@@ -1,3 +1,11 @@
+## [2.122.1] _2026-11-03_
+
+### ⚡️ Performance
+
+-   Speed up publishing large contracts (PACT-7601) ([#1067](https://github.com/pact-foundation/pact_broker/issues/1067))
+    > **Migration note:** when contracts are published with /contracts/publish,
+    > the configured sha_generator is now called with a second argument,
+
 ## [2.122.0] _2026-10-01_
 
 ### 🚀 Features
