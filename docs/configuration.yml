@@ -488,6 +488,13 @@ groups:
           and at large numbers, the graph will not render due to browser performance issues.
         default_value: 150
         allowed_values_description: A positive integer
+      matrix_max_limit:
+        description: |-
+          The maximum value accepted for the `limit` parameter of a matrix query (`/matrix`).
+          A request with a larger `limit` is rejected with a 400 response. Very large limits can cause expensive database queries.
+          When not set, there is no maximum.
+        default_description: No maximum
+        allowed_values_description: A positive integer
   - title: Miscellaneous
     vars:
       features:

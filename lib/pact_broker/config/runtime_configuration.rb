@@ -97,6 +97,7 @@ module PactBroker
         semver_formats: ["%M.%m.%p%s%d", "%M.%m", "%M"],
         seed_example_data: true,
         network_diagram_max_pacticipants: 150,
+        matrix_max_limit: nil,
         features: {}
       )
 
@@ -114,6 +115,7 @@ module PactBroker
       coerce_types(
         features: COERCE_FEATURES,
         network_diagram_max_pacticipants: :integer,
+        matrix_max_limit: :integer,
         webhook_certificates: COERCE_WEBHOOKS
       )
       sensitive_values(:database_url, :database_password)
