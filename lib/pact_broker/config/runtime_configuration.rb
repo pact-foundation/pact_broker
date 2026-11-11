@@ -101,6 +101,12 @@ module PactBroker
         features: {}
       )
 
+      # A matrix query without a limit gets a limit of 100 (see PactBroker::Matrix::ParseQuery), so a lower
+      # matrix_max_limit would reject every request that does not set one.
+      MATRIX_MAX_LIMIT_MINIMUM = 100
+
+      on_load :validate_matrix_max_limit!
+
       def self.getter_and_setter_method_names
         extra_methods = [
           :warning_error_classes,
@@ -225,6 +231,13 @@ module PactBroker
 
         unless [:auto, true, false].include?(log_otel_enabled)
           raise_validation_error("log_otel_enabled must be one of: auto, true, false")
+        end
+      end
+
+      # An empty or non-numeric value is coerced to 0, so it is rejected here too.
+      def validate_matrix_max_limit!
+        if matrix_max_limit && matrix_max_limit < MATRIX_MAX_LIMIT_MINIMUM
+          raise_validation_error("matrix_max_limit must be #{MATRIX_MAX_LIMIT_MINIMUM} or greater, or not set")
         end
       end
 

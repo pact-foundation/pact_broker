@@ -173,9 +173,17 @@ module PactBroker
           end
         end
 
-        it "coerces a non-integer value to an integer" do
-          with_env("PACT_BROKER_MATRIX_MAX_LIMIT" => "10.5") do
-            expect(RuntimeConfiguration.new.matrix_max_limit).to eq 10
+        it "accepts the default matrix limit" do
+          with_env("PACT_BROKER_MATRIX_MAX_LIMIT" => "100") do
+            expect(RuntimeConfiguration.new.matrix_max_limit).to eq 100
+          end
+        end
+
+        ["99", "0", "-1", "", "abc"].each do |value|
+          it "raises a ConfigurationError on load for #{value.inspect}" do
+            with_env("PACT_BROKER_MATRIX_MAX_LIMIT" => value) do
+              expect { RuntimeConfiguration.new }.to raise_error(PactBroker::ConfigurationError, "matrix_max_limit must be 100 or greater, or not set")
+            end
           end
         end
       end

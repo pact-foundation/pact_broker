@@ -273,7 +273,7 @@ module PactBroker
           end
 
           context "when no limit is specified" do
-            let(:matrix_max_limit) { 1 }
+            let(:matrix_max_limit) { 100 }
             let(:options) { {} }
 
             it "does not return a limit error" do

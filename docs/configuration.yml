@@ -492,9 +492,10 @@ groups:
         description: |-
           The maximum value accepted for the `limit` parameter of a matrix query (`/matrix`).
           A request with a larger `limit` is rejected with a 400 response. Very large limits can cause expensive database queries.
-          When not set, there is no maximum.
+          When not set, there is no maximum. A matrix query without a `limit` uses a limit of 100,
+          so the value must be 100 or greater, or the Pact Broker will not start.
         default_description: No maximum
-        allowed_values_description: A positive integer
+        allowed_values_description: An integer of 100 or greater
   - title: Miscellaneous
     vars:
       features:
