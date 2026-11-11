@@ -20,6 +20,7 @@ require "pact_broker/config/runtime_configuration_basic_auth_methods"
 require "pact_broker/string_refinements"
 require "pact_broker/hash_refinements"
 require "pact_broker/error"
+require "pact_broker/matrix/parse_query"
 
 module PactBroker
   module Config
@@ -97,8 +98,11 @@ module PactBroker
         semver_formats: ["%M.%m.%p%s%d", "%M.%m", "%M"],
         seed_example_data: true,
         network_diagram_max_pacticipants: 150,
+        matrix_max_limit: nil,
         features: {}
       )
+
+      on_load :validate_matrix_max_limit!
 
       def self.getter_and_setter_method_names
         extra_methods = [
@@ -114,6 +118,7 @@ module PactBroker
       coerce_types(
         features: COERCE_FEATURES,
         network_diagram_max_pacticipants: :integer,
+        matrix_max_limit: :integer,
         webhook_certificates: COERCE_WEBHOOKS
       )
       sensitive_values(:database_url, :database_password)
@@ -223,6 +228,16 @@ module PactBroker
 
         unless [:auto, true, false].include?(log_otel_enabled)
           raise_validation_error("log_otel_enabled must be one of: auto, true, false")
+        end
+      end
+
+      # A matrix query without a limit gets the default limit, so a lower matrix_max_limit
+      # would reject every request that does not set one.
+      # An empty or non-numeric value is coerced to 0, so it is rejected here too.
+      def validate_matrix_max_limit!
+        default_limit = PactBroker::Matrix::ParseQuery::DEFAULT_LIMIT
+        if matrix_max_limit && matrix_max_limit < default_limit
+          raise_validation_error("matrix_max_limit must be at least the default matrix limit (#{default_limit}), or not set")
         end
       end
 

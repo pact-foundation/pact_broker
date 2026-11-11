@@ -703,6 +703,18 @@ and at large numbers, the graph will not render due to browser performance issue
 **Default:** `150`<br/>
 **Allowed values:** A positive integer<br/>
 
+### matrix_max_limit
+
+The maximum value accepted for the `limit` parameter of a matrix query (`/matrix`).
+A request with a larger `limit` is rejected with a 400 response. Very large limits can cause expensive database queries.
+When not set, there is no maximum. A matrix query without a `limit` uses a limit of 100,
+so the value must be 100 or greater, or the Pact Broker will not start.
+
+**Environment variable name:** `PACT_BROKER_MATRIX_MAX_LIMIT`<br/>
+**YAML configuration key name:** `matrix_max_limit`<br/>
+**Default:** No maximum<br/>
+**Allowed values:** An integer of 100 or greater<br/>
+
 <br/>
 
 ## Miscellaneous

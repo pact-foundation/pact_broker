@@ -238,6 +238,50 @@ module PactBroker
           end
         end
 
+        describe "the matrix_max_limit" do
+          let(:selectors) { [] }
+
+          before do
+            allow(PactBroker.configuration).to receive(:matrix_max_limit).and_return(matrix_max_limit)
+          end
+
+          context "when matrix_max_limit is not configured" do
+            let(:matrix_max_limit) { nil }
+            let(:options) { { limit: "1000000" } }
+
+            it "does not return a limit error" do
+              expect(subject).to_not include(a_string_including("The limit"))
+            end
+          end
+
+          context "when the limit equals the matrix_max_limit" do
+            let(:matrix_max_limit) { 1000 }
+            let(:options) { { limit: "1000" } }
+
+            it "does not return a limit error" do
+              expect(subject).to_not include(a_string_including("The limit"))
+            end
+          end
+
+          context "when the limit exceeds the matrix_max_limit" do
+            let(:matrix_max_limit) { 1000 }
+            let(:options) { { limit: "1001" } }
+
+            it "returns an error message" do
+              expect(subject).to include "The limit must be 1000 or less."
+            end
+          end
+
+          context "when no limit is specified" do
+            let(:matrix_max_limit) { 100 }
+            let(:options) { {} }
+
+            it "does not return a limit error" do
+              expect(subject).to_not include(a_string_including("The limit"))
+            end
+          end
+        end
+
         context "when an ignore selector has both a version and latest specified" do
           let(:selectors) { [] }
 

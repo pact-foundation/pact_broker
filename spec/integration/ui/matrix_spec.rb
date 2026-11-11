@@ -33,4 +33,17 @@ describe "UI matrix" do
       expect(subject.body).to include "/matrix/provider/Bar/latest/ptag/consumer/Foo/latest/ctag/badge.svg"
     end
   end
+
+  describe "with a limit above the matrix_max_limit" do
+    before do
+      allow(PactBroker.configuration).to receive(:matrix_max_limit).and_return(1000)
+    end
+
+    subject { get("/matrix?q%5B%5Dpacticipant=Foo&q%5B%5Dpacticipant=Bar&latestby=cvpv&limit=1001") }
+
+    it "shows the error message instead of the matrix" do
+      expect(subject.body).to include "The limit must be 1000 or less."
+      expect(subject.body).to_not include "/badge.svg"
+    end
+  end
 end

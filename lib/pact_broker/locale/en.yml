@@ -97,6 +97,7 @@ en:
         cannot_set_currently_deployed_true: The currentlyDeployed property cannot be set back to true. Please record a new deployment.
         cannot_set_currently_supported_true: The currentlySupported property cannot be set back to true. Please record a new deployment.
         invalid_limit: The limit must be 1 or greater.
+        matrix_limit_exceeds_maximum: "The limit must be %{max_limit} or less."
         pacts_for_verification_selector_fallback_tag: "fallbackTag can only be set if latest is true"
         pacts_for_verification_selector_matching_branch_requires_provider_version_branch: the providerVersionBranch must be specified when the selector matchingBranch=true is used
         pacts_for_verification_selector_tag_and_branch_disallowed: "cannot specify both a tag and a branch"

@@ -162,6 +162,32 @@ module PactBroker
         end
       end
 
+      describe "matrix_max_limit" do
+        it "has no maximum by default" do
+          expect(RuntimeConfiguration.new.matrix_max_limit).to be_nil
+        end
+
+        it "reads PACT_BROKER_MATRIX_MAX_LIMIT" do
+          with_env("PACT_BROKER_MATRIX_MAX_LIMIT" => "1000") do
+            expect(RuntimeConfiguration.new.matrix_max_limit).to eq 1000
+          end
+        end
+
+        it "accepts the default matrix limit" do
+          with_env("PACT_BROKER_MATRIX_MAX_LIMIT" => "100") do
+            expect(RuntimeConfiguration.new.matrix_max_limit).to eq 100
+          end
+        end
+
+        ["99", "0", "-1", "", "abc"].each do |value|
+          it "raises a ConfigurationError on load for #{value.inspect}" do
+            with_env("PACT_BROKER_MATRIX_MAX_LIMIT" => value) do
+              expect { RuntimeConfiguration.new }.to raise_error(PactBroker::ConfigurationError, "matrix_max_limit must be at least the default matrix limit (100), or not set")
+            end
+          end
+        end
+      end
+
       describe "log_otel_enabled" do
         subject { RuntimeConfiguration.new }
 

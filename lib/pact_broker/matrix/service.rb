@@ -140,6 +140,11 @@ module PactBroker
           error_messages << message("errors.validation.invalid_limit")
         end
 
+        max_limit = PactBroker.configuration.matrix_max_limit
+        if max_limit && options[:limit] && options[:limit].to_i > max_limit
+          error_messages << message("errors.validation.matrix_limit_exceeds_maximum", max_limit: max_limit)
+        end
+
         error_messages
       end
       # rubocop: enable Metrics/CyclomaticComplexity
