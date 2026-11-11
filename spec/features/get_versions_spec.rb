@@ -74,42 +74,6 @@ describe "Get versions" do
           .use_provider("Provider4")
           .create_pact
       end
-
-      # Temporarily allow lazy loading for PactPublication so we can measure query count
-      PactBroker::Pacts::PactPublication.class_eval do
-        alias_method :_orig_load_associated_objects, :_load_associated_objects
-        def _load_associated_objects(opts, *args, &block)
-          allow_lazy_load
-          _orig_load_associated_objects(opts, *args, &block)
-        end
-      end
-
-      # Setup query counter
-      query_count = [0]  # Array so it can be mutated in the closure
-      original_log_method = PactBroker::DB.connection.method(:log_connection_yield)
-
-      PactBroker::DB.connection.define_singleton_method(:log_connection_yield) do |sql, conn, args=nil, &block|
-        if sql.to_s.upcase.start_with?("SELECT") && !sql.to_s.include?("sqlite_master")
-          query_count[0] += 1
-        end
-        original_log_method.call(sql, conn, args, &block)
-      end
-
-      @query_count = query_count
-      @original_log_method = original_log_method
-    end
-
-    after do
-      # Restore original database logging method
-      if @original_log_method
-        PactBroker::DB.connection.define_singleton_method(:log_connection_yield, @original_log_method)
-      end
-
-      # Restore original _load_associated_objects method
-      PactBroker::Pacts::PactPublication.class_eval do
-        alias_method :_load_associated_objects, :_orig_load_associated_objects
-        remove_method :_orig_load_associated_objects
-      end
     end
 
     it "returns versions without excessive queries" do
@@ -119,11 +83,8 @@ describe "Get versions" do
       # Query counting is done inside the test (not in before/after hooks) because:
       # 1. We only want to count queries during the actual HTTP request
       # 2. We don't want to count queries from test setup (finding consumer, etc.)
-      # 3. The counter must be reset for each test run
-
-      queries_before_request = @query_count[0]
-      response = get(perf_path, { "pageNumber" => "1", "pageSize" => "20" })
-      queries_during_request = @query_count[0] - queries_before_request
+      queries_during_request = count_select_queries { get(perf_path, { "pageNumber" => "1", "pageSize" => "20" }) }
+      response = last_response
 
       expect(response.status).to eq(200)
 
