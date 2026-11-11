@@ -25,4 +25,17 @@ describe "Get matrix for consumer and provider" do
 
     its(:status) { is_expected.to eq 400 }
   end
+
+  context "when the limit exceeds the matrix_max_limit" do
+    before do
+      allow(PactBroker.configuration).to receive(:matrix_max_limit).and_return(1000)
+    end
+
+    subject { get(path, { limit: "1001" }) }
+
+    it "returns a 400 response with an error message" do
+      expect(subject.status).to eq 400
+      expect(subject.body).to include "The limit must be 1000 or less."
+    end
+  end
 end
