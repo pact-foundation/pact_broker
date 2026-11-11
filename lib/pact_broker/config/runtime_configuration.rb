@@ -102,10 +102,6 @@ module PactBroker
         features: {}
       )
 
-      # A matrix query without a limit gets the default limit, so a lower matrix_max_limit
-      # would reject every request that does not set one.
-      MATRIX_MAX_LIMIT_MINIMUM = PactBroker::Matrix::ParseQuery::DEFAULT_LIMIT
-
       on_load :validate_matrix_max_limit!
 
       def self.getter_and_setter_method_names
@@ -235,10 +231,13 @@ module PactBroker
         end
       end
 
+      # A matrix query without a limit gets the default limit, so a lower matrix_max_limit
+      # would reject every request that does not set one.
       # An empty or non-numeric value is coerced to 0, so it is rejected here too.
       def validate_matrix_max_limit!
-        if matrix_max_limit && matrix_max_limit < MATRIX_MAX_LIMIT_MINIMUM
-          raise_validation_error("matrix_max_limit must be #{MATRIX_MAX_LIMIT_MINIMUM} or greater, or not set")
+        default_limit = PactBroker::Matrix::ParseQuery::DEFAULT_LIMIT
+        if matrix_max_limit && matrix_max_limit < default_limit
+          raise_validation_error("matrix_max_limit must be at least the default matrix limit (#{default_limit}), or not set")
         end
       end
 
