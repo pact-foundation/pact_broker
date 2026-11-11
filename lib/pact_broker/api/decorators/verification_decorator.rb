@@ -24,7 +24,7 @@ module PactBroker
         end
 
         link :self do | options |
-          pact = options[:pact] || represented.latest_pact_publication
+          pact = pact_for(options)
           {
             title: "Verification result",
             name: "Verification result #{represented.number} for #{pact.name}",
@@ -33,7 +33,7 @@ module PactBroker
         end
 
         link "pb:pact-version" do | options |
-          pact = options[:pact] || represented.latest_pact_publication
+          pact = pact_for(options)
           {
             title: "Pact",
             name: pact.name,
@@ -46,6 +46,16 @@ module PactBroker
             title: "Webhooks triggered by the publication of this verification result",
             href: verification_triggered_webhooks_url(represented, options.fetch(:base_url))
           }
+        end
+
+        private
+
+        # A decorator rendering many verifications passes :pacts_by_pact_version_sha
+        # so each one avoids its own lookup.
+        def pact_for(options)
+          options[:pact] ||
+            options[:pacts_by_pact_version_sha]&.[](represented.pact_version_sha) ||
+            represented.latest_pact_publication
         end
       end
     end

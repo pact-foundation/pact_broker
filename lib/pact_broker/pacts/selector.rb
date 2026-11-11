@@ -6,7 +6,7 @@ module PactBroker
     class Selector < Hash
       using PactBroker::HashRefinements
 
-      PROPERTY_NAMES = [:latest, :tag, :branch, :consumer, :consumer_version, :environment_name, :fallback_tag, :fallback_branch, :main_branch, :matching_branch, :currently_supported, :currently_deployed]
+      PROPERTY_NAMES = [:latest, :tag, :branch, :consumer, :consumer_version, :environment_name, :fallback_tag, :fallback_branch, :fallback_to_main_branch, :main_branch, :matching_branch, :currently_supported, :currently_deployed]
 
       def initialize(properties = {})
         properties.without(*PROPERTY_NAMES).tap { |it| warn("WARN: Unsupported property for #{self.class.name}: #{it.keys.join(", ")} at #{caller[0..3]}") if it.any? }
@@ -14,11 +14,17 @@ module PactBroker
       end
 
       def resolve(consumer_version)
-        ResolvedSelector.new(self.to_h.without(:fallback_tag, :fallback_branch), consumer_version)
+        ResolvedSelector.new(self.to_h.without(:fallback_tag, :fallback_branch, :fallback_to_main_branch), consumer_version)
       end
 
       def resolve_for_fallback(consumer_version)
         ResolvedSelector.new(self.to_h, consumer_version)
+      end
+
+      # Records the consumer's main branch as the fallback branch, so the verification
+      # notice names the branch that was actually used.
+      def resolve_for_fallback_to_main_branch(consumer_version, main_branch)
+        ResolvedSelector.new(self.to_h.without(:fallback_to_main_branch).merge(fallback_branch: main_branch), consumer_version)
       end
 
       def resolve_for_environment(consumer_version, environment, target = nil)
@@ -87,12 +93,20 @@ module PactBroker
         self[:fallback_branch] = fallback_branch
       end
 
+      def fallback_to_main_branch= fallback_to_main_branch
+        self[:fallback_to_main_branch] = fallback_to_main_branch
+      end
+
       def fallback_tag
         self[:fallback_tag]
       end
 
       def fallback_branch
         self[:fallback_branch]
+      end
+
+      def fallback_to_main_branch
+        self[:fallback_to_main_branch]
       end
 
       def consumer= consumer
@@ -233,6 +247,10 @@ module PactBroker
 
       def fallback_branch?
         !!fallback_branch
+      end
+
+      def fallback_to_main_branch?
+        !!fallback_to_main_branch
       end
 
       def main_branch

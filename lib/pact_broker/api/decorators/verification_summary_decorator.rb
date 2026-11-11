@@ -25,6 +25,12 @@ module PactBroker
           }
         end
 
+        # representable passes through the kwargs from to_json as normal args
+        def to_hash(options)
+          user_options = options.fetch(:user_options, {}).merge(pacts_by_pact_version_sha: represented.pacts_by_pact_version_sha)
+          super(options.merge(user_options: user_options))
+        end
+
         def provider_summary
           OpenStruct.new(
             successful: represented.select(&:success).collect(&:provider_name),

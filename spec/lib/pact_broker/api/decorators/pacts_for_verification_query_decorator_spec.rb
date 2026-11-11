@@ -51,6 +51,16 @@ module PactBroker
             end
           end
 
+          context "with fallbackToMainBranch" do
+            let(:consumer_version_selectors) do
+              [{ "branch" => "feat-x", "fallbackToMainBranch" => true }]
+            end
+
+            it "sets fallback_to_main_branch and defaults the latest to true" do
+              expect(subject.consumer_version_selectors.first).to eq PactBroker::Pacts::Selector.new(branch: "feat-x", fallback_to_main_branch: true, latest: true)
+            end
+          end
+
           it "parses the latest as a boolean" do
             expect(subject.consumer_version_selectors.first).to eq PactBroker::Pacts::Selector.new(tag: "dev", latest: true)
           end
