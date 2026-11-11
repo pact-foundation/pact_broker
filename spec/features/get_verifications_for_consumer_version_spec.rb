@@ -29,6 +29,32 @@ describe "Get verifications for consumer version" do
     it "returns a list of verifications" do
       expect(last_response_body[:_embedded][:verificationResults].size).to eq 2
     end
+
+  end
+
+  context "when the pacts for two providers have the same content" do
+    before do
+      # The production default, under which the sha ignores the consumer and provider names
+      allow(PactBroker.configuration).to receive(:base_equality_only_on_content_that_affects_verification_results).and_return(true)
+      td.create_consumer("Consumer")
+        .create_consumer_version("1.2.3")
+        .create_provider("Provider")
+        .create_pact
+        .create_verification(provider_version: "1")
+        .create_provider("Another provider")
+        .create_pact
+        .create_verification(provider_version: "1")
+    end
+
+    it "links each verification to the pact for its own provider" do
+      expect(PactBroker::Pacts::PactVersion.select_map(:sha).uniq.size).to eq 1
+
+      hrefs = last_response_body[:_embedded][:verificationResults].map { |result| result[:_links][:"pb:pact-version"][:href] }
+      expect(hrefs).to contain_exactly(
+        a_string_including("/pacts/provider/Provider/consumer/Consumer/"),
+        a_string_including("/pacts/provider/Another%20provider/consumer/Consumer/")
+      )
+    end
   end
 
   context "when the consumer version has pacts with many providers" do

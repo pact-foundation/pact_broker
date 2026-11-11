@@ -27,7 +27,7 @@ module PactBroker
 
         # representable passes through the kwargs from to_json as normal args
         def to_hash(options)
-          user_options = options.fetch(:user_options, {}).merge(pacts_by_pact_version_sha: represented.pacts_by_pact_version_sha)
+          user_options = options.fetch(:user_options, {}).merge(pacts_by_provider_and_sha: represented.pacts_by_provider_and_sha)
           super(options.merge(user_options: user_options))
         end
 

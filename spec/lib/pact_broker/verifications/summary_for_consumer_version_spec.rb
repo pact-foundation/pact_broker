@@ -28,9 +28,21 @@ module PactBroker
 
       subject { SummaryForConsumerVersion.new(verifications, pacts)}
 
-      describe "#pacts_by_pact_version_sha" do
-        it "indexes the pacts by their pact version sha" do
-          expect(subject.pacts_by_pact_version_sha).to eq("1" => pact_1, "2" => pact_2, "3" => pact_3)
+      describe "#pacts_by_provider_and_sha" do
+        it "indexes the pacts by their provider name and pact version sha" do
+          expect(subject.pacts_by_provider_and_sha).to eq(
+            ["Successful Provider", "1"] => pact_1,
+            ["Failed Provider", "2"] => pact_2,
+            ["Unknown Provider", "3"] => pact_3
+          )
+        end
+
+        context "when the pacts for two providers share a sha" do
+          let(:pact_2) { instance_double("pact", provider_name: "Failed Provider", pact_version_sha: "1") }
+
+          it "keeps a pact for each provider" do
+            expect(subject.pacts_by_provider_and_sha.values).to eq [pact_1, pact_2, pact_3]
+          end
         end
       end
 
