@@ -181,7 +181,6 @@ module PactBroker
       # The fallback is applied per consumer, so a consumer without a pact for the tag
       # still gets its fallback pact when another consumer does have a pact for the tag.
       def find_pacts_for_fallback_tags(selected_pacts, provider_name, consumer_version_selectors)
-        # TODO at the moment, the validation doesn't stop fallback being used with 'all' selectors
         consumer_version_selectors.select(&:fallback_tag?).flat_map do | selector |
           consumer_ids_with_a_pact_for_the_tag = selected_pacts
             .select { | selected_pact | selected_pact.latest_for_tag?(selector.tag) }
