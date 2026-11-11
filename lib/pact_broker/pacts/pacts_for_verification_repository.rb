@@ -268,12 +268,12 @@ module PactBroker
         query.all.collect do | pact_publication |
           SelectedPact.new(
             pact_publication.to_domain,
-            Selectors.new(resolve_selector_for_fallback_branch(selector, pact_publication))
+            Selectors.new(resolve_selector_for_fallback(selector, pact_publication))
           )
         end
       end
 
-      def resolve_selector_for_fallback_branch(selector, pact_publication)
+      def resolve_selector_for_fallback(selector, pact_publication)
         if selector.fallback_to_main_branch?
           selector.resolve_for_fallback_to_main_branch(pact_publication.consumer_version, pact_publication.consumer.main_branch)
         else
