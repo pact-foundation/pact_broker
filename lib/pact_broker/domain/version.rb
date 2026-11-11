@@ -85,20 +85,24 @@ module PactBroker
           # end
         end
 
+        # Filters on a UNION of version ids so the versions dataset stays unwrapped for later criteria.
+        # An OR of two IN subqueries is equivalent, but cannot use the versions primary key index.
         def currently_in_environment(environment_name, pacticipant_name)
-          currently_deployed_to_environment(environment_name, pacticipant_name).union(currently_supported_in_environment(environment_name, pacticipant_name))
+          version_ids = version_ids_currently_deployed_to_environment(environment_name, pacticipant_name)
+                          .union(version_ids_currently_supported_in_environment(environment_name, pacticipant_name), from_self: false)
+          where(Sequel[:versions][:id] => version_ids)
         end
 
-        def currently_deployed_to_environment(environment_name, pacticipant_name)
+        def version_ids_currently_deployed_to_environment(environment_name, pacticipant_name)
           deployed_version_query = PactBroker::Deployments::DeployedVersion.currently_deployed.for_environment_name(environment_name)
           deployed_version_query = deployed_version_query.for_pacticipant_name(pacticipant_name) if pacticipant_name
-          where(id: deployed_version_query.select(:version_id))
+          deployed_version_query.select(:version_id)
         end
 
-        def currently_supported_in_environment(environment_name, pacticipant_name)
+        def version_ids_currently_supported_in_environment(environment_name, pacticipant_name)
           supported_version_query = PactBroker::Deployments::ReleasedVersion.currently_supported.for_environment_name(environment_name)
           supported_version_query = supported_version_query.for_pacticipant_name(pacticipant_name) if pacticipant_name
-          where(id: supported_version_query.select(:version_id))
+          supported_version_query.select(:version_id)
         end
 
         def currently_deployed

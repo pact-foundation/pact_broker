@@ -36,6 +36,10 @@ module PactBroker
         ["the latest version on a branch", { pacticipant_name: "Foo", branch: "main", latest: true }],
         ["an environment", { pacticipant_name: "Foo", environment_name: "production" }],
         ["the main branch", { pacticipant_name: "Foo", main_branch: true }],
+        ["a version number and an environment", { pacticipant_name: "Foo", pacticipant_version_number: "1", environment_name: "production" }],
+        ["a tag and an environment", { pacticipant_name: "Foo", tag: "prod", environment_name: "production" }],
+        ["the latest version and an environment", { pacticipant_name: "Foo", latest: true, environment_name: "production" }],
+        ["the latest version with a tag and an environment", { pacticipant_name: "Foo", tag: "prod", latest: true, environment_name: "production" }],
       ].each do | description, attributes |
         it "match the ids the SQL query derives, for a selector specifying #{description}" do
           unresolved = UnresolvedSelector.new(attributes)
