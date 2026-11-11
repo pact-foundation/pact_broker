@@ -1,3 +1,46 @@
+## [2.123.0] _2026-11-11_
+
+### 🚀 Features
+
+-   Add fallbackToMainBranch consumer version selector option
+
+### 🐛 Bug Fixes
+
+-   Stop the consumer version verification summary querying per verification
+-   Apply fallbackTag per consumer
+-   Honour fallbackBranch in consumer version selectors
+
+### 🚜 Refactor
+
+-   Name the fallback resolver for tags and branches
+
+### ⚡️ Performance
+
+-   Speed up publishing large contracts (PACT-7601) ([#1067](https://github.com/pact-foundation/pact_broker/issues/1067))
+    > **Migration note:** when contracts are published with /contracts/publish,
+    > the configured sha_generator is now called with a second argument,
+-   Exclude consumers in the fallback tag query
+-   Exclude consumers in the fallback branch query
+
+### 📚 Documentation
+
+-   Say fallbackTag applies per consumer
+-   Say fallbackBranch applies per consumer
+
+### 🧪 Testing
+
+-   Share one SQL query counter across feature specs
+-   Pin fallbackTag semantics in a table
+-   Cover fallbackTag dedup, branches and notices
+-   Pin fallbackBranch semantics in a table
+-   Cover the fallbackBranch request and notices end to end
+-   Pin fallbackToMainBranch semantics in the fallback branch table
+-   Cover the fallbackToMainBranch request and notices end to end
+
+### 🛠️ Miscellaneous Tasks
+
+-   Drop a TODO the selector contract already resolves
+
 ## [2.122.0] _2026-10-01_
 
 ### 🚀 Features
