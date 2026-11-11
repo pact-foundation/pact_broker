@@ -18,15 +18,21 @@ module PactBroker
         )
       end
 
-      let(:pact_1) { instance_double("pact", provider_name: "Successful Provider") }
-      let(:pact_2) { instance_double("pact", provider_name: "Failed Provider") }
-      let(:pact_3) { instance_double("pact", provider_name: "Unknown Provider") }
+      let(:pact_1) { instance_double("pact", provider_name: "Successful Provider", pact_version_sha: "1") }
+      let(:pact_2) { instance_double("pact", provider_name: "Failed Provider", pact_version_sha: "2") }
+      let(:pact_3) { instance_double("pact", provider_name: "Unknown Provider", pact_version_sha: "3") }
 
       let(:pacts) do
         [pact_1, pact_2, pact_3]
       end
 
       subject { SummaryForConsumerVersion.new(verifications, pacts)}
+
+      describe "#pacts_by_pact_version_sha" do
+        it "indexes the pacts by their pact version sha" do
+          expect(subject.pacts_by_pact_version_sha).to eq("1" => pact_1, "2" => pact_2, "3" => pact_3)
+        end
+      end
 
       describe "#provider_summary" do
         it "returns the successful providers" do

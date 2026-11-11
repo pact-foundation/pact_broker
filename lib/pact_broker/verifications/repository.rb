@@ -99,7 +99,7 @@ module PactBroker
           .remove_verifications_for_overridden_consumer_versions
           .for_consumer_name_and_consumer_version_number(consumer_name, consumer_version_number)
           .latest_by_pact_version
-          .eager(:provider)
+          .eager(:provider, :consumer, :provider_version, :pact_version)
           .all
           .sort_by { | v | v.provider_name.downcase }
       end

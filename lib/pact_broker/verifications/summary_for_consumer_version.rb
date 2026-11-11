@@ -13,6 +13,10 @@ module PactBroker
         successful.count == pacts.count
       end
 
+      def pacts_by_pact_version_sha
+        pacts.to_h { | pact | [pact.pact_version_sha, pact] }
+      end
+
       def provider_summary
         OpenStruct.new(
           successful: successful,
