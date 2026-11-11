@@ -202,6 +202,7 @@ module PactBroker
       def find_by_consumer_version consumer_name, consumer_version_number
         scope_for(PactPublication)
           .eager_for_domain_with_content
+          .eager(pact_version: :latest_verification)
           .for_consumer_name_and_maybe_version_number(consumer_name, consumer_version_number)
           .remove_overridden_revisions_from_complete_query
           .all
