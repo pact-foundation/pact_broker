@@ -85,13 +85,11 @@ module PactBroker
           # end
         end
 
-        # The UNION is of the version ids only, inside the IN, so that this dataset is not wrapped in a
-        # subquery (SELECT * FROM (... UNION ...) AS t1). That subquery would only have the columns selected
-        # before this method was called, and criteria applied afterwards (eg. where_number in for_selector)
-        # would fail. An OR of two IN subqueries also works, but cannot use the versions primary key index.
+        # Filters on a UNION of version ids so the versions dataset stays unwrapped for later criteria.
+        # An OR of two IN subqueries is equivalent, but cannot use the versions primary key index.
         def currently_in_environment(environment_name, pacticipant_name)
           version_ids = version_ids_currently_deployed_to_environment(environment_name, pacticipant_name)
-                          .union(version_ids_currently_supported_in_environment(environment_name, pacticipant_name))
+                          .union(version_ids_currently_supported_in_environment(environment_name, pacticipant_name), from_self: false)
           where(Sequel[:versions][:id] => version_ids)
         end
 
