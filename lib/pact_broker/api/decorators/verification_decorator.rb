@@ -50,11 +50,11 @@ module PactBroker
 
         private
 
-        # A decorator rendering many verifications passes :pacts_by_pact_version_sha
+        # A decorator rendering many verifications passes :pacts_by_provider_and_sha
         # so each one avoids its own lookup.
         def pact_for(options)
           options[:pact] ||
-            options[:pacts_by_pact_version_sha]&.[](represented.pact_version_sha) ||
+            options[:pacts_by_provider_and_sha]&.[]([represented.provider_name, represented.pact_version_sha]) ||
             represented.latest_pact_publication
         end
       end

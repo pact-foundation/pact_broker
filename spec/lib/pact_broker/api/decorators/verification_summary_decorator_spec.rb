@@ -4,7 +4,7 @@ module PactBroker
   module Api
     module Decorators
       describe VerificationSummaryDecorator do
-        let(:summary) { instance_double("PactBroker::Verifications::SummaryForConsumerVersion", verifications: verifications, success: true, provider_summary: provider_summary, pacts_by_pact_version_sha: { "1234" => pact }) }
+        let(:summary) { instance_double("PactBroker::Verifications::SummaryForConsumerVersion", verifications: verifications, success: true, provider_summary: provider_summary, pacts_by_provider_and_sha: { ["Provider", "1234"] => pact }) }
         let(:provider_summary) {
           instance_double("provider summary", successful: ["Successful provider"], failed: ["Failed provider"], unknown: ["Unknown provider"])
         }
