@@ -350,6 +350,18 @@ module PactBroker
           its([:consumerVersionSelectors, 0]) { is_expected.to eq "cannot specify both fallbackBranch and fallbackToMainBranch=true (at index 0)" }
         end
 
+        context "when fallbackToMainBranch is specified with latest=false" do
+          let(:consumer_version_selectors) do
+            [{
+              branch: "feat-x",
+              fallbackToMainBranch: true,
+              latest: false
+            }]
+          end
+
+          its([:consumerVersionSelectors, 0]) { is_expected.to include "fallbackToMainBranch can only be set if latest is true" }
+        end
+
         context "when fallbackToMainBranch is specified with a branch" do
           let(:consumer_version_selectors) do
             [{
