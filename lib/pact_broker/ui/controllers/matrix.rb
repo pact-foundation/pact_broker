@@ -17,7 +17,7 @@ module PactBroker
 
         get "/" do
           selectors = [OpenStruct.new, OpenStruct.new]
-          options = { limit: 100, latestby: nil }
+          options = { limit: PactBroker::Matrix::ParseQuery::DEFAULT_LIMIT, latestby: nil }
           locals = {
             lines: [],
             selectors: create_selector_objects(selectors),
@@ -50,7 +50,7 @@ module PactBroker
                         PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: params[:consumer_name]),
                         PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: params[:provider_name])
                       ]
-          options = { latestby: "cvpv", limit: 100 }
+          options = { latestby: "cvpv", limit: PactBroker::Matrix::ParseQuery::DEFAULT_LIMIT }
           lines = matrix_service.find(selectors, options)
           lines = PactBroker::UI::ViewModels::MatrixLines.new(lines, base_url: base_url)
           locals =  {

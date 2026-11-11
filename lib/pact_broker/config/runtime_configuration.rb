@@ -20,6 +20,7 @@ require "pact_broker/config/runtime_configuration_basic_auth_methods"
 require "pact_broker/string_refinements"
 require "pact_broker/hash_refinements"
 require "pact_broker/error"
+require "pact_broker/matrix/parse_query"
 
 module PactBroker
   module Config
@@ -101,9 +102,9 @@ module PactBroker
         features: {}
       )
 
-      # A matrix query without a limit gets a limit of 100 (see PactBroker::Matrix::ParseQuery), so a lower
-      # matrix_max_limit would reject every request that does not set one.
-      MATRIX_MAX_LIMIT_MINIMUM = 100
+      # A matrix query without a limit gets the default limit, so a lower matrix_max_limit
+      # would reject every request that does not set one.
+      MATRIX_MAX_LIMIT_MINIMUM = PactBroker::Matrix::ParseQuery::DEFAULT_LIMIT
 
       on_load :validate_matrix_max_limit!
 

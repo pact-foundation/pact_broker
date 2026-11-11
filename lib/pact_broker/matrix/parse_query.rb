@@ -4,6 +4,8 @@ require "pact_broker/matrix/unresolved_selector"
 module PactBroker
   module Matrix
     class ParseQuery
+      DEFAULT_LIMIT = 100
+
       # rubocop: disable Metrics/CyclomaticComplexity
       # rubocop: disable Metrics/MethodLength
       def self.call query
@@ -34,7 +36,7 @@ module PactBroker
         if params.key?("limit") && params["limit"] != ""
           options[:limit] = params["limit"]
         else
-          options[:limit] = "100"
+          options[:limit] = DEFAULT_LIMIT.to_s
         end
 
         if params.key?("latest") && params["latest"] != ""
