@@ -1,3 +1,13 @@
+## [2.124.0] _2026-11-11_
+
+### 🚀 Features
+
+-   _(matrix)_ Add matrix_max_limit to cap the matrix query limit
+
+### 🐛 Bug Fixes
+
+-   _(matrix)_ Support an environment in a selector alongside a version or latest
+
 ## [2.123.0] _2026-11-11_
 
 ### 🚀 Features
