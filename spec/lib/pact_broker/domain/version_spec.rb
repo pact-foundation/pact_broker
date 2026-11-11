@@ -273,6 +273,65 @@ module PactBroker
           end
         end
 
+        context "when selecting a specific version of a pacticipant that is currently in an environment" do
+          before do
+            td.create_environment("test")
+              .create_environment("prod")
+              .create_consumer("Foo")
+              .create_consumer_version("1")
+              .create_deployed_version_for_consumer_version(environment_name: "prod")
+              .create_consumer_version("2")
+              .create_released_version_for_consumer_version(environment_name: "prod")
+              .create_consumer_version("3")
+              .create_deployed_version_for_consumer_version(environment_name: "test")
+          end
+
+          context "when the version is deployed to the environment" do
+            let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: "Foo", pacticipant_version_number: "1", environment_name: "prod") }
+
+            it "returns the version" do
+              expect(version_numbers).to eq %w{1}
+            end
+          end
+
+          context "when the version is released to the environment" do
+            let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: "Foo", pacticipant_version_number: "2", environment_name: "prod") }
+
+            it "returns the version" do
+              expect(version_numbers).to eq %w{2}
+            end
+          end
+
+          context "when the version is not in the environment" do
+            let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: "Foo", pacticipant_version_number: "3", environment_name: "prod") }
+
+            it "returns no versions" do
+              expect(version_numbers).to eq []
+            end
+          end
+        end
+
+        context "when a version is deployed to multiple targets and also released in the same environment" do
+          before do
+            td.create_environment("prod")
+              .create_consumer("Foo")
+              .create_consumer_version("1")
+              .create_deployed_version_for_consumer_version(target: "blue")
+              .create_deployed_version_for_consumer_version(target: "green")
+              .create_released_version_for_consumer_version
+          end
+
+          let(:selector) { PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: "Foo", environment_name: "prod") }
+
+          it "returns the version only once" do
+            expect(version_numbers).to eq %w{1}
+          end
+
+          it "returns the version id only once from ids_for_selectors" do
+            expect(Version.ids_for_selectors([selector]).all.size).to eq 1
+          end
+        end
+
         context "when selecting all currently deployed versions" do
           let(:selector) { PactBroker::DB::Clean::Selector.new(deployed: true) }
 
@@ -511,6 +570,27 @@ module PactBroker
           ten = Version.ids_for_selectors(selectors_for((1..10).collect { |i| "App#{i}" }))
 
           expect(subquery_nesting_depth(ten)).to eq subquery_nesting_depth(two)
+        end
+
+        context "when a selector specifies both a version number and an environment" do
+          before do
+            td.create_environment("prod")
+              .create_consumer("Foo")
+              .create_consumer_version("1")
+              .create_deployed_version_for_consumer_version
+              .create_consumer_version("2")
+          end
+
+          let(:selectors) do
+            [
+              PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: "Foo", pacticipant_version_number: "1", environment_name: "prod"),
+              PactBroker::Matrix::UnresolvedSelector.new(pacticipant_name: "Foo", pacticipant_version_number: "2", environment_name: "prod")
+            ]
+          end
+
+          it "returns the id of the version only when it is in the environment" do
+            expect(Version.ids_for_selectors(selectors).all.collect(&:id)).to eq [Version.find(number: "1").id]
+          end
         end
       end
     end
