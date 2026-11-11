@@ -24,14 +24,25 @@ require "pact_broker/versions/branch_version_repository"
 # [consumer, version, labels]. A label is "branch:name" for a branch selector,
 # "branch:name->fallback" when the fallback selected the pact, or the tag name.
 #
+# `fallbackToMainBranch` is `fallbackBranch` with each consumer's configured
+# main branch as its fallback. A consumer with no main branch has no fallback.
+# Its fallback label names the main branch the broker resolved. Rows that use it
+# set each consumer's main branch through `main_branches`; any consumer left out
+# has none.
+#
 # `fallbackBranch` without `branch`, or with `latest: false`, is rejected by the
 # request contract. `matchingBranch` with `fallbackBranch` is rejected for the
-# same reason.
+# same reason. The same holds for `fallbackToMainBranch`, which is also rejected
+# with `fallbackBranch`.
 module PactBroker
   module Pacts
     describe "fallbackBranch semantics" do
       def self.sel(branch, fallback = nil, consumer: nil)
         Selector.new({ branch: branch, fallback_branch: fallback, latest: true, consumer: consumer }.compact)
+      end
+
+      def self.main_sel(branch, consumer: nil)
+        Selector.new({ branch: branch, fallback_to_main_branch: true, latest: true, consumer: consumer }.compact)
       end
 
       def self.tag_sel(tag, fallback = nil)
@@ -148,6 +159,48 @@ module PactBroker
           pacts: [["Foo2", "3", %w[main]], ["Foo2", "4", %w[feat-x]], ["Foo2", "5", %w[feat-x], { provider: "Baz" }]],
           selectors: [sel("feat-x", "main")],
           expected: [["Foo2", "3", %w[branch:feat-x->main]]] },
+
+        { id: "T1", rule: "R1", title: "fallbackToMainBranch falls back to each consumer's own main branch",
+          pacts: [["Foo", "1", %w[main]], ["Foo2", "3", %w[develop]], ["Foo2", "4", %w[main]]],
+          main_branches: { "Foo" => "main", "Foo2" => "develop" },
+          selectors: [main_sel("feat-x")],
+          expected: [["Foo", "1", %w[branch:feat-x->main]], ["Foo2", "3", %w[branch:feat-x->develop]]] },
+
+        { id: "T2", rule: "R1", title: "fallbackToMainBranch: one consumer has the branch, another only its main branch",
+          pacts: [["Foo", "1", %w[main]], ["Foo", "2", %w[feat-x]], ["Foo2", "3", %w[develop]]],
+          main_branches: { "Foo" => "main", "Foo2" => "develop" },
+          selectors: [main_sel("feat-x")],
+          expected: [["Foo", "2", %w[branch:feat-x]], ["Foo2", "3", %w[branch:feat-x->develop]]] },
+
+        { id: "T3", rule: "R1", title: "fallbackToMainBranch: a consumer with no main branch has no fallback",
+          pacts: [["Foo", "1", %w[main]], ["Foo2", "3", %w[main]]],
+          main_branches: { "Foo" => "main" },
+          selectors: [main_sel("feat-x")],
+          expected: [["Foo", "1", %w[branch:feat-x->main]]] },
+
+        { id: "T4", rule: "R1", title: "fallbackToMainBranch: the main branch head has no pact with this provider, though an older version does",
+          pacts: [["Foo", "1", %w[main]], ["Foo", "2", %w[main], { provider: "Baz" }]],
+          main_branches: { "Foo" => "main" },
+          selectors: [main_sel("feat-x")],
+          expected: [] },
+
+        { id: "T5", rule: "R1", title: "fallbackToMainBranch follows a renamed main branch",
+          pacts: [["Foo", "1", %w[master]], ["Foo", "2", %w[main]], ["Foo", "3", %w[master]]],
+          main_branches: { "Foo" => "main" },
+          selectors: [main_sel("feat-x")],
+          expected: [["Foo", "2", %w[branch:feat-x->main]]] },
+
+        { id: "T6", rule: "R2", title: "fallbackToMainBranch: a mainBranch selector also selects the fallback pact, so the two merge",
+          pacts: [["Foo", "1", %w[main]]],
+          main_branches: { "Foo" => "main" },
+          selectors: [main_sel("feat-x"), Selector.latest_for_main_branch],
+          expected: [["Foo", "1", %w[branch:feat-x->main mainBranch]]] },
+
+        { id: "T7", rule: "R1", title: "fallbackToMainBranch: the selected branch is one consumer's main branch",
+          pacts: [["Foo", "1", %w[main]], ["Foo2", "3", %w[develop]]],
+          main_branches: { "Foo" => "main", "Foo2" => "develop" },
+          selectors: [main_sel("main")],
+          expected: [["Foo", "1", %w[branch:main]], ["Foo2", "3", %w[branch:main->develop]]] },
       ]
 
       # MARK: Runner
@@ -161,6 +214,13 @@ module PactBroker
         end
       end
 
+      # Adding a branch can auto-detect a main branch, so each consumer's main branch is set explicitly.
+      def set_main_branches(pacts, main_branches)
+        pacts.collect(&:first).uniq.each do | consumer |
+          PactBroker::Domain::Pacticipant.where(name: consumer).update(main_branch: main_branches[consumer])
+        end
+      end
+
       def pact_content(consumer, provider, content_key)
         return nil unless content_key
         { consumer: { name: consumer }, provider: { name: provider }, interactions: [], content: content_key }.to_json
@@ -169,6 +229,8 @@ module PactBroker
       def label(selector)
         if selector.branch
           selector.fallback_branch ? "branch:#{selector.branch}->#{selector.fallback_branch}" : "branch:#{selector.branch}"
+        elsif selector.main_branch
+          "mainBranch"
         elsif selector.fallback_tag
           "#{selector.tag}->#{selector.fallback_tag}"
         else
@@ -185,6 +247,7 @@ module PactBroker
       rows.each do | row |
         it "#{row[:id]} (#{row[:rule]}) #{row[:title]}" do
           create_pacts(row[:pacts])
+          set_main_branches(row[:pacts], row[:main_branches]) if row[:main_branches]
           result = Repository.new.find_for_verification("Bar", Selectors.new(*row[:selectors]))
           expect(describe_result(result)).to eq row[:expected].sort
         end
@@ -193,10 +256,10 @@ module PactBroker
       # MARK: WIP and pending
 
       # Each entry is [consumer, version, wip, pending].
-      def find_for_verification(provider_branch: nil, provider_tags: [], include_wip: false)
+      def find_for_verification(provider_branch: nil, provider_tags: [], include_wip: false, selector: sel("feat-x", "main"))
         options = { include_pending_status: true }
         options[:include_wip_pacts_since] = Date.today - 30 if include_wip
-        Service.find_for_verification("Bar", provider_branch, provider_tags, Selectors.new(sel("feat-x", "main")), options)
+        Service.find_for_verification("Bar", provider_branch, provider_tags, Selectors.new(selector), options)
           .collect { | p | [p.consumer_name, p.consumer_version_number, p.wip, p.pending] }
           .sort
       end
@@ -247,7 +310,21 @@ module PactBroker
         end
       end
 
+      describe "W5 (R4) fallbackToMainBranch with a provider branch, the fallback pact is explicitly selected, so it is not WIP" do
+        before do
+          create_pacts([["Foo", "2", %w[feat-x]], ["Foo2", "3", %w[develop]]])
+          set_main_branches([["Foo"], ["Foo2"]], { "Foo" => "main", "Foo2" => "develop" })
+        end
+
+        it "returns Foo2's fallback pact as pending and not WIP" do
+          expect(find_for_verification(provider_branch: "feat-x", include_wip: true, selector: main_sel("feat-x"))).to eq [
+            ["Foo", "2", false, true], ["Foo2", "3", false, true]
+          ]
+        end
+      end
+
       def sel(*args, **kwargs) = self.class.sel(*args, **kwargs)
+      def main_sel(*args, **kwargs) = self.class.main_sel(*args, **kwargs)
     end
   end
 end
