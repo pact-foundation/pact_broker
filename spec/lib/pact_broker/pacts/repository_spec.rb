@@ -68,6 +68,17 @@ module PactBroker
           expect(PactVersion.order(:id).last.interactions_count).to eq 1
         end
 
+        context "with typed v4 messages and no spec version in the metadata" do
+          let(:json_content) do
+            { interactions: [{ "type" => "Asynchronous/Messages", "description" => "a message", "contents" => {} }] }.to_json
+          end
+
+          it "sets has_messages to true" do
+            subject
+            expect(PactVersion.order(:id).last.has_messages).to eq true
+          end
+        end
+
         it "sets the messages count" do
           subject
           expect(PactVersion.order(:id).last.messages_count).to eq 0
