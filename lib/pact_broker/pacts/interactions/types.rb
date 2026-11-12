@@ -4,10 +4,9 @@ module PactBroker
       # Classifies the interactions of a pact as messages or HTTP, independent of spec version.
       class Types
         # Pact Spec v4+ message interaction types
-        MESSAGE_TYPES = [
-          "Asynchronous/Messages",
-          "Synchronous/Messages"
-        ].freeze
+        ASYNCHRONOUS_MESSAGES = "Asynchronous/Messages"
+        SYNCHRONOUS_MESSAGES = "Synchronous/Messages"
+        MESSAGE_TYPES = [ASYNCHRONOUS_MESSAGES, SYNCHRONOUS_MESSAGES].freeze
 
         def initialize(content)
           @content = content

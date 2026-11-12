@@ -1,6 +1,7 @@
 require "cgi"
 require "json"
 require "pact_broker/api/renderers/markdown"
+require "pact_broker/pacts/interactions/types"
 
 module PactBroker
   module Api
@@ -73,7 +74,7 @@ module PactBroker
           end
 
           def async?
-            interaction["type"] == "Asynchronous/Messages" || !interaction.key?("request")
+            interaction["type"] == PactBroker::Pacts::Interactions::Types::ASYNCHRONOUS_MESSAGES || !interaction.key?("request")
           end
 
           private
@@ -81,7 +82,7 @@ module PactBroker
           attr_reader :interaction, :pact
 
           def sync?
-            interaction["type"] == "Synchronous/Messages"
+            interaction["type"] == PactBroker::Pacts::Interactions::Types::SYNCHRONOUS_MESSAGES
           end
 
           def http_request
