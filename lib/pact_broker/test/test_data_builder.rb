@@ -339,14 +339,15 @@ module PactBroker
       def create_pact_version_without_publication(json_content = nil )
         json_content = json_content ? json_content : {random: rand}.to_json
         pact_version_sha = generate_pact_version_sha(json_content)
-        content = PactBroker::Pacts::Content.from_json(json_content)
+        types = PactBroker::Pacts::Interactions::Types.for(PactBroker::Pacts::Content.from_json(json_content))
 
         @pact_version = PactBroker::Pacts::PactVersion.new(
           consumer_id: consumer.id,
           provider_id: provider.id,
           sha: pact_version_sha,
           content: json_content,
-          has_messages: PactBroker::Pacts::Interactions::Types.for(content).has_messages?,
+          has_messages: types.has_messages?,
+          has_http_interactions: types.has_http_interactions?,
           created_at: Sequel.datetime_class.now
         ).save
         self
