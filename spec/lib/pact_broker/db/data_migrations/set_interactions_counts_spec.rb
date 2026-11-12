@@ -9,11 +9,11 @@ module PactBroker
             td.create_consumer("Foo")
               .create_provider("Bar")
               .create_consumer_version("1")
-              .create_pact(json_content: { interactions: [1, 2] }.to_json )
+              .create_pact(json_content: { interactions: [{}, {}] }.to_json )
               .create_consumer_version("2")
-              .create_pact(json_content: { interactions: [1, 2, 3] }.to_json )
+              .create_pact(json_content: { interactions: [{}, {}, {}] }.to_json )
               .create_provider("Bop")
-              .create_pact(json_content: { messages: [1] }.to_json )
+              .create_pact(json_content: { messages: [{}] }.to_json )
             PactBroker::Pacts::PactVersion.dataset.update(interactions_count: nil, messages_count: nil)
           end
 

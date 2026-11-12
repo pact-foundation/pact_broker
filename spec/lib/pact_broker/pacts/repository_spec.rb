@@ -17,7 +17,7 @@ module PactBroker
         let(:provider) { Pacticipants::Repository.new.create name: "Provider" }
         let(:version) { PactBroker::Versions::Repository.new.create number: "1.2.3", pacticipant_id: consumer.id }
         let(:pact_version_sha) { "123" }
-        let(:json_content) { { interactions: ["json"] }.to_json }
+        let(:json_content) { { interactions: [{ "description" => "an interaction" }] }.to_json }
 
         let(:params) do
           {
@@ -73,9 +73,12 @@ module PactBroker
             { interactions: [{ "type" => "Asynchronous/Messages", "description" => "a message", "contents" => {} }] }.to_json
           end
 
-          it "sets has_messages to true" do
+          it "sets has_messages to true and counts the interaction as a message" do
             subject
-            expect(PactVersion.order(:id).last.has_messages).to eq true
+            pv = PactVersion.order(:id).last
+            expect(pv.has_messages).to eq true
+            expect(pv.messages_count).to eq 1
+            expect(pv.interactions_count).to eq 0
           end
         end
 
@@ -98,11 +101,11 @@ module PactBroker
             }.to_json
           end
 
-          it "persists V4 counts for messages and interactions" do
+          it "counts typed messages as messages and the rest as interactions" do
             subject
             pv = PactVersion.order(:id).last
-            expect(pv.messages_count).to eq 0 # messages_count represents v2, v3 style messages attribute
-            expect(pv.interactions_count).to eq 3
+            expect(pv.messages_count).to eq 2
+            expect(pv.interactions_count).to eq 1
             expect(pv.has_messages).to eq true
           end
         end
@@ -124,10 +127,10 @@ module PactBroker
             }.to_json
           end
 
-          it "persists V4 counts for messages and interactions" do
+          it "counts the messages array as messages and the interactions array as interactions" do
             subject
             pv = PactVersion.order(:id).last
-            expect(pv.messages_count).to eq 2 # messages_count represents v2, v3 style messages attribute
+            expect(pv.messages_count).to eq 2
             expect(pv.interactions_count).to eq 1
             expect(pv.has_messages).to eq true
           end
@@ -388,8 +391,8 @@ module PactBroker
             it "updates counts according to V4 schema" do
               subject
               pv = PactVersion.order(:id).last
-              expect(pv.messages_count).to eq 0 # messages_count represents v2, v3 style messages attribute
-              expect(pv.interactions_count).to eq 2
+              expect(pv.messages_count).to eq 1
+              expect(pv.interactions_count).to eq 1
               expect(pv.has_messages).to eq true
             end
           end

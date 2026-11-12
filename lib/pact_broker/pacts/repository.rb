@@ -395,16 +395,16 @@ module PactBroker
       end
 
       def create_pact_version consumer_id, provider_id, sha, json_content
-        content = Content.from_json(json_content)
+        types = Interactions::Types.for(Content.from_json(json_content))
         PactBroker::Pacts::PactVersion.new(
           consumer_id: consumer_id,
           provider_id: provider_id,
           sha: sha,
           content: json_content,
           created_at: Sequel.datetime_class.now,
-          interactions_count: content.interactions&.count || 0,
-          messages_count: content.messages&.count || 0,
-          has_messages: Interactions::Types.for(content).has_messages?
+          interactions_count: types.http_interactions.count,
+          messages_count: types.message_interactions.count,
+          has_messages: types.has_messages?
         ).upsert
       end
 

@@ -1,5 +1,6 @@
 require "pact_broker/dataset"
 require "pact_broker/pacts/content"
+require "pact_broker/pacts/interactions/types"
 require "pact_broker/pacts/pact_version_association_loaders"
 
 module PactBroker
@@ -162,10 +163,10 @@ module PactBroker
 
       def set_interactions_and_messages_counts!
         if interactions_count.nil? || messages_count.nil?
-          content_object = PactBroker::Pacts::Content.from_json(content)
+          types = PactBroker::Pacts::Interactions::Types.for(PactBroker::Pacts::Content.from_json(content))
           update(
-            messages_count: content_object.messages&.count || 0,
-            interactions_count: content_object.interactions&.count || 0
+            messages_count: types.message_interactions.count,
+            interactions_count: types.http_interactions.count
           )
         end
       end

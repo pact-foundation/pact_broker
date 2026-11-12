@@ -69,11 +69,11 @@ module PactBroker
             td.create_consumer
               .create_provider
               .create_consumer_version
-              .create_pact(json_content: { interactions: [1, 2], messages: [1] }.to_json)
+              .create_pact(json_content: { interactions: [{}, {}], messages: [{}] }.to_json)
               .create_consumer
               .create_provider
               .create_consumer_version
-              .create_pact(json_content: { interactions: [1, 2], messages: [1] }.to_json)
+              .create_pact(json_content: { interactions: [{}, {}], messages: [{}] }.to_json)
               .create_consumer
               .create_provider
               .create_consumer_version
