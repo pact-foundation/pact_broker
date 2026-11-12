@@ -1,4 +1,5 @@
 require "pact_broker/pacts/content"
+require "pact_broker/pacts/interactions/types"
 
 module PactBroker
   module DB
@@ -28,12 +29,12 @@ module PactBroker
           .where(Sequel[:pp2][:consumer_version_order] => nil)
 
           latest_pact_publications_query.each do | row |
-            content = PactBroker::Pacts::Content.from_json(row[:content])
+            types = PactBroker::Pacts::Interactions::Types.for(PactBroker::Pacts::Content.from_json(row[:content]))
             connection.from(:pact_versions)
               .where(id: row[:id])
               .update(
-                messages_count: content.messages&.count || 0,
-                interactions_count: content.interactions&.count || 0
+                messages_count: types.message_interactions.count,
+                interactions_count: types.http_interactions.count
               )
           end
         end

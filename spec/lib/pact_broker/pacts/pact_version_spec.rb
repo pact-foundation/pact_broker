@@ -471,9 +471,9 @@ module PactBroker
             pv
           end
 
-          it "calculates counts from V4 interactions/messages" do
-            expect(subject.messages_count).to eq 0
-            expect(subject.interactions_count).to eq 3
+          it "counts typed messages as messages and the rest as interactions" do
+            expect(subject.messages_count).to eq 2
+            expect(subject.interactions_count).to eq 1
           end
         end
 
