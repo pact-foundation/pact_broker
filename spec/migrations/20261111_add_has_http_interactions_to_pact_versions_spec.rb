@@ -26,12 +26,7 @@ describe "adding has_http_interactions to pact_versions", migration: true do
   end
 
   it "reads back nil for a row inserted without the column" do
-    now = DateTime.new(2017, 1, 1)
-    consumer = create(:pacticipants, { name: "consumer", created_at: now, updated_at: now })
-    provider = create(:pacticipants, { name: "provider", created_at: now, updated_at: now })
-    pact_version_id = database[:pact_versions].insert(
-      consumer_id: consumer[:id], provider_id: provider[:id], sha: "abc", content: "{}", created_at: now
-    )
+    pact_version_id = insert_pact_version("abc")
 
     expect(database[:pact_versions].where(id: pact_version_id).first).to include(has_http_interactions: nil)
   end
