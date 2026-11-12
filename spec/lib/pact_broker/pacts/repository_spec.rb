@@ -68,6 +68,11 @@ module PactBroker
           expect(PactVersion.order(:id).last.interactions_count).to eq 1
         end
 
+        it "sets has_http_interactions" do
+          subject
+          expect(PactVersion.order(:id).last.has_http_interactions).to eq true
+        end
+
         context "with typed v4 messages and no spec version in the metadata" do
           let(:json_content) do
             { interactions: [{ "type" => "Asynchronous/Messages", "description" => "a message", "contents" => {} }] }.to_json
@@ -77,6 +82,7 @@ module PactBroker
             subject
             pv = PactVersion.order(:id).last
             expect(pv.has_messages).to eq true
+            expect(pv.has_http_interactions).to eq false
             expect(pv.messages_count).to eq 1
             expect(pv.interactions_count).to eq 0
           end
@@ -107,6 +113,7 @@ module PactBroker
             expect(pv.messages_count).to eq 2
             expect(pv.interactions_count).to eq 1
             expect(pv.has_messages).to eq true
+            expect(pv.has_http_interactions).to eq true
           end
         end
 
@@ -133,6 +140,7 @@ module PactBroker
             expect(pv.messages_count).to eq 2
             expect(pv.interactions_count).to eq 1
             expect(pv.has_messages).to eq true
+            expect(pv.has_http_interactions).to eq true
           end
         end
 

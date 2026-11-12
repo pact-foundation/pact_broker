@@ -404,7 +404,8 @@ module PactBroker
           created_at: Sequel.datetime_class.now,
           interactions_count: types.http_interactions.count,
           messages_count: types.message_interactions.count,
-          has_messages: types.has_messages?
+          has_messages: types.has_messages?,
+          has_http_interactions: types.has_http_interactions?
         ).upsert
       end
 
