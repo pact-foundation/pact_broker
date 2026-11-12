@@ -210,9 +210,12 @@ end
 #  created_at         | timestamp without time zone | NOT NULL
 #  messages_count     | integer                     |
 #  interactions_count | integer                     |
+#  has_messages       | boolean                     | NOT NULL DEFAULT false
 # Indexes:
-#  pact_versions_pkey   | PRIMARY KEY btree (id)
-#  unq_pvc_con_prov_sha | UNIQUE btree (consumer_id, provider_id, sha)
+#  pact_versions_pkey              | PRIMARY KEY btree (id)
+#  unq_pvc_con_prov_sha            | UNIQUE btree (consumer_id, provider_id, sha)
+#  pact_versions_consumer_id_index | btree (consumer_id)
+#  pact_versions_provider_id_index | btree (provider_id)
 # Foreign key constraints:
 #  pact_versions_consumer_id_fkey | (consumer_id) REFERENCES pacticipants(id)
 #  pact_versions_provider_id_fkey | (provider_id) REFERENCES pacticipants(id)
