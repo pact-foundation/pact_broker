@@ -69,6 +69,15 @@ module PactBroker
             "a v4-shaped pact with Asynchronous/Messages and no spec version" => [
               pact_with(nil, "interactions" => [async_message]), true, false
             ],
+            "a v4-shaped pact with Synchronous/Messages and no spec version" => [
+              pact_with(nil, "interactions" => [sync_message]), true, false
+            ],
+            "a v3 pact with typed message interactions" => [
+              pact_with("3.0.0", "interactions" => [async_message]), true, false
+            ],
+            "a v4 pact with a messages array" => [
+              pact_with("4.0", "messages" => [{ "description" => "a message", "contents" => { "foo" => "bar" } }]), true, false
+            ],
             "a v4 pact with an unknown interaction type" => [
               pact_with("4.0", "interactions" => [http_interaction.merge("type" => "Something/Else")]), false, true
             ],
