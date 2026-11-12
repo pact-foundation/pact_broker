@@ -212,7 +212,7 @@ end
 #  messages_count        | integer                     |
 #  interactions_count    | integer                     |
 #  has_messages          | boolean                     | NOT NULL DEFAULT false
-#  has_http_interactions | boolean                     |
+#  has_http_interactions | boolean                     | NOT NULL
 # Indexes:
 #  pact_versions_pkey              | PRIMARY KEY btree (id)
 #  unq_pvc_con_prov_sha            | UNIQUE btree (consumer_id, provider_id, sha)
