@@ -2,8 +2,10 @@ module PactBroker
   module DB
     class Version
       def self.call database_connection
-        if database_connection.tables.include?(:schema_migrations)
-          version_from_schema_migrations(database_connection)
+        if database_connection.tables.include?(:pact_broker_schema_migrations)
+          version_from_table(database_connection, :pact_broker_schema_migrations)
+        elsif database_connection.tables.include?(:schema_migrations)
+          version_from_table(database_connection, :schema_migrations)
         elsif database_connection.tables.include?(:schema_info)
           version_from_schema_info(database_connection)
         else
@@ -11,8 +13,8 @@ module PactBroker
         end
       end
 
-      private_class_method def self.version_from_schema_migrations(database_connection)
-        last_migration = database_connection[:schema_migrations].order(:filename).last
+      private_class_method def self.version_from_table(database_connection, table_name)
+        last_migration = database_connection[table_name].order(:filename).last
         if last_migration
           last_migration[:filename].split("_", 2).first.to_i
         else
