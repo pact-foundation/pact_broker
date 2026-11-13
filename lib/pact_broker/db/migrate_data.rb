@@ -30,7 +30,8 @@ module PactBroker
           DataMigrations::CreateBranches,
           DataMigrations::MigrateIntegrations,
           DataMigrations::MigratePactVersionProviderTagSuccessfulVerifications,
-          DataMigrations::SetContractDataUpdatedAtForIntegrations
+          DataMigrations::SetContractDataUpdatedAtForIntegrations,
+          DataMigrations::SetPactVersionInteractionFlags
       ].freeze
 
       def self.registered_migrations
