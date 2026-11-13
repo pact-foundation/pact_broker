@@ -22,19 +22,18 @@ module PactBroker
           last_id = 0
           updated = 0
           loop do
-            rows = connection[:pact_versions]
+            ids = connection[:pact_versions]
               .where(has_http_interactions: nil)
               .where { id > last_id }
               .order(:id)
               .limit(BATCH_SIZE)
-              .select(:id, :content)
-              .all
-            break if rows.empty?
+              .select_map(:id)
+            break if ids.empty?
 
             # Inside a migration transaction, Sequel reuses it and the page commits with the migration.
-            connection.transaction { rows.each { |row| set_flags(connection, row) } }
-            last_id = rows.last[:id]
-            updated += rows.size
+            connection.transaction { ids.each { |id| set_flags(connection, id) } }
+            last_id = ids.last
+            updated += ids.size
             logger.info "Set interaction flags on #{updated} pact versions so far, up to id #{last_id}"
           end
 
@@ -42,9 +41,10 @@ module PactBroker
           nil
         end
 
-        def self.set_flags(connection, row)
-          types = types_for(row)
-          connection[:pact_versions].where(id: row[:id]).update(
+        # Loads one row's content at a time, because a page of large pacts can exhaust the memory.
+        def self.set_flags(connection, id)
+          types = types_for(id, connection[:pact_versions].where(id: id).get(:content))
+          connection[:pact_versions].where(id: id).update(
             has_messages: types.has_messages?,
             has_http_interactions: types.has_http_interactions?,
             messages_count: types.message_interactions.count,
@@ -53,10 +53,10 @@ module PactBroker
         end
 
         # Re-raises a parse failure as the same error class, with the row id in the message.
-        def self.types_for(row)
-          PactBroker::Pacts::Interactions::Types.for(PactBroker::Pacts::Content.from_json(row[:content]))
+        def self.types_for(id, content)
+          PactBroker::Pacts::Interactions::Types.for(PactBroker::Pacts::Content.from_json(content))
         rescue StandardError => e
-          raise e.exception("Could not read the content of pact_versions id #{row[:id]}: #{e.message}")
+          raise e.exception("Could not read the content of pact_versions id #{id}: #{e.message}")
         end
 
         def self.nullable_column_present?(connection)

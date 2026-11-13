@@ -93,6 +93,20 @@ RSpec.describe PactBroker::DB::DataMigrations::SetPactVersionInteractionFlags, m
     expected.each { |id, flag_values| expect(flags(id)).to eq(flag_values) }
   end
 
+  it "reads the content of one row per query" do
+    sql = []
+    allow(connection).to receive(:log_connection_yield).and_wrap_original do |original, statement, *args, &block|
+      sql << statement.to_s
+      original.call(statement, *args, &block)
+    end
+
+    described_class.call(connection)
+
+    content_reads = sql.grep(/\ASELECT .*content/i)
+    expect(content_reads.size).to eq all_ids.size
+    expect(content_reads).to all(match(/WHERE \(.?id.? = \d+\) LIMIT 1/))
+  end
+
   it "changes nothing when run a second time" do
     described_class.call(connection)
 
