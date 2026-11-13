@@ -88,6 +88,17 @@ module PactBroker
           end
         end
 
+        context "with no interactions" do
+          let(:json_content) { { interactions: [] }.to_json }
+
+          it "sets has_messages and has_http_interactions to false" do
+            subject
+            pv = PactVersion.order(:id).last
+            expect(pv.has_messages).to eq false
+            expect(pv.has_http_interactions).to eq false
+          end
+        end
+
         it "sets the messages count" do
           subject
           expect(PactVersion.order(:id).last.messages_count).to eq 0
