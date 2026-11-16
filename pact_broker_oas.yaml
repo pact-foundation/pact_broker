@@ -332,8 +332,10 @@ components:
           enum:
           - application/json
         specification:
+          description: "\"janus\" is accepted only when the janus feature is enabled, for a Pact Janus contract"
           enum:
           - pact
+          - janus
         onConflict:
           default: overwrite
           enum:
