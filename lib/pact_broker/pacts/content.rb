@@ -123,7 +123,7 @@ module PactBroker
       # (contract-file spec §3.2), so its interactions are all that count: the same contract
       # gets the same SHA whichever specification it was published under.
       def content_that_affects_verification_results
-        if janus? && interactions
+        if janus_with_interactions?
           { "interactions" => interactions }
         elsif interactions || messages
           cont = {}
@@ -158,25 +158,31 @@ module PactBroker
 
       # A Janus contract conforms to no pact specification version.
       def pact_specification_version
-        return nil if janus?
-        maybe_pact_specification_version_1 = pact_hash["metadata"]["pactSpecification"]["version"] rescue nil
-        maybe_pact_specification_version_2 = pact_hash["metadata"]["pact-specification"]["version"] rescue nil
-        maybe_pact_specification_version_3 = pact_hash["metadata"] && pact_hash["metadata"]["pactSpecificationVersion"] rescue nil
-        maybe_pact_specification_version_1 || maybe_pact_specification_version_2 || maybe_pact_specification_version_3
+        janus? ? nil : pact_specification_version_in_metadata
       end
 
       private
 
       attr_reader :pact_hash
 
+      def pact_specification_version_in_metadata
+        maybe_pact_specification_version_1 = pact_hash["metadata"]["pactSpecification"]["version"] rescue nil
+        maybe_pact_specification_version_2 = pact_hash["metadata"]["pact-specification"]["version"] rescue nil
+        maybe_pact_specification_version_3 = pact_hash["metadata"] && pact_hash["metadata"]["pactSpecificationVersion"] rescue nil
+        maybe_pact_specification_version_1 || maybe_pact_specification_version_2 || maybe_pact_specification_version_3
+      end
+
+      def janus_with_interactions?
+        janus? && !interactions.nil?
+      end
+
       def janus_provider_states
-        (interactions || []).flat_map do | interaction |
-          states = interaction.is_a?(Hash) ? interaction["states"] : nil
-          next [] unless states.is_a?(Array)
-          states.select { |state| state.is_a?(Hash) && state["name"].is_a?(String) }.collect do | state |
-            ProviderState.new(state["name"], state["params"])
-          end
-        end
+        named_states = hashes(interactions).flat_map { | interaction | hashes(interaction["states"]) }.select { | state | state["name"].is_a?(String) }
+        named_states.collect { | state | ProviderState.new(state["name"], state["params"]) }
+      end
+
+      def hashes(list)
+        list.is_a?(Array) ? list.select { | item | item.is_a?(Hash) } : []
       end
 
       def add_ids(interactions, overwrite_existing_id)

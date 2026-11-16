@@ -12,15 +12,8 @@ module PactBroker
 
         if janus?(original) || janus?(additional)
           janus_conflict?(original, additional)
-        elsif original["interactions"].nil? || additional["interactions"].nil?
-          true
         else
-          additional["interactions"].any? do |new_interaction|
-            original["interactions"].any? do |original_interaction|
-              same_description_and_state?(original_interaction, new_interaction) &&
-                !same_request_properties?(original_interaction["request"], new_interaction["request"])
-            end
-          end
+          pact_conflict?(original, additional)
         end
       end
 
@@ -56,6 +49,19 @@ module PactBroker
       end
 
       private
+
+      def pact_conflict?(original, additional)
+        if original["interactions"].nil? || additional["interactions"].nil?
+          true
+        else
+          additional["interactions"].any? do |new_interaction|
+            original["interactions"].any? do |original_interaction|
+              same_description_and_state?(original_interaction, new_interaction) &&
+                !same_request_properties?(original_interaction["request"], new_interaction["request"])
+            end
+          end
+        end
+      end
 
       def janus?(content)
         PactBroker::Janus.contract?(content)
