@@ -1,7 +1,10 @@
+require "pact_broker/janus"
+
 module PactBroker
   module Pacts
     module Interactions
       # Classifies the interactions of a pact as messages or HTTP, independent of spec version.
+      # A Janus contract's messages are its emissive interactions (PactBroker::Janus).
       class Types
         # Pact Spec v4+ message interaction types
         ASYNCHRONOUS_MESSAGES = "Asynchronous/Messages"
@@ -46,7 +49,11 @@ module PactBroker
         end
 
         def message_type?(interaction)
-          MESSAGE_TYPES.include?(interaction["type"])
+          if content.janus?
+            PactBroker::Janus.message?(interaction)
+          else
+            MESSAGE_TYPES.include?(interaction["type"])
+          end
         end
       end
     end

@@ -152,6 +152,48 @@ module PactBroker
           end
         end
       end
+
+      describe ".call with a Janus contract" do
+        let(:contract) { load_json_fixture("janus-contract.json") }
+        let(:features) { { janus: true } }
+
+        before do
+          allow(PactBroker.configuration).to receive(:features).and_return(features)
+          PactBroker.configuration.base_equality_only_on_content_that_affects_verification_results = true
+        end
+
+        def sha(content)
+          GenerateSha.call(content.to_json)
+        end
+
+        it "is the SHA1 of its interactions, sorted, which the Rust port gives too" do
+          expect(sha(contract)).to eq "21d089c08a18436d229f97cdca310dbeab04b701"
+        end
+
+        it "does not change with its metadata, its header or the order of its interactions and members" do
+          changed = contract.merge(
+            "$schema" => "https://pact.io/janus/contract.schema.json",
+            "metadata" => { "created" => "2026-11-16T00:00:00Z", "pactSpecification" => { "version" => "4.0" } },
+            "messages" => [{ "description" => "not a message" }],
+            "interactions" => contract["interactions"].reverse.collect { |i| i.to_a.reverse.to_h }
+          )
+          expect(sha(changed)).to eq sha(contract)
+        end
+
+        it "changes when an interaction changes" do
+          changed = JSON.parse(contract.to_json)
+          changed["interactions"].first["states"].first["params"]["id"] = "43"
+          expect(sha(changed)).to_not eq sha(contract)
+        end
+
+        context "with the janus feature off" do
+          let(:features) { {} }
+
+          it "is the SHA the broker gave before the feature existed, which for a contract is the same" do
+            expect(sha(contract)).to eq "21d089c08a18436d229f97cdca310dbeab04b701"
+          end
+        end
+      end
     end
   end
 end

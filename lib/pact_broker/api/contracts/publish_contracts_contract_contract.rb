@@ -1,5 +1,6 @@
 require "pact_broker/api/contracts/base_contract"
 require "pact_broker/api/contracts/utf_8_validation"
+require "pact_broker/janus"
 
 # The contract for the contract object in the publish contracts request
 module PactBroker
@@ -11,7 +12,7 @@ module PactBroker
           required(:providerName).filled(:string)
           required(:content).filled(:string)
           required(:contentType).filled(included_in?: ["application/json"])
-          required(:specification).filled(included_in?: ["pact"])
+          required(:specification).filled
           optional(:onConflict).filled(included_in?:["overwrite", "merge"])
           optional(:decodedParsedContent) # set in the resource
           optional(:decodedContent) # set in the resource
@@ -19,6 +20,14 @@ module PactBroker
 
         rule(:consumerName).validate(:not_blank_if_present)
         rule(:providerName).validate(:not_blank_if_present)
+
+        # "janus" is accepted only with the janus feature on (PactBroker::Janus)
+        rule(:specification) do
+          specifications = PactBroker::Janus.specifications
+          unless specifications.include?(value)
+            key.failure(:included_in?, list: specifications.join(", "))
+          end
+        end
 
         # validate_encoding (ensure all UTF-8 chars)
         rule(:decodedContent) do
@@ -45,6 +54,13 @@ module PactBroker
         rule(:decodedParsedContent, :contentType) do
           if !base_rule_error? && !values[:decodedParsedContent].is_a?(Hash)
             base.failure(validation_message("invalid_parsed_contract_class", { actual_class: values[:decodedParsedContent].class }))
+          end
+        end
+
+        # validate a contract published as a Janus contract is one
+        rule(:decodedParsedContent, :specification) do
+          if !base_rule_error? && PactBroker::Janus.enabled? && values[:specification] == PactBroker::Janus::SPECIFICATION && !PactBroker::Janus.contract?(values[:decodedParsedContent])
+            base.failure(validation_message("not_a_janus_contract", { contract_format: PactBroker::Janus::CONTRACT_FORMAT }))
           end
         end
 

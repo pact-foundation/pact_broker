@@ -24,7 +24,7 @@ This endpoint is designed to be used by a command line tool, and hence, the resp
 * `contracts`
   * `consumerName`: the name of the consumer. Required. Must match the pacticipant name and the consumer name inside the pact. While this field may seem redundant currently, this endpoint will be extended to support publication of provider generated, non-pact contracts, and the consumerName and providerName fields will be used to indicate which role the pacticipant is taking in the contract.
   * `providerName`: the name of the provider. Required.
-  * `specification`: currently, only contracts of type "pact" are supported, but this will be extended in the future. Required.
+  * `specification`: "pact", or "janus" for a [Pact Janus](https://github.com/rholshausen/pact-janus) contract when the `janus` feature is enabled (`PACT_BROKER_FEATURES=janus`). A Janus contract is stored as a pact version, its `$format` must be `janus-contract/1`, and only its interactions are part of its content SHA. Required.
   * `contentType`: currently, only contracts with a content type of "application/json" are supported. Required.
   * `content`: the content of the contract. Must be Base64 encoded. Required.
 
