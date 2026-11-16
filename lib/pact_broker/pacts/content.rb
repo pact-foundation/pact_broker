@@ -2,6 +2,7 @@ require "pact_broker/pacts/parse"
 require "pact_broker/pacts/sort_content"
 require "pact_broker/pacts/generate_interaction_sha"
 require "pact_broker/hash_refinements"
+require "pact_broker/janus"
 
 module PactBroker
   module Pacts
@@ -36,7 +37,13 @@ module PactBroker
         Content.from_hash(SortContent.call(pact_hash))
       end
 
+      # Whether this is a Janus contract, which the broker reads only with the janus feature on.
+      def janus?
+        PactBroker::Janus.contract?(pact_hash)
+      end
+
       def provider_states
+        return janus_provider_states if janus?
         messages_and_or_interactions_or_empty_array.flat_map do | interaction |
           if interaction["providerState"].is_a?(String)
             [ProviderState.new(interaction["providerState"])]
@@ -111,8 +118,14 @@ module PactBroker
       end
 
       # Half thinking this belongs in GenerateSha
+      #
+      # A Janus contract puts everything that changes what a verifier does inside an interaction
+      # (contract-file spec §3.2), so its interactions are all that count: the same contract
+      # gets the same SHA whichever specification it was published under.
       def content_that_affects_verification_results
-        if interactions || messages
+        if janus? && interactions
+          { "interactions" => interactions }
+        elsif interactions || messages
           cont = {}
           cont["interactions"] = interactions if interactions
           cont["messages"] = messages if messages
@@ -123,7 +136,9 @@ module PactBroker
         end
       end
 
+      # A Janus contract has no messages array: its messages are emissive interactions.
       def messages
+        return nil if janus?
         pact_hash.is_a?(Hash) && pact_hash["messages"].is_a?(Array) ? pact_hash["messages"] : nil
       end
 
@@ -141,7 +156,9 @@ module PactBroker
         messages_and_or_interactions || []
       end
 
+      # A Janus contract conforms to no pact specification version.
       def pact_specification_version
+        return nil if janus?
         maybe_pact_specification_version_1 = pact_hash["metadata"]["pactSpecification"]["version"] rescue nil
         maybe_pact_specification_version_2 = pact_hash["metadata"]["pact-specification"]["version"] rescue nil
         maybe_pact_specification_version_3 = pact_hash["metadata"] && pact_hash["metadata"]["pactSpecificationVersion"] rescue nil
@@ -151,6 +168,16 @@ module PactBroker
       private
 
       attr_reader :pact_hash
+
+      def janus_provider_states
+        (interactions || []).flat_map do | interaction |
+          states = interaction.is_a?(Hash) ? interaction["states"] : nil
+          next [] unless states.is_a?(Array)
+          states.select { |state| state.is_a?(Hash) && state["name"].is_a?(String) }.collect do | state |
+            ProviderState.new(state["name"], state["params"])
+          end
+        end
+      end
 
       def add_ids(interactions, overwrite_existing_id)
         interactions.map do | interaction |

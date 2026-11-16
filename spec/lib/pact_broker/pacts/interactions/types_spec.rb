@@ -125,6 +125,31 @@ module PactBroker
             expect(types.http_interactions.map { |i| i["_id"] }).to eq ["h"]
           end
         end
+
+        context "with a Janus contract" do
+          let(:features) { { janus: true } }
+          let(:content) { Content.from_hash(load_json_fixture("janus-contract.json")) }
+
+          before do
+            allow(PactBroker.configuration).to receive(:features).and_return(features)
+          end
+
+          subject(:types) { Types.for(content) }
+
+          it "counts each emissive interaction as a message, and the rest as HTTP interactions" do
+            expect(types.message_interactions.map { |i| i["description"] }).to eq ["an order was shipped"]
+            expect(types.http_interactions.map { |i| i["description"] }).to eq ["a request for an order"]
+          end
+
+          context "with the janus feature off" do
+            let(:features) { {} }
+
+            it "counts every interaction as an HTTP interaction, as before" do
+              expect(types.has_messages?).to be false
+              expect(types.http_interactions.size).to eq 2
+            end
+          end
+        end
       end
     end
   end

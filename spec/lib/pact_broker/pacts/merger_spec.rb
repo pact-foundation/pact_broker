@@ -174,6 +174,84 @@ module PactBroker
         def compare_pacts(a, b)
           PactBroker::Pacts::Merger.conflict?(a.to_json, b.to_json)
         end
+
+      describe "with Janus contracts" do
+        let(:features) { { janus: true } }
+        let(:contract) { load_json_fixture("janus-contract.json") }
+        let(:other_contract) { JSON.parse(contract.to_json) }
+        let(:new_interaction) do
+          JSON.parse(contract["interactions"].first.to_json).merge("description" => "a request for another order")
+        end
+
+        before do
+          allow(PactBroker.configuration).to receive(:features).and_return(features)
+        end
+
+        def merge(a, b)
+          JSON.parse(Merger.merge_pacts(a.to_json, b.to_json))
+        end
+
+        def conflict?(a, b)
+          Merger.conflict?(a.to_json, b.to_json)
+        end
+
+        describe "#merge_pacts" do
+          it "appends an interaction of a new identity" do
+            other_contract["interactions"] = [new_interaction]
+            expect(merge(contract, other_contract)["interactions"]).to eq contract["interactions"] + [new_interaction]
+          end
+
+          it "replaces an interaction of the same description and states" do
+            other_contract["interactions"] = [other_contract["interactions"].first]
+            other_contract["interactions"].first["parts"]["request"]["path"]["example"] = "/orders/43"
+            merged = merge(contract, other_contract)
+            expect(merged["interactions"]).to eq [other_contract["interactions"].first, contract["interactions"].last]
+          end
+
+          it "keeps two interactions with the same description and different states" do
+            other_contract["interactions"] = [other_contract["interactions"].first]
+            other_contract["interactions"].first["states"] = []
+            expect(merge(contract, other_contract)["interactions"].size).to eq 3
+          end
+
+          it "replaces a pact with a Janus contract, rather than merging the two" do
+            expect(merge(load_json_fixture("consumer-provider.json"), contract)).to eq contract
+          end
+        end
+
+        describe "#conflict?" do
+          it "is false for the same contract, whatever _id the broker gave its interactions" do
+            stored = JSON.parse(contract.to_json)
+            stored["interactions"].each { |i| i["_id"] = "1234" }
+            expect(conflict?(stored, contract)).to be false
+          end
+
+          it "is false for an interaction of a new identity" do
+            other_contract["interactions"] = [new_interaction]
+            expect(conflict?(contract, other_contract)).to be false
+          end
+
+          it "is true for an interaction of the same identity recorded differently" do
+            other_contract["interactions"].first["parts"]["response"] = {}
+            expect(conflict?(contract, other_contract)).to be true
+          end
+
+          it "is true for a Janus contract and a pact" do
+            expect(conflict?(load_json_fixture("consumer-provider.json"), contract)).to be true
+            expect(conflict?(contract, load_json_fixture("consumer-provider.json"))).to be true
+          end
+        end
+
+        context "with the janus feature off" do
+          let(:features) { {} }
+
+          it "merges as before, by description alone, since a contract has no provider state a pact names" do
+            other_contract["interactions"] = [other_contract["interactions"].first]
+            other_contract["interactions"].first["states"] = []
+            expect(merge(contract, other_contract)["interactions"].size).to eq 2
+          end
+        end
+      end
       end
     end
   end

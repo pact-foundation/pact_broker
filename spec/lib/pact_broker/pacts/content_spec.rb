@@ -484,6 +484,54 @@ module PactBroker
           its(:interaction_ids) { is_expected.to eq [] }
         end
       end
+
+      describe "with a Janus contract" do
+        let(:contract) do
+          load_json_fixture("janus-contract.json").merge(
+            # members a Janus contract does not have, which must not be read as a pact's
+            "messages" => [{ "description" => "not a message", "providerStates" => [{ "name" => "not a state" }] }],
+            "metadata" => { "pactSpecification" => { "version" => "4.0" }, "created" => "2026-11-16T00:00:00Z" }
+          )
+        end
+        let(:features) { { janus: true } }
+
+        before do
+          allow(PactBroker.configuration).to receive(:features).and_return(features)
+        end
+
+        subject { Content.from_hash(contract) }
+
+        its(:janus?) { is_expected.to be true }
+        its(:messages) { is_expected.to be nil }
+        its(:pact_specification_version) { is_expected.to be nil }
+
+        it "reads its provider states from each interaction's states" do
+          expect(subject.provider_states).to eq [
+            ProviderState.new("an order exists", { "id" => "42" }),
+            ProviderState.new("an order was shipped", nil)
+          ]
+        end
+
+        it "takes only its interactions as the content that affects verification results" do
+          expect(subject.content_that_affects_verification_results).to eq("interactions" => contract["interactions"])
+        end
+
+        it "adds an _id to each interaction, as for a pact" do
+          expect(subject.with_ids.interaction_ids.size).to eq 2
+        end
+
+        context "with the janus feature off" do
+          let(:features) { {} }
+
+          its(:janus?) { is_expected.to be false }
+
+          it "is read as it was before the feature existed" do
+            expect(subject.messages).to eq contract["messages"]
+            expect(subject.provider_states).to eq [ProviderState.new("not a state", nil)]
+            expect(subject.content_that_affects_verification_results.keys).to eq ["interactions", "messages", "pact_specification_version"]
+          end
+        end
+      end
     end
   end
 end
