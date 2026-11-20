@@ -48,7 +48,7 @@ Remember to rebuild the image if you change any of the gems or gem versions.
 
 ### With native install
 
-* You will need to install Ruby 2.7, and preferably a ruby version manager. I recommend using [chruby][chruby] and [ruby-install][ruby-install].
+* You will need to install Ruby 3.2 or later, and preferably a ruby version manager. I recommend using [chruby][chruby] and [ruby-install][ruby-install].
 * Install bundler (the Ruby gem dependency manager) `gem install bundler`
 * Check out the pact_broker repository and cd into it.
 * Run `bundle install`. If you have any gem conflict issues, run `bundle update`.
