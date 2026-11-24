@@ -52,7 +52,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency "json", ">= 2.19.9"
   gem.add_runtime_dependency "psych", "~> 5.0"
   gem.add_runtime_dependency "roar", "~> 1.1"
-  gem.add_runtime_dependency "dry-validation", "~> 1.8"
+  gem.add_runtime_dependency "dry-validation", "~> 1.11.1"
   gem.add_runtime_dependency "reform", "~> 2.6"
   gem.add_runtime_dependency "sequel", "~> 5.90"
   gem.add_runtime_dependency "webmachine", "~> 2.0"

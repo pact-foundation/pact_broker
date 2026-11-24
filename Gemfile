@@ -14,7 +14,7 @@ group :development do
   gem "rubocop", "~>1.7"
   gem "rubocop-performance", "~> 1.23"
   gem "sequel-annotate", "~>1.3"
-  gem "yard", "~> 0.9"
+  gem "yard", ">= 0.9.44"
 end
 
 group :test do
