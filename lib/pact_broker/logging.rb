@@ -7,7 +7,6 @@ module PactBroker
 
     def self.included(base)
       base.extend self
-      base.extend SemanticLogger::Loggable::ClassMethods
       base.class_eval do
         # Returns [SemanticLogger::Logger] class level logger
         def self.logger
