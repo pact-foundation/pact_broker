@@ -73,6 +73,69 @@ module PactBroker
           its([:contracts, 0]) { is_expected.to include "one of" }
         end
 
+        context "with a Janus contract" do
+          let(:features) { { janus: true } }
+          let(:specification) { "janus" }
+          let(:contract_hash) { load_json_fixture("janus-contract.json") }
+          let(:contracts) do
+            [
+              {
+                :consumerName => consumer_name,
+                :providerName => provider_name,
+                :specification => specification,
+                :contentType => content_type,
+                :content => encoded_contract,
+                :decodedContent => decoded_content,
+                :decodedParsedContent => decoded_parsed_content
+              }
+            ]
+          end
+
+          before do
+            allow(PactBroker.configuration).to receive(:features).and_return(features)
+          end
+
+          context "with the janus feature on" do
+            it { is_expected.to be_empty }
+          end
+
+          context "with the janus feature off" do
+            let(:features) { {} }
+
+            its([:contracts]) { is_expected.to eq ["specification must be one of: pact (at index 0)"] }
+          end
+
+          context "when the content is a pact" do
+            let(:contract_hash) { { "consumer" => { "name" => "Foo" }, "provider" => { "name" => "Bar" }, "interactions" => [] } }
+
+            its([:contracts, 0]) { is_expected.to eq "content published with specification 'janus' must be a Janus contract, whose $format is 'janus-contract/1' (at index 0)" }
+          end
+
+          context "when the content is a later major of the Janus contract" do
+            let(:contract_hash) { load_json_fixture("janus-contract.json").merge("$format" => "janus-contract/2") }
+
+            its([:contracts, 0]) { is_expected.to include "must be a Janus contract" }
+          end
+
+          context "when the specification is something else" do
+            let(:specification) { "oas" }
+
+            its([:contracts, 0]) { is_expected.to eq "specification must be one of: pact, janus (at index 0)" }
+          end
+
+          context "when a Janus contract is published as a pact, as every client does today" do
+            let(:specification) { "pact" }
+
+            it { is_expected.to be_empty }
+          end
+        end
+
+        context "with a specification other than pact" do
+          let(:contracts) { super().collect { |contract| contract.merge(:specification => "janus") } }
+
+          its([:contracts]) { is_expected.to eq ["specification must be one of: pact (at index 0)"] }
+        end
+
         context "when the specification is pact and consumer name does not match the pacticipant name" do
           let(:consumer_name) { "waffle" }
 

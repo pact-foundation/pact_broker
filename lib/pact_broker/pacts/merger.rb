@@ -1,4 +1,5 @@
 require "json"
+require "pact_broker/janus"
 
 module PactBroker
   module Pacts
@@ -9,15 +10,10 @@ module PactBroker
       def conflict? original_json, additional_json
         original, additional = [original_json, additional_json].map{|str| JSON.parse(str, **PACT_PARSING_OPTIONS) }
 
-        if original["interactions"].nil? || additional["interactions"].nil?
-          true
+        if janus?(original) || janus?(additional)
+          janus_conflict?(original, additional)
         else
-          additional["interactions"].any? do |new_interaction|
-            original["interactions"].any? do |original_interaction|
-              same_description_and_state?(original_interaction, new_interaction) &&
-                !same_request_properties?(original_interaction["request"], new_interaction["request"])
-            end
-          end
+          pact_conflict?(original, additional)
         end
       end
 
@@ -28,6 +24,10 @@ module PactBroker
       # TODO: should have separate tests!
       def merge_pacts original_json, additional_json
         original, additional = [original_json, additional_json].map{|str| JSON.parse(str, **PACT_PARSING_OPTIONS) }
+
+        if janus?(original) || janus?(additional)
+          return merge_janus_contracts(original, additional, additional_json)
+        end
 
         new_pact = original
 
@@ -49,6 +49,66 @@ module PactBroker
       end
 
       private
+
+      def pact_conflict?(original, additional)
+        if original["interactions"].nil? || additional["interactions"].nil?
+          true
+        else
+          additional["interactions"].any? do |new_interaction|
+            original["interactions"].any? do |original_interaction|
+              same_description_and_state?(original_interaction, new_interaction) &&
+                !same_request_properties?(original_interaction["request"], new_interaction["request"])
+            end
+          end
+        end
+      end
+
+      def janus?(content)
+        PactBroker::Janus.contract?(content)
+      end
+
+      # Two Janus contracts conflict when they record an interaction of the same identity
+      # differently (ADR 0065 of Pact Janus). A Janus contract and a pact always conflict.
+      def janus_conflict?(original, additional)
+        return true unless mergeable_janus?(original) && mergeable_janus?(additional)
+        additional["interactions"].any? do |new_interaction|
+          original["interactions"].any? do |original_interaction|
+            same_janus_identity?(original_interaction, new_interaction) &&
+              without_id(original_interaction) != without_id(new_interaction)
+          end
+        end
+      end
+
+      # Merges as a pact is merged, an interaction replacing the one of the same identity. Content
+      # that is not a Janus contract on both sides cannot be merged, and replaces what was there.
+      def merge_janus_contracts(original, additional, additional_json)
+        return additional_json unless mergeable_janus?(original) && mergeable_janus?(additional)
+        new_contract = original
+        additional["interactions"].each do |new_interaction|
+          overwrite_index = original["interactions"].find_index do |original_interaction|
+            same_janus_identity?(original_interaction, new_interaction)
+          end
+          if overwrite_index
+            new_contract["interactions"][overwrite_index] = new_interaction
+          else
+            new_contract["interactions"] << new_interaction
+          end
+        end
+        new_contract.to_json
+      end
+
+      def mergeable_janus?(content)
+        janus?(content) && content["interactions"].is_a?(Array)
+      end
+
+      def same_janus_identity?(original, additional)
+        PactBroker::Janus.interaction_identity(original) == PactBroker::Janus.interaction_identity(additional)
+      end
+
+      # The broker adds an _id to each interaction it stores
+      def without_id(interaction)
+        interaction.reject { |key, _| key == "_id" }
+      end
 
       def same_description_and_state? original, additional
         original["description"] == additional["description"] &&
