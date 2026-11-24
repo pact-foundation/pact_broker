@@ -42,11 +42,11 @@ module PactBroker
 
     def self.connect(db_credentials)
       # Keep this conifiguration in sync with lib/pact_broker/app.rb#configure_database_connection
-      Sequel.datetime_class = DateTime
       if ENV["DEBUG"] == "true"
         logger = PactBroker.logger
       end
       if db_credentials.fetch("adapter") == "sqlite"
+        FileUtils.rm_f([Dir.pwd, db_credentials.fetch("database")])
         FileUtils.mkdir_p(File.dirname(db_credentials.fetch("database")))
       end
       PactBroker.logger.info "Connecting to #{db_credentials['adapter']} database #{db_credentials['database']}."
