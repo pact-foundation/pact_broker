@@ -5,8 +5,6 @@ require "pact_broker/db/migrate_data"
 require "pact_broker/db/version"
 require "pact_broker/db/table_dependency_calculator"
 
-Sequel.datetime_class = DateTime
-
 module PactBroker
   module DB
     MIGRATIONS_DIR = File.expand_path("../../../db/migrations", __FILE__)

@@ -69,7 +69,7 @@ module PactBroker
             consumer_id: existing_model.consumer_id,
             consumer_version_order: existing_model.consumer_version_order,
             pact_version_id: pact_version.id,
-            created_at: Sequel.datetime_class.now
+            created_at: Time.now
           ).upsert
           update_latest_pact_publication_ids(pact_publication)
           pact_publication.with_version_branches_and_tags.to_domain
@@ -401,7 +401,7 @@ module PactBroker
           provider_id: provider_id,
           sha: sha,
           content: json_content,
-          created_at: Sequel.datetime_class.now,
+          created_at: Time.now,
           interactions_count: types.http_interactions.count,
           messages_count: types.message_interactions.count,
           has_messages: types.has_messages?,

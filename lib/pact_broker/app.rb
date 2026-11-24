@@ -152,7 +152,7 @@ module PactBroker
       PactBroker::DB.connection.extension(:statement_timeout)
       PactBroker::DB.connection.extension(:any_not_empty)
       PactBroker::DB.connection.timezone = :utc
-      Sequel.datetime_class = DateTime
+
       Sequel.database_timezone = :utc # Store all dates in UTC, assume any date without a TZ is UTC
       Sequel.application_timezone = :local # Convert dates to localtime when retrieving from database
       Sequel.typecast_timezone = :utc # If no timezone specified on dates going into the database, assume they are UTC

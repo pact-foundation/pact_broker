@@ -348,7 +348,7 @@ module PactBroker
           content: json_content,
           has_messages: types.has_messages?,
           has_http_interactions: types.has_http_interactions?,
-          created_at: Sequel.datetime_class.now
+          created_at: Time.now
         ).save
         self
       end

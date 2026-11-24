@@ -5,8 +5,8 @@ Sequel.migration do
         name: "allow_dangerous_contract_modification",
         type: "boolean",
         value: "1",
-        created_at: Sequel.datetime_class.now,
-        updated_at: Sequel.datetime_class.now
+        created_at: Time.now,
+        updated_at: Time.now
       )
     end
   end

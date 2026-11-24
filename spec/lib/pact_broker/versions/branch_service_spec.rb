@@ -75,7 +75,7 @@ module PactBroker
             td.create_consumer("Foo")
               .create_consumer_version("1", branch: "main")
 
-            BranchVersion.dataset.update(updated_at: Sequel.datetime_class.now - 10, created_at: Sequel.datetime_class.now - 10)
+            BranchVersion.dataset.update(updated_at: Time.now - 10, created_at: Time.now - 10)
           end
 
           it "does not create a new branch version" do

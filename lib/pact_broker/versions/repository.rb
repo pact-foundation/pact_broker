@@ -75,8 +75,8 @@ module PactBroker
         version_params = {
           number: args[:number],
           pacticipant_id: args[:pacticipant_id],
-          created_at: Sequel.datetime_class.now,
-          updated_at: Sequel.datetime_class.now,
+          created_at: Time.now,
+          updated_at: Time.now,
           build_url: args[:build_url]
         }.compact
 

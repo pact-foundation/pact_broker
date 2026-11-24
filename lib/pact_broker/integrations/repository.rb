@@ -22,8 +22,8 @@ module PactBroker
           Integration.new(
             consumer_id: consumer_id,
             provider_id: provider_id,
-            created_at: Sequel.datetime_class.now,
-            contract_data_updated_at: Sequel.datetime_class.now
+            created_at: Time.now,
+            contract_data_updated_at: Time.now
           ).insert_ignore
         end
         nil
@@ -39,7 +39,7 @@ module PactBroker
       def create_for_pacts(objects_with_consumer_and_provider)
         published_integrations = objects_with_consumer_and_provider.collect{ |i| { consumer_id: i.consumer.id, provider_id: i.provider.id } }
         existing_integrations = Sequel::Model.db[:integrations].select(:consumer_id, :provider_id).where(Sequel.|(*published_integrations) ).all
-        new_integrations = (published_integrations - existing_integrations).collect{ |i| i.merge(created_at: Sequel.datetime_class.now, contract_data_updated_at: Sequel.datetime_class.now) }
+        new_integrations = (published_integrations - existing_integrations).collect{ |i| i.merge(created_at: Time.now, contract_data_updated_at: Time.now) }
         Integration.dataset.insert_ignore.multi_insert(new_integrations)
       end
 
@@ -88,7 +88,7 @@ module PactBroker
 
         Integration
           .where(criteria)
-          .update(contract_data_updated_at: Sequel.datetime_class.now)
+          .update(contract_data_updated_at: Time.now)
       end
     end
   end
