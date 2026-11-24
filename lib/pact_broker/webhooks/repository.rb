@@ -39,8 +39,10 @@ module PactBroker
         existing_webhook.provider_id = find_pacticipant_by_name(webhook.provider)&.id
         existing_webhook.update_from_domain(webhook).save
         existing_webhook.events.collect(&:delete)
+        # The events may be the rows just deleted (when the update omits events),
+        # so insert fresh rows by name.
         (webhook.events || []).each do | webhook_event |
-          existing_webhook.add_event(webhook_event)
+          existing_webhook.add_event(name: webhook_event.name)
         end
         find_by_uuid uuid
       end

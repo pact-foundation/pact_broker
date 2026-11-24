@@ -30,6 +30,33 @@ module PactBroker
         end
       end
 
+      describe ".update_by_uuid with a persisted webhook" do
+        before do
+          td.create_consumer("Foo")
+            .create_provider("Bar")
+            .create_webhook(uuid: "abcdefghijklmnopqrstu", event_names: [WebhookEvent::CONTRACT_REQUIRING_VERIFICATION_PUBLISHED])
+        end
+
+        let(:params) { { "request" => { "method" => "POST", "url" => "http://example.org/new" } } }
+
+        subject { Service.update_by_uuid("abcdefghijklmnopqrstu", params) }
+
+        context "when the params do not contain events" do
+          it "keeps the existing events" do
+            expect(subject.events.collect(&:name)).to eq [WebhookEvent::CONTRACT_REQUIRING_VERIFICATION_PUBLISHED]
+            expect(subject.request.url).to eq "http://example.org/new"
+          end
+        end
+
+        context "when the params contain events" do
+          let(:params) { super().merge("events" => [{ "name" => WebhookEvent::CONTRACT_PUBLISHED }]) }
+
+          it "replaces the existing events" do
+            expect(subject.events.collect(&:name)).to eq [WebhookEvent::CONTRACT_PUBLISHED]
+          end
+        end
+      end
+
       describe ".update_by_uuid" do
         before do
           allow_any_instance_of(PactBroker::Webhooks::Repository).to receive(:find_by_uuid).and_return(existing_webhook)
