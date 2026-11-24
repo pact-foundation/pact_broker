@@ -1,3 +1,36 @@
+## [2.125.0] _2026-11-24_
+
+### 🚀 Features
+
+-   Add a nullable has_http_interactions column to pact_versions
+-   Record has_http_interactions when a pact version is created
+-   Fill has_http_interactions for existing pact versions
+-   Make has_http_interactions NOT NULL
+
+### 🐛 Bug Fixes
+
+-   Link each verification in a consumer version summary to its own provider's pact
+-   Count typed v4 messages in pacts without a specification version
+-   Count typed v4 messages as messages, not interactions
+-   Load one pact's content at a time when filling interaction flags
+-   Render can-i-deploy badge as grey when deployability is unknown
+-   Stop extending SemanticLogger::Loggable::ClassMethods
+-   Keep webhook events when an update omits them
+
+### 🚜 Refactor
+
+-   Name the v4 message types once in Interactions::Types
+
+### 🧪 Testing
+
+-   Cover pacts whose spec version does not match their shape
+-   Reuse the insert helper in the nullable column spec
+-   Pin has_http_interactions false for a pact with no interactions
+
+### 🛠️ Miscellaneous Tasks
+
+-   Bump Ruby to 3.2.11
+
 ## [2.124.0] _2026-11-11_
 
 ### 🚀 Features
