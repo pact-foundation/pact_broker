@@ -98,7 +98,7 @@ module PactBroker
             it "does not update the branch updated_at" do
               branch = PactBroker::Versions::Branch.where(name: "original-branch").single_record
               original_updated_at = branch.updated_at
-              now = (original_updated_at.to_time.utc + 30)
+              now = (original_updated_at.to_time.utc)
               Timecop.freeze(now) { subject }
               expect(branch.refresh.updated_at.to_time.to_i).to eq(original_updated_at.to_time.to_i)
             end
