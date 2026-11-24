@@ -10,6 +10,12 @@ Sequel.datetime_class = DateTime
 module PactBroker
   module DB
     MIGRATIONS_DIR = File.expand_path("../../../db/migrations", __FILE__)
+    # The default Sequel tracking table used to record which migrations have been applied.
+    # Consumers that run pact_broker alongside their own migrations can use this constant
+    # together with a separate tracking table name to keep migration state isolated.
+    # Example:
+    #   PactBroker::DB.run_migrations(db, table: :my_app_schema_migrations)
+    MIGRATION_TABLE = :schema_migrations
 
     def self.connection= connection
       @connection = connection
