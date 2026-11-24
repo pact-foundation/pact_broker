@@ -21,9 +21,9 @@ if ENV["SIMPLECOV_COMMAND_NAME"]
 end
 
 SimpleCov.start do
-  add_filter "/db/"
-  add_filter "/example/"
-  add_filter "/spec/"
-  add_filter "/tasks/"
-  add_filter "/script/"
+  skip "/db/"
+  skip "/example/"
+  skip "/spec/"
+  skip "/tasks/"
+  skip "/script/"
 end
