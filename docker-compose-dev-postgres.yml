@@ -34,7 +34,7 @@ services:
       - ./Rakefile:/home/Rakefile
 
   shell:
-    image: ruby:3.2.4-alpine@sha256:867125ca5fed8316e90a5fba593ecb86392073d6d26f44307f4936218d2f5613
+    image: ruby:3.2.11-alpine3.23@sha256:d206c25708a44df6a7ce22213ee5da9fc0a9f7b31ce884429ba758db48abdc62
     depends_on:
       - pact-broker
     entrypoint: /bin/sh
