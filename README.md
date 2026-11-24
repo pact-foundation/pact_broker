@@ -123,7 +123,7 @@ Then open a browser at [http://localhost:9292](http://localhost:9292).
 
 #### Using Ruby
 
-* Install Ruby 2.7 and Bundler (check the automated tests to find the most recent version of Ruby and Bundler that are supported)
+* Install Ruby 3.2 or later and Bundler (check the automated tests to find the most recent version of Ruby and Bundler that are supported)
     * Windows users: get a Rails/Ruby installer from [RailsInstaller](http://railsinstaller.org/) and run it
     * unix users just use your package manager
 * Run `git clone git@github.com:pact-foundation/pact_broker.git && cd pact_broker/example`
@@ -152,7 +152,7 @@ You can use the [Pact Broker Docker image][docker] or [Terraform on AWS][terrafo
 * Create a PostgreSQL database.
   * To ensure you're on a supported version of the database that you choose, check the [.github/workflows/test.yml](.github/workflows/test.yml) file to see which versions we're currently running our tests against.
 * You'll find a sample database creation script in the [example/config.ru](https://github.com/pact-foundation/pact_broker/blob/master/example/config.ru).
-* Install ruby 2.7 and the latest version of bundler (if you've come this far, I'm assuming you know how to do both of these. Did I mention there was a [Docker][docker] image?)
+* Install ruby 3.2 or later and the latest version of bundler (if you've come this far, I'm assuming you know how to do both of these. Did I mention there was a [Docker][docker] image?)
 * Copy the [pact\_broker](https://github.com/DiUS/pact_broker-docker/tree/master/pact_broker) directory from the Pact Broker Docker project. This will have the recommended settings for database connections, logging, basic auth etc. Note that the Docker image uses Phusion Passenger as the web application server in front of the Pact Broker Ruby application, which is the recommended set up if you are not using a containerized solution.
 * Modify the config.ru and Gemfile as desired (eg. choose database driver gem, set your database credentials. Use the "pg" gem for Postgres)
   * example Sequel configuration for postgres `{ adapter: "postgres", database: "pact_broker", username: 'pact_broker', password: 'pact_broker', :encoding => 'utf8' }`
