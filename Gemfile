@@ -18,7 +18,7 @@ group :development do
 end
 
 group :test do
-  gem "simplecov", :require => false
+  gem "simplecov", "~> 1.0", :require => false
   gem "simplecov-cobertura", :require => false
   gem "rspec_junit_formatter", :require => false
   if ENV["X_PACT_DEVELOPMENT"] == "true"
